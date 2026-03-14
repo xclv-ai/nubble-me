@@ -12,13 +12,17 @@ Every section of content exists at 4 depth levels:
 
 Readers control depth globally or per-section via swipe gestures, keyboard arrows, or pinch-to-zoom.
 
+## Live Demo
+
+[nubble.me](https://www.perplexity.ai/computer/a/nubble-me-myE1HJBdQIaiTVJCKGuYFg)
+
 ## Features
 
 - Swipe left/right on any section to change its depth
 - Shift + arrow keys for global depth control
 - Pinch-to-zoom gesture for depth on mobile
 - Smooth spring animations and content transitions
-- Depth indicator — morphing centered bar
+- Depth indicator — morphing centered bar showing current zoom level
 - Section navigation rail with hover tooltips
 - Reading time estimate that updates with depth
 - Scroll progress bar
@@ -27,7 +31,15 @@ Readers control depth globally or per-section via swipe gestures, keyboard arrow
 - Dark mode with smooth theme transitions
 - Visual text density that varies by depth level
 
-## Stack
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| **[Architecture](docs/ARCHITECTURE.md)** | Content loading pipeline — how any ePub, PDF, or URL becomes a nubble. Extraction, chunking, on-device AI depth generation, data model, .nubble file format. |
+| **[Product Plan](docs/PRODUCT_PLAN.md)** | Vision, target users, phased roadmap (web prototype → iOS MVP → ePub/PDF → App Store), business model, competitive landscape, key metrics. |
+| **[Tech Stack](docs/TECH_STACK.md)** | Current web stack vs. target iOS stack. SwiftUI equivalents for every React pattern. Portability assessment. Migration path. |
+
+## Current Stack (Web Prototype)
 
 - React 18 + TypeScript
 - Framer Motion (gestures, springs, animations)
@@ -35,23 +47,31 @@ Readers control depth globally or per-section via swipe gestures, keyboard arrow
 - Vite + Express (dev server)
 - Fonts: Satoshi (body) + Zodiak (display) via Fontshare
 
+## Target Stack (iOS App)
+
+- SwiftUI + Swift 6
+- Apple Foundation Models (on-device AI, iOS 26+)
+- PDFKit + Vision (content extraction)
+- SwiftData + CloudKit (storage + sync)
+- Zero third-party UI dependencies
+
 ## Getting Started
 
-```bash
-npm install
-npm run dev
-```
+
+added 2 packages, and audited 221 packages in 1s
+
+48 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
 
 ## Build & Deploy
 
-```bash
-npm run build
-NODE_ENV=production node dist/index.cjs
-```
 
-## Architecture
 
-The reader is a single React component (`NubbleReader.tsx`, ~791 lines) that takes a `ContentDocument` — an array of sections, each with 4 depth-level text variants. Currently uses hardcoded sample content. Designed for future integration with on-device AI summarization for any ebook/PDF/article input.
+## Project Structure
+
+
 
 ## License
 
