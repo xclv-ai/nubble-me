@@ -53,29 +53,31 @@ struct NubbleReaderView: View {
 
     private var header: some View {
         VStack(spacing: 0) {
-            HStack {
-                // Logo + wordmark
-                HStack(spacing: 10) {
-                    NubbleLogo()
-                    Text("nubble")
-                        .font(.custom("Satoshi-Medium", size: 11, relativeTo: .caption))
-                        .foregroundStyle(NubbleColors.muted(for: colorScheme))
-                        .tracking(2.5)
-                        .textCase(.uppercase)
-                }
-
-                if let onImportTapped {
-                    Button(action: onImportTapped) {
-                        Image(systemName: "doc.badge.plus")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.6))
+            ZStack {
+                // Left: Logo + import
+                HStack {
+                    HStack(spacing: 10) {
+                        NubbleLogo()
+                        Text("nubble")
+                            .font(.custom("Satoshi-Medium", size: 11, relativeTo: .caption))
+                            .foregroundStyle(NubbleColors.muted(for: colorScheme))
+                            .tracking(2.5)
+                            .textCase(.uppercase)
                     }
-                    .padding(.leading, 12)
+
+                    if let onImportTapped {
+                        Button(action: onImportTapped) {
+                            Image(systemName: "doc.badge.plus")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.6))
+                        }
+                        .padding(.leading, 4)
+                    }
+
+                    Spacer()
                 }
 
-                Spacer()
-
-                // Global depth control
+                // Center: Depth control (− indicator +)
                 HStack(spacing: 6) {
                     Button {
                         state.changeGlobalDepth(by: -1)
@@ -98,9 +100,13 @@ struct NubbleReaderView: View {
                     }
                     .disabled(state.globalDepth == 3)
                     .opacity(state.globalDepth == 3 ? 0.2 : 1)
+                }
 
-                    // Depth label + reading time
-                    VStack(alignment: .leading, spacing: 1) {
+                // Right: Depth label + reading time
+                HStack {
+                    Spacer()
+
+                    VStack(alignment: .trailing, spacing: 1) {
                         Text(DepthLevel(rawValue: state.globalDepth)?.label ?? "")
                             .font(.custom("Satoshi-Medium", size: 10, relativeTo: .caption2))
                             .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.5))
@@ -113,7 +119,7 @@ struct NubbleReaderView: View {
                             .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.3))
                             .contentTransition(.numericText())
                     }
-                    .frame(width: 72, alignment: .leading)
+                    .frame(width: 90, alignment: .trailing)
                     .animation(Springs.snappy, value: state.globalDepth)
                 }
             }

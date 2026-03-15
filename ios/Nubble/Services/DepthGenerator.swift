@@ -19,7 +19,7 @@ final class DepthGenerator {
 
     /// Generate 4 depth variants for each chunk.
     /// Uses Apple Foundation Models on iOS 26+, falls back to passthrough on unsupported devices.
-    func generateDepths(for chunks: [RawChunk]) async throws -> [ContentSection] {
+    func generateDepths(for chunks: [RawChunk]) async -> [ContentSection] {
         totalSections = chunks.count
         sectionsCompleted = 0
         progress = 0
@@ -27,7 +27,7 @@ final class DepthGenerator {
         var sections: [ContentSection] = []
 
         for chunk in chunks {
-            let depths = try await generateDepthSet(for: chunk)
+            let depths = await generateDepthSet(for: chunk)
             let section = ContentSection(
                 id: chunk.id,
                 title: chunk.title,
@@ -45,9 +45,14 @@ final class DepthGenerator {
         return sections
     }
 
-    private func generateDepthSet(for chunk: RawChunk) async throws -> DepthSet {
+    private func generateDepthSet(for chunk: RawChunk) async -> DepthSet {
         #if canImport(FoundationModels)
-        return try await generateWithFoundationModels(chunk)
+        do {
+            return try await generateWithFoundationModels(chunk)
+        } catch {
+            // Foundation Models not available at runtime (simulator, unsupported device)
+            return passthroughDepths(chunk)
+        }
         #else
         return passthroughDepths(chunk)
         #endif

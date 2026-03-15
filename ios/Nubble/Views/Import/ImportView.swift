@@ -88,7 +88,7 @@ struct ImportSheet: View {
         }
         .fileImporter(
             isPresented: $showFilePicker,
-            allowedContentTypes: [.pdf, .epub],
+            allowedContentTypes: [.pdf, .epub, .plainText, .json, .init("net.daringfireball.markdown")!],
             allowsMultipleSelection: false
         ) { result in
             switch result {

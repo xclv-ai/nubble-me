@@ -40,6 +40,14 @@ final class ConversionPipeline {
         case "pdf":
             stage = .extractingText
             extracted = try await pdfExtractor.extract(fileURL: fileURL)
+        case "txt", "md", "markdown", "json":
+            let text = try String(contentsOf: fileURL, encoding: .utf8)
+            let title = fileURL.deletingPathExtension().lastPathComponent
+            extracted = ExtractedDocument(
+                title: title,
+                author: nil,
+                chapters: [ExtractedChapter(title: title, body: text, position: 0)]
+            )
         default:
             throw ExtractionError.unsupportedFormat(ext)
         }
@@ -64,7 +72,7 @@ final class ConversionPipeline {
 
         // Step 3: Generate 4 depth levels per section
         stage = .generatingDepths
-        let sections = try await depthGenerator.generateDepths(for: allChunks)
+        let sections = await depthGenerator.generateDepths(for: allChunks)
 
         // Track progress from depth generator
         sectionsCompleted = depthGenerator.sectionsCompleted
