@@ -7,87 +7,72 @@ type DepthLevel = 0 | 1 | 2 | 3;
 const DEPTH_LABELS = ["Summary", "Condensed", "Standard", "Expanded"] as const;
 const DEPTH_KEYS: (keyof ContentSection)[] = ["summary", "condensed", "standard", "expanded"];
 
-/* ─── Easing & spring constants (from v1 — proven smooth) ─── */
+/* ─── Easing & spring constants (from v1) ─── */
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 const EASE_IN_OUT = [0.4, 0, 0.2, 1] as const;
 const SPRING_SNAPPY = { type: "spring" as const, stiffness: 400, damping: 30, mass: 0.8 };
 const SPRING_GENTLE = { type: "spring" as const, stiffness: 200, damping: 25, mass: 1 };
 const SPRING_REVEAL = { type: "spring" as const, stiffness: 80, damping: 20, mass: 1.2 };
 
-/* ─── Lens / Glass depth system ───
+/* ─── Lens effect per depth ───
  *
- * Metaphor: a magnifying glass hovers over the content. As depth increases,
- * the lens "engages" — the glass becomes visible, edges refract light with
- * chromatic aberration, and a subtle barrel vignette appears.
+ * Uses ONLY CSS properties verified to work on iOS Safari + Chrome:
+ *   - text-shadow: colored offsets for chromatic aberration on actual text
+ *   - backdrop-filter + -webkit-backdrop-filter: glass blur
+ *   - box-shadow inset: vignette darkening at edges
+ *   - linear-gradient: specular highlight
+ *   - border with rgba: glass rim
  *
- * Depth 0 (Summary):   No lens — raw flat text, distant
- * Depth 1 (Condensed):  Faint glass appears — very subtle edge refraction
- * Depth 2 (Standard):   Glass present — mild chromatic fringe, soft vignette
- * Depth 3 (Expanded):   Full loupe — visible RGB fringing at edges, glass rim,
- *                        specular highlight, barrel vignette
- *
- * Implementation:
- *   - SVG filters for chromatic aberration (RGB channel split)
- *   - CSS for glass card (backdrop-blur, border highlights, inner shadows)
- *   - Radial gradient vignette overlay (lens curvature)
- *   - Specular highlight line (light on glass surface)
- *   - All purely visual — NO layout-affecting transforms, NO 3D
+ * NO SVG filters. NO mix-blend-mode. NO feDisplacementMap.
  */
 
-/* Per-depth lens parameters */
-interface LensParams {
-  /** Chromatic aberration RGB offset in px (0 = none) */
-  aberration: number;
-  /** Glass card backdrop blur in px */
-  glassBlur: number;
-  /** Glass border opacity (specular rim) */
-  rimOpacity: number;
-  /** Vignette overlay opacity (radial darkening at edges) */
-  vignetteOpacity: number;
-  /** Specular highlight opacity (top edge light streak) */
-  specularOpacity: number;
-  /** Inner glow opacity */
-  innerGlow: number;
-  /** Text opacity */
-  textOpacity: number;
+interface LensStyle {
+  /** text-shadow CSS value — chromatic aberration via R/B offset */
+  textShadow: string;
+  /** backdrop-filter blur px */
+  blur: number;
+  /** inset box-shadow for vignette (spread + alpha) */
+  vignette: string;
+  /** border rgba for glass rim */
+  rimBorder: string;
+  /** specular highlight opacity */
+  specular: number;
+  /** card background alpha */
+  cardAlpha: number;
 }
 
-const LENS_PARAMS: Record<DepthLevel, LensParams> = {
+const LENS_STYLES: Record<DepthLevel, LensStyle> = {
   0: {
-    aberration: 0,
-    glassBlur: 0,
-    rimOpacity: 0,
-    vignetteOpacity: 0,
-    specularOpacity: 0,
-    innerGlow: 0,
-    textOpacity: 1,
+    textShadow: "none",
+    blur: 0,
+    vignette: "none",
+    rimBorder: "1px solid transparent",
+    specular: 0,
+    cardAlpha: 0,
   },
   1: {
-    aberration: 1.5,
-    glassBlur: 6,
-    rimOpacity: 0.3,
-    vignetteOpacity: 0.15,
-    specularOpacity: 0.4,
-    innerGlow: 0.12,
-    textOpacity: 0.85,
+    textShadow: "1px 0 0 rgba(255,0,0,0.12), -1px 0 0 rgba(0,100,255,0.12)",
+    blur: 4,
+    vignette: "inset 0 0 30px 5px rgba(0,0,0,0.06)",
+    rimBorder: "1px solid rgba(255,255,255,0.15)",
+    specular: 0.15,
+    cardAlpha: 0.04,
   },
   2: {
-    aberration: 3,
-    glassBlur: 10,
-    rimOpacity: 0.5,
-    vignetteOpacity: 0.3,
-    specularOpacity: 0.6,
-    innerGlow: 0.2,
-    textOpacity: 0.8,
+    textShadow: "2px 0 1px rgba(255,0,0,0.18), -2px 0 1px rgba(0,100,255,0.18)",
+    blur: 8,
+    vignette: "inset 0 0 50px 10px rgba(0,0,0,0.1)",
+    rimBorder: "1px solid rgba(255,255,255,0.25)",
+    specular: 0.3,
+    cardAlpha: 0.06,
   },
   3: {
-    aberration: 5,
-    glassBlur: 16,
-    rimOpacity: 0.7,
-    vignetteOpacity: 0.45,
-    specularOpacity: 0.8,
-    innerGlow: 0.3,
-    textOpacity: 0.75,
+    textShadow: "3px 0 1px rgba(255,0,0,0.25), -3px 0 1px rgba(0,100,255,0.25), 0 1px 0 rgba(0,200,0,0.08)",
+    blur: 12,
+    vignette: "inset 0 0 80px 15px rgba(0,0,0,0.15)",
+    rimBorder: "1px solid rgba(255,255,255,0.35)",
+    specular: 0.5,
+    cardAlpha: 0.08,
   },
 };
 
@@ -134,7 +119,6 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 
-  // Track active section + scroll progress (identical to v1)
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -198,7 +182,6 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
     });
   }, [flashBoundary]);
 
-  // Keyboard (identical to v1)
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.shiftKey) {
@@ -213,7 +196,6 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
     return () => window.removeEventListener("keydown", handleKey);
   }, [activeSectionId, changeSectionDepth, changeGlobalDepth]);
 
-  // Pinch-to-zoom (identical to v1)
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -283,10 +265,7 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
 
   return (
     <div className="h-screen w-screen flex flex-col overflow-hidden bg-background">
-      {/* SVG filter definitions for chromatic aberration */}
-      <LensFilterDefs />
-
-      {/* Boundary flash overlay */}
+      {/* Boundary flash */}
       <AnimatePresence>
         {boundaryFlash && (
           <motion.div
@@ -305,7 +284,7 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
         )}
       </AnimatePresence>
 
-      {/* Header (identical to v1) */}
+      {/* Header */}
       <header className="flex-shrink-0 h-12 px-5 flex items-center justify-between border-b border-border/40 relative">
         <motion.div
           className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary/25"
@@ -319,7 +298,6 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
           <span className="text-[11px] text-muted-foreground tracking-[0.15em] uppercase font-medium">nubble</span>
         </div>
 
-        {/* Global depth control */}
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => changeGlobalDepth(-1)}
@@ -329,7 +307,7 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
             <Minus size={14} />
           </button>
 
-          <LensDepthIndicator depth={globalDepth} />
+          <DepthZoomIndicator depth={globalDepth} size="md" />
 
           <button
             onClick={() => changeGlobalDepth(1)}
@@ -401,7 +379,7 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
       </header>
 
       <div className="flex-1 flex overflow-hidden">
-        {/* Section nav rail (identical to v1) */}
+        {/* Section nav rail */}
         <div className="flex-shrink-0 w-8 sm:w-10 flex flex-col items-center justify-center gap-1.5 py-4">
           {doc.sections.map((section, i) => (
             <div key={section.id} className="relative group/nav">
@@ -433,7 +411,6 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
           style={{ scrollBehavior: "smooth" }}
         >
           <div className="max-w-[660px] mx-auto px-4 sm:px-6 pt-8 pb-24">
-            {/* Document title */}
             <motion.div
               className="mb-10"
               initial={{ opacity: 0, y: 12 }}
@@ -462,7 +439,6 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
               </div>
             </motion.div>
 
-            {/* Sections */}
             {doc.sections.map((section, i) => (
               <GlassSectionBlock
                 key={section.id}
@@ -527,166 +503,14 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
   );
 }
 
-/* ─── SVG Filter Definitions ───
- *
- * Chromatic aberration: splits the image into R, G, B channels and offsets
- * red and blue slightly in opposite directions. At low offsets (< 1px), this
- * is invisible on solid areas but creates subtle rainbow fringing at edges
- * and high-contrast boundaries — exactly like a real lens.
- *
- * We define 4 filter variants (one per depth) because SVG filter attributes
- * can't be animated via CSS transitions. Switching between them is instant
- * but the Framer Motion content transition masks the swap.
- */
-
-function LensFilterDefs() {
-  const offsets = [0, 1.5, 3, 5];
-
-  return (
-    <svg className="absolute w-0 h-0" aria-hidden="true">
-      <defs>
-        {offsets.map((offset, i) => (
-          <filter
-            key={i}
-            id={`lens-aberration-${i}`}
-            x="-2%"
-            y="-2%"
-            width="104%"
-            height="104%"
-            colorInterpolationFilters="sRGB"
-          >
-            {offset === 0 ? (
-              /* Depth 0: no effect, pass through */
-              <feOffset in="SourceGraphic" dx="0" dy="0" />
-            ) : (
-              <>
-                {/* Extract red channel */}
-                <feColorMatrix
-                  type="matrix"
-                  in="SourceGraphic"
-                  values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"
-                  result="red"
-                />
-                {/* Extract green channel */}
-                <feColorMatrix
-                  type="matrix"
-                  in="SourceGraphic"
-                  values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0"
-                  result="green"
-                />
-                {/* Extract blue channel */}
-                <feColorMatrix
-                  type="matrix"
-                  in="SourceGraphic"
-                  values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"
-                  result="blue"
-                />
-                {/* Offset red rightward, blue leftward */}
-                <feOffset in="red" dx={offset} dy={0} result="red-shifted" />
-                <feOffset in="blue" dx={-offset} dy={0} result="blue-shifted" />
-                {/* Recombine with screen blend */}
-                <feBlend mode="screen" in="red-shifted" in2="green" result="rg" />
-                <feBlend mode="screen" in="rg" in2="blue-shifted" />
-              </>
-            )}
-          </filter>
-        ))}
-      </defs>
-    </svg>
-  );
-}
-
-/* ─── Lens Depth Indicator ───
- * A circular lens icon that fills/glows with depth.
- */
-
-interface LensDepthIndicatorProps {
-  depth: DepthLevel;
-}
-
-function LensDepthIndicator({ depth }: LensDepthIndicatorProps) {
-  const size = 28;
-  const innerRadius = 4 + depth * 2.5; // 4 → 11.5
-
-  return (
-    <div
-      className="relative flex items-center justify-center pointer-events-none select-none"
-      style={{ width: size, height: size }}
-    >
-      {/* Outer ring */}
-      <motion.div
-        className="absolute rounded-full border"
-        animate={{
-          width: size,
-          height: size,
-          borderColor: `hsl(var(--primary) / ${0.15 + depth * 0.12})`,
-          boxShadow: depth > 0
-            ? `inset 0 1px 2px hsl(var(--primary) / ${0.05 + depth * 0.03}), 0 0 ${depth * 4}px hsl(var(--primary) / ${depth * 0.05})`
-            : "none",
-        }}
-        transition={SPRING_SNAPPY}
-      />
-      {/* Inner fill — the "glass" */}
-      <motion.div
-        className="relative rounded-full"
-        animate={{
-          width: innerRadius * 2,
-          height: innerRadius * 2,
-          backgroundColor: `hsl(var(--primary) / ${0.08 + depth * 0.15})`,
-        }}
-        transition={SPRING_SNAPPY}
-      />
-      {/* Specular dot */}
-      <motion.div
-        className="absolute rounded-full bg-white"
-        style={{ top: 6, right: 7 }}
-        animate={{
-          width: 2 + depth * 0.5,
-          height: 2 + depth * 0.5,
-          opacity: 0.1 + depth * 0.15,
-        }}
-        transition={SPRING_SNAPPY}
-      />
-    </div>
-  );
-}
-
-/* ─── Swipe Onboarding (identical to v1) ─── */
-
-function SwipeOnboarding() {
-  return (
-    <motion.div
-      className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <motion.div
-        className="flex items-center gap-2 bg-foreground/80 text-background px-4 py-2.5 rounded-full shadow-xl"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ delay: 0.8, ...SPRING_GENTLE }}
-      >
-        <motion.span
-          className="text-lg"
-          animate={{ x: [0, 14, 0, -14, 0] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
-        >
-          &#x1F446;
-        </motion.span>
-        <span className="text-[11px] font-medium tracking-wide">swipe to change depth</span>
-      </motion.div>
-    </motion.div>
-  );
-}
-
 /* ─── Glass Section Block ───
  *
- * Based on v1's SectionBlock for smooth, proven scroll/gesture behavior.
- * Layered on top: glass card, chromatic aberration, vignette, specular.
- * NO 3D transforms, NO scale changes — just visual overlays.
+ * Lens effects via proven CSS:
+ *   1. text-shadow with red/blue offsets = chromatic aberration on actual glyphs
+ *   2. backdrop-filter: blur() = frosted glass (Apple invented this)
+ *   3. box-shadow: inset = vignette darkening at card edges
+ *   4. border with rgba white = glass rim catching light
+ *   5. linear-gradient div = specular highlight streak on glass surface
  */
 
 interface GlassSectionBlockProps {
@@ -729,9 +553,8 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
     const contentText = section[DEPTH_KEYS[depth] as keyof ContentSection] as string;
     const paragraphs = contentText.split("\n\n");
 
-    const lens = LENS_PARAMS[depth];
+    const lens = LENS_STYLES[depth];
 
-    /* Text density per depth (from v1) */
     const textStyle = useMemo(() => {
       switch (depth) {
         case 0: return "text-[15.5px] text-foreground font-medium leading-[1.8]";
@@ -757,7 +580,7 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
           )}
         </AnimatePresence>
 
-        {/* Swipeable container (v1 behavior — smooth, no 3D) */}
+        {/* Swipeable (v1 behavior) */}
         <motion.div
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
@@ -766,65 +589,35 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
           style={{ x, rotate, scale }}
           className="cursor-grab active:cursor-grabbing touch-pan-y origin-center"
         >
-          {/* Glass card */}
-          <motion.div
-            className="relative rounded-lg overflow-hidden"
-            animate={{
-              backdropFilter: depth > 0 ? `blur(${lens.glassBlur}px)` : "none",
-              WebkitBackdropFilter: depth > 0 ? `blur(${lens.glassBlur}px)` : "none",
+          {/* Glass card wrapper */}
+          <div
+            className="relative rounded-xl overflow-hidden transition-all duration-500 ease-in-out"
+            style={{
+              border: lens.rimBorder,
+              boxShadow: lens.vignette,
+              backdropFilter: lens.blur > 0 ? `blur(${lens.blur}px)` : "none",
+              WebkitBackdropFilter: lens.blur > 0 ? `blur(${lens.blur}px)` : "none",
+              background: isDark
+                ? `rgba(255,255,255,${lens.cardAlpha})`
+                : `rgba(255,255,255,${lens.cardAlpha * 5})`,
             }}
-            transition={{ duration: 0.5, ease: EASE_IN_OUT }}
           >
-            {/* Glass rim — border that appears with depth */}
-            <motion.div
-              className="absolute inset-0 rounded-lg pointer-events-none"
-              animate={{
-                boxShadow: depth > 0
-                  ? `inset 0 1px 0 rgba(255,255,255,${lens.rimOpacity}), inset 0 -1px 0 rgba(0,0,0,${lens.rimOpacity * 0.3}), 0 0 0 1px rgba(${isDark ? "255,255,255" : "0,0,0"},${lens.rimOpacity * 0.15})`
-                  : "none",
+            {/* Specular highlight — bright streak across top of glass */}
+            <div
+              className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none transition-opacity duration-500"
+              style={{
+                opacity: lens.specular,
+                background: "linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.8) 25%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.8) 75%, transparent 95%)",
               }}
-              transition={{ duration: 0.5 }}
-              style={{ zIndex: 10 }}
             />
 
-            {/* Specular highlight — light streak across top of glass */}
+            {/* Active card background */}
             <motion.div
-              className="absolute top-0 inset-x-0 h-[1px] pointer-events-none"
-              style={{ zIndex: 10 }}
+              className="relative rounded-xl px-4 sm:px-5 py-4"
               animate={{
-                opacity: lens.specularOpacity,
-                background: `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${lens.specularOpacity}) 30%, rgba(255,255,255,${lens.specularOpacity * 1.5}) 50%, rgba(255,255,255,${lens.specularOpacity}) 70%, transparent 90%)`,
-              }}
-              transition={{ duration: 0.5 }}
-            />
-
-            {/* Lens vignette — radial darkening at edges (barrel curvature) */}
-            <motion.div
-              className="absolute inset-0 rounded-lg pointer-events-none"
-              style={{ zIndex: 5 }}
-              animate={{
-                opacity: lens.vignetteOpacity,
-                background: `radial-gradient(ellipse 80% 70% at 50% 50%, transparent 50%, rgba(0,0,0,${lens.vignetteOpacity * 2}) 100%)`,
-              }}
-              transition={{ duration: 0.5 }}
-            />
-
-            {/* Inner glow — subtle light concentration in center */}
-            <motion.div
-              className="absolute inset-0 rounded-lg pointer-events-none"
-              style={{ zIndex: 5 }}
-              animate={{
-                opacity: lens.innerGlow,
-                background: `radial-gradient(ellipse 60% 50% at 50% 40%, rgba(255,255,255,${lens.innerGlow * 3}) 0%, transparent 70%)`,
-              }}
-              transition={{ duration: 0.5 }}
-            />
-
-            {/* Content area with active card background */}
-            <motion.div
-              className="relative rounded-lg px-4 sm:px-5 py-4"
-              animate={{
-                backgroundColor: isActive ? "hsl(var(--card) / 0.6)" : "hsl(var(--card) / 0)",
+                backgroundColor: isActive && depth === 0
+                  ? "hsl(var(--card) / 0.6)"
+                  : "hsl(var(--card) / 0)",
               }}
               transition={{ duration: 0.4, ease: EASE_IN_OUT }}
             >
@@ -852,7 +645,6 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
                   </AnimatePresence>
                 </div>
 
-                {/* Per-section depth indicator */}
                 <motion.div
                   className="flex items-center gap-1.5"
                   animate={{
@@ -887,7 +679,7 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
                 {section.title}
               </h2>
 
-              {/* Content body — with chromatic aberration filter */}
+              {/* Content body — text-shadow creates chromatic aberration */}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={`${section.id}-${depth}`}
@@ -900,9 +692,6 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
                     filter: { duration: 0.3, ease: EASE_OUT_EXPO },
                   }}
                   className="overflow-hidden"
-                  style={{
-                    filter: depth > 0 ? `url(#lens-aberration-${depth})` : "none",
-                  }}
                 >
                   {paragraphs.map((p, pi) => (
                     <motion.p
@@ -914,7 +703,10 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
                         delay: pi * 0.08,
                         ease: EASE_OUT_EXPO,
                       }}
-                      className={`mb-3 last:mb-0 ${textStyle}`}
+                      className={`mb-3 last:mb-0 ${textStyle} transition-all duration-500`}
+                      style={{
+                        textShadow: lens.textShadow,
+                      }}
                     >
                       {p}
                     </motion.p>
@@ -944,10 +736,10 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
                 )}
               </AnimatePresence>
             </motion.div>
-          </motion.div>
+          </div>
         </motion.div>
 
-        {/* Divider (from v1) */}
+        {/* Divider */}
         {index < total - 1 && (
           <div className="mx-5 my-1 border-t border-border/25" />
         )}
@@ -958,7 +750,38 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
 
 GlassSectionBlock.displayName = "GlassSectionBlock";
 
-/* ─── Depth Zoom Indicator (from v1, for per-section) ─── */
+/* ─── Swipe Onboarding (from v1) ─── */
+
+function SwipeOnboarding() {
+  return (
+    <motion.div
+      className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <motion.div
+        className="flex items-center gap-2 bg-foreground/80 text-background px-4 py-2.5 rounded-full shadow-xl"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        transition={{ delay: 0.8, ...SPRING_GENTLE }}
+      >
+        <motion.span
+          className="text-lg"
+          animate={{ x: [0, 14, 0, -14, 0] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
+        >
+          &#x1F446;
+        </motion.span>
+        <span className="text-[11px] font-medium tracking-wide">swipe to change depth</span>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─── Depth Zoom Indicator (from v1) ─── */
 
 interface DepthZoomIndicatorProps {
   depth: DepthLevel;
