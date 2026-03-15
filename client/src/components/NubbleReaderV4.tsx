@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect, forwardRef, useMemo } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, PanInfo } from "framer-motion";
-import { ChevronsLeft, ChevronsRight, Sun, Moon, Minus, Plus } from "lucide-react";
+import { Sun, Moon, Minus, Plus } from "lucide-react";
 import type { ContentDocument, ContentSection } from "@/lib/sample-content";
 
 type DepthLevel = 0 | 1 | 2 | 3;
@@ -22,45 +22,40 @@ const SPRING_REVEAL = { type: "spring" as const, stiffness: 80, damping: 20, mas
 
 const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*<>[]{}=/\\|~";
 
-function scrambleString(text: string): string {
-  let result = "";
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    if (ch === " " || ch === "\n" || ch === "\t") {
-      result += ch;
-    } else {
-      result += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
-    }
-  }
-  return result;
-}
-
+/**
+ * Hook: scramble-decodes text when targetText changes.
+ * On first render, shows text immediately (no scramble).
+ * On subsequent changes, scrambles then decodes left-to-right.
+ */
 function useScrambleText(targetText: string, durationMs: number = 800): string {
-  // Start scrambled so animation is visible on mount
-  const [displayed, setDisplayed] = useState(() => scrambleString(targetText));
+  const [displayed, setDisplayed] = useState(targetText);
   const frameRef = useRef<number>(0);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
+    // No animation on first render — show text immediately
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      setDisplayed(targetText);
+      return;
+    }
+
     const len = targetText.length;
     const startTime = performance.now();
 
     const animate = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(1, elapsed / durationMs);
-
-      // Characters decoded so far (left to right)
       const decodedCount = Math.floor(progress * len);
 
       let result = "";
       for (let i = 0; i < len; i++) {
         const ch = targetText[i];
-        // Preserve whitespace — only scramble visible characters
         if (ch === " " || ch === "\n" || ch === "\t") {
           result += ch;
         } else if (i < decodedCount) {
-          result += ch; // decoded — show final character
+          result += ch;
         } else {
-          // Still scrambling — show random character
           result += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
         }
       }
@@ -70,30 +65,53 @@ function useScrambleText(targetText: string, durationMs: number = 800): string {
       if (progress < 1) {
         frameRef.current = requestAnimationFrame(animate);
       } else {
-        setDisplayed(targetText); // ensure final state is exact
+        setDisplayed(targetText);
       }
     };
 
     frameRef.current = requestAnimationFrame(animate);
-
     return () => cancelAnimationFrame(frameRef.current);
   }, [targetText, durationMs]);
 
   return displayed;
 }
 
-/** A paragraph that scramble-decodes when its text changes */
-function ScrambleParagraph({
-  text,
-  className,
-  durationMs = 800,
-}: {
-  text: string;
-  className: string;
-  durationMs?: number;
-}) {
-  const displayed = useScrambleText(text, durationMs);
-  return <p className={className}>{displayed}</p>;
+/**
+ * Wrapper that smoothly animates height changes using ResizeObserver.
+ * Content is never unmounted — only text changes in-place.
+ */
+function SmoothHeight({ children }: { children: React.ReactNode }) {
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number | undefined>(undefined);
+  const isFirstMeasure = useRef(true);
+
+  useEffect(() => {
+    const el = innerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const h = entry.contentRect.height;
+        if (isFirstMeasure.current) {
+          isFirstMeasure.current = false;
+          setHeight(h);
+        } else {
+          setHeight(h);
+        }
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <motion.div
+      animate={{ height: height ?? "auto" }}
+      transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+      style={{ overflow: "hidden" }}
+    >
+      <div ref={innerRef}>{children}</div>
+    </motion.div>
+  );
 }
 
 /* ─── Helpers ─── */
@@ -412,16 +430,11 @@ const ScrambleSectionBlock = forwardRef<HTMLDivElement, ScrambleSectionBlockProp
     }, [onChangeDepth, onFirstSwipe, rawX]);
 
     const contentText = section[DEPTH_KEYS[depth] as keyof ContentSection] as string;
-    const paragraphs = contentText.split("\n\n");
+    const scrambledText = useScrambleText(contentText, 800);
+    const paragraphs = scrambledText.split("\n\n");
 
-    const textStyle = useMemo(() => {
-      switch (depth) {
-        case 0: return "text-[15.5px] text-foreground font-medium leading-[1.8]";
-        case 1: return "text-[14.5px] text-foreground/85 leading-[1.75]";
-        case 2: return "text-[14px] text-foreground/80 leading-[1.7]";
-        case 3: return "text-[13.5px] text-foreground/75 leading-[1.65]";
-      }
-    }, [depth]);
+    // Consistent text style — no size jumps between depths
+    const textStyle = "text-[14px] text-foreground/80 leading-[1.75]";
 
     return (
       <motion.div
@@ -483,38 +496,12 @@ const ScrambleSectionBlock = forwardRef<HTMLDivElement, ScrambleSectionBlockProp
               {section.title}
             </h2>
 
-            {/* Content with scramble decode transition */}
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={`${section.id}-${depth}`}
-                initial={{ opacity: 0.3, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{
-                  opacity: { duration: 0.15, ease: EASE_OUT_EXPO },
-                  height: { duration: 0.4, ease: EASE_OUT_EXPO },
-                }}
-                className="overflow-hidden"
-              >
-                {paragraphs.map((p, pi) => (
-                  <ScrambleParagraph
-                    key={`${section.id}-${depth}-${pi}`}
-                    text={p}
-                    className={`mb-3 last:mb-0 ${textStyle}`}
-                    durationMs={600 + pi * 100}
-                  />
-                ))}
-              </motion.div>
-            </AnimatePresence>
-
-            <AnimatePresence>
-              {isActive && hasSwipedOnce && (
-                <motion.div className="flex items-center justify-between mt-3 select-none pointer-events-none" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 0.2, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}>
-                  <div className="flex items-center gap-1 text-[9px] text-muted-foreground tracking-wider uppercase"><ChevronsLeft size={10} /><span>less</span></div>
-                  <div className="flex items-center gap-1 text-[9px] text-muted-foreground tracking-wider uppercase"><span>more</span><ChevronsRight size={10} /></div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Content — stays mounted, text changes in-place with scramble decode */}
+            <SmoothHeight>
+              {paragraphs.map((p, pi) => (
+                <p key={pi} className={`mb-3 last:mb-0 ${textStyle}`}>{p}</p>
+              ))}
+            </SmoothHeight>
           </motion.div>
         </motion.div>
 
