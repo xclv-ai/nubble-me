@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import HomeV2 from "@/pages/home-v2";
 import HomeV3 from "@/pages/home-v3";
+import HomeV4 from "@/pages/home-v4";
 
 function AppRouter() {
   return (
@@ -15,6 +16,7 @@ function AppRouter() {
       <Route path="/" component={Home} />
       <Route path="/v2" component={HomeV2} />
       <Route path="/v3" component={HomeV3} />
+      <Route path="/v4" component={HomeV4} />
       <Route component={NotFound} />
     </Switch>
   );
