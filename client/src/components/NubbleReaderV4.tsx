@@ -22,16 +22,25 @@ const SPRING_REVEAL = { type: "spring" as const, stiffness: 80, damping: 20, mas
 
 const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*<>[]{}=/\\|~";
 
+function scrambleString(text: string): string {
+  let result = "";
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === " " || ch === "\n" || ch === "\t") {
+      result += ch;
+    } else {
+      result += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+    }
+  }
+  return result;
+}
+
 function useScrambleText(targetText: string, durationMs: number = 800): string {
-  const [displayed, setDisplayed] = useState(targetText);
+  // Start scrambled so animation is visible on mount
+  const [displayed, setDisplayed] = useState(() => scrambleString(targetText));
   const frameRef = useRef<number>(0);
-  const prevTextRef = useRef(targetText);
 
   useEffect(() => {
-    // Skip animation on initial mount
-    if (prevTextRef.current === targetText) return;
-    prevTextRef.current = targetText;
-
     const len = targetText.length;
     const startTime = performance.now();
 
