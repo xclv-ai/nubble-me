@@ -13,80 +13,59 @@ const SPRING_SNAPPY = { type: "spring" as const, stiffness: 400, damping: 30, ma
 const SPRING_GENTLE = { type: "spring" as const, stiffness: 200, damping: 25, mass: 1 };
 const SPRING_REVEAL = { type: "spring" as const, stiffness: 80, damping: 20, mass: 1.2 };
 
-/* ─── Magnifying glass per depth ───
+/* ─── Lens edge blur per depth ───
  *
- * Technique from: duplicated content at larger scale, clipped by container.
- * Like a real magnifying glass — content inside is zoomed, edges clip naturally.
+ * Uses backdrop-filter: blur() with CSS mask-image gradient to create
+ * visible edge blur that fades toward the center — like real lens distortion.
  *
- * All CSS properties used here are verified to work on iOS Safari/Chrome:
- *   - transform: scale()      → magnification
- *   - overflow: hidden         → lens edge clipping
- *   - border-radius            → lens shape (rounder at higher depth)
- *   - box-shadow (outer)       → thick glass rim
- *   - box-shadow (inset)       → barrel curvature darkening
- *   - background with rgba     → glass tint
- *   - linear-gradient div      → specular reflection spot
+ * Verified iOS Safari/Chrome compatible:
+ *   - -webkit-backdrop-filter: blur()
+ *   - -webkit-mask-image: linear-gradient()
+ *   - overflow: hidden
+ *   - box-shadow (inset)
  */
 
 interface LensConfig {
-  /** Content scale factor — 1.0 = normal, higher = magnified */
-  contentScale: number;
-  /** Border radius of the lens container */
+  /** Blur amount at card edges in px */
+  edgeBlur: number;
+  /** How far the blur extends from edge in px */
+  blurSpread: number;
+  /** Vignette overlay opacity (dark edges) */
+  vignetteOpacity: number;
+  /** Border radius */
   borderRadius: number;
-  /** Glass rim — outer box-shadow */
-  rimShadow: string;
-  /** Barrel vignette — inset box-shadow */
-  barrelShadow: string;
-  /** Glass tint background */
-  glassBg: string;
-  /** Glass tint background (dark mode) */
-  glassBgDark: string;
-  /** Specular highlight opacity */
-  specularOpacity: number;
-  /** Border width for glass edge */
-  borderWidth: number;
+  /** Inset shadow for depth framing */
+  insetShadow: string;
 }
 
 const LENS: Record<DepthLevel, LensConfig> = {
   0: {
-    contentScale: 1,
+    edgeBlur: 0,
+    blurSpread: 0,
+    vignetteOpacity: 0,
     borderRadius: 8,
-    rimShadow: "none",
-    barrelShadow: "none",
-    glassBg: "transparent",
-    glassBgDark: "transparent",
-    specularOpacity: 0,
-    borderWidth: 0,
+    insetShadow: "none",
   },
   1: {
-    contentScale: 1.02,
+    edgeBlur: 2,
+    blurSpread: 30,
+    vignetteOpacity: 0.04,
     borderRadius: 12,
-    rimShadow: "0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)",
-    barrelShadow: "inset 0 0 20px 5px rgba(0,0,0,0.04)",
-    glassBg: "rgba(255,255,255,0.35)",
-    glassBgDark: "rgba(255,255,255,0.05)",
-    specularOpacity: 0.15,
-    borderWidth: 1,
+    insetShadow: "inset 0 0 15px 3px rgba(0,0,0,0.06)",
   },
   2: {
-    contentScale: 1.04,
+    edgeBlur: 4,
+    blurSpread: 50,
+    vignetteOpacity: 0.08,
     borderRadius: 16,
-    rimShadow: "0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08), 0 0 0 1.5px rgba(0,0,0,0.06)",
-    barrelShadow: "inset 0 0 40px 10px rgba(0,0,0,0.07)",
-    glassBg: "rgba(255,255,255,0.45)",
-    glassBgDark: "rgba(255,255,255,0.08)",
-    specularOpacity: 0.3,
-    borderWidth: 1.5,
+    insetShadow: "inset 0 0 30px 8px rgba(0,0,0,0.1)",
   },
   3: {
-    contentScale: 1.06,
+    edgeBlur: 7,
+    blurSpread: 70,
+    vignetteOpacity: 0.14,
     borderRadius: 20,
-    rimShadow: "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.12), 0 0 0 2px rgba(0,0,0,0.08)",
-    barrelShadow: "inset 0 0 60px 15px rgba(0,0,0,0.1)",
-    glassBg: "rgba(255,255,255,0.55)",
-    glassBgDark: "rgba(255,255,255,0.1)",
-    specularOpacity: 0.5,
-    borderWidth: 2,
+    insetShadow: "inset 0 0 50px 12px rgba(0,0,0,0.15)",
   },
 };
 
@@ -360,7 +339,7 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
           </span>
           <span className="hidden md:inline">or swipe</span>
         </div>
-        <span className="text-[10px] text-muted-foreground/30 flex-shrink-0 ml-2">v3 — magnifying glass</span>
+        <span className="text-[10px] text-muted-foreground/30 flex-shrink-0 ml-2">v3 — edge blur lens</span>
       </footer>
     </div>
   );
@@ -368,16 +347,42 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
 
 /* ─── Lens Section Block ───
  *
- * The section card IS the magnifying glass.
- * At higher depth:
- *   - Content scales up (transform: scale) — magnified view
- *   - Container clips overflow — lens edge effect
- *   - Thick rim shadow — glass border
- *   - Inset shadow — barrel curvature darkening
- *   - Glass background tint — semi-transparent
- *   - Specular highlight — light reflecting off glass surface
- *   - Rounder corners — lens shape
+ * Edge blur overlays sit ON TOP of the text content (z-index: 10+).
+ * They use -webkit-backdrop-filter: blur() to blur the text underneath them.
+ * CSS mask-image gradient fades the blur from edge (full) to center (none).
+ * This creates visible lens-like distortion where text is sharp in the center
+ * but blurred at the edges — like looking through a magnifying glass.
  */
+
+/** Generates the 4 edge blur overlay styles for a given depth */
+function edgeBlurStyle(
+  position: "top" | "bottom" | "left" | "right",
+  blur: number,
+  spread: number,
+): React.CSSProperties {
+  const gradientDir = {
+    top: "to bottom",
+    bottom: "to top",
+    left: "to right",
+    right: "to left",
+  }[position];
+
+  const isHorizontal = position === "left" || position === "right";
+
+  return {
+    position: "absolute" as const,
+    [position]: 0,
+    ...(isHorizontal
+      ? { top: 0, bottom: 0, width: `${spread * 0.6}px` }
+      : { left: 0, right: 0, height: `${spread}px` }),
+    WebkitBackdropFilter: `blur(${blur}px)`,
+    backdropFilter: `blur(${blur}px)`,
+    WebkitMaskImage: `linear-gradient(${gradientDir}, black 0%, transparent 100%)`,
+    maskImage: `linear-gradient(${gradientDir}, black 0%, transparent 100%)`,
+    pointerEvents: "none" as const,
+    zIndex: 10,
+  };
+}
 
 interface LensSectionBlockProps {
   section: ContentSection;
@@ -445,42 +450,14 @@ const LensSectionBlock = forwardRef<HTMLDivElement, LensSectionBlockProps>(
           style={{ x, rotate, scale: dragScale }}
           className="cursor-grab active:cursor-grabbing touch-pan-y origin-center"
         >
-          {/* The lens container — clips magnified content */}
+          {/* The lens container */}
           <motion.div
             className="relative overflow-hidden"
-            animate={{
-              borderRadius: lens.borderRadius,
-              boxShadow: `${lens.rimShadow}${lens.barrelShadow !== "none" ? `, ${lens.barrelShadow}` : ""}`,
-            }}
+            animate={{ borderRadius: lens.borderRadius }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            style={{
-              background: isDark ? lens.glassBgDark : lens.glassBg,
-              border: lens.borderWidth > 0
-                ? `${lens.borderWidth}px solid ${isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)"}`
-                : "none",
-            }}
           >
-            {/* Specular highlight — light reflection on glass surface */}
-            {lens.specularOpacity > 0 && (
-              <div
-                className="absolute top-0 right-0 pointer-events-none"
-                style={{
-                  width: 80 + depth * 20,
-                  height: 80 + depth * 20,
-                  opacity: lens.specularOpacity,
-                  background: "radial-gradient(ellipse at 70% 30%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 60%)",
-                  zIndex: 10,
-                }}
-              />
-            )}
-
-            {/* Magnified content area */}
-            <motion.div
-              className="px-4 sm:px-5 py-4"
-              animate={{ scale: lens.contentScale }}
-              transition={SPRING_GENTLE}
-              style={{ transformOrigin: "top left" }}
-            >
+            {/* Text content — z-0, lives underneath the blur overlays */}
+            <div className="relative z-0 px-4 sm:px-5 py-4">
               {/* Section meta */}
               <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-2">
@@ -549,7 +526,32 @@ const LensSectionBlock = forwardRef<HTMLDivElement, LensSectionBlockProps>(
                   </motion.div>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </div>
+
+            {/* ── Edge blur overlays ──
+             * These sit ON TOP of the text (z-10) and use backdrop-filter
+             * to blur the actual text at the card edges.
+             * mask-image gradient fades blur from edge (strong) to center (none).
+             * Only rendered at depth > 0. */}
+            {depth > 0 && (
+              <>
+                <div style={edgeBlurStyle("top", lens.edgeBlur, lens.blurSpread)} />
+                <div style={edgeBlurStyle("bottom", lens.edgeBlur, lens.blurSpread)} />
+                <div style={edgeBlurStyle("left", lens.edgeBlur, lens.blurSpread)} />
+                <div style={edgeBlurStyle("right", lens.edgeBlur, lens.blurSpread)} />
+                {/* Vignette — inset shadow darkening at edges */}
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    boxShadow: lens.insetShadow,
+                    borderRadius: lens.borderRadius,
+                    pointerEvents: "none",
+                    zIndex: 11,
+                  }}
+                />
+              </>
+            )}
           </motion.div>
         </motion.div>
 
