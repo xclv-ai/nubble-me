@@ -318,36 +318,642 @@ Full local persistence. Library of nubbled documents. Reading state survives app
 
 ---
 
-## Phase 4: ePub + PDF Import (Week 7-9)
+## Phase 4: ePub + PDF Import & Conversion (Week 7-9)
 
 ### Goal
-Import books and PDFs, not just URLs.
+Open any ePub or PDF file and convert it into a fully nubbled, multi-depth document. This is the core differentiator — turning static books/documents into interactive depth-controlled reading experiences.
 
-### 4.1 ePub Parser
-- Unzip ePub (Apple's `Compression` framework)
-- Parse `content.opf` for spine order + metadata
-- Parse chapter XHTML with `SwiftSoup`
-- Preserve heading hierarchy for section markers
-- Extract cover image from metadata
+### 4.1 File Opening & Import Entry Points
 
-### 4.2 PDF Extractor
-- `PDFKit` for text extraction (`PDFPage.string`)
-- `Vision` framework OCR for scanned PDFs (automatic detection)
-- Heading detection heuristic: short lines, no punctuation, ALL CAPS
+Users can open ePub/PDF files from multiple sources:
 
-### 4.3 File Import UI
-- Document picker (`UIDocumentPickerViewController` via SwiftUI)
-- Share sheet extension (receive ePub/PDF from Files, email, etc.)
-- Drag & drop on iPad
+```swift
+// 1. Document picker (browse Files app)
+struct FileImportView: View {
+    @State private var showPicker = false
 
-### 4.4 Processing
-- Same chunking engine as URL pipeline
-- Same depth generation (on-device AI)
-- Progress UI: "Importing... Parsing chapters... Generating depths..."
-- Book-specific: preserve chapter structure as section groups
+    var body: some View {
+        Button("Import Book or PDF") { showPicker = true }
+        .fileImporter(
+            isPresented: $showPicker,
+            allowedContentTypes: [.epub, .pdf],
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case .success(let urls):
+                guard let url = urls.first else { return }
+                Task { await importFile(url) }
+            case .failure(let error):
+                // Show error alert
+            }
+        }
+    }
+}
+
+// 2. Share sheet extension (receive from Safari, Mail, other apps)
+// ShareExtension/ShareViewController.swift
+class ShareViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        guard let item = extensionContext?.inputItems.first as? NSExtensionItem,
+              let attachment = item.attachments?.first else { return }
+
+        if attachment.hasItemConformingToTypeIdentifier(UTType.epub.identifier) {
+            attachment.loadFileRepresentation(forTypeIdentifier: UTType.epub.identifier) { url, error in
+                // Copy to app group container, open main app
+            }
+        } else if attachment.hasItemConformingToTypeIdentifier(UTType.pdf.identifier) {
+            attachment.loadFileRepresentation(forTypeIdentifier: UTType.pdf.identifier) { url, error in
+                // Copy to app group container, open main app
+            }
+        }
+    }
+}
+
+// 3. Drag & drop on iPad
+.onDrop(of: [.epub, .pdf], isTargeted: nil) { providers in
+    guard let provider = providers.first else { return false }
+    // Load and import
+    return true
+}
+
+// 4. Open In / UTType registration (Info.plist)
+// Register app as handler for .epub and .pdf files
+// Users can "Open In Nubble" from any app
+```
+
+**Info.plist UTType registration:**
+```xml
+<key>CFBundleDocumentTypes</key>
+<array>
+    <dict>
+        <key>CFBundleTypeName</key>
+        <string>ePub Document</string>
+        <key>LSHandlerRank</key>
+        <string>Alternate</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>org.idpf.epub-container</string>
+        </array>
+    </dict>
+    <dict>
+        <key>CFBundleTypeName</key>
+        <string>PDF Document</string>
+        <key>LSHandlerRank</key>
+        <string>Alternate</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>com.adobe.pdf</string>
+        </array>
+    </dict>
+</array>
+```
+
+### 4.2 ePub Parser — Full Implementation
+
+ePub files are ZIP archives containing XHTML chapters, metadata, and assets.
+
+```swift
+import SwiftSoup
+
+struct EPubParser {
+
+    struct EPubBook {
+        let title: String
+        let author: String?
+        let language: String?
+        let coverImageData: Data?
+        let chapters: [EPubChapter]
+    }
+
+    struct EPubChapter {
+        let title: String?
+        let htmlContent: String
+        let position: Int
+    }
+
+    /// Main entry: .epub file URL → structured book
+    func parse(fileURL: URL) throws -> EPubBook {
+        // 1. Unzip ePub
+        let epubDir = try unzipEPub(fileURL)
+
+        // 2. Find OPF file via META-INF/container.xml
+        let containerURL = epubDir.appendingPathComponent("META-INF/container.xml")
+        let containerXML = try String(contentsOf: containerURL)
+        let containerDoc = try SwiftSoup.parse(containerXML)
+        let opfPath = try containerDoc.select("rootfile").first()?.attr("full-path") ?? ""
+
+        // 3. Parse OPF for metadata + spine order
+        let opfURL = epubDir.appendingPathComponent(opfPath)
+        let opfDir = opfURL.deletingLastPathComponent()
+        let opfXML = try String(contentsOf: opfURL)
+        let opfDoc = try SwiftSoup.parse(opfXML)
+
+        let title = try opfDoc.select("dc\\:title, title").first()?.text() ?? "Untitled"
+        let author = try opfDoc.select("dc\\:creator, creator").first()?.text()
+        let language = try opfDoc.select("dc\\:language, language").first()?.text()
+
+        // 4. Get spine order (reading order of chapters)
+        let spineItems = try opfDoc.select("spine itemref")
+        let manifest = try opfDoc.select("manifest item")
+
+        var idToHref: [String: String] = [:]
+        for item in manifest {
+            let id = try item.attr("id")
+            let href = try item.attr("href")
+            idToHref[id] = href
+        }
+
+        // 5. Parse each chapter in spine order
+        var chapters: [EPubChapter] = []
+        for (index, itemRef) in spineItems.enumerated() {
+            let idref = try itemRef.attr("idref")
+            guard let href = idToHref[idref] else { continue }
+
+            let chapterURL = opfDir.appendingPathComponent(href)
+            guard FileManager.default.fileExists(atPath: chapterURL.path) else { continue }
+
+            let chapterHTML = try String(contentsOf: chapterURL)
+            let chapterDoc = try SwiftSoup.parse(chapterHTML)
+
+            // Extract chapter title from first heading
+            let chapterTitle = try chapterDoc.select("h1, h2, h3").first()?.text()
+
+            // Get body text, strip navigation/TOC elements
+            try chapterDoc.select("nav, .toc, #toc").remove()
+            let bodyHTML = try chapterDoc.body()?.html() ?? ""
+
+            // Skip empty chapters (cover pages, copyright, etc.)
+            let plainText = try chapterDoc.body()?.text() ?? ""
+            guard plainText.split(separator: " ").count > 30 else { continue }
+
+            chapters.append(EPubChapter(
+                title: chapterTitle,
+                htmlContent: bodyHTML,
+                position: index
+            ))
+        }
+
+        // 6. Extract cover image
+        let coverImageData = try extractCoverImage(opfDoc: opfDoc, opfDir: opfDir)
+
+        // 7. Cleanup temp directory
+        try? FileManager.default.removeItem(at: epubDir)
+
+        return EPubBook(
+            title: title,
+            author: author,
+            language: language,
+            coverImageData: coverImageData,
+            chapters: chapters
+        )
+    }
+
+    private func unzipEPub(_ fileURL: URL) throws -> URL {
+        let tempDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+        // Use Apple's Compression framework or ZipFoundation
+        // Unzip contents to tempDir
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        // ... unzip implementation ...
+        return tempDir
+    }
+
+    private func extractCoverImage(opfDoc: Document, opfDir: URL) throws -> Data? {
+        // Look for cover in metadata or manifest
+        if let coverId = try opfDoc.select("meta[name=cover]").first()?.attr("content"),
+           let coverHref = try opfDoc.select("manifest item#\(coverId)").first()?.attr("href") {
+            let coverURL = opfDir.appendingPathComponent(coverHref)
+            return try? Data(contentsOf: coverURL)
+        }
+        return nil
+    }
+}
+```
+
+**ePub → plain text conversion (per chapter):**
+```swift
+extension EPubParser {
+    /// Convert chapter HTML to structured plain text preserving headings
+    func htmlToStructuredText(_ html: String) throws -> String {
+        let doc = try SwiftSoup.parse(html)
+
+        var result = ""
+        let body = doc.body() ?? doc
+
+        for element in body.children() {
+            let tag = element.tagName().lowercased()
+            let text = try element.text().trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !text.isEmpty else { continue }
+
+            switch tag {
+            case "h1": result += "\n# \(text)\n\n"
+            case "h2": result += "\n## \(text)\n\n"
+            case "h3": result += "\n### \(text)\n\n"
+            case "blockquote": result += "> \(text)\n\n"
+            case "ul", "ol":
+                for li in try element.select("li") {
+                    result += "• \(try li.text())\n"
+                }
+                result += "\n"
+            default: result += "\(text)\n\n"  // p, div, etc.
+            }
+        }
+        return result
+    }
+}
+```
+
+### 4.3 PDF Extractor — Full Implementation
+
+```swift
+import PDFKit
+import Vision
+
+struct PDFExtractor {
+
+    struct ExtractedPDF {
+        let title: String
+        let pageCount: Int
+        let chapters: [PDFChapter]
+        let isScanned: Bool   // was OCR used?
+    }
+
+    struct PDFChapter {
+        let title: String
+        let body: String
+        let startPage: Int
+        let position: Int
+    }
+
+    /// Main entry: .pdf file URL → structured document
+    func extract(fileURL: URL) async throws -> ExtractedPDF {
+        guard let pdf = PDFDocument(url: fileURL) else {
+            throw PDFExtractionError.cannotOpen
+        }
+
+        // 1. Extract text from all pages
+        var pageTexts: [(page: Int, text: String)] = []
+        var isScanned = false
+
+        for i in 0..<pdf.pageCount {
+            guard let page = pdf.page(at: i) else { continue }
+
+            if let text = page.string, !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                // Native text PDF
+                pageTexts.append((i, text))
+            } else {
+                // Scanned page — use Vision OCR
+                isScanned = true
+                let ocrText = try await performOCR(on: page)
+                if !ocrText.isEmpty {
+                    pageTexts.append((i, ocrText))
+                }
+            }
+        }
+
+        // 2. Combine all page text
+        let fullText = pageTexts.map(\.text).joined(separator: "\n\n")
+
+        // 3. Detect headings and split into chapters
+        let chapters = detectChapters(pageTexts: pageTexts)
+
+        // 4. Extract title from PDF metadata or first heading
+        let title = pdf.documentAttributes?[PDFDocumentAttribute.titleAttribute] as? String
+            ?? chapters.first?.title
+            ?? fileURL.deletingPathExtension().lastPathComponent
+
+        return ExtractedPDF(
+            title: title,
+            pageCount: pdf.pageCount,
+            chapters: chapters,
+            isScanned: isScanned
+        )
+    }
+
+    /// OCR for scanned PDF pages using Vision framework
+    private func performOCR(on page: PDFPage) async throws -> String {
+        // Render page to image
+        let pageRect = page.bounds(for: .mediaBox)
+        let scale: CGFloat = 2.0  // 2x for better OCR accuracy
+        let imageSize = CGSize(width: pageRect.width * scale, height: pageRect.height * scale)
+
+        let renderer = UIGraphicsImageRenderer(size: imageSize)
+        let image = renderer.image { ctx in
+            UIColor.white.setFill()
+            ctx.fill(CGRect(origin: .zero, size: imageSize))
+            ctx.cgContext.translateBy(x: 0, y: imageSize.height)
+            ctx.cgContext.scaleBy(x: scale, y: -scale)
+            page.draw(with: .mediaBox, to: ctx.cgContext)
+        }
+
+        guard let cgImage = image.cgImage else { return "" }
+
+        // Run Vision text recognition
+        let request = VNRecognizeTextRequest()
+        request.recognitionLevel = .accurate
+        request.usesLanguageCorrection = true
+
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+        try handler.perform([request])
+
+        let observations = request.results ?? []
+        return observations
+            .compactMap { $0.topCandidates(1).first?.string }
+            .joined(separator: "\n")
+    }
+
+    /// Detect chapter boundaries using heading heuristics
+    private func detectChapters(pageTexts: [(page: Int, text: String)]) -> [PDFChapter] {
+        var chapters: [PDFChapter] = []
+        var currentTitle = "Introduction"
+        var currentBody = ""
+        var currentStartPage = 0
+        var position = 0
+
+        for (pageNum, text) in pageTexts {
+            let lines = text.components(separatedBy: .newlines)
+
+            for line in lines {
+                let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty else { continue }
+
+                if isLikelyHeading(trimmed) {
+                    // Save previous chapter if it has content
+                    if !currentBody.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        let wordCount = currentBody.split(separator: " ").count
+                        if wordCount > 30 {  // Skip tiny sections
+                            chapters.append(PDFChapter(
+                                title: currentTitle,
+                                body: currentBody.trimmingCharacters(in: .whitespacesAndNewlines),
+                                startPage: currentStartPage,
+                                position: position
+                            ))
+                            position += 1
+                        }
+                    }
+                    currentTitle = trimmed
+                    currentBody = ""
+                    currentStartPage = pageNum
+                } else {
+                    currentBody += trimmed + "\n"
+                }
+            }
+        }
+
+        // Don't forget the last chapter
+        if !currentBody.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            chapters.append(PDFChapter(
+                title: currentTitle,
+                body: currentBody.trimmingCharacters(in: .whitespacesAndNewlines),
+                startPage: currentStartPage,
+                position: position
+            ))
+        }
+
+        return chapters
+    }
+
+    /// Heuristic: is this line a heading?
+    private func isLikelyHeading(_ line: String) -> Bool {
+        let words = line.split(separator: " ")
+
+        // Too long for a heading
+        if words.count > 10 { return false }
+
+        // ALL CAPS (and more than one word)
+        if words.count >= 2 && line == line.uppercased() && line != line.lowercased() {
+            return true
+        }
+
+        // Short line with no terminal punctuation
+        if words.count <= 8 {
+            let lastChar = line.last
+            if lastChar != "." && lastChar != "," && lastChar != ";" && lastChar != ":" && lastChar != "?" && lastChar != "!" {
+                // Check for common chapter patterns
+                let lowered = line.lowercased()
+                if lowered.hasPrefix("chapter") || lowered.hasPrefix("part") ||
+                   lowered.hasPrefix("section") || lowered.hasPrefix("introduction") ||
+                   lowered.hasPrefix("conclusion") || lowered.hasPrefix("epilogue") ||
+                   lowered.hasPrefix("prologue") || lowered.hasPrefix("appendix") {
+                    return true
+                }
+                // Numbered heading: "1.", "1.1", "I.", "IV."
+                if let first = words.first,
+                   first.last == "." && (first.dropLast().allSatisfy({ $0.isNumber }) ||
+                   first.dropLast().allSatisfy({ "IVXLCDM".contains($0) })) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+}
+
+enum PDFExtractionError: Error, LocalizedError {
+    case cannotOpen
+    case noTextContent
+    case ocrFailed
+
+    var errorDescription: String? {
+        switch self {
+        case .cannotOpen: return "Could not open PDF file"
+        case .noTextContent: return "No readable text found in PDF"
+        case .ocrFailed: return "Text recognition (OCR) failed"
+        }
+    }
+}
+```
+
+### 4.4 Conversion Pipeline: File → Nubbled Document
+
+The full end-to-end conversion from opening a file to a nubbled document:
+
+```swift
+class FileConversionPipeline: ObservableObject {
+    enum ConversionStage: String {
+        case opening = "Opening file..."
+        case parsing = "Parsing content..."
+        case extractingText = "Extracting text..."
+        case runningOCR = "Running text recognition (OCR)..."
+        case chunking = "Splitting into sections..."
+        case generatingDepths = "Generating reading depths..."
+        case saving = "Saving to library..."
+        case done = "Done!"
+    }
+
+    @Published var stage: ConversionStage = .opening
+    @Published var progress: Double = 0.0       // 0-1
+    @Published var depthsCompleted: Int = 0     // sections with depths generated
+    @Published var totalSections: Int = 0
+
+    private let epubParser = EPubParser()
+    private let pdfExtractor = PDFExtractor()
+    private let chunkingEngine = ChunkingEngine()
+    private let depthGenerator = DepthGenerator()
+
+    /// Convert any supported file to a NubbleDocument
+    func convert(fileURL: URL) async throws -> NubbleDocument {
+        let ext = fileURL.pathExtension.lowercased()
+
+        // Step 1: Parse file into raw chapters
+        stage = .parsing
+        let rawChapters: [(title: String?, body: String)]
+        let docTitle: String
+        let docAuthor: String?
+        var coverData: Data? = nil
+
+        switch ext {
+        case "epub":
+            let book = try epubParser.parse(fileURL: fileURL)
+            docTitle = book.title
+            docAuthor = book.author
+            coverData = book.coverImageData
+            rawChapters = try book.chapters.map { chapter in
+                let text = try epubParser.htmlToStructuredText(chapter.htmlContent)
+                return (title: chapter.title, body: text)
+            }
+
+        case "pdf":
+            stage = .extractingText
+            let pdf = try await pdfExtractor.extract(fileURL: fileURL)
+            if pdf.isScanned { stage = .runningOCR }
+            docTitle = pdf.title
+            docAuthor = nil
+            rawChapters = pdf.chapters.map { (title: $0.title, body: $0.body) }
+
+        default:
+            throw ConversionError.unsupportedFormat(ext)
+        }
+
+        // Step 2: Chunk each chapter into 200-800 word sections
+        stage = .chunking
+        var allChunks: [RawChunk] = []
+        for (chapterIndex, chapter) in rawChapters.enumerated() {
+            let chunks = chunkingEngine.chunk(
+                chapter.body,
+                chapterTitle: chapter.title,
+                startPosition: allChunks.count
+            )
+            allChunks.append(contentsOf: chunks)
+            progress = Double(chapterIndex + 1) / Double(rawChapters.count) * 0.3
+        }
+
+        totalSections = allChunks.count
+
+        // Step 3: Generate 4 depth levels for each section via AI
+        stage = .generatingDepths
+        var sections: [NubbleSection] = []
+
+        for (index, chunk) in allChunks.enumerated() {
+            let depths = try await depthGenerator.generateDepths(for: chunk)
+
+            let section = NubbleSection(
+                id: UUID(),
+                position: index,
+                title: chunk.title,
+                summary: depths.summary,
+                condensed: depths.condensed,
+                standard: depths.standard,
+                expanded: depths.expanded,
+                currentDepth: 2  // default to standard
+            )
+            sections.append(section)
+
+            depthsCompleted = index + 1
+            progress = 0.3 + (Double(index + 1) / Double(allChunks.count)) * 0.65
+        }
+
+        // Step 4: Save to SwiftData
+        stage = .saving
+        let document = NubbleDocument(
+            id: UUID(),
+            title: docTitle,
+            author: docAuthor,
+            sourceType: ext == "epub" ? .epub : .pdf,
+            sourceURL: fileURL.absoluteString,
+            importedAt: Date(),
+            sections: sections
+        )
+        progress = 1.0
+        stage = .done
+
+        return document
+    }
+}
+
+enum ConversionError: Error, LocalizedError {
+    case unsupportedFormat(String)
+    case emptyDocument
+    case parsingFailed(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .unsupportedFormat(let ext): return "Unsupported file format: .\(ext)"
+        case .emptyDocument: return "Document contains no readable text"
+        case .parsingFailed(let reason): return "Failed to parse: \(reason)"
+        }
+    }
+}
+```
+
+### 4.5 Conversion Progress UI
+
+```swift
+struct ConversionProgressView: View {
+    @ObservedObject var pipeline: FileConversionPipeline
+
+    var body: some View {
+        VStack(spacing: 24) {
+            // Animated book icon
+            Image(systemName: "book.pages")
+                .font(.system(size: 48))
+                .symbolEffect(.pulse)
+
+            // Stage label
+            Text(pipeline.stage.rawValue)
+                .font(.headline)
+
+            // Progress bar
+            ProgressView(value: pipeline.progress)
+                .progressViewStyle(.linear)
+                .frame(maxWidth: 280)
+
+            // Section counter (during depth generation)
+            if pipeline.stage == .generatingDepths {
+                Text("\(pipeline.depthsCompleted) / \(pipeline.totalSections) sections")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(40)
+    }
+}
+```
+
+### 4.6 DRM & Error Handling
+
+| Scenario | Detection | User-facing behavior |
+|----------|-----------|---------------------|
+| DRM-protected ePub | `encryption.xml` present in ZIP | Alert: "This book has DRM protection. Nubble can only open DRM-free books." |
+| Scanned PDF (no text layer) | `PDFPage.string` returns empty | Auto-trigger Vision OCR, show "Running text recognition..." |
+| Corrupt/invalid ePub | ZIP extraction or OPF parse fails | Alert: "Couldn't open this file. It may be damaged." + option to retry |
+| Very large PDF (500+ pages) | Page count check | Warning: "This is a long document. Generation may take a few minutes." + process in background |
+| Mixed scanned/digital PDF | Per-page text check | Use native text where available, OCR only for scanned pages |
+| Password-protected PDF | `PDFDocument.isLocked` | Prompt for password, retry with `unlock(withPassword:)` |
+| Content too short (< 50 words total) | Word count after extraction | Show as single section, all depths identical |
+
+### 4.7 Supported File Types Summary
+
+| Format | Parser | Text Extraction | Heading Detection | Cover Image | Chapter Structure |
+|--------|--------|----------------|-------------------|-------------|-------------------|
+| ePub (.epub) | `SwiftSoup` + ZIP | HTML → plain text | `<h1>`/`<h2>`/`<h3>` tags | OPF metadata | Spine order |
+| PDF (.pdf) | `PDFKit` | `PDFPage.string` | Heuristic (caps, short lines, patterns) | N/A | Page-based splitting |
+| Scanned PDF | `PDFKit` + `Vision` | OCR (`VNRecognizeTextRequest`) | Same heuristic on OCR output | N/A | Page-based splitting |
 
 ### Deliverable
-Import any ePub or PDF → fully nubbled document in library.
+Full file import pipeline: open any DRM-free ePub or PDF from Files, share sheet, drag & drop, or "Open In" → parse → chunk → AI depth generation → nubbled document in library, ready to read.
 
 ---
 
@@ -441,10 +1047,11 @@ Nubble/
 │       └── OnboardingFlow.swift        # First-launch tutorial
 ├── Services/
 │   ├── ContentExtractor.swift          # URL → raw text (SwiftSoup)
-│   ├── ChunkingEngine.swift            # Raw text → sections
-│   ├── DepthGenerator.swift            # Sections → 4-depth variants (AI)
-│   ├── EPubParser.swift                # ePub file → raw text
-│   └── PDFExtractor.swift              # PDF file → raw text
+│   ├── ChunkingEngine.swift            # Raw text → semantic sections (200-800 words)
+│   ├── DepthGenerator.swift            # Sections → 4-depth variants (Foundation Models / GPT-4o-mini)
+│   ├── EPubParser.swift                # ePub ZIP → chapters (SwiftSoup HTML parsing)
+│   ├── PDFExtractor.swift              # PDF → text (PDFKit + Vision OCR for scanned pages)
+│   └── FileConversionPipeline.swift    # End-to-end: file open → parse → chunk → AI depths → save
 ├── Utilities/
 │   ├── Springs.swift                   # Animation spring presets
 │   └── ReadingTime.swift               # Word count → reading time
