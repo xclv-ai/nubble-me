@@ -1,25 +1,18 @@
 /**
  * NotebookLM integration via nlm CLI.
- * Uploads documents, generates summarized/expanded versions, retrieves results.
- * Falls back to algorithmic depths if nlm is not available or authenticated.
+ * Uploads the full document, then uses generate-chat per section to produce
+ * all depth levels (summary, condensed, expanded). Standard = original text.
  */
 
 import { execFile } from "child_process";
 import { promisify } from "util";
 import path from "path";
 import { log } from "./index";
+import type { RawChunk, ChunkedSection } from "./chunking";
 
 const exec = promisify(execFile);
 
 const NLM_PATH = process.env.NLM_PATH || path.join(process.env.HOME || "/root", "go/bin/nlm");
-
-interface NLMResult {
-  notebookId: string;
-  sourceId: string;
-  summary: string;
-  condensed: string;
-  expanded: string;
-}
 
 /** Check if nlm CLI is available and authenticated */
 export async function isNLMAvailable(): Promise<boolean> {
@@ -43,68 +36,67 @@ async function runNLM(args: string[], timeoutMs = 60000): Promise<string> {
   }
 }
 
-/** Parse notebook ID from nlm create output */
-function parseNotebookId(output: string): string {
-  // nlm create typically outputs something like "Created notebook: <id>"
+/** Parse an ID (notebook or source) from nlm output */
+function parseId(output: string, label: string): string {
   const match = output.match(/([a-zA-Z0-9_-]{10,})/);
-  if (!match) throw new Error(`Could not parse notebook ID from: ${output}`);
-  return match[1];
-}
-
-/** Parse source ID from nlm add output */
-function parseSourceId(output: string): string {
-  const match = output.match(/([a-zA-Z0-9_-]{10,})/);
-  if (!match) throw new Error(`Could not parse source ID from: ${output}`);
+  if (!match) throw new Error(`Could not parse ${label} ID from: ${output}`);
   return match[1];
 }
 
 /**
- * Full NotebookLM pipeline:
- * 1. Create notebook
- * 2. Upload file as source
- * 3. Generate summary (depth 0 + 1)
- * 4. Generate expansion (depth 3)
- * 5. Retrieve results
- * 6. Cleanup notebook
+ * Full pipeline: upload file → create notebook → generate all depths per section.
+ *
+ * For each chunk we send a targeted prompt via generate-chat that asks the LLM
+ * to produce the summary (~20 words), condensed (2-3 sentences), and expanded
+ * (+50-100% content) versions. Standard = original chunk text.
  */
-export async function processWithNotebookLM(
+export async function generateDepths(
   filePath: string,
-  title: string
-): Promise<{ summary: string; expanded: string } | null> {
+  title: string,
+  chunks: RawChunk[],
+): Promise<ChunkedSection[]> {
   let notebookId: string | null = null;
 
   try {
-    // 1. Create notebook
+    // 1. Create notebook + upload file so NLM has full document context
     log(`Creating notebook for: ${title}`, "nlm");
     const createOutput = await runNLM(["create", `Nubble: ${title}`]);
-    notebookId = parseNotebookId(createOutput);
+    notebookId = parseId(createOutput, "notebook");
     log(`Created notebook: ${notebookId}`, "nlm");
 
-    // 2. Upload file as source
     log(`Uploading file: ${filePath}`, "nlm");
     const addOutput = await runNLM(["add", notebookId, filePath], 120000);
-    const sourceId = parseSourceId(addOutput);
+    const sourceId = parseId(addOutput, "source");
     log(`Added source: ${sourceId}`, "nlm");
 
-    // Wait a moment for NotebookLM to index the source
+    // Wait for NotebookLM to index
     await new Promise(resolve => setTimeout(resolve, 5000));
 
-    // 3. Generate summary
-    log("Generating summary...", "nlm");
-    const summary = await runNLM(["summarize", notebookId, sourceId], 120000);
+    // 2. Generate depths for each section
+    log(`Generating depths for ${chunks.length} sections...`, "nlm");
+    const sections: ChunkedSection[] = [];
 
-    // 4. Generate expansion
-    log("Generating expansion...", "nlm");
-    const expanded = await runNLM(["expand", notebookId, sourceId], 120000);
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      log(`  Section ${i + 1}/${chunks.length}: "${chunk.title}"`, "nlm");
 
-    log("NotebookLM processing complete", "nlm");
+      const prompt = buildDepthPrompt(chunk.body);
+      const raw = await runNLM(["generate-chat", notebookId, prompt], 90000);
+      const depths = parseDepthResponse(raw);
 
-    return { summary, expanded };
-  } catch (err: any) {
-    log(`NotebookLM pipeline failed: ${err.message}`, "nlm");
-    return null;
+      sections.push({
+        id: `s${i + 1}`,
+        title: chunk.title,
+        summary: depths.summary,
+        condensed: depths.condensed,
+        standard: chunk.body,
+        expanded: depths.expanded,
+      });
+    }
+
+    log("All depths generated", "nlm");
+    return sections;
   } finally {
-    // Cleanup: delete the notebook
     if (notebookId) {
       try {
         await runNLM(["rm", notebookId]);
@@ -116,28 +108,41 @@ export async function processWithNotebookLM(
   }
 }
 
-/**
- * Generate per-section depths using NotebookLM chat.
- * Sends custom prompts for each chunk to get targeted summaries.
- */
-export async function generateDepthsWithNLM(
-  notebookId: string,
-  sectionText: string,
-  type: "summary" | "condensed" | "expanded"
-): Promise<string | null> {
-  const prompts: Record<string, string> = {
-    summary: `Summarize the following section in exactly one sentence (max 20 words). Capture the single most important idea:\n\n${sectionText}`,
-    condensed: `Condense the following section to 2-3 sentences. Keep only the key points, drop examples and qualifications:\n\n${sectionText}`,
-    expanded: `Expand the following section with concrete examples for each key point, brief explanations of why each point matters, and relevant context. Add 50-100% more content while keeping the same structure:\n\n${sectionText}`,
-  };
+/** Build a single prompt that asks for all three depth levels at once */
+function buildDepthPrompt(sectionText: string): string {
+  return `Given the following section of text, produce three versions at different depth levels. Output EXACTLY in this format with the markers on their own lines:
 
-  try {
-    const result = await runNLM(
-      ["generate-chat", notebookId, prompts[type]],
-      60000
-    );
-    return result || null;
-  } catch {
-    return null;
+---SUMMARY---
+(One sentence, max 20 words. Capture the single most important idea. Do not lose the core meaning.)
+
+---CONDENSED---
+(2-3 sentences. Keep only the key points and essential meaning. Drop examples and qualifications but preserve the argument.)
+
+---EXPANDED---
+(Expand with concrete examples, brief explanations of why each point matters, and relevant context. Add 50-100% more content while keeping the same logical structure. Do not fabricate facts — elaborate on what is stated or clearly implied.)
+
+Here is the section:
+
+${sectionText}`;
+}
+
+/** Parse the structured response from the LLM */
+function parseDepthResponse(raw: string): {
+  summary: string;
+  condensed: string;
+  expanded: string;
+} {
+  const summaryMatch = raw.match(/---SUMMARY---\s*([\s\S]*?)(?=---CONDENSED---|$)/);
+  const condensedMatch = raw.match(/---CONDENSED---\s*([\s\S]*?)(?=---EXPANDED---|$)/);
+  const expandedMatch = raw.match(/---EXPANDED---\s*([\s\S]*?)$/);
+
+  const summary = summaryMatch?.[1]?.trim();
+  const condensed = condensedMatch?.[1]?.trim();
+  const expanded = expandedMatch?.[1]?.trim();
+
+  if (!summary || !condensed || !expanded) {
+    throw new Error("LLM response did not contain all three depth levels");
   }
+
+  return { summary, condensed, expanded };
 }

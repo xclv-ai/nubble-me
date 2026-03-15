@@ -10,7 +10,6 @@ interface UploadResult {
   author: string;
   sectionCount: number;
   wordCount: number;
-  nlmEnhanced: boolean;
 }
 
 export default function ImportPage() {
@@ -39,7 +38,7 @@ export default function ImportPage() {
       formData.append("file", file);
 
       setStage("processing");
-      setProgress("Extracting text and generating depths...");
+      setProgress("Extracting text and generating depth levels via NotebookLM...");
 
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -170,12 +169,6 @@ export default function ImportPage() {
                 {result.wordCount.toLocaleString()} words
               </div>
             </div>
-
-            {result.nlmEnhanced && (
-              <p className="text-xs text-green-600 dark:text-green-400 mb-4">
-                Enhanced with NotebookLM
-              </p>
-            )}
 
             <div className="flex gap-3 justify-center">
               <button

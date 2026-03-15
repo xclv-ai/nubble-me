@@ -1,6 +1,6 @@
 /**
  * Chunking engine: splits extracted text into semantic sections (200-800 words).
- * Produces algorithmic depth levels as immediate fallback (no AI needed).
+ * Only handles splitting — depth generation is done by the LLM via nlm.
  */
 
 export interface RawChunk {
@@ -109,30 +109,6 @@ export function chunkText(text: string): RawChunk[] {
   }
 
   return chunks;
-}
-
-/** Generate algorithmic depth levels (no AI, instant) */
-export function generateAlgorithmicDepths(chunks: RawChunk[]): ChunkedSection[] {
-  return chunks.map((chunk, i) => {
-    const sentences = extractSentences(chunk.body);
-    const paragraphs = chunk.body.split(/\n\s*\n/).filter(p => p.trim());
-
-    return {
-      id: `s${i + 1}`,
-      title: chunk.title,
-      summary: sentences[0] || chunk.body.slice(0, 100),
-      condensed: paragraphs[0] || sentences.slice(0, 3).join(" "),
-      standard: chunk.body,
-      expanded: chunk.body, // no expansion without AI
-    };
-  });
-}
-
-function extractSentences(text: string): string[] {
-  return text
-    .split(/(?<=[.!?])\s+/)
-    .map(s => s.trim())
-    .filter(s => s.length > 10);
 }
 
 function wordCount(text: string): number {

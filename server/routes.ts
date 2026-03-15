@@ -4,8 +4,8 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { extractFile } from "./extract";
-import { chunkText, generateAlgorithmicDepths, type ChunkedSection } from "./chunking";
-import { isNLMAvailable, processWithNotebookLM } from "./notebooklm";
+import { chunkText, type ChunkedSection } from "./chunking";
+import { isNLMAvailable, generateDepths } from "./notebooklm";
 import { log } from "./index";
 
 // Configure multer for file uploads
@@ -36,7 +36,6 @@ const documents = new Map<string, {
   sections: ChunkedSection[];
   createdAt: Date;
   source: string;
-  nlmEnhanced: boolean;
 }>();
 
 export async function registerRoutes(
@@ -55,6 +54,14 @@ export async function registerRoutes(
     try {
       if (!req.file) {
         return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      // Require nlm — all depth generation is LLM-powered
+      const nlmAvailable = await isNLMAvailable();
+      if (!nlmAvailable) {
+        return res.status(503).json({
+          error: "NotebookLM (nlm) is not available or not authenticated. Run `nlm auth` to set up.",
+        });
       }
 
       const originalName = req.file.originalname;
@@ -77,32 +84,11 @@ export async function registerRoutes(
       const chunks = chunkText(extracted.text);
       log(`Created ${chunks.length} sections`, "upload");
 
-      // 3. Generate algorithmic depths (instant, no AI)
-      let sections = generateAlgorithmicDepths(chunks);
+      // 3. Generate all depth levels via LLM (nlm generate-chat per section)
+      log("Generating depth levels via NotebookLM...", "upload");
+      const sections = await generateDepths(filePath, extracted.title, chunks);
 
-      // 4. Try NotebookLM enhancement if available
-      let nlmEnhanced = false;
-      const useNLM = req.body?.useNLM !== "false";
-
-      if (useNLM) {
-        const nlmAvailable = await isNLMAvailable();
-        if (nlmAvailable) {
-          log("NotebookLM available, enhancing depths...", "upload");
-          const nlmResult = await processWithNotebookLM(filePath, extracted.title);
-          if (nlmResult) {
-            // Merge NLM results into sections
-            // NLM gives us a document-level summary and expansion
-            // We use these to enhance the algorithmic depths
-            sections = enhanceWithNLM(sections, nlmResult.summary, nlmResult.expanded);
-            nlmEnhanced = true;
-            log("NotebookLM enhancement complete", "upload");
-          }
-        } else {
-          log("NotebookLM not available, using algorithmic depths", "upload");
-        }
-      }
-
-      // 5. Store the converted document
+      // 4. Store the converted document
       const docId = `doc_${Date.now()}`;
       const doc = {
         id: docId,
@@ -111,14 +97,13 @@ export async function registerRoutes(
         sections,
         createdAt: new Date(),
         source: originalName,
-        nlmEnhanced,
       };
       documents.set(docId, doc);
 
       // Cleanup temp file
       try { fs.unlinkSync(filePath); } catch {}
 
-      log(`Document ready: ${docId} (${sections.length} sections, NLM: ${nlmEnhanced})`, "upload");
+      log(`Document ready: ${docId} (${sections.length} sections)`, "upload");
 
       res.json({
         id: docId,
@@ -126,7 +111,6 @@ export async function registerRoutes(
         author: extracted.author,
         sectionCount: sections.length,
         wordCount: extracted.text.split(/\s+/).length,
-        nlmEnhanced,
       });
     } catch (err: any) {
       log(`Upload error: ${err.message}`, "upload");
@@ -160,43 +144,10 @@ export async function registerRoutes(
       author: d.author,
       sectionCount: d.sections.length,
       source: d.source,
-      nlmEnhanced: d.nlmEnhanced,
       createdAt: d.createdAt,
     }));
     res.json(docs);
   });
 
   return httpServer;
-}
-
-/**
- * Enhance algorithmic sections with NotebookLM summary/expansion.
- * NLM gives document-level output — we split and map back to sections.
- */
-function enhanceWithNLM(
-  sections: ChunkedSection[],
-  nlmSummary: string,
-  nlmExpanded: string
-): ChunkedSection[] {
-  // Split NLM output into paragraphs and try to map to sections
-  const summaryParagraphs = nlmSummary.split(/\n\s*\n/).filter(p => p.trim());
-  const expandedParagraphs = nlmExpanded.split(/\n\s*\n/).filter(p => p.trim());
-
-  return sections.map((section, i) => {
-    return {
-      ...section,
-      // Use NLM summary paragraph if available, else keep algorithmic
-      summary: summaryParagraphs[i]
-        ? extractFirstSentence(summaryParagraphs[i])
-        : section.summary,
-      condensed: summaryParagraphs[i] || section.condensed,
-      // Use NLM expanded paragraph if available
-      expanded: expandedParagraphs[i] || section.expanded,
-    };
-  });
-}
-
-function extractFirstSentence(text: string): string {
-  const match = text.match(/^[^.!?]+[.!?]/);
-  return match ? match[0].trim() : text.slice(0, 100);
 }
