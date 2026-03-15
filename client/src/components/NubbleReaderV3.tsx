@@ -7,76 +7,88 @@ type DepthLevel = 0 | 1 | 2 | 3;
 const DEPTH_LABELS = ["Summary", "Condensed", "Standard", "Expanded"] as const;
 const DEPTH_KEYS: (keyof ContentSection)[] = ["summary", "condensed", "standard", "expanded"];
 
-/* ─── Easing & spring constants (from v1) ─── */
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 const EASE_IN_OUT = [0.4, 0, 0.2, 1] as const;
 const SPRING_SNAPPY = { type: "spring" as const, stiffness: 400, damping: 30, mass: 0.8 };
 const SPRING_GENTLE = { type: "spring" as const, stiffness: 200, damping: 25, mass: 1 };
 const SPRING_REVEAL = { type: "spring" as const, stiffness: 80, damping: 20, mass: 1.2 };
 
-/* ─── Lens effect per depth ───
+/* ─── Magnifying glass per depth ───
  *
- * Uses ONLY CSS properties verified to work on iOS Safari + Chrome:
- *   - text-shadow: colored offsets for chromatic aberration on actual text
- *   - backdrop-filter + -webkit-backdrop-filter: glass blur
- *   - box-shadow inset: vignette darkening at edges
- *   - linear-gradient: specular highlight
- *   - border with rgba: glass rim
+ * Technique from: duplicated content at larger scale, clipped by container.
+ * Like a real magnifying glass — content inside is zoomed, edges clip naturally.
  *
- * NO SVG filters. NO mix-blend-mode. NO feDisplacementMap.
+ * All CSS properties used here are verified to work on iOS Safari/Chrome:
+ *   - transform: scale()      → magnification
+ *   - overflow: hidden         → lens edge clipping
+ *   - border-radius            → lens shape (rounder at higher depth)
+ *   - box-shadow (outer)       → thick glass rim
+ *   - box-shadow (inset)       → barrel curvature darkening
+ *   - background with rgba     → glass tint
+ *   - linear-gradient div      → specular reflection spot
  */
 
-interface LensStyle {
-  /** text-shadow CSS value — chromatic aberration via R/B offset */
-  textShadow: string;
-  /** backdrop-filter blur px */
-  blur: number;
-  /** inset box-shadow for vignette (spread + alpha) */
-  vignette: string;
-  /** border rgba for glass rim */
-  rimBorder: string;
-  /** specular highlight opacity */
-  specular: number;
-  /** card background alpha */
-  cardAlpha: number;
+interface LensConfig {
+  /** Content scale factor — 1.0 = normal, higher = magnified */
+  contentScale: number;
+  /** Border radius of the lens container */
+  borderRadius: number;
+  /** Glass rim — outer box-shadow */
+  rimShadow: string;
+  /** Barrel vignette — inset box-shadow */
+  barrelShadow: string;
+  /** Glass tint background */
+  glassBg: string;
+  /** Glass tint background (dark mode) */
+  glassBgDark: string;
+  /** Specular highlight opacity */
+  specularOpacity: number;
+  /** Border width for glass edge */
+  borderWidth: number;
 }
 
-const LENS_STYLES: Record<DepthLevel, LensStyle> = {
+const LENS: Record<DepthLevel, LensConfig> = {
   0: {
-    textShadow: "none",
-    blur: 0,
-    vignette: "none",
-    rimBorder: "1px solid transparent",
-    specular: 0,
-    cardAlpha: 0,
+    contentScale: 1,
+    borderRadius: 8,
+    rimShadow: "none",
+    barrelShadow: "none",
+    glassBg: "transparent",
+    glassBgDark: "transparent",
+    specularOpacity: 0,
+    borderWidth: 0,
   },
   1: {
-    textShadow: "1px 0 0 rgba(255,0,0,0.12), -1px 0 0 rgba(0,100,255,0.12)",
-    blur: 4,
-    vignette: "inset 0 0 30px 5px rgba(0,0,0,0.06)",
-    rimBorder: "1px solid rgba(255,255,255,0.15)",
-    specular: 0.15,
-    cardAlpha: 0.04,
+    contentScale: 1.02,
+    borderRadius: 12,
+    rimShadow: "0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)",
+    barrelShadow: "inset 0 0 20px 5px rgba(0,0,0,0.04)",
+    glassBg: "rgba(255,255,255,0.35)",
+    glassBgDark: "rgba(255,255,255,0.05)",
+    specularOpacity: 0.15,
+    borderWidth: 1,
   },
   2: {
-    textShadow: "2px 0 1px rgba(255,0,0,0.18), -2px 0 1px rgba(0,100,255,0.18)",
-    blur: 8,
-    vignette: "inset 0 0 50px 10px rgba(0,0,0,0.1)",
-    rimBorder: "1px solid rgba(255,255,255,0.25)",
-    specular: 0.3,
-    cardAlpha: 0.06,
+    contentScale: 1.04,
+    borderRadius: 16,
+    rimShadow: "0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08), 0 0 0 1.5px rgba(0,0,0,0.06)",
+    barrelShadow: "inset 0 0 40px 10px rgba(0,0,0,0.07)",
+    glassBg: "rgba(255,255,255,0.45)",
+    glassBgDark: "rgba(255,255,255,0.08)",
+    specularOpacity: 0.3,
+    borderWidth: 1.5,
   },
   3: {
-    textShadow: "3px 0 1px rgba(255,0,0,0.25), -3px 0 1px rgba(0,100,255,0.25), 0 1px 0 rgba(0,200,0,0.08)",
-    blur: 12,
-    vignette: "inset 0 0 80px 15px rgba(0,0,0,0.15)",
-    rimBorder: "1px solid rgba(255,255,255,0.35)",
-    specular: 0.5,
-    cardAlpha: 0.08,
+    contentScale: 1.06,
+    borderRadius: 20,
+    rimShadow: "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.12), 0 0 0 2px rgba(0,0,0,0.08)",
+    barrelShadow: "inset 0 0 60px 15px rgba(0,0,0,0.1)",
+    glassBg: "rgba(255,255,255,0.55)",
+    glassBgDark: "rgba(255,255,255,0.1)",
+    specularOpacity: 0.5,
+    borderWidth: 2,
   },
 };
-
-/* ─── Helpers ─── */
 
 function estimateReadingTime(doc: ContentDocument, depthKey: keyof ContentSection): number {
   const totalWords = doc.sections.reduce((sum, s) => {
@@ -122,30 +134,23 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-
     const handleScroll = () => {
       const containerRect = el.getBoundingClientRect();
       const centerY = containerRect.top + containerRect.height * 0.35;
       let closest = doc.sections[0]?.id ?? "";
       let closestDist = Infinity;
-
       for (const section of doc.sections) {
         const ref = sectionRefs.current[section.id];
         if (!ref) continue;
         const rect = ref.getBoundingClientRect();
         const sectionCenter = rect.top + rect.height / 2;
         const dist = Math.abs(sectionCenter - centerY);
-        if (dist < closestDist) {
-          closestDist = dist;
-          closest = section.id;
-        }
+        if (dist < closestDist) { closestDist = dist; closest = section.id; }
       }
       setActiveSectionId(closest);
-
       const scrollable = el.scrollHeight - el.clientHeight;
       setScrollProgress(scrollable > 0 ? el.scrollTop / scrollable : 0);
     };
-
     el.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => el.removeEventListener("scroll", handleScroll);
@@ -173,10 +178,7 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
   const changeGlobalDepth = useCallback((delta: number) => {
     setGlobalDepth(prev => {
       const next = Math.max(0, Math.min(3, prev + delta)) as DepthLevel;
-      if (next !== prev) {
-        setSectionOverrides({});
-        return next;
-      }
+      if (next !== prev) { setSectionOverrides({}); return next; }
       flashBoundary(delta < 0 ? "min" : "max");
       return prev;
     });
@@ -199,42 +201,28 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-
     let initialDistance = 0;
     let pinchActive = false;
-
     const getDistance = (touches: TouchList) => {
       if (touches.length < 2) return 0;
       const dx = touches[0].clientX - touches[1].clientX;
       const dy = touches[0].clientY - touches[1].clientY;
       return Math.sqrt(dx * dx + dy * dy);
     };
-
     const onTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 2) {
-        pinchActive = true;
-        initialDistance = getDistance(e.touches);
-        e.preventDefault();
-      }
+      if (e.touches.length === 2) { pinchActive = true; initialDistance = getDistance(e.touches); e.preventDefault(); }
     };
-
     const onTouchEnd = (e: TouchEvent) => {
       if (pinchActive && e.changedTouches.length > 0) {
         const finalDistance = getDistance(e.touches.length >= 2 ? e.touches : e.changedTouches);
         const delta = finalDistance - initialDistance;
-        if (Math.abs(delta) > 40) {
-          changeGlobalDepth(delta > 0 ? 1 : -1);
-        }
+        if (Math.abs(delta) > 40) { changeGlobalDepth(delta > 0 ? 1 : -1); }
         pinchActive = false;
       }
     };
-
     const onTouchMove = (e: TouchEvent) => {
-      if (pinchActive && e.touches.length === 2) {
-        e.preventDefault();
-      }
+      if (pinchActive && e.touches.length === 2) { e.preventDefault(); }
     };
-
     el.addEventListener("touchstart", onTouchStart, { passive: false });
     el.addEventListener("touchmove", onTouchMove, { passive: false });
     el.addEventListener("touchend", onTouchEnd, { passive: true });
@@ -247,130 +235,55 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
 
   const scrollToSection = useCallback((sectionId: string) => {
     const ref = sectionRefs.current[sectionId];
-    if (ref) {
-      ref.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    if (ref) { ref.scrollIntoView({ behavior: "smooth", block: "start" }); }
   }, []);
 
   const handleFirstSwipe = useCallback(() => {
     if (!hasSwipedOnce) setHasSwipedOnce(true);
   }, [hasSwipedOnce]);
 
-  const activeSection = useMemo(() =>
-    doc.sections.find(s => s.id === activeSectionId),
-  [doc.sections, activeSectionId]);
-  const activeSectionIndex = useMemo(() =>
-    doc.sections.findIndex(s => s.id === activeSectionId),
-  [doc.sections, activeSectionId]);
+  const activeSection = useMemo(() => doc.sections.find(s => s.id === activeSectionId), [doc.sections, activeSectionId]);
+  const activeSectionIndex = useMemo(() => doc.sections.findIndex(s => s.id === activeSectionId), [doc.sections, activeSectionId]);
 
   return (
     <div className="h-screen w-screen flex flex-col overflow-hidden bg-background">
-      {/* Boundary flash */}
       <AnimatePresence>
         {boundaryFlash && (
-          <motion.div
-            className="fixed inset-0 z-50 pointer-events-none"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <div className={`absolute inset-0 ${
-              boundaryFlash === "max"
-                ? "bg-gradient-to-l from-primary/8 to-transparent"
-                : "bg-gradient-to-r from-primary/8 to-transparent"
-            }`} />
+          <motion.div className="fixed inset-0 z-50 pointer-events-none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
+            <div className={`absolute inset-0 ${boundaryFlash === "max" ? "bg-gradient-to-l from-primary/8 to-transparent" : "bg-gradient-to-r from-primary/8 to-transparent"}`} />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Header */}
       <header className="flex-shrink-0 h-12 px-5 flex items-center justify-between border-b border-border/40 relative">
-        <motion.div
-          className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary/25"
-          style={{ originX: 0 }}
-          animate={{ scaleX: scrollProgress }}
-          transition={{ duration: 0.1, ease: "linear" }}
-        />
-
+        <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary/25" style={{ originX: 0 }} animate={{ scaleX: scrollProgress }} transition={{ duration: 0.1, ease: "linear" }} />
         <div className="flex items-center gap-2.5">
           <NubbleLogo />
           <span className="text-[11px] text-muted-foreground tracking-[0.15em] uppercase font-medium">nubble</span>
         </div>
-
         <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => changeGlobalDepth(-1)}
-            disabled={globalDepth === 0}
-            className="p-1 text-muted-foreground/50 hover:text-foreground transition-colors duration-200 disabled:opacity-20"
-          >
-            <Minus size={14} />
-          </button>
-
+          <button onClick={() => changeGlobalDepth(-1)} disabled={globalDepth === 0} className="p-1 text-muted-foreground/50 hover:text-foreground transition-colors duration-200 disabled:opacity-20"><Minus size={14} /></button>
           <DepthZoomIndicator depth={globalDepth} size="md" />
-
-          <button
-            onClick={() => changeGlobalDepth(1)}
-            disabled={globalDepth === 3}
-            className="p-1 text-muted-foreground/50 hover:text-foreground transition-colors duration-200 disabled:opacity-20"
-          >
-            <Plus size={14} />
-          </button>
-
+          <button onClick={() => changeGlobalDepth(1)} disabled={globalDepth === 3} className="p-1 text-muted-foreground/50 hover:text-foreground transition-colors duration-200 disabled:opacity-20"><Plus size={14} /></button>
           <div className="relative ml-0.5 hidden sm:flex items-center gap-2 h-4 overflow-hidden">
             <AnimatePresence mode="popLayout">
-              <motion.span
-                key={globalDepth}
-                initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
-                transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
-                className="text-[10px] text-muted-foreground/50 font-medium tracking-[0.15em] uppercase whitespace-nowrap"
-              >
-                {DEPTH_LABELS[globalDepth]}
-              </motion.span>
+              <motion.span key={globalDepth} initial={{ opacity: 0, y: 8, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -8, filter: "blur(4px)" }} transition={{ duration: 0.25, ease: EASE_OUT_EXPO }} className="text-[10px] text-muted-foreground/50 font-medium tracking-[0.15em] uppercase whitespace-nowrap">{DEPTH_LABELS[globalDepth]}</motion.span>
             </AnimatePresence>
             <AnimatePresence mode="popLayout">
-              <motion.span
-                key={readingTime}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
-                className="text-[10px] text-muted-foreground/30 font-medium whitespace-nowrap"
-              >
-                {readingTime} min
-              </motion.span>
+              <motion.span key={readingTime} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25, ease: EASE_OUT_EXPO }} className="text-[10px] text-muted-foreground/30 font-medium whitespace-nowrap">{readingTime} min</motion.span>
             </AnimatePresence>
           </div>
         </div>
-
         <div className="flex items-center gap-3">
           <AnimatePresence mode="popLayout">
-            <motion.span
-              key={activeSectionId}
-              initial={{ opacity: 0, y: 6, filter: "blur(3px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -6, filter: "blur(3px)" }}
-              transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
-              className="text-[10px] text-muted-foreground/40 hidden md:inline font-medium tracking-wide whitespace-nowrap"
-            >
+            <motion.span key={activeSectionId} initial={{ opacity: 0, y: 6, filter: "blur(3px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -6, filter: "blur(3px)" }} transition={{ duration: 0.25, ease: EASE_OUT_EXPO }} className="text-[10px] text-muted-foreground/40 hidden md:inline font-medium tracking-wide whitespace-nowrap">
               <span className="text-primary/50 font-semibold mr-1">{String(activeSectionIndex + 1).padStart(2, "0")}</span>
               {activeSection?.title}
             </motion.span>
           </AnimatePresence>
-          <button
-            onClick={toggleTheme}
-            className="p-1.5 text-muted-foreground/50 hover:text-foreground transition-colors duration-200"
-          >
+          <button onClick={toggleTheme} className="p-1.5 text-muted-foreground/50 hover:text-foreground transition-colors duration-200">
             <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={isDark ? "sun" : "moon"}
-                initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-                animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
-                transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
-              >
+              <motion.div key={isDark ? "sun" : "moon"} initial={{ opacity: 0, rotate: -90, scale: 0.5 }} animate={{ opacity: 1, rotate: 0, scale: 1 }} exit={{ opacity: 0, rotate: 90, scale: 0.5 }} transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}>
                 {isDark ? <Sun size={15} /> : <Moon size={15} />}
               </motion.div>
             </AnimatePresence>
@@ -379,68 +292,31 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
       </header>
 
       <div className="flex-1 flex overflow-hidden">
-        {/* Section nav rail */}
         <div className="flex-shrink-0 w-8 sm:w-10 flex flex-col items-center justify-center gap-1.5 py-4">
           {doc.sections.map((section, i) => (
             <div key={section.id} className="relative group/nav">
-              <motion.button
-                onClick={() => scrollToSection(section.id)}
-                className="rounded-full bg-primary"
-                animate={{
-                  width: 6,
-                  height: section.id === activeSectionId ? 20 : 6,
-                  opacity: section.id === activeSectionId ? 1 : 0.15,
-                }}
-                whileHover={{ opacity: section.id === activeSectionId ? 1 : 0.4 }}
-                transition={SPRING_SNAPPY}
-                aria-label={`Jump to: ${section.title}`}
-              />
+              <motion.button onClick={() => scrollToSection(section.id)} className="rounded-full bg-primary" animate={{ width: 6, height: section.id === activeSectionId ? 20 : 6, opacity: section.id === activeSectionId ? 1 : 0.15 }} whileHover={{ opacity: section.id === activeSectionId ? 1 : 0.4 }} transition={SPRING_SNAPPY} aria-label={`Jump to: ${section.title}`} />
               <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover/nav:opacity-100 transition-opacity duration-200 z-30">
-                <div className="bg-foreground/90 text-background text-[9px] font-medium px-2 py-1 rounded whitespace-nowrap shadow-lg">
-                  {section.title}
-                </div>
+                <div className="bg-foreground/90 text-background text-[9px] font-medium px-2 py-1 rounded whitespace-nowrap shadow-lg">{section.title}</div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Scrollable content */}
-        <div
-          ref={scrollRef}
-          className="flex-1 overflow-y-auto overflow-x-hidden"
-          style={{ scrollBehavior: "smooth" }}
-        >
+        <div ref={scrollRef} className="flex-1 overflow-y-auto overflow-x-hidden" style={{ scrollBehavior: "smooth" }}>
           <div className="max-w-[660px] mx-auto px-4 sm:px-6 pt-8 pb-24">
-            <motion.div
-              className="mb-10"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
-            >
-              <h1
-                className="text-xl font-medium text-foreground mb-1 leading-snug"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
-                {doc.title}
-              </h1>
+            <motion.div className="mb-10" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}>
+              <h1 className="text-xl font-medium text-foreground mb-1 leading-snug" style={{ fontFamily: "var(--font-serif)" }}>{doc.title}</h1>
               <div className="flex items-center gap-3">
                 <p className="text-xs text-muted-foreground/50 font-medium">{doc.author}</p>
                 <AnimatePresence mode="popLayout">
-                  <motion.span
-                    key={readingTime}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="sm:hidden text-xs text-muted-foreground/30 font-medium"
-                  >
-                    {readingTime} min read
-                  </motion.span>
+                  <motion.span key={readingTime} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="sm:hidden text-xs text-muted-foreground/30 font-medium">{readingTime} min read</motion.span>
                 </AnimatePresence>
               </div>
             </motion.div>
 
             {doc.sections.map((section, i) => (
-              <GlassSectionBlock
+              <LensSectionBlock
                 key={section.id}
                 section={section}
                 index={i}
@@ -454,11 +330,7 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
                 isDark={isDark}
                 scrollRoot={scrollRef}
                 onChangeDepth={(delta) => changeSectionDepth(section.id, delta)}
-                onResetToGlobal={() => setSectionOverrides(prev => {
-                  const next = { ...prev };
-                  delete next[section.id];
-                  return next;
-                })}
+                onResetToGlobal={() => setSectionOverrides(prev => { const next = { ...prev }; delete next[section.id]; return next; })}
                 onFirstSwipe={handleFirstSwipe}
                 ref={(el: HTMLDivElement | null) => { sectionRefs.current[section.id] = el; }}
               />
@@ -467,7 +339,6 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="flex-shrink-0 h-9 px-3 sm:px-5 flex items-center justify-between border-t border-border/40">
         <div className="flex sm:hidden items-center gap-2 text-[9px] text-muted-foreground/40 tracking-wide overflow-hidden">
           <span className="whitespace-nowrap">scroll to read</span>
@@ -479,41 +350,36 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
         <div className="hidden sm:flex items-center gap-4 text-[10px] text-muted-foreground/40 tracking-wide">
           <span>scroll to read</span>
           <span className="flex items-center gap-1.5">
-            <kbd className="inline-flex items-center justify-center px-1.5 h-4 rounded bg-muted/50 text-muted-foreground/60 text-[9px] font-mono leading-none">
-              &#8592;&#8594;
-            </kbd>
+            <kbd className="inline-flex items-center justify-center px-1.5 h-4 rounded bg-muted/50 text-muted-foreground/60 text-[9px] font-mono leading-none">&#8592;&#8594;</kbd>
             section depth
           </span>
           <span className="flex items-center gap-1.5">
-            <kbd className="inline-flex items-center justify-center px-1 h-4 rounded bg-muted/50 text-muted-foreground/60 text-[9px] font-mono leading-none">
-              &#8679;
-            </kbd>
-            <kbd className="inline-flex items-center justify-center px-1.5 h-4 rounded bg-muted/50 text-muted-foreground/60 text-[9px] font-mono leading-none">
-              &#8592;&#8594;
-            </kbd>
+            <kbd className="inline-flex items-center justify-center px-1 h-4 rounded bg-muted/50 text-muted-foreground/60 text-[9px] font-mono leading-none">&#8679;</kbd>
+            <kbd className="inline-flex items-center justify-center px-1.5 h-4 rounded bg-muted/50 text-muted-foreground/60 text-[9px] font-mono leading-none">&#8592;&#8594;</kbd>
             global
           </span>
           <span className="hidden md:inline">or swipe</span>
         </div>
-        <span className="text-[10px] text-muted-foreground/30 flex-shrink-0 ml-2">
-          v3 — glass lens
-        </span>
+        <span className="text-[10px] text-muted-foreground/30 flex-shrink-0 ml-2">v3 — magnifying glass</span>
       </footer>
     </div>
   );
 }
 
-/* ─── Glass Section Block ───
+/* ─── Lens Section Block ───
  *
- * Lens effects via proven CSS:
- *   1. text-shadow with red/blue offsets = chromatic aberration on actual glyphs
- *   2. backdrop-filter: blur() = frosted glass (Apple invented this)
- *   3. box-shadow: inset = vignette darkening at card edges
- *   4. border with rgba white = glass rim catching light
- *   5. linear-gradient div = specular highlight streak on glass surface
+ * The section card IS the magnifying glass.
+ * At higher depth:
+ *   - Content scales up (transform: scale) — magnified view
+ *   - Container clips overflow — lens edge effect
+ *   - Thick rim shadow — glass border
+ *   - Inset shadow — barrel curvature darkening
+ *   - Glass background tint — semi-transparent
+ *   - Specular highlight — light reflecting off glass surface
+ *   - Rounder corners — lens shape
  */
 
-interface GlassSectionBlockProps {
+interface LensSectionBlockProps {
   section: ContentSection;
   index: number;
   total: number;
@@ -530,30 +396,24 @@ interface GlassSectionBlockProps {
   onFirstSwipe: () => void;
 }
 
-const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
+const LensSectionBlock = forwardRef<HTMLDivElement, LensSectionBlockProps>(
   ({ section, index, total, depth, globalDepth, isOverridden, isActive, isFirst, hasSwipedOnce, isDark, scrollRoot, onChangeDepth, onResetToGlobal, onFirstSwipe }, ref) => {
     const rawX = useMotionValue(0);
     const x = useSpring(rawX, { stiffness: 300, damping: 28, mass: 0.6 });
     const rotate = useTransform(rawX, [-200, 0, 200], [-1.5, 0, 1.5]);
-    const scale = useTransform(rawX, [-200, 0, 200], [0.985, 1, 0.985]);
+    const dragScale = useTransform(rawX, [-200, 0, 200], [0.985, 1, 0.985]);
 
     const handleDragEnd = useCallback((_: any, info: PanInfo) => {
       const threshold = 50;
       const vThreshold = 180;
-      if (info.offset.x > threshold || info.velocity.x > vThreshold) {
-        onChangeDepth(1);
-        onFirstSwipe();
-      } else if (info.offset.x < -threshold || info.velocity.x < -vThreshold) {
-        onChangeDepth(-1);
-        onFirstSwipe();
-      }
+      if (info.offset.x > threshold || info.velocity.x > vThreshold) { onChangeDepth(1); onFirstSwipe(); }
+      else if (info.offset.x < -threshold || info.velocity.x < -vThreshold) { onChangeDepth(-1); onFirstSwipe(); }
       rawX.set(0);
     }, [onChangeDepth, onFirstSwipe, rawX]);
 
     const contentText = section[DEPTH_KEYS[depth] as keyof ContentSection] as string;
     const paragraphs = contentText.split("\n\n");
-
-    const lens = LENS_STYLES[depth];
+    const lens = LENS[depth];
 
     const textStyle = useMemo(() => {
       switch (depth) {
@@ -567,61 +427,61 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
     return (
       <motion.div
         ref={ref}
-        className="relative mb-1 scroll-mt-6 group"
+        className="relative mb-2 scroll-mt-6 group"
         initial={{ opacity: 0, y: 40, scale: 0.97 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
         viewport={{ root: scrollRoot, once: true, amount: 0.15 }}
         transition={SPRING_REVEAL}
       >
-        {/* Onboarding */}
         <AnimatePresence>
-          {isFirst && !hasSwipedOnce && isActive && (
-            <SwipeOnboarding />
-          )}
+          {isFirst && !hasSwipedOnce && isActive && <SwipeOnboarding />}
         </AnimatePresence>
 
-        {/* Swipeable (v1 behavior) */}
         <motion.div
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.15}
           onDragEnd={handleDragEnd}
-          style={{ x, rotate, scale }}
+          style={{ x, rotate, scale: dragScale }}
           className="cursor-grab active:cursor-grabbing touch-pan-y origin-center"
         >
-          {/* Glass card wrapper */}
-          <div
-            className="relative rounded-xl overflow-hidden transition-all duration-500 ease-in-out"
+          {/* The lens container — clips magnified content */}
+          <motion.div
+            className="relative overflow-hidden"
+            animate={{
+              borderRadius: lens.borderRadius,
+              boxShadow: `${lens.rimShadow}${lens.barrelShadow !== "none" ? `, ${lens.barrelShadow}` : ""}`,
+            }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
             style={{
-              border: lens.rimBorder,
-              boxShadow: lens.vignette,
-              backdropFilter: lens.blur > 0 ? `blur(${lens.blur}px)` : "none",
-              WebkitBackdropFilter: lens.blur > 0 ? `blur(${lens.blur}px)` : "none",
-              background: isDark
-                ? `rgba(255,255,255,${lens.cardAlpha})`
-                : `rgba(255,255,255,${lens.cardAlpha * 5})`,
+              background: isDark ? lens.glassBgDark : lens.glassBg,
+              border: lens.borderWidth > 0
+                ? `${lens.borderWidth}px solid ${isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)"}`
+                : "none",
             }}
           >
-            {/* Specular highlight — bright streak across top of glass */}
-            <div
-              className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none transition-opacity duration-500"
-              style={{
-                opacity: lens.specular,
-                background: "linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.8) 25%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.8) 75%, transparent 95%)",
-              }}
-            />
+            {/* Specular highlight — light reflection on glass surface */}
+            {lens.specularOpacity > 0 && (
+              <div
+                className="absolute top-0 right-0 pointer-events-none"
+                style={{
+                  width: 80 + depth * 20,
+                  height: 80 + depth * 20,
+                  opacity: lens.specularOpacity,
+                  background: "radial-gradient(ellipse at 70% 30%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 60%)",
+                  zIndex: 10,
+                }}
+              />
+            )}
 
-            {/* Active card background */}
+            {/* Magnified content area */}
             <motion.div
-              className="relative rounded-xl px-4 sm:px-5 py-4"
-              animate={{
-                backgroundColor: isActive && depth === 0
-                  ? "hsl(var(--card) / 0.6)"
-                  : "hsl(var(--card) / 0)",
-              }}
-              transition={{ duration: 0.4, ease: EASE_IN_OUT }}
+              className="px-4 sm:px-5 py-4"
+              animate={{ scale: lens.contentScale }}
+              transition={SPRING_GENTLE}
+              style={{ transformOrigin: "top left" }}
             >
-              {/* Section meta row */}
+              {/* Section meta */}
               <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-primary/70 font-semibold tracking-[0.2em] uppercase">
@@ -629,40 +489,17 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
                   </span>
                   <AnimatePresence>
                     {isOverridden && (
-                      <motion.div
-                        className="flex items-center gap-2"
-                        initial={{ opacity: 0, x: -8, filter: "blur(4px)" }}
-                        animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, x: -8, filter: "blur(4px)" }}
-                        transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
-                      >
+                      <motion.div className="flex items-center gap-2" initial={{ opacity: 0, x: -8, filter: "blur(4px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} exit={{ opacity: 0, x: -8, filter: "blur(4px)" }} transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}>
                         <span className="w-px h-2.5 bg-border/60" />
-                        <span className="text-[9px] text-primary/50 tracking-wider uppercase font-medium">
-                          {DEPTH_LABELS[depth]}
-                        </span>
+                        <span className="text-[9px] text-primary/50 tracking-wider uppercase font-medium">{DEPTH_LABELS[depth]}</span>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
-
-                <motion.div
-                  className="flex items-center gap-1.5"
-                  animate={{
-                    opacity: isOverridden || isActive ? 1 : 0,
-                  }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.25 }}
-                >
+                <motion.div className="flex items-center gap-1.5" animate={{ opacity: isOverridden || isActive ? 1 : 0 }} whileHover={{ opacity: 1 }} transition={{ duration: 0.25 }}>
                   <AnimatePresence>
                     {isOverridden && (
-                      <motion.button
-                        onClick={(e) => { e.stopPropagation(); onResetToGlobal(); }}
-                        className="text-[9px] text-muted-foreground/40 hover:text-muted-foreground mr-1 tracking-wider uppercase"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        transition={{ duration: 0.2 }}
-                      >
+                      <motion.button onClick={(e) => { e.stopPropagation(); onResetToGlobal(); }} className="text-[9px] text-muted-foreground/40 hover:text-muted-foreground mr-1 tracking-wider uppercase" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.2 }}>
                         reset
                       </motion.button>
                     )}
@@ -672,14 +509,11 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
               </div>
 
               {/* Title */}
-              <h2
-                className="font-serif text-lg font-medium mb-3 text-foreground leading-snug"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
+              <h2 className="font-serif text-lg font-medium mb-3 text-foreground leading-snug" style={{ fontFamily: "var(--font-serif)" }}>
                 {section.title}
               </h2>
 
-              {/* Content body — text-shadow creates chromatic aberration */}
+              {/* Content */}
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={`${section.id}-${depth}`}
@@ -698,15 +532,8 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
                       key={pi}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.4,
-                        delay: pi * 0.08,
-                        ease: EASE_OUT_EXPO,
-                      }}
-                      className={`mb-3 last:mb-0 ${textStyle} transition-all duration-500`}
-                      style={{
-                        textShadow: lens.textShadow,
-                      }}
+                      transition={{ duration: 0.4, delay: pi * 0.08, ease: EASE_OUT_EXPO }}
+                      className={`mb-3 last:mb-0 ${textStyle}`}
                     >
                       {p}
                     </motion.p>
@@ -714,125 +541,55 @@ const GlassSectionBlock = forwardRef<HTMLDivElement, GlassSectionBlockProps>(
                 </motion.div>
               </AnimatePresence>
 
-              {/* Swipe hint */}
               <AnimatePresence>
                 {isActive && hasSwipedOnce && (
-                  <motion.div
-                    className="flex items-center justify-between mt-3 select-none pointer-events-none"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 0.2, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
-                  >
-                    <div className="flex items-center gap-1 text-[9px] text-muted-foreground tracking-wider uppercase">
-                      <ChevronsLeft size={10} />
-                      <span>less</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-[9px] text-muted-foreground tracking-wider uppercase">
-                      <span>more</span>
-                      <ChevronsRight size={10} />
-                    </div>
+                  <motion.div className="flex items-center justify-between mt-3 select-none pointer-events-none" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 0.2, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}>
+                    <div className="flex items-center gap-1 text-[9px] text-muted-foreground tracking-wider uppercase"><ChevronsLeft size={10} /><span>less</span></div>
+                    <div className="flex items-center gap-1 text-[9px] text-muted-foreground tracking-wider uppercase"><span>more</span><ChevronsRight size={10} /></div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </motion.div>
-          </div>
+          </motion.div>
         </motion.div>
 
-        {/* Divider */}
-        {index < total - 1 && (
-          <div className="mx-5 my-1 border-t border-border/25" />
-        )}
+        {index < total - 1 && <div className="mx-5 my-1 border-t border-border/25" />}
       </motion.div>
     );
   }
 );
 
-GlassSectionBlock.displayName = "GlassSectionBlock";
-
-/* ─── Swipe Onboarding (from v1) ─── */
+LensSectionBlock.displayName = "LensSectionBlock";
 
 function SwipeOnboarding() {
   return (
-    <motion.div
-      className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <motion.div
-        className="flex items-center gap-2 bg-foreground/80 text-background px-4 py-2.5 rounded-full shadow-xl"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ delay: 0.8, ...SPRING_GENTLE }}
-      >
-        <motion.span
-          className="text-lg"
-          animate={{ x: [0, 14, 0, -14, 0] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
-        >
-          &#x1F446;
-        </motion.span>
+    <motion.div className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+      <motion.div className="flex items-center gap-2 bg-foreground/80 text-background px-4 py-2.5 rounded-full shadow-xl" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} transition={{ delay: 0.8, ...SPRING_GENTLE }}>
+        <motion.span className="text-lg" animate={{ x: [0, 14, 0, -14, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}>&#x1F446;</motion.span>
         <span className="text-[11px] font-medium tracking-wide">swipe to change depth</span>
       </motion.div>
     </motion.div>
   );
 }
 
-/* ─── Depth Zoom Indicator (from v1) ─── */
-
-interface DepthZoomIndicatorProps {
-  depth: DepthLevel;
-  size: "sm" | "md";
-}
+interface DepthZoomIndicatorProps { depth: DepthLevel; size: "sm" | "md"; }
 
 function DepthZoomIndicator({ depth, size }: DepthZoomIndicatorProps) {
   const unit = size === "md" ? 8 : 5;
   const borderRadius = size === "md" ? 2.5 : 1.5;
   const maxWidth = unit * 5;
   const widths = [unit, unit * 2.2, unit * 3.5, maxWidth];
-  const activeWidth = widths[depth];
-
   return (
-    <div
-      className="relative pointer-events-none select-none flex items-center justify-center"
-      style={{ width: maxWidth, height: unit }}
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          borderRadius,
-          backgroundColor: "hsl(var(--primary) / 0.12)",
-        }}
-      />
-      <motion.div
-        className="relative"
-        style={{ borderRadius }}
-        animate={{
-          width: activeWidth,
-          height: unit,
-          backgroundColor: "hsl(var(--primary) / 0.85)",
-        }}
-        transition={SPRING_SNAPPY}
-      />
+    <div className="relative pointer-events-none select-none flex items-center justify-center" style={{ width: maxWidth, height: unit }}>
+      <div className="absolute inset-0" style={{ borderRadius, backgroundColor: "hsl(var(--primary) / 0.12)" }} />
+      <motion.div className="relative" style={{ borderRadius }} animate={{ width: widths[depth], height: unit, backgroundColor: "hsl(var(--primary) / 0.85)" }} transition={SPRING_SNAPPY} />
     </div>
   );
 }
 
-/* ─── Logo (from v1) ─── */
-
 function NubbleLogo() {
   return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label="nubble logo"
-    >
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="nubble logo">
       <rect x="3" y="5" width="12" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.3" opacity="0.3" />
       <rect x="9" y="5" width="12" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.3" />
       <line x1="7" y1="12" x2="17" y2="12" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeLinecap="round" />
