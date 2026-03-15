@@ -433,8 +433,15 @@ const ScrambleSectionBlock = forwardRef<HTMLDivElement, ScrambleSectionBlockProp
     const scrambledText = useScrambleText(contentText, 800);
     const paragraphs = scrambledText.split("\n\n");
 
-    // Consistent text style — no size jumps between depths
-    const textStyle = "text-[14px] text-foreground/80 leading-[1.75]";
+    // Same font size across depths (no layout jumps), but weight/opacity vary
+    const textStyle = useMemo(() => {
+      switch (depth) {
+        case 0: return "text-[14px] text-foreground font-medium leading-[1.75]";
+        case 1: return "text-[14px] text-foreground/85 leading-[1.75]";
+        case 2: return "text-[14px] text-foreground/80 leading-[1.75]";
+        case 3: return "text-[14px] text-foreground/75 leading-[1.75]";
+      }
+    }, [depth]);
 
     return (
       <motion.div
