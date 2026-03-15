@@ -63,31 +63,31 @@ const LENS_PARAMS: Record<DepthLevel, LensParams> = {
     textOpacity: 1,
   },
   1: {
-    aberration: 0.4,
-    glassBlur: 2,
-    rimOpacity: 0.08,
-    vignetteOpacity: 0.04,
-    specularOpacity: 0.1,
-    innerGlow: 0.03,
-    textOpacity: 0.88,
+    aberration: 1.5,
+    glassBlur: 6,
+    rimOpacity: 0.3,
+    vignetteOpacity: 0.15,
+    specularOpacity: 0.4,
+    innerGlow: 0.12,
+    textOpacity: 0.85,
   },
   2: {
-    aberration: 0.8,
-    glassBlur: 4,
-    rimOpacity: 0.15,
-    vignetteOpacity: 0.08,
-    specularOpacity: 0.2,
-    innerGlow: 0.06,
-    textOpacity: 0.82,
+    aberration: 3,
+    glassBlur: 10,
+    rimOpacity: 0.5,
+    vignetteOpacity: 0.3,
+    specularOpacity: 0.6,
+    innerGlow: 0.2,
+    textOpacity: 0.8,
   },
   3: {
-    aberration: 1.5,
-    glassBlur: 8,
-    rimOpacity: 0.25,
-    vignetteOpacity: 0.14,
-    specularOpacity: 0.35,
-    innerGlow: 0.1,
-    textOpacity: 0.78,
+    aberration: 5,
+    glassBlur: 16,
+    rimOpacity: 0.7,
+    vignetteOpacity: 0.45,
+    specularOpacity: 0.8,
+    innerGlow: 0.3,
+    textOpacity: 0.75,
   },
 };
 
@@ -540,7 +540,7 @@ export function NubbleReaderV3({ document: doc }: NubbleReaderV3Props) {
  */
 
 function LensFilterDefs() {
-  const offsets = [0, 0.4, 0.8, 1.5];
+  const offsets = [0, 1.5, 3, 5];
 
   return (
     <svg className="absolute w-0 h-0" aria-hidden="true">
