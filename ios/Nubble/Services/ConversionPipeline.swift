@@ -4,7 +4,6 @@ enum ConversionStage: String, Sendable {
     case opening = "Opening file..."
     case parsing = "Parsing content..."
     case extractingText = "Extracting text..."
-    case chunking = "Splitting into sections..."
     case generatingDepths = "Generating reading depths..."
     case done = "Done!"
 }
@@ -23,6 +22,9 @@ final class ConversionPipeline {
     private let depthGenerator = DepthGenerator()
 
     /// Convert an ePub or PDF file URL into a ContentDocument ready for the reader.
+    ///
+    /// Chapters are preserved as sections (not split into arbitrary chunks).
+    /// Only plain text files without headings get chunked, since they have no natural structure.
     func convert(fileURL: URL) async throws -> ContentDocument {
         stage = .opening
         progress = 0
@@ -43,38 +45,36 @@ final class ConversionPipeline {
         case "txt", "md", "markdown", "json":
             let text = try String(contentsOf: fileURL, encoding: .utf8)
             let title = fileURL.deletingPathExtension().lastPathComponent
+            // For plain text: use chunking engine to split on headings
+            let chunks = chunkingEngine.chunk(text, chapterTitle: title)
             extracted = ExtractedDocument(
                 title: title,
                 author: nil,
-                chapters: [ExtractedChapter(title: title, body: text, position: 0)]
+                chapters: chunks.map { ExtractedChapter(title: $0.title, body: $0.body, position: $0.position) }
             )
         default:
             throw ExtractionError.unsupportedFormat(ext)
         }
 
-        progress = 0.2
-
-        // Step 2: Chunk all chapters into 200-800 word sections
-        stage = .chunking
-        var allChunks: [RawChunk] = []
-        for (index, chapter) in extracted.chapters.enumerated() {
-            let chunks = chunkingEngine.chunk(
-                chapter.body,
-                chapterTitle: chapter.title,
-                startPosition: allChunks.count
-            )
-            allChunks.append(contentsOf: chunks)
-            progress = 0.2 + (Double(index + 1) / Double(extracted.chapters.count)) * 0.1
-        }
-
-        totalSections = allChunks.count
         progress = 0.3
 
-        // Step 3: Generate 4 depth levels per section
-        stage = .generatingDepths
-        let sections = await depthGenerator.generateDepths(for: allChunks)
+        // Step 2: Convert chapters directly to RawChunks (preserve chapter = section)
+        let chunks = extracted.chapters.enumerated().map { index, chapter in
+            RawChunk(
+                id: UUID().uuidString,
+                position: index,
+                title: chapter.title,
+                body: chapter.body
+            )
+        }
 
-        // Track progress from depth generator
+        totalSections = chunks.count
+        progress = 0.3
+
+        // Step 3: Generate 4 depth levels per chapter/section
+        stage = .generatingDepths
+        let sections = await depthGenerator.generateDepths(for: chunks)
+
         sectionsCompleted = depthGenerator.sectionsCompleted
         progress = 1.0
         stage = .done

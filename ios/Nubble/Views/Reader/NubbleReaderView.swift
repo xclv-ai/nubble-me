@@ -183,8 +183,11 @@ struct NubbleReaderView: View {
             .onScrollGeometryChange(for: Double.self) { geo in
                 let scrollable = geo.contentSize.height - geo.containerSize.height
                 return scrollable > 0 ? geo.contentOffset.y / scrollable : 0
-            } action: { _, newValue in
-                state.scrollProgress = max(0, min(1, newValue))
+            } action: { oldValue, newValue in
+                let clamped = max(0, min(1, newValue))
+                if abs(clamped - oldValue) > 0.001 {
+                    state.scrollProgress = clamped
+                }
             }
             .gesture(
                 MagnifyGesture()

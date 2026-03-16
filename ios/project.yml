@@ -51,6 +51,7 @@ targets:
           - Satoshi-Bold.otf
           - Zodiak-Regular.otf
           - Zodiak-Bold.otf
+        LSSupportsOpeningDocumentsInPlace: true
         CFBundleDocumentTypes:
           - CFBundleTypeName: ePub Document
             LSHandlerRank: Alternate
@@ -60,6 +61,18 @@ targets:
             LSHandlerRank: Alternate
             LSItemContentTypes:
               - com.adobe.pdf
+          - CFBundleTypeName: Plain Text
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - public.plain-text
+          - CFBundleTypeName: JSON Document
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - public.json
+          - CFBundleTypeName: Markdown Document
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - net.daringfireball.markdown
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: me.nubble.app
@@ -67,3 +80,5 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         SWIFT_STRICT_CONCURRENCY: complete
         ENABLE_USER_SCRIPT_SANDBOXING: true
+        DEVELOPMENT_TEAM: F7TR367W75
+        CODE_SIGN_STYLE: Automatic
