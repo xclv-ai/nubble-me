@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect, forwardRef, useMemo } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, PanInfo } from "framer-motion";
-import { ChevronsLeft, ChevronsRight, Sun, Moon, Minus, Plus } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, Sun, Moon, Minus, Plus, Upload } from "lucide-react";
+import { useLocation } from "wouter";
 import type { ContentDocument, ContentSection } from "@/lib/sample-content";
 
 type DepthLevel = 0 | 1 | 2 | 3;
@@ -30,6 +31,7 @@ interface NubbleReaderProps {
 }
 
 export function NubbleReader({ document: doc }: NubbleReaderProps) {
+  const [, setLocation] = useLocation();
   const [globalDepth, setGlobalDepth] = useState<DepthLevel>(2);
   const [sectionOverrides, setSectionOverrides] = useState<Record<string, DepthLevel>>({});
   const [isDark, setIsDark] = useState(() =>
@@ -320,6 +322,14 @@ export function NubbleReader({ document: doc }: NubbleReaderProps) {
               {activeSection?.title}
             </motion.span>
           </AnimatePresence>
+          <button
+            onClick={() => setLocation("/import")}
+            className="p-1.5 text-muted-foreground/50 hover:text-foreground transition-colors duration-200"
+            title="Import document"
+            data-testid="import-button"
+          >
+            <Upload size={15} />
+          </button>
           <button
             onClick={toggleTheme}
             className="p-1.5 text-muted-foreground/50 hover:text-foreground transition-colors duration-200"
