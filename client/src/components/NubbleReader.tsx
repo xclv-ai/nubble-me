@@ -323,7 +323,7 @@ export function NubbleReader({ document: doc }: NubbleReaderProps) {
             </motion.span>
           </AnimatePresence>
           <button
-            onClick={() => setLocation("/feed")}
+            onClick={() => setLocation("/digest")}
             className="p-1.5 text-muted-foreground/50 hover:text-foreground transition-colors duration-200"
             title="AI News Feed"
             data-testid="feed-button"

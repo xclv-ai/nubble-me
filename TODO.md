@@ -74,3 +74,4 @@
 - [x] [2026-03-17] Nubble skill created — `/nubble` triggers daily feed automation
 - [x] [2026-03-17] Feed UI — card grid (featured/grid/list), `/feed` and `/read-feed/:id` routes
 - [x] [2026-03-17] First feed generated — 2026-03-17.json, 10 stories, all 4 depth levels
+- [x] [2026-03-17] Digest page — `/digest` renders all 10 stories in NubbleReader as one document

@@ -16,6 +16,9 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
   - `npm run feed:generate` script for manual pipeline runs
   - Nubble skill (`~/.claude/skills/nubble/SKILL.md`) for automated daily feed generation
   - First feed: 2026-03-17, 10 AI stories, 4 depth levels each, $0 API cost
+- **Digest page** (`/digest`) — all daily stories as one NubbleReader document
+  - One section per story, sorted by rank, with full depth control
+  - Newspaper icon in NubbleReader header now links to `/digest`
 
 ---
 

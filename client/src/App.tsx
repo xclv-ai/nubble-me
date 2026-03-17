@@ -13,6 +13,7 @@ import ImportPage from "@/pages/import";
 import ReadPage from "@/pages/read";
 import FeedPage from "@/pages/feed";
 import ReadFeedPage from "@/pages/read-feed";
+import DigestPage from "@/pages/digest";
 
 function AppRouter() {
   return (
@@ -25,6 +26,7 @@ function AppRouter() {
       <Route path="/read/:id" component={ReadPage} />
       <Route path="/feed" component={FeedPage} />
       <Route path="/read-feed/:id" component={ReadFeedPage} />
+      <Route path="/digest" component={DigestPage} />
       <Route component={NotFound} />
     </Switch>
   );
