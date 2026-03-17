@@ -206,6 +206,12 @@ export default function FeedPage() {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 
+  // Override body overflow:hidden (set globally for NubbleReader)
+  useEffect(() => {
+    document.body.style.overflow = "auto";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
   const {
     data: feed,
     isLoading,
