@@ -165,13 +165,13 @@ async function runPipeline(): Promise<void> {
 TITLE: [headline]
 SOURCE: [publication name]
 URL: [source URL if available, otherwise "unknown"]
-WHY: [one sentence about why this matters]
+WHY: [one sentence about what this CHANGES — not what it costs, but what's different now]
 
 ---STORY 2---
 TITLE: ...
 (continue through STORY 10)
 
-Focus on: major LLM releases, funding rounds, regulatory changes, breakthrough research, industry shifts. Prioritize stories with the broadest impact.`;
+Focus on: what's genuinely NEW and how it changes something — new capabilities, new limitations exposed, new ways people will work or build, shifts in who has power. De-prioritize funding rounds and valuations unless the money itself changes the game. Prioritize stories where something actually shifted — not just announcements.`;
 
     const rankOutput = await runNLM(["notebook", "query", notebookId, rankPrompt], 120000);
     const stories = parseStoryList(rankOutput);
@@ -185,10 +185,10 @@ Focus on: major LLM releases, funding rounds, regulatory changes, breakthrough r
       const depthPrompt = `For the story "${story.title}" from ${story.source}, produce three depth versions. Output EXACTLY in this format:
 
 ---SUMMARY---
-(One sentence, max 20 words. The single most important fact.)
+(One sentence, max 20 words. What changed and why it matters — not dollar amounts.)
 
 ---CONDENSED---
-(2-3 sentences. Key facts only, no filler.)
+(2-3 sentences. What's new, what it changes, who it affects. No filler.)
 
 ---EXPANDED---
 Write in the style of Richard Feynman — clear, provocative, no jargon without explanation. Say what things ACTUALLY mean. If something is uncertain, say so. Use this exact structure with bold markdown headers:
