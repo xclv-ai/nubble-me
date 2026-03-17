@@ -12,6 +12,7 @@ struct ArticleExtractor: Sendable {
         let imageUrl: URL?
         let wordCount: Int
         let siteName: String?
+        let isPaywalled: Bool
     }
 
     func extract(from url: URL) async throws -> ExtractedArticle {
@@ -51,19 +52,32 @@ struct ArticleExtractor: Sendable {
         // 5. Find main content via readability scoring
         let contentElement = try findMainContent(doc)
 
-        // 6. Convert to structured text
+        // 6. Detect paywall
+        let isPaywalled = try detectPaywall(doc, contentElement: contentElement)
+
+        // 7. Convert to structured text
         let bodyText = try htmlToStructuredText(contentElement)
 
         let wordCount = bodyText.split(whereSeparator: { $0.isWhitespace }).count
+
+        // Cap at 10,000 words for very long articles
+        let cappedText: String
+        if wordCount > 10_000 {
+            let words = bodyText.split(whereSeparator: { $0.isWhitespace }).prefix(10_000)
+            cappedText = words.joined(separator: " ") + "\n\n[Article truncated. Read the full article at the original source.]"
+        } else {
+            cappedText = bodyText
+        }
 
         return ExtractedArticle(
             title: title,
             author: author,
             publishedDate: publishedDate,
-            bodyText: bodyText,
+            bodyText: cappedText,
             imageUrl: imageUrl,
-            wordCount: wordCount,
-            siteName: siteName
+            wordCount: min(wordCount, 10_000),
+            siteName: siteName,
+            isPaywalled: isPaywalled
         )
     }
 
@@ -85,6 +99,33 @@ struct ArticleExtractor: Sendable {
             return h1
         }
         return "Untitled"
+    }
+
+    // MARK: - Paywall Detection
+
+    private func detectPaywall(_ doc: Document, contentElement: Element) throws -> Bool {
+        // Check for paywall-related class names
+        let paywallSelectors = [
+            ".paywall", ".gate", ".premium-content", ".subscribe-wall",
+            "[data-paywall]", ".tp-modal", ".piano-offer",
+        ]
+        for selector in paywallSelectors {
+            if try !doc.select(selector).isEmpty() { return true }
+        }
+
+        // Check for very short content with subscription keywords
+        let bodyText = try contentElement.text()
+        let wordCount = bodyText.split(separator: " ").count
+        let lowerText = bodyText.lowercased()
+
+        if wordCount < 100 {
+            let subscribeKeywords = ["subscribe", "sign in", "log in", "premium", "member"]
+            for keyword in subscribeKeywords {
+                if lowerText.contains(keyword) { return true }
+            }
+        }
+
+        return false
     }
 
     // MARK: - Meta Extraction

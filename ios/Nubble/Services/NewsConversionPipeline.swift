@@ -29,6 +29,14 @@ final class NewsConversionPipeline {
         stage = .extracting
         let extracted = try await articleExtractor.extract(from: article.articleUrl)
         progress = 0.25
+
+        // Update paywall status
+        if extracted.isPaywalled {
+            if let idx = feedState.articles.firstIndex(where: { $0.id == article.id }) {
+                feedState.articles[idx].isPaywalled = true
+            }
+        }
+
         feedState.updateProcessingState(article.id, state: .chunking)
 
         // 2. Chunk with news-tuned parameters

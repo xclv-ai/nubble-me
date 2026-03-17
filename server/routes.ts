@@ -194,5 +194,33 @@ export async function registerRoutes(
     res.json(feedAggregator.getTopics());
   });
 
+  // Add a custom feed source
+  app.post("/api/feed/sources", (req, res) => {
+    try {
+      const { name, url, topicIds } = req.body;
+      if (!url) {
+        return res.status(400).json({ error: "URL is required" });
+      }
+      const source = feedAggregator.addSource({
+        name: name || new URL(url).hostname,
+        url,
+        topicIds: topicIds || ["ai-news"],
+      });
+      res.json(source);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+
+  // Remove a feed source
+  app.delete("/api/feed/sources/:id", (req, res) => {
+    const removed = feedAggregator.removeSource(req.params.id);
+    if (removed) {
+      res.json({ removed: true });
+    } else {
+      res.status(404).json({ error: "Source not found" });
+    }
+  });
+
   return httpServer;
 }

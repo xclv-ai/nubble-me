@@ -29,6 +29,7 @@ struct NewsArticle: Identifiable, Sendable {
     var lastReadAt: Date?
     var processedAt: Date?
     var errorMessage: String?
+    var isPaywalled: Bool
 
     var estimatedReadTime: Int {
         let words = wordCount ?? snippet.split(separator: " ").count

@@ -399,7 +399,13 @@ export class FeedAggregator {
       (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
     );
 
-    this.cachedArticles = deduplicated;
+    // Auto-prune articles older than 30 days
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const pruned = deduplicated.filter(
+      (a) => new Date(a.publishedAt) > thirtyDaysAgo,
+    );
+
+    this.cachedArticles = pruned;
     this.lastRefreshAt = new Date();
 
     log(
@@ -442,6 +448,33 @@ export class FeedAggregator {
 
   getTopics(): NewsTopic[] {
     return DEFAULT_TOPICS;
+  }
+
+  addSource(opts: { name: string; url: string; topicIds: string[] }): FeedSource {
+    // Validate URL
+    new URL(opts.url); // throws if invalid
+
+    const source: FeedSource = {
+      id: `custom-${Date.now()}`,
+      name: opts.name,
+      url: opts.url,
+      type: "rss",
+      topicIds: opts.topicIds,
+      refreshIntervalMinutes: 30,
+      isActive: true,
+    };
+
+    this.sources.push(source);
+    log(`Added custom source: ${source.name} (${source.url})`, "feed");
+    return source;
+  }
+
+  removeSource(id: string): boolean {
+    const index = this.sources.findIndex((s) => s.id === id);
+    if (index === -1) return false;
+    const removed = this.sources.splice(index, 1)[0];
+    log(`Removed source: ${removed.name}`, "feed");
+    return true;
   }
 
   startAutoRefresh(intervalMinutes: number = 15): void {

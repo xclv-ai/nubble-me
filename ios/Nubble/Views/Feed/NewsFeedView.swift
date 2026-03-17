@@ -5,6 +5,8 @@ struct NewsFeedView: View {
     @State private var feedService = FeedService()
     @State private var selectedArticle: NewsArticle?
     @State private var processingArticle: NewsArticle?
+    @State private var showSaved = false
+    @State private var showTopicManager = false
     @Namespace private var namespace
     @Environment(\.colorScheme) private var colorScheme
 
@@ -45,6 +47,15 @@ struct NewsFeedView: View {
                     }
                 }
             }
+            .navigationDestination(isPresented: $showSaved) {
+                SavedArticlesView(feedState: feedState) { article in
+                    showSaved = false
+                    tapArticle(article)
+                }
+            }
+            .sheet(isPresented: $showTopicManager) {
+                TopicManagerView(topics: $feedState.topics)
+            }
             .task {
                 await loadFeed()
             }
@@ -66,15 +77,33 @@ struct NewsFeedView: View {
 
             Spacer()
 
-            if feedState.unreadCount > 0 {
-                Text("\(feedState.unreadCount)")
-                    .font(.custom("Satoshi-Medium", size: 11, relativeTo: .caption))
-                    .foregroundStyle(NubbleColors.primary(for: colorScheme))
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(
-                        Capsule().fill(NubbleColors.primary(for: colorScheme).opacity(0.12))
-                    )
+            HStack(spacing: 14) {
+                // Saved articles
+                let savedCount = feedState.articles.filter { $0.isSaved }.count
+                Button { showSaved = true } label: {
+                    Image(systemName: savedCount > 0 ? "bookmark.fill" : "bookmark")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.6))
+                }
+
+                // Topic manager
+                Button { showTopicManager = true } label: {
+                    Image(systemName: "line.3.horizontal.decrease")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.6))
+                }
+
+                // Unread badge
+                if feedState.unreadCount > 0 {
+                    Text("\(feedState.unreadCount)")
+                        .font(.custom("Satoshi-Medium", size: 11, relativeTo: .caption))
+                        .foregroundStyle(NubbleColors.primary(for: colorScheme))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(
+                            Capsule().fill(NubbleColors.primary(for: colorScheme).opacity(0.12))
+                        )
+                }
             }
         }
         .padding(.horizontal, 20)
@@ -101,6 +130,18 @@ struct NewsFeedView: View {
                 } else if feedState.articles.isEmpty {
                     emptyState
                 } else {
+                    // Last refreshed indicator
+                    if let lastRefreshed = feedState.lastRefreshedAt {
+                        HStack {
+                            Spacer()
+                            Text("Updated \(lastRefreshed.timeAgo) ago")
+                                .font(.custom("Satoshi-Regular", size: 10, relativeTo: .caption2))
+                                .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.4))
+                            Spacer()
+                        }
+                        .padding(.bottom, 4)
+                    }
+
                     // Featured card (first article)
                     if let featured = feedState.filteredArticles.first {
                         NewsCardView(

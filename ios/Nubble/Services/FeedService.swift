@@ -93,7 +93,8 @@ struct FeedService: Sendable {
                 readProgress: 0,
                 lastReadAt: nil,
                 processedAt: nil,
-                errorMessage: nil
+                errorMessage: nil,
+                isPaywalled: false
             )
         }
 

@@ -32,6 +32,18 @@ struct NewsCardView: View {
         }
         .buttonStyle(.plain)
         .opacity(article.isRead ? 0.7 : 1.0)
+        .overlay(alignment: .bottom) {
+            // Reading progress indicator for partially-read articles
+            if article.readProgress > 0 && article.readProgress < 1 {
+                GeometryReader { geo in
+                    Rectangle()
+                        .fill(NubbleColors.primary(for: colorScheme).opacity(0.4))
+                        .frame(width: geo.size.width * article.readProgress, height: 2)
+                }
+                .frame(height: 2)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+        }
         .contextMenu {
             Button { onSave() } label: {
                 Label(
@@ -39,6 +51,16 @@ struct NewsCardView: View {
                     systemImage: article.isSaved ? "bookmark.fill" : "bookmark"
                 )
             }
+
+            if article.processingState == .failed {
+                Button {
+                    // Reset for retry
+                    onTap()
+                } label: {
+                    Label("Retry", systemImage: "arrow.clockwise")
+                }
+            }
+
             ShareLink(item: article.articleUrl)
         }
     }
@@ -135,10 +157,25 @@ struct NewsCardView: View {
             Text("\(article.estimatedReadTime) min")
                 .font(Typography.uiSmall)
 
+            if article.isPaywalled {
+                Text("PAYWALL")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(.orange)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 1)
+                    .background(
+                        Capsule().fill(.orange.opacity(0.12))
+                    )
+            }
+
             Spacer()
 
             if article.processingState == .ready {
                 DepthIndicator(depth: 0, size: .sm)
+            } else if article.processingState == .failed {
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.system(size: 9))
+                    .foregroundStyle(.red.opacity(0.6))
             } else if article.isSaved {
                 Image(systemName: "bookmark.fill")
                     .font(.system(size: 9))

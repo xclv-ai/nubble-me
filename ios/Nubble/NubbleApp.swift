@@ -24,6 +24,10 @@ struct NubbleApp: App {
                         }
                     }
                 }
+
+                Tab("Settings", systemImage: "gearshape") {
+                    SettingsView()
+                }
             }
             .tint(NubbleColors.Light.primary)
         }
