@@ -7,8 +7,12 @@ struct NewsFeedView: View {
     @State private var processingArticle: NewsArticle?
     @State private var showSaved = false
     @State private var showTopicManager = false
+    @State private var isLoadingMore = false
+    @State private var hasMorePages = true
     @Namespace private var namespace
     @Environment(\.colorScheme) private var colorScheme
+
+    private let pageSize = 50
 
     var body: some View {
         NavigationStack {
@@ -57,6 +61,7 @@ struct NewsFeedView: View {
                 TopicManagerView(topics: $feedState.topics)
             }
             .task {
+                await feedState.loadFromDisk()
                 await loadFeed()
             }
         }
@@ -154,7 +159,8 @@ struct NewsFeedView: View {
                     }
 
                     // Remaining articles as compact cards
-                    ForEach(feedState.filteredArticles.dropFirst()) { article in
+                    let remaining = Array(feedState.filteredArticles.dropFirst())
+                    ForEach(remaining) { article in
                         NewsCardView(
                             article: article,
                             style: .compact,
@@ -162,6 +168,24 @@ struct NewsFeedView: View {
                             onSave: { feedState.toggleSaved(article.id) }
                         )
                         .matchedTransitionSource(id: article.id, in: namespace)
+                        .onAppear {
+                            // Infinite scroll: load more when near the end
+                            if article.id == remaining.last?.id {
+                                Task { await loadMoreIfNeeded() }
+                            }
+                        }
+                    }
+
+                    // Loading more indicator
+                    if isLoadingMore {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                                .controlSize(.small)
+                                .tint(NubbleColors.muted(for: colorScheme))
+                            Spacer()
+                        }
+                        .padding(.vertical, 12)
                     }
                 }
             }
@@ -238,24 +262,58 @@ struct NewsFeedView: View {
 
     private func loadFeed() async {
         feedState.isRefreshing = true
+        hasMorePages = true
         do {
             let topics = try await feedService.fetchTopics()
             feedState.topics = topics
 
-            let (articles, lastRefreshed) = try await feedService.fetchFeed()
-            feedState.articles = articles
+            let (articles, lastRefreshed) = try await feedService.fetchFeed(limit: pageSize, offset: 0)
+            // Merge with cached state (saved, read, documents)
+            let existingById = Dictionary(uniqueKeysWithValues: feedState.articles.map { ($0.id, $0) })
+            feedState.articles = articles.map { article in
+                var merged = article
+                if let existing = existingById[article.id] {
+                    merged.isSaved = existing.isSaved
+                    merged.isRead = existing.isRead
+                    merged.readProgress = existing.readProgress
+                    merged.document = existing.document
+                    merged.processingState = existing.processingState
+                }
+                return merged
+            }
             feedState.lastRefreshedAt = lastRefreshed
+            hasMorePages = articles.count >= pageSize
         } catch {
             feedState.error = error.localizedDescription
         }
         feedState.isRefreshing = false
     }
 
+    private func loadMoreIfNeeded() async {
+        guard !isLoadingMore, hasMorePages, !feedState.isRefreshing else { return }
+        isLoadingMore = true
+        do {
+            let offset = feedState.articles.count
+            let (newArticles, _) = try await feedService.fetchFeed(limit: pageSize, offset: offset)
+            if newArticles.isEmpty {
+                hasMorePages = false
+            } else {
+                let existingIds = Set(feedState.articles.map(\.id))
+                let unique = newArticles.filter { !existingIds.contains($0.id) }
+                feedState.articles.append(contentsOf: unique)
+                hasMorePages = newArticles.count >= pageSize
+            }
+        } catch {
+            // Silently fail on pagination — user can still pull-to-refresh
+        }
+        isLoadingMore = false
+    }
+
     private func refreshFeed() async {
         feedState.isRefreshing = true
         do {
             try await feedService.triggerRefresh()
-            let (articles, lastRefreshed) = try await feedService.fetchFeed()
+            let (articles, lastRefreshed) = try await feedService.fetchFeed(limit: pageSize, offset: 0)
             // Merge: keep processing state and saved status of existing articles
             let existingById = Dictionary(uniqueKeysWithValues: feedState.articles.map { ($0.id, $0) })
             feedState.articles = articles.map { article in
@@ -271,6 +329,7 @@ struct NewsFeedView: View {
             }
             feedState.lastRefreshedAt = lastRefreshed
             feedState.error = nil
+            hasMorePages = articles.count >= pageSize
         } catch {
             feedState.error = error.localizedDescription
         }

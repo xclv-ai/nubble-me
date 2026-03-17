@@ -46,6 +46,11 @@ enum FeedRefreshScheduler {
             do {
                 let service = FeedService()
                 try await service.triggerRefresh()
+
+                // Fetch latest articles and persist them
+                let (articles, _) = try await service.fetchFeed()
+                await FeedPersistence.shared.saveArticles(articles)
+
                 task.setTaskCompleted(success: true)
             } catch {
                 task.setTaskCompleted(success: false)
@@ -61,8 +66,42 @@ enum FeedRefreshScheduler {
         // Schedule next processing run
         scheduleArticleProcessing()
 
-        // Background article pre-processing would go here
-        // For now, mark as complete
-        task.setTaskCompleted(success: true)
+        let processingTask = Task { @MainActor in
+            let persistence = FeedPersistence.shared
+            let articles = await persistence.loadArticles()
+
+            // Pre-process top 5 saved articles that don't have documents yet
+            let candidates = articles
+                .filter { $0.isSaved && $0.document == nil && $0.processingState != .failed }
+                .prefix(5)
+
+            guard !candidates.isEmpty else {
+                task.setTaskCompleted(success: true)
+                return
+            }
+
+            let pipeline = NewsConversionPipeline()
+            let feedState = FeedState()
+            feedState.articles = articles
+
+            for article in candidates {
+                guard !Task.isCancelled else { break }
+                do {
+                    let document = try await pipeline.convert(article: article, feedState: feedState)
+                    await persistence.saveDocument(articleId: article.id, document: document)
+                } catch {
+                    // Skip failed articles, continue with next
+                    continue
+                }
+            }
+
+            // Persist updated article states
+            await persistence.saveArticles(feedState.articles)
+            task.setTaskCompleted(success: true)
+        }
+
+        task.expirationHandler = {
+            processingTask.cancel()
+        }
     }
 }

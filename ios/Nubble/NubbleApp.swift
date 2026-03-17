@@ -4,6 +4,11 @@ import SwiftUI
 struct NubbleApp: App {
     @State private var currentDocument: ContentDocument = SampleContent.paradoxOfChoice
     @State private var showImport = false
+    @Environment(\.scenePhase) private var scenePhase
+
+    init() {
+        FeedRefreshScheduler.register()
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -30,6 +35,12 @@ struct NubbleApp: App {
                 }
             }
             .tint(NubbleColors.Light.primary)
+            .onChange(of: scenePhase) { _, newPhase in
+                if newPhase == .background {
+                    FeedRefreshScheduler.scheduleFeedRefresh()
+                    FeedRefreshScheduler.scheduleArticleProcessing()
+                }
+            }
         }
     }
 }
