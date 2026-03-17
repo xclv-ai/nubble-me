@@ -167,8 +167,10 @@ export async function registerRoutes(
     const topics = req.query.topics
       ? String(req.query.topics).split(",")
       : undefined;
-    const limit = req.query.limit ? Number(req.query.limit) : 50;
-    const offset = req.query.offset ? Number(req.query.offset) : 0;
+    const rawLimit = req.query.limit ? Number(req.query.limit) : 50;
+    const rawOffset = req.query.offset ? Number(req.query.offset) : 0;
+    const limit = Math.min(Math.max(isNaN(rawLimit) ? 50 : rawLimit, 1), 200);
+    const offset = Math.max(isNaN(rawOffset) ? 0 : rawOffset, 0);
 
     const result = feedAggregator.getArticles({ topics, limit, offset });
     res.json(result);

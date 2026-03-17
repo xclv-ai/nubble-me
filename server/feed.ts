@@ -269,13 +269,14 @@ export async function parseFeed(source: FeedSource): Promise<FeedArticle[]> {
       if (!link) return;
 
       const pubDateStr = item.find("pubDate, published, updated").first().text().trim();
-      const publishedAt = pubDateStr ? new Date(pubDateStr) : new Date();
+      const parsedDate = pubDateStr ? new Date(pubDateStr) : null;
+      const publishedAt = parsedDate && !isNaN(parsedDate.getTime()) ? parsedDate : new Date();
 
       // Skip articles older than 7 days
       const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
       if (publishedAt < sevenDaysAgo) return;
 
-      const descriptionHtml = item.find("description, summary, content\\:encoded").first().text() || "";
+      const descriptionHtml = item.find("description, summary, content\\:encoded").first().html() || "";
       const snippet = stripHtml(descriptionHtml).slice(0, 300);
 
       const author = item.find("dc\\:creator, author name, author").first().text().trim() || null;
@@ -315,12 +316,10 @@ export async function parseFeed(source: FeedSource): Promise<FeedArticle[]> {
 // ── Deduplication ──────────────────────────────────────────────────────────
 
 function jaccard(a: string, b: string): number {
-  const wordsA = a.toLowerCase().split(/\s+/);
-  const wordsB = b.toLowerCase().split(/\s+/);
-  const setA = new Set(wordsA);
-  const setB = new Set(wordsB);
+  const setA = new Set(a.toLowerCase().split(/\s+/));
+  const setB = new Set(b.toLowerCase().split(/\s+/));
   let intersectionCount = 0;
-  for (const word of wordsA) {
+  for (const word of setA) {
     if (setB.has(word)) intersectionCount++;
   }
   const unionCount = setA.size + setB.size - intersectionCount;
@@ -361,59 +360,70 @@ export class FeedAggregator {
   private cachedArticles: FeedArticle[] = [];
   private lastRefreshAt: Date | null = null;
   private refreshTimer: ReturnType<typeof setInterval> | null = null;
+  private isRefreshing = false;
 
   constructor(sources: FeedSource[] = DEFAULT_FEED_SOURCES) {
     this.sources = sources;
   }
 
   async refreshAll(): Promise<{ total: number; errors: string[] }> {
-    log(`Refreshing ${this.sources.filter((s) => s.isActive).length} feed sources...`, "feed");
+    if (this.isRefreshing) {
+      log("Refresh already in progress, skipping", "feed");
+      return { total: this.cachedArticles.length, errors: [] };
+    }
+    this.isRefreshing = true;
 
-    const errors: string[] = [];
-    const allArticles: FeedArticle[] = [];
+    try {
+      log(`Refreshing ${this.sources.filter((s) => s.isActive).length} feed sources...`, "feed");
 
-    // Fetch all feeds concurrently (max 4 at a time)
-    const activeSources = this.sources.filter((s) => s.isActive);
-    const batchSize = 4;
+      const errors: string[] = [];
+      const allArticles: FeedArticle[] = [];
 
-    for (let i = 0; i < activeSources.length; i += batchSize) {
-      const batch = activeSources.slice(i, i + batchSize);
-      const results = await Promise.allSettled(
-        batch.map((source) => parseFeed(source)),
+      // Fetch all feeds concurrently (max 4 at a time)
+      const activeSources = this.sources.filter((s) => s.isActive);
+      const batchSize = 4;
+
+      for (let i = 0; i < activeSources.length; i += batchSize) {
+        const batch = activeSources.slice(i, i + batchSize);
+        const results = await Promise.allSettled(
+          batch.map((source) => parseFeed(source)),
+        );
+
+        results.forEach((result, idx) => {
+          if (result.status === "fulfilled") {
+            allArticles.push(...result.value);
+          } else {
+            errors.push(`${batch[idx].name}: ${result.reason}`);
+          }
+        });
+      }
+
+      // Deduplicate
+      const deduplicated = deduplicateArticles(allArticles);
+
+      // Sort by publish date (newest first)
+      deduplicated.sort(
+        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
       );
 
-      results.forEach((result, idx) => {
-        if (result.status === "fulfilled") {
-          allArticles.push(...result.value);
-        } else {
-          errors.push(`${batch[idx].name}: ${result.reason}`);
-        }
-      });
+      // Auto-prune articles older than 30 days
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const pruned = deduplicated.filter(
+        (a) => new Date(a.publishedAt) > thirtyDaysAgo,
+      );
+
+      this.cachedArticles = pruned;
+      this.lastRefreshAt = new Date();
+
+      log(
+        `Feed refresh complete: ${deduplicated.length} articles from ${activeSources.length} sources (${errors.length} errors)`,
+        "feed",
+      );
+
+      return { total: deduplicated.length, errors };
+    } finally {
+      this.isRefreshing = false;
     }
-
-    // Deduplicate
-    const deduplicated = deduplicateArticles(allArticles);
-
-    // Sort by publish date (newest first)
-    deduplicated.sort(
-      (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
-    );
-
-    // Auto-prune articles older than 30 days
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const pruned = deduplicated.filter(
-      (a) => new Date(a.publishedAt) > thirtyDaysAgo,
-    );
-
-    this.cachedArticles = pruned;
-    this.lastRefreshAt = new Date();
-
-    log(
-      `Feed refresh complete: ${deduplicated.length} articles from ${activeSources.length} sources (${errors.length} errors)`,
-      "feed",
-    );
-
-    return { total: deduplicated.length, errors };
   }
 
   getArticles(options?: {
@@ -452,7 +462,13 @@ export class FeedAggregator {
 
   addSource(opts: { name: string; url: string; topicIds: string[] }): FeedSource {
     // Validate URL
-    new URL(opts.url); // throws if invalid
+    const parsed = new URL(opts.url); // throws if invalid
+
+    // Check for duplicate URL
+    const normalizedUrl = canonicalUrl(opts.url);
+    if (this.sources.some((s) => canonicalUrl(s.url) === normalizedUrl)) {
+      throw new Error(`Feed source with URL "${opts.url}" already exists`);
+    }
 
     const source: FeedSource = {
       id: `custom-${Date.now()}`,

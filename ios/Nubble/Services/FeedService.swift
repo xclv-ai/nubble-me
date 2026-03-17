@@ -42,7 +42,9 @@ struct FeedService: Sendable {
     // MARK: - Fetch Feed
 
     func fetchFeed(topics: [String]? = nil, limit: Int = 50, offset: Int = 0) async throws -> ([NewsArticle], Date?) {
-        var components = URLComponents(url: baseURL.appendingPathComponent("/api/feed"), resolvingAgainstBaseURL: false)!
+        guard var components = URLComponents(url: baseURL.appendingPathComponent("/api/feed"), resolvingAgainstBaseURL: false) else {
+            throw FeedError.serverError
+        }
         var queryItems: [URLQueryItem] = [
             URLQueryItem(name: "limit", value: String(limit)),
             URLQueryItem(name: "offset", value: String(offset)),
@@ -52,7 +54,10 @@ struct FeedService: Sendable {
         }
         components.queryItems = queryItems
 
-        let (data, response) = try await URLSession.shared.data(from: components.url!)
+        guard let url = components.url else {
+            throw FeedError.serverError
+        }
+        let (data, response) = try await URLSession.shared.data(from: url)
 
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw FeedError.serverError
