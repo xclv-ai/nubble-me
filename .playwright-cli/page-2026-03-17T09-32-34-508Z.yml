@@ -1,0 +1,86 @@
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e215]:
+    - banner [ref=e216]:
+      - generic [ref=e217]:
+        - heading "nubble" [level=1] [ref=e218]
+        - paragraph [ref=e219]: Tuesday, March 17, 2026 · 10 stories
+      - button "Reader" [ref=e220] [cursor=pointer]
+    - button "1 OpenAI raises $110B at $840B valuation Fox Business The largest private funding round in history signals that the AI arms race has entered a new phase where only companies with access to tens of billions in capital can compete at the frontier." [ref=e222] [cursor=pointer]:
+      - generic [ref=e223]:
+        - generic [ref=e224]: "1"
+        - heading "OpenAI raises $110B at $840B valuation" [level=2] [ref=e225]
+      - link "Fox Business" [ref=e227]:
+        - /url: ""
+        - text: Fox Business
+        - img [ref=e228]
+      - paragraph [ref=e234]: The largest private funding round in history signals that the AI arms race has entered a new phase where only companies with access to tens of billions in capital can compete at the frontier.
+    - generic [ref=e235]:
+      - button "2 Pentagon blacklists Anthropic over AI safety guardrail disputes OPB/Worth This unprecedented clash between a leading AI company and the US government sets a dangerous precedent for whether private companies or the military will control the ethical boundaries of AI." [ref=e236] [cursor=pointer]:
+        - generic [ref=e237]:
+          - generic [ref=e238]: "2"
+          - heading "Pentagon blacklists Anthropic over AI safety guardrail disputes" [level=3] [ref=e239]
+        - generic [ref=e241]: OPB/Worth
+        - paragraph [ref=e244]: This unprecedented clash between a leading AI company and the US government sets a dangerous precedent for whether private companies or the military will control the ethical boundaries of AI.
+      - button "3 OpenAI launches GPT-5.4 with native agentic and coding capabilities TLDL/Julian Goldie GPT-5.4 marks the transition from AI chatbots to autonomous AI agents, with native computer use and coding capabilities that could reshape enterprise software development." [ref=e245] [cursor=pointer]:
+        - generic [ref=e246]:
+          - generic [ref=e247]: "3"
+          - heading "OpenAI launches GPT-5.4 with native agentic and coding capabilities" [level=3] [ref=e248]
+        - generic [ref=e250]: TLDL/Julian Goldie
+        - paragraph [ref=e253]: GPT-5.4 marks the transition from AI chatbots to autonomous AI agents, with native computer use and coding capabilities that could reshape enterprise software development.
+      - button "4 Nvidia unveils Vera Rubin and Feynman computing platforms NVIDIA GTC Nvidia's next-generation architectures cement the company as the indispensable infrastructure provider for the entire AI industry, from cloud hyperscalers to space operations." [ref=e254] [cursor=pointer]:
+        - generic [ref=e255]:
+          - generic [ref=e256]: "4"
+          - heading "Nvidia unveils Vera Rubin and Feynman computing platforms" [level=3] [ref=e257]
+        - generic [ref=e259]: NVIDIA GTC
+        - paragraph [ref=e262]: Nvidia's next-generation architectures cement the company as the indispensable infrastructure provider for the entire AI industry, from cloud hyperscalers to space operations.
+    - generic [ref=e263]:
+      - button "5 DeepSeek V3.2 challenges US AI dominance with breakthrough pricing TLDL | DeepSeek's GPT-4 quality at 10x lower cost forces US labs to compete on price and proves that non-US entities can rival Silicon Valley's most advanced AI products." [ref=e264] [cursor=pointer]:
+        - generic [ref=e265]: "5"
+        - generic [ref=e266]:
+          - heading "DeepSeek V3.2 challenges US AI dominance with breakthrough pricing" [level=3] [ref=e267]
+          - generic [ref=e268]:
+            - generic [ref=e269]: TLDL
+            - generic [ref=e270]: "|"
+            - generic [ref=e271]: DeepSeek's GPT-4 quality at 10x lower cost forces US labs to compete on price and proves that non-US entities can rival Silicon Valley's most advanced AI products.
+      - button "6 Uber and Nvidia partner to launch autonomous robotaxi fleet ZDNET | The largest planned robotaxi deployment in history — 28 cities by 2028 — marks the 'ChatGPT moment' for self-driving cars and positions Nvidia at the center of the autonomous vehicle ecosystem." [ref=e272] [cursor=pointer]:
+        - generic [ref=e273]: "6"
+        - generic [ref=e274]:
+          - heading "Uber and Nvidia partner to launch autonomous robotaxi fleet" [level=3] [ref=e275]
+          - generic [ref=e276]:
+            - generic [ref=e277]: ZDNET
+            - generic [ref=e278]: "|"
+            - generic [ref=e279]: The largest planned robotaxi deployment in history — 28 cities by 2028 — marks the 'ChatGPT moment' for self-driving cars and positions Nvidia at the center of the autonomous vehicle ecosystem.
+      - button "7 Nvidia supports OpenClaw with NemoClaw AI stack NVIDIA GTC | NemoClaw establishes the standard operating system architecture for agentic computers, enabling enterprises to deploy autonomous AI agents on-premises with full governance and security." [ref=e280] [cursor=pointer]:
+        - generic [ref=e281]: "7"
+        - generic [ref=e282]:
+          - heading "Nvidia supports OpenClaw with NemoClaw AI stack" [level=3] [ref=e283]
+          - generic [ref=e284]:
+            - generic [ref=e285]: NVIDIA GTC
+            - generic [ref=e286]: "|"
+            - generic [ref=e287]: NemoClaw establishes the standard operating system architecture for agentic computers, enabling enterprises to deploy autonomous AI agents on-premises with full governance and security.
+      - button "8 DeepMind and Nvidia expand AlphaFold protein database NVIDIA GTC | Adding millions of protein structures with 100x faster inference removes major computational barriers for drug discovery and democratizes access to AI-driven biology research worldwide." [ref=e288] [cursor=pointer]:
+        - generic [ref=e289]: "8"
+        - generic [ref=e290]:
+          - heading "DeepMind and Nvidia expand AlphaFold protein database" [level=3] [ref=e291]
+          - generic [ref=e292]:
+            - generic [ref=e293]: NVIDIA GTC
+            - generic [ref=e294]: "|"
+            - generic [ref=e295]: Adding millions of protein structures with 100x faster inference removes major computational barriers for drug discovery and democratizes access to AI-driven biology research worldwide.
+      - button "9 Nvidia releases open physical AI models for healthcare robotics NVIDIA GTC | The first open-source physical AI platform for healthcare transitions medical AI from screens into the operating room, with adoption from Johnson & Johnson and leading surgical robotics companies." [ref=e296] [cursor=pointer]:
+        - generic [ref=e297]: "9"
+        - generic [ref=e298]:
+          - heading "Nvidia releases open physical AI models for healthcare robotics" [level=3] [ref=e299]
+          - generic [ref=e300]:
+            - generic [ref=e301]: NVIDIA GTC
+            - generic [ref=e302]: "|"
+            - generic [ref=e303]: The first open-source physical AI platform for healthcare transitions medical AI from screens into the operating room, with adoption from Johnson & Johnson and leading surgical robotics companies.
+      - button "10 Microsoft integrates Anthropic models into Copilot Cowork VentureBeat | Despite its deep OpenAI partnership, Microsoft's move to integrate Anthropic models signals that enterprise productivity platforms will increasingly rely on a diverse ecosystem of frontier AI models." [ref=e304] [cursor=pointer]:
+        - generic [ref=e305]: "10"
+        - generic [ref=e306]:
+          - heading "Microsoft integrates Anthropic models into Copilot Cowork" [level=3] [ref=e307]
+          - generic [ref=e308]:
+            - generic [ref=e309]: VentureBeat
+            - generic [ref=e310]: "|"
+            - generic [ref=e311]: Despite its deep OpenAI partnership, Microsoft's move to integrate Anthropic models signals that enterprise productivity platforms will increasingly rely on a diverse ecosystem of frontier AI models.

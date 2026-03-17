@@ -1,0 +1,61 @@
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e152]:
+    - button "Feed" [ref=e153] [cursor=pointer]:
+      - img [ref=e154]
+      - text: Feed
+    - generic [ref=e156]:
+      - banner [ref=e157]:
+        - generic [ref=e159]:
+          - img "nubble logo" [ref=e160]
+          - generic [ref=e163]: nubble
+        - generic [ref=e164]:
+          - button [ref=e165] [cursor=pointer]:
+            - img [ref=e166]
+          - button [ref=e167] [cursor=pointer]:
+            - img [ref=e168]
+          - generic [ref=e169]:
+            - generic [ref=e170]: Standard
+            - generic [ref=e171]: 1 min
+        - generic [ref=e172]:
+          - generic [ref=e173]: 01OpenAI raises $110B at $840B valuation
+          - button "Import document" [ref=e174] [cursor=pointer]:
+            - img [ref=e175]
+          - button [ref=e178] [cursor=pointer]:
+            - img [ref=e180]
+      - generic [ref=e182]:
+        - generic [ref=e183]:
+          - generic:
+            - 'button "Jump to: OpenAI raises $110B at $840B valuation"'
+            - generic:
+              - generic: OpenAI raises $110B at $840B valuation
+        - generic [ref=e185]:
+          - generic [ref=e186]:
+            - heading "OpenAI raises $110B at $840B valuation" [level=1] [ref=e187]
+            - paragraph [ref=e189]: Fox Business
+          - generic [ref=e190]:
+            - generic:
+              - generic:
+                - generic: 👆
+                - generic: swipe to change depth
+            - generic [ref=e192]:
+              - generic [ref=e195]: "01"
+              - heading "OpenAI raises $110B at $840B valuation" [level=2] [ref=e197]
+              - generic [ref=e198]:
+                - paragraph [ref=e199]: OpenAI is raising $110 billion from Amazon, SoftBank, and Nvidia, valuing the company at $840 billion ahead of an expected IPO later this year. This massive capital injection will secure the advanced AI chips and computing capacity needed to maintain OpenAI's industry lead against competitors like Google and Anthropic.
+                - paragraph [ref=e200]: The deal includes Amazon investing $50 billion, SoftBank contributing $30 billion, and Nvidia adding $30 billion. As part of the arrangement, OpenAI struck a deal to utilize two gigawatts of computing capacity powered by Amazon's Trainium AI chips, while expanding their cloud partnership to spend an additional $100 billion on Amazon Web Services over eight years.
+                - paragraph [ref=e201]: This is the largest private funding round in history, signaling that the AI arms race has entered a new phase where only companies with access to tens of billions in capital can compete at the frontier. The sheer scale of investment reflects the enormous computational demands of training and running next-generation AI models.
+      - contentinfo [ref=e202]:
+        - generic [ref=e203]:
+          - generic [ref=e204]: scroll to read
+          - generic [ref=e205]:
+            - generic [ref=e206]: ←→
+            - text: section depth
+          - generic [ref=e207]:
+            - generic [ref=e208]: ⇧
+            - generic [ref=e209]: ←→
+            - text: global
+          - generic [ref=e210]: or swipe
+        - link "Created with Perplexity Computer" [ref=e211] [cursor=pointer]:
+          - /url: https://www.perplexity.ai/computer

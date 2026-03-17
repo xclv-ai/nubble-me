@@ -1,0 +1,114 @@
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e6]:
+        - img "nubble logo" [ref=e7]
+        - generic [ref=e10]: nubble
+      - generic [ref=e11]:
+        - button [ref=e12] [cursor=pointer]:
+          - img [ref=e13]
+        - button [ref=e14] [cursor=pointer]:
+          - img [ref=e15]
+        - generic [ref=e16]:
+          - generic [ref=e17]: Standard
+          - generic [ref=e18]: 4 min
+      - generic [ref=e19]:
+        - generic [ref=e20]: 01More Is Less
+        - button "AI News Feed" [ref=e21] [cursor=pointer]:
+          - img [ref=e22]
+        - button "Import document" [ref=e25] [cursor=pointer]:
+          - img [ref=e26]
+        - button [ref=e29] [cursor=pointer]:
+          - img [ref=e31]
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - 'button "Jump to: More Is Less" [ref=e36] [cursor=pointer]'
+          - generic:
+            - generic: More Is Less
+        - generic [ref=e37]:
+          - 'button "Jump to: Maximizers vs. Satisficers" [ref=e38] [cursor=pointer]'
+          - generic:
+            - generic: Maximizers vs. Satisficers
+        - generic [ref=e39]:
+          - 'button "Jump to: Opportunity Cost" [ref=e40] [cursor=pointer]'
+          - generic:
+            - generic: Opportunity Cost
+        - generic [ref=e41]:
+          - 'button "Jump to: The Escalation of Expectations" [ref=e42] [cursor=pointer]'
+          - generic:
+            - generic: The Escalation of Expectations
+        - generic [ref=e43]:
+          - 'button "Jump to: Self-Blame and Regret" [ref=e44] [cursor=pointer]'
+          - generic:
+            - generic: Self-Blame and Regret
+        - generic [ref=e45]:
+          - 'button "Jump to: What Can Be Done" [ref=e46] [cursor=pointer]'
+          - generic:
+            - generic: What Can Be Done
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - heading "The Paradox of Choice" [level=1] [ref=e50]
+          - paragraph [ref=e52]: Adapted from Barry Schwartz
+        - generic [ref=e53]:
+          - generic:
+            - generic:
+              - generic: 👆
+              - generic: swipe to change depth
+          - generic [ref=e55]:
+            - generic [ref=e58]: "01"
+            - heading "More Is Less" [level=2] [ref=e60]
+            - generic [ref=e61]:
+              - paragraph [ref=e62]: "Walk into any modern supermarket and you'll face an overwhelming wall of options. There are 285 varieties of cookies, 175 salad dressings, and 275 types of cereal on a typical store shelf. The assumption has always been simple: more choice equals more freedom, and more freedom equals greater well-being."
+              - paragraph [ref=e63]: But research tells a different story. When Sheena Iyengar set up a jam-tasting booth at a gourmet store, she found that while a display of 24 jams attracted more attention, shoppers were 10 times more likely to purchase when shown just 6 options. The abundance of choice didn't empower — it paralyzed.
+        - generic [ref=e67]:
+          - generic [ref=e70]: "02"
+          - heading "Maximizers vs. Satisficers" [level=2] [ref=e72]
+          - generic [ref=e73]:
+            - paragraph [ref=e74]: Nobel laureate Herbert Simon identified two fundamental approaches to decision-making. "Maximizers" are people who always seek the absolute best option. They research exhaustively, compare endlessly, and often continue searching even after finding something good. "Satisficers" set a threshold of what's acceptable and stop searching once they find something that meets it.
+            - paragraph [ref=e75]: You might assume maximizers end up better off — after all, they put in more effort. But the data reveals something surprising. While maximizers sometimes do achieve marginally better objective outcomes (a higher salary, a slightly better product), they pay an enormous psychological price. Maximizers report significantly more regret, anxiety, and dissatisfaction with their choices. The satisficer who buys a "good enough" sweater walks away content. The maximizer who buys the "best" sweater keeps wondering about the ones they didn't try.
+        - generic [ref=e79]:
+          - generic [ref=e82]: "03"
+          - heading "Opportunity Cost" [level=2] [ref=e84]
+          - generic [ref=e85]:
+            - paragraph [ref=e86]: The concept of opportunity cost — what you give up when you choose one option over another — is fundamental to economics. But its psychological impact is often underestimated. When you choose a restaurant for dinner, you're not just choosing that restaurant; you're also choosing not to eat at every other restaurant in the city.
+            - paragraph [ref=e87]: With fewer options, opportunity costs are manageable. If there are only two restaurants in town, choosing one means missing out on one alternative. But in a city with 500 restaurants, the shadow of unchosen options looms large. The Thai food you're eating might be excellent, but you can't help wondering about the Italian place, the new ramen shop, or the highly-rated tapas bar.
+            - paragraph [ref=e88]: "Research shows that the mere contemplation of opportunity costs reduces satisfaction with whatever we choose. And the effect is proportional to the number of alternatives: more options mean more imagined pleasures foregone, creating a persistent background hum of \"what if\" that erodes our enjoyment of what we actually have."
+        - generic [ref=e92]:
+          - generic [ref=e95]: "04"
+          - heading "The Escalation of Expectations" [level=2] [ref=e97]
+          - generic [ref=e98]:
+            - paragraph [ref=e99]: "There's a simple psychological principle at work: the more options we have, the higher our expectations climb. If there's only one pair of jeans available, you expect them to be decent. If there are 50 styles, 15 washes, and 8 fits, you expect to find the perfect pair — the ones that make you look and feel exactly the way you want."
+            - paragraph [ref=e100]: This expectation escalation has a cruel consequence. When the jeans you buy are merely good — comfortable, well-fitting, reasonably flattering — you feel let down. With 50 options, "good" feels like failure because "perfect" seemed achievable. The objective quality of the jeans hasn't changed, but the subjective experience has been poisoned by inflated expectations.
+            - paragraph [ref=e101]: Before the explosion of choices, "good enough" was genuinely good enough. People wore their decent jeans and didn't think twice about it. Now, the gap between what we expect and what we experience has widened into a chasm — not because products have gotten worse, but because our expectations have raced ahead of reality.
+        - generic [ref=e105]:
+          - generic [ref=e108]: "05"
+          - heading "Self-Blame and Regret" [level=2] [ref=e110]
+          - generic [ref=e111]:
+            - paragraph [ref=e112]: "Perhaps the most psychologically damaging effect of excessive choice is what it does to our sense of personal responsibility. When there's only one option and it disappoints, you can blame the world — there was nothing else available. But when you've chosen from 50 options and the result is mediocre, there's only one person to blame: yourself."
+            - paragraph [ref=e113]: This shift in attribution is profound. "With so many options, I should have been able to find the right one" becomes the internal monologue. The failure isn't in the options — it's in you. You didn't research enough, you didn't compare carefully enough, you weren't discerning enough.
+            - paragraph [ref=e114]: "Regret, which psychologists identify as one of the most powerful negative emotions, feeds on this self-blame. Post-decision regret is amplified by the number of alternatives: the more paths not taken, the more chances to second-guess yourself. And anticipated regret — the fear of future regret — makes decisions even more agonizing before they're made, creating a paralyzing loop of anxiety."
+        - generic [ref=e118]:
+          - generic [ref=e121]: "06"
+          - heading "What Can Be Done" [level=2] [ref=e123]
+          - generic [ref=e124]:
+            - paragraph [ref=e125]: If more choice makes us miserable, the solution isn't to eliminate all options — it's to develop better strategies for navigating abundance. Several evidence-based approaches can help.
+            - paragraph [ref=e126]: First, choose when to choose. Not every decision deserves the same investment. Reserve careful deliberation for choices that truly matter — your career, your relationships, your health. For everything else, adopt a satisficing approach. The marginal benefit of finding the "best" toothpaste is negligible.
+            - paragraph [ref=e127]: Second, make your decisions irreversible when possible. Research shows that people who can't return their choices are more satisfied than those who can. Commitment focuses the mind on the virtues of what we have rather than the possibilities of what we don't.
+            - paragraph [ref=e128]: Third, practice gratitude. Actively appreciating what we've chosen counteracts the corrosive effect of imagined alternatives. The Thai restaurant you're at? It's delicious. Let that be enough.
+            - paragraph [ref=e129]: Finally, lower your expectations. This isn't pessimism — it's realism. When you expect the good rather than the perfect, you create space for pleasant surprises rather than constant disappointment.
+    - contentinfo [ref=e130]:
+      - generic [ref=e131]:
+        - generic [ref=e132]: scroll to read
+        - generic [ref=e133]:
+          - generic [ref=e134]: ←→
+          - text: section depth
+        - generic [ref=e135]:
+          - generic [ref=e136]: ⇧
+          - generic [ref=e137]: ←→
+          - text: global
+        - generic [ref=e138]: or swipe
+      - link "Created with Perplexity Computer" [ref=e139] [cursor=pointer]:
+        - /url: https://www.perplexity.ai/computer

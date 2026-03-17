@@ -1,0 +1,8 @@
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e204]:
+    - generic [ref=e205]:
+      - img [ref=e206]
+      - heading "404 Page Not Found" [level=1] [ref=e208]
+    - paragraph [ref=e209]: Did you forget to add the page to the router?
