@@ -44,8 +44,8 @@ function readFeed(date: string): object | null {
 let generationInProgress = false;
 
 export function registerFeedRoutes(app: Express): void {
-  // GET /api/feed — latest feed
-  app.get("/api/feed", (_req, res) => {
+  // GET /api/nubble-feed — latest feed (NLM-powered daily feed)
+  app.get("/api/nubble-feed", (_req, res) => {
     const dates = getAvailableDates();
     if (dates.length === 0) {
       return res.status(404).json({ error: "No feed data available" });
@@ -57,14 +57,14 @@ export function registerFeedRoutes(app: Express): void {
     res.json(feed);
   });
 
-  // GET /api/feed/dates — list available dates
-  app.get("/api/feed/dates", (_req, res) => {
+  // GET /api/nubble-feed/dates — list available dates
+  app.get("/api/nubble-feed/dates", (_req, res) => {
     const dates = getAvailableDates();
     res.json({ dates });
   });
 
-  // GET /api/feed/:date — feed for specific date
-  app.get("/api/feed/:date", (req, res) => {
+  // GET /api/nubble-feed/:date — feed for specific date
+  app.get("/api/nubble-feed/:date", (req, res) => {
     const { date } = req.params;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return res.status(400).json({ error: "Invalid date format. Use YYYY-MM-DD." });
@@ -76,8 +76,8 @@ export function registerFeedRoutes(app: Express): void {
     res.json(feed);
   });
 
-  // POST /api/feed/generate — trigger feed generation
-  app.post("/api/feed/generate", (_req, res) => {
+  // POST /api/nubble-feed/generate — trigger feed generation
+  app.post("/api/nubble-feed/generate", (_req, res) => {
     if (generationInProgress) {
       return res.status(409).json({ error: "Feed generation already in progress" });
     }

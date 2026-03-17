@@ -212,9 +212,9 @@ export default function FeedPage() {
     isError,
     refetch,
   } = useQuery<FeedResponse>({
-    queryKey: ["/api/feed"],
+    queryKey: ["/api/nubble-feed"],
     queryFn: async () => {
-      const res = await fetch("/api/feed");
+      const res = await fetch("/api/nubble-feed");
       if (!res.ok) throw new Error("Failed to fetch feed");
       return res.json();
     },

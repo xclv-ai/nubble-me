@@ -110,10 +110,16 @@ NotebookLM-powered, $0/month:
 5. Cleans up notebook
 
 ### Feed Routes
-- `GET /api/feed` — latest feed
-- `GET /api/feed/:date` — specific date
-- `GET /api/feed/dates` — available dates
-- `POST /api/feed/generate` — trigger pipeline (async)
+- `GET /api/nubble-feed` — latest feed
+- `GET /api/nubble-feed/:date` — specific date
+- `GET /api/nubble-feed/dates` — available dates
+- `POST /api/nubble-feed/generate` — trigger pipeline (async)
+
+### iOS RSS Feed Routes (from `server/feed.ts`)
+- `GET /api/feed` — aggregated RSS articles (supports `?topics=`, `?limit=`, `?offset=`)
+- `POST /api/feed/refresh` — manually trigger RSS refresh
+- `GET /api/feed/sources` — list feed sources
+- `GET /api/feed/topics` — list available topics
 
 ### Feed UI
 - `/feed` — card grid: featured (rank 1), grid (2-4), list (5-10)
