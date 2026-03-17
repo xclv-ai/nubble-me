@@ -26,6 +26,7 @@ client/src/
   components/NubbleReader.tsx   # Core reader: gestures, state, animations (790 lines)
   components/ui/                # 45 Radix UI primitive components (shadcn/ui)
   pages/home.tsx                # Renders NubbleReader with sample document
+  pages/digest.tsx              # All daily stories → one NubbleReader document
   lib/sample-content.ts         # ContentSection/ContentDocument types + sample data
   App.tsx                       # Router setup
 server/
@@ -124,6 +125,7 @@ NotebookLM-powered, $0/month:
 ### Feed UI
 - `/feed` — card grid: featured (rank 1), grid (2-4), list (5-10)
 - `/read-feed/:id` — story in NubbleReader with back button
+- `/digest` — all daily stories as one NubbleReader document (1 section per story, sorted by rank)
 
 ### Key Files
 - `server/feed-pipeline.ts` — standalone pipeline script
