@@ -8,9 +8,15 @@ struct RawChunk: Sendable {
 }
 
 struct ChunkingEngine: Sendable {
-    let minWords = 200
-    let maxWords = 800
-    let splitTarget = 600
+    let minWords: Int
+    let maxWords: Int
+    let splitTarget: Int
+
+    init(minWords: Int = 200, maxWords: Int = 800, splitTarget: Int = 600) {
+        self.minWords = minWords
+        self.maxWords = maxWords
+        self.splitTarget = splitTarget
+    }
 
     /// Chunk text into semantic sections of 200-800 words.
     /// Splits on headings first, then paragraph boundaries for oversized chunks.

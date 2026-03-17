@@ -7,16 +7,25 @@ struct NubbleApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NubbleReaderView(
-                document: currentDocument,
-                onImportTapped: { showImport = true }
-            )
-            .sheet(isPresented: $showImport) {
-                ImportSheet { document in
-                    currentDocument = document
-                    showImport = false
+            TabView {
+                Tab("Feed", systemImage: "newspaper") {
+                    NewsFeedView()
+                }
+
+                Tab("Library", systemImage: "books.vertical") {
+                    NubbleReaderView(
+                        document: currentDocument,
+                        onImportTapped: { showImport = true }
+                    )
+                    .sheet(isPresented: $showImport) {
+                        ImportSheet { document in
+                            currentDocument = document
+                            showImport = false
+                        }
+                    }
                 }
             }
+            .tint(NubbleColors.Light.primary)
         }
     }
 }

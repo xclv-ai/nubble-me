@@ -6,6 +6,7 @@ import fs from "fs";
 import { extractFile } from "./extract";
 import { chunkText, type ChunkedSection } from "./chunking";
 import { isNLMAvailable, generateDepths } from "./notebooklm";
+import { FeedAggregator } from "./feed";
 import { log } from "./index";
 
 // Configure multer for file uploads
@@ -147,6 +148,50 @@ export async function registerRoutes(
       createdAt: d.createdAt,
     }));
     res.json(docs);
+  });
+
+  // ── News Feed API ────────────────────────────────────────────────────────
+
+  const feedAggregator = new FeedAggregator();
+
+  // Initial feed fetch on startup
+  feedAggregator.refreshAll().catch((err) => {
+    log(`Initial feed refresh failed: ${err.message}`, "feed");
+  });
+
+  // Auto-refresh every 15 minutes
+  feedAggregator.startAutoRefresh(15);
+
+  // Get aggregated news feed
+  app.get("/api/feed", (req, res) => {
+    const topics = req.query.topics
+      ? String(req.query.topics).split(",")
+      : undefined;
+    const limit = req.query.limit ? Number(req.query.limit) : 50;
+    const offset = req.query.offset ? Number(req.query.offset) : 0;
+
+    const result = feedAggregator.getArticles({ topics, limit, offset });
+    res.json(result);
+  });
+
+  // Manually trigger feed refresh
+  app.post("/api/feed/refresh", async (_req, res) => {
+    try {
+      const result = await feedAggregator.refreshAll();
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Get available feed sources
+  app.get("/api/feed/sources", (_req, res) => {
+    res.json(feedAggregator.getSources());
+  });
+
+  // Get available topics
+  app.get("/api/feed/topics", (_req, res) => {
+    res.json(feedAggregator.getTopics());
   });
 
   return httpServer;
