@@ -17,6 +17,17 @@ const SPRING_REVEAL = { type: "spring" as const, stiffness: 80, damping: 20, mas
 
 /* ─── Helpers ─── */
 
+/** Render text with **bold** markdown support */
+function renderInlineMarkdown(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={i} className="font-semibold text-foreground">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
+
 /** Average reading speed: ~230 words/minute */
 function estimateReadingTime(doc: ContentDocument, depthKey: keyof ContentSection): number {
   const totalWords = doc.sections.reduce((sum, s) => {
@@ -747,7 +758,7 @@ const SectionBlock = forwardRef<HTMLDivElement, SectionBlockProps>(
                     }}
                     className={`mb-3 last:mb-0 ${textStyle}`}
                   >
-                    {p}
+                    {renderInlineMarkdown(p)}
                   </motion.p>
                 ))}
               </motion.div>

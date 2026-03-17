@@ -191,7 +191,21 @@ Focus on: major LLM releases, funding rounds, regulatory changes, breakthrough r
 (2-3 sentences. Key facts only, no filler.)
 
 ---EXPANDED---
-(300-500 words. Full analysis with context, implications, and what to watch next. No fabricated facts.)`;
+Write in the style of Richard Feynman — clear, provocative, no jargon without explanation. Say what things ACTUALLY mean. If something is uncertain, say so. Use this exact structure with bold markdown headers:
+
+**WHAT'S GOING ON**
+(Plain English. What happened. No throat-clearing. Start with the concrete fact.)
+
+**WHY THIS IS A BIG DEAL**
+(Context. What led here. The numbers that matter. Why anyone outside the industry should care.)
+
+**UNCOMFORTABLE TRUTH**
+(The thing nobody wants to say. The real friction, the hidden cost, the part that makes people squirm.)
+
+**SO WHAT**
+(One sentence. The punchline. What changes tomorrow.)
+
+Total 300-500 words. No fabricated facts. No corporate speak.`;
 
       const depthOutput = await runNLM(["notebook", "query", notebookId, depthPrompt], 120000);
       const depths = parseDepthResponse(depthOutput);
