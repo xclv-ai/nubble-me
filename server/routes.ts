@@ -6,7 +6,7 @@ import fs from "fs";
 import { extractFile } from "./extract";
 import { chunkText, type ChunkedSection } from "./chunking";
 import { isNLMAvailable, generateDepths } from "./notebooklm";
-import { FeedAggregator } from "./feed";
+import { registerFeedRoutes } from "./feed-routes";
 import { log } from "./index";
 
 // Configure multer for file uploads
@@ -43,6 +43,9 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+
+  // Register feed routes (NLM-powered daily feed)
+  registerFeedRoutes(app);
 
   // Check if NotebookLM (nlm) is available
   app.get("/api/nlm/status", async (_req, res) => {
@@ -148,80 +151,6 @@ export async function registerRoutes(
       createdAt: d.createdAt,
     }));
     res.json(docs);
-  });
-
-  // ── News Feed API ────────────────────────────────────────────────────────
-
-  const feedAggregator = new FeedAggregator();
-
-  // Initial feed fetch on startup
-  feedAggregator.refreshAll().catch((err) => {
-    log(`Initial feed refresh failed: ${err.message}`, "feed");
-  });
-
-  // Auto-refresh every 15 minutes
-  feedAggregator.startAutoRefresh(15);
-
-  // Get aggregated news feed
-  app.get("/api/feed", (req, res) => {
-    const topics = req.query.topics
-      ? String(req.query.topics).split(",")
-      : undefined;
-    const rawLimit = req.query.limit ? Number(req.query.limit) : 50;
-    const rawOffset = req.query.offset ? Number(req.query.offset) : 0;
-    const limit = Math.min(Math.max(isNaN(rawLimit) ? 50 : rawLimit, 1), 200);
-    const offset = Math.max(isNaN(rawOffset) ? 0 : rawOffset, 0);
-
-    const result = feedAggregator.getArticles({ topics, limit, offset });
-    res.json(result);
-  });
-
-  // Manually trigger feed refresh
-  app.post("/api/feed/refresh", async (_req, res) => {
-    try {
-      const result = await feedAggregator.refreshAll();
-      res.json(result);
-    } catch (err: any) {
-      res.status(500).json({ error: err.message });
-    }
-  });
-
-  // Get available feed sources
-  app.get("/api/feed/sources", (_req, res) => {
-    res.json(feedAggregator.getSources());
-  });
-
-  // Get available topics
-  app.get("/api/feed/topics", (_req, res) => {
-    res.json(feedAggregator.getTopics());
-  });
-
-  // Add a custom feed source
-  app.post("/api/feed/sources", (req, res) => {
-    try {
-      const { name, url, topicIds } = req.body;
-      if (!url) {
-        return res.status(400).json({ error: "URL is required" });
-      }
-      const source = feedAggregator.addSource({
-        name: name || new URL(url).hostname,
-        url,
-        topicIds: topicIds || ["ai-news"],
-      });
-      res.json(source);
-    } catch (err: any) {
-      res.status(400).json({ error: err.message });
-    }
-  });
-
-  // Remove a feed source
-  app.delete("/api/feed/sources/:id", (req, res) => {
-    const removed = feedAggregator.removeSource(req.params.id);
-    if (removed) {
-      res.json({ removed: true });
-    } else {
-      res.status(404).json({ error: "Source not found" });
-    }
   });
 
   return httpServer;
