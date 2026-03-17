@@ -5,7 +5,7 @@ import { useLocation } from "wouter";
 import type { ContentDocument, ContentSection } from "@/lib/sample-content";
 
 type DepthLevel = 0 | 1 | 2 | 3;
-const DEPTH_LABELS = ["Summary", "Brief", "Full", "Deep Dive"] as const;
+const DEPTH_LABELS = ["Sneak Peek", "Brief", "Full", "Deep Dive"] as const;
 const DEPTH_KEYS: (keyof ContentSection)[] = ["summary", "condensed", "standard", "expanded"];
 
 /* ─── Easing constants ─── */
