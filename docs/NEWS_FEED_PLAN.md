@@ -1,8 +1,13 @@
 # AI News Feed — Implementation Plan
 
 > **Goal:** Automatic news parsing + on-device conversion into nubble's 4-depth format.
-> Turn nubble into a daily AI/industry news reader where every article is instantly explorable at 4 levels of depth.
+> Turn nubble into a daily AI news reader where every article is instantly explorable at 4 levels of depth.
 > **Reference UX:** Perplexity Discover — curated cards, AI summaries, tap to dive deeper.
+>
+> **Key Decisions:**
+> - **Architecture:** Hybrid — backend provides feed URLs + metadata, on-device handles extraction + depth generation
+> - **Topics at launch:** AI-only focus (AI research, LLM releases, AI companies, AI policy)
+> - **Sourcing:** RSS feeds first (free), paid API later when users justify it
 
 ---
 
@@ -109,16 +114,28 @@ ios/Nubble/
 
 ### 1.4 Backend vs On-Device
 
-**Everything on-device:**
-- RSS feed fetching (direct HTTP)
-- HTML extraction (SwiftSoup — already a dependency)
+**Hybrid approach — backend aggregates metadata, device does the heavy lifting:**
+
+**Backend (lightweight Express or serverless):**
+- Aggregates RSS feeds on a schedule (every 15 min)
+- Deduplicates and ranks articles server-side
+- Serves a single `/api/feed` endpoint returning article metadata (title, URL, snippet, source, topic, image)
+- Hosts curated feed source list (updatable without app releases)
+- Future: NewsAPI.org proxy when upgrading to paid API
+
+**On-device (iPhone):**
+- Fetches article metadata from backend `/api/feed`
+- Full article HTML extraction (SwiftSoup — already a dependency)
 - Chunking (pure Swift — already implemented)
 - Depth generation (Apple Foundation Models — already implemented)
 - Storage (SwiftData, local)
+- All AI processing stays private and on-device
 
-**Lightweight server needed only for:**
-- NewsAPI.org API key proxy (single serverless function on Vercel/CloudFlare Worker)
-- Optional: curated feed list JSON hosted on CDN (updatable without app releases)
+**Benefits of hybrid:**
+- Lower battery/bandwidth — device doesn't poll 15+ RSS feeds individually
+- Shared dedup/ranking — all users benefit from the same curated feed
+- Easy to add push notifications for breaking AI news later
+- Backend is tiny: a single cron job + one API endpoint
 
 ---
 
@@ -232,37 +249,39 @@ final class FeedState {
 
 ## 3. News Sourcing Strategy
 
-### 3.1 Recommended: RSS (primary) + NewsAPI.org (trending)
+### 3.1 Phase 1: AI-Focused RSS Feeds (Free)
 
-**Default curated RSS feeds:**
+**Curated AI news sources:**
 
-| Topic | Feeds |
-|-------|-------|
-| AI & ML | TechCrunch AI, The Verge AI, Ars Technica AI, MIT Technology Review, BAIR Blog |
-| Ecommerce | Shopify Engineering Blog, Practical Ecommerce, Digital Commerce 360 |
-| Startups | TechCrunch Startups, Y Combinator Blog |
-| General Tech | Hacker News (top stories), Techmeme, The Verge |
+| Category | RSS Feeds |
+|----------|-----------|
+| Breaking AI News | TechCrunch AI, The Verge AI, Ars Technica AI, VentureBeat AI |
+| Research & Labs | BAIR Blog, Google AI Blog, Meta AI Blog, DeepMind Blog |
+| Analysis | MIT Technology Review, The Information (if accessible), Import AI Newsletter |
+| Community | Hacker News (AI-filtered), r/MachineLearning RSS, Hugging Face Blog |
+| Industry | Anthropic Blog, OpenAI Blog, Stability AI Blog, Cohere Blog |
 
-Start with **15–20 curated feeds**. Users can add custom RSS URLs later.
+Start with **12–15 curated feeds**, all AI-focused. Users can add custom RSS URLs later.
 
-**NewsAPI.org** for "Trending" section:
-- Free tier: 100 requests/day, 24h delay — sufficient for MVP
-- Query: `q=artificial+intelligence OR AI OR ecommerce&sortBy=popularity`
-- Upgrade to paid ($449/mo) only at scale (10K+ users)
+**Phase 2 (future): Paid API for broader coverage**
+- NewsAPI.org or World News API when user base justifies cost
+- Enables trending detection, semantic search, push notifications
+- Architecture supports drop-in addition (backend proxy already planned)
 
-**Why not others:**
-- Bing News API: requires Azure, more setup
-- NewsAPI.ai: overkill for v1 (entity detection not needed yet)
-- Connexun: smaller coverage
+**Why RSS-first:**
+- $0/mo — perfect for validating the concept
+- Real-time (no 24h delay like free NewsAPI tier)
+- AI blogs/labs publish via RSS reliably
+- No API key management, no rate limit concerns
 
 ### 3.2 Cost Analysis
 
-| Component | Free Tier | Paid | When to upgrade |
-|-----------|-----------|------|-----------------|
+| Component | MVP | Scale | When to upgrade |
+|-----------|-----|-------|-----------------|
 | RSS feeds | $0 | $0 | Never |
-| NewsAPI.org | $0 (100 req/day) | $449/mo | >5K users |
-| API key proxy (Vercel) | $0 (hobby) | $20/mo | >100K req/mo |
-| AI depth gen | $0 (on-device) | ~$0.001/article (cloud) | Older devices |
+| Backend aggregator (Vercel/Railway) | $0 (hobby) | $20/mo | >100K req/mo |
+| AI depth gen | $0 (on-device) | ~$0.001/article (cloud fallback) | Older devices |
+| News API (future) | — | $449/mo | >5K users, broader coverage needed |
 | **Total MVP** | **$0/mo** | | |
 
 ### 3.3 Rate Limiting
@@ -444,7 +463,7 @@ struct NubbleApp: App {
 ┌─────────────────────────────────────┐
 │  nubble                    ●●●●     │  ← Header + unread count
 │  ─────────────────────────────────  │
-│  [AI] [Ecommerce] [Startups] [All] │  ← Topic chips (horizontal scroll)
+│  [All] [Research] [Releases] [Policy] │ ← Topic chips (AI sub-categories)
 │  ─────────────────────────────────  │
 │                                     │
 │  ┌─────────────────────────────┐   │  ← Featured card (hero)
@@ -509,14 +528,19 @@ struct NubbleApp: App {
 
 **Dependencies:** None — can start immediately
 
-1. Create `NewsArticle`, `NewsTopic`, `FeedSource` models
-2. Build `FeedService` — RSS XML parsing with SwiftSoup
-3. RSS fetcher with URLSession, ETags, conditional GET
-4. `DuplicateDetector` — URL normalization + title similarity
-5. Default curated feed list (hardcoded initially)
-6. Wire up `FeedState` observable
+**Backend (Express or serverless):**
+1. RSS aggregator cron job — fetch 12–15 AI RSS feeds every 15 min
+2. RSS XML parser (use `rss-parser` npm package or similar)
+3. `DuplicateDetector` — URL normalization + title similarity
+4. `GET /api/feed` endpoint — returns deduplicated, ranked article metadata
+5. Deploy to Vercel/Railway (free tier)
 
-**Reused:** SwiftSoup (already in project)
+**iOS:**
+6. Create `NewsArticle`, `NewsTopic`, `FeedSource` models
+7. Build `FeedService` — fetches from backend `/api/feed`
+8. Wire up `FeedState` observable
+
+**Reused:** Existing Express server setup, SwiftSoup (already in project)
 
 ### Phase 6B: Article Extraction (Week 2–3)
 
