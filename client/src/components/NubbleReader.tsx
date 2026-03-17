@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect, forwardRef, useMemo } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, PanInfo } from "framer-motion";
-import { ChevronsLeft, ChevronsRight, Sun, Moon, Minus, Plus, Upload } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, Sun, Moon, Minus, Plus, Upload, Newspaper } from "lucide-react";
 import { useLocation } from "wouter";
 import type { ContentDocument, ContentSection } from "@/lib/sample-content";
 
@@ -322,6 +322,14 @@ export function NubbleReader({ document: doc }: NubbleReaderProps) {
               {activeSection?.title}
             </motion.span>
           </AnimatePresence>
+          <button
+            onClick={() => setLocation("/feed")}
+            className="p-1.5 text-muted-foreground/50 hover:text-foreground transition-colors duration-200"
+            title="AI News Feed"
+            data-testid="feed-button"
+          >
+            <Newspaper size={15} />
+          </button>
           <button
             onClick={() => setLocation("/import")}
             className="p-1.5 text-muted-foreground/50 hover:text-foreground transition-colors duration-200"
