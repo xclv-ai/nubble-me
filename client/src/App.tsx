@@ -1,4 +1,4 @@
-import { Switch, Route, Router } from "wouter";
+import { Switch, Route, Router, Redirect } from "wouter";
 import { useHashLocation } from "wouter/use-hash-location";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -13,7 +13,8 @@ import ImportPage from "@/pages/import";
 import ReadPage from "@/pages/read";
 import FeedPage from "@/pages/feed";
 import ReadFeedPage from "@/pages/read-feed";
-import DigestPage from "@/pages/digest";
+import AiDigestPage from "@/pages/ai-digest";
+import AiBrandingPage from "@/pages/ai-branding";
 
 function AppRouter() {
   return (
@@ -26,7 +27,9 @@ function AppRouter() {
       <Route path="/read/:id" component={ReadPage} />
       <Route path="/feed" component={FeedPage} />
       <Route path="/read-feed/:id" component={ReadFeedPage} />
-      <Route path="/digest" component={DigestPage} />
+      <Route path="/ai-digest" component={AiDigestPage} />
+      <Route path="/ai-branding" component={AiBrandingPage} />
+      <Route path="/digest">{() => <Redirect to="/ai-digest" />}</Route>
       <Route component={NotFound} />
     </Switch>
   );

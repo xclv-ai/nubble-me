@@ -25,8 +25,10 @@ Current state: **web prototype** with hardcoded sample content ("The Paradox of 
 client/src/
   components/NubbleReader.tsx   # Core reader: gestures, state, animations (790 lines)
   components/ui/                # 45 Radix UI primitive components (shadcn/ui)
-  pages/home.tsx                # Renders NubbleReader with sample document
-  pages/digest.tsx              # All daily stories → one NubbleReader document
+  pages/home.tsx                # Homepage with category selector cards
+  pages/ai-digest.tsx           # AI News feed → NubbleReader (fetches /data/feed/ai-news/latest.json)
+  pages/ai-branding.tsx         # AI & Branding feed → NubbleReader (fetches /data/feed/ai-branding/latest.json)
+  pages/digest.tsx              # Legacy redirect → /ai-digest
   lib/sample-content.ts         # ContentSection/ContentDocument types + sample data
   App.tsx                       # Router setup
 server/
@@ -123,9 +125,22 @@ NotebookLM-powered, $0/month:
 - `GET /api/feed/topics` — list available topics
 
 ### Feed UI
+- `/` — homepage with category selector cards ("AI News Nubs", "AI and Strategic Branding Nubs")
+- `/ai-digest` — AI News daily digest in NubbleReader (fetches from `/data/feed/ai-news/latest.json`)
+- `/ai-branding` — AI & Strategic Branding digest in NubbleReader (fetches from `/data/feed/ai-branding/latest.json`)
 - `/feed` — card grid: featured (rank 1), grid (2-4), list (5-10)
 - `/read-feed/:id` — story in NubbleReader with back button
-- `/digest` — all daily stories as one NubbleReader document (1 section per story, sorted by rank)
+- `/digest` — redirects to `/ai-digest` (legacy)
+
+### Feed Categories
+- `ai-news` — general AI news, LLM releases, breakthroughs
+- `ai-branding` — AI adoption at branding agencies (WPP, Landor, FutureBrand), AI marketing tools, M&A
+
+### Feed Data Structure
+- `client/public/data/feed/ai-news/` — AI news JSON files + latest.json
+- `client/public/data/feed/ai-branding/` — AI branding JSON files + latest.json
+- `server/data/feed/ai-news/` — server-side mirror
+- `server/data/feed/ai-branding/` — server-side mirror
 
 ### Key Files
 - `server/feed-pipeline.ts` — standalone pipeline script

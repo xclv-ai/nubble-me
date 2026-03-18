@@ -11,6 +11,11 @@
 
 - [ ] User testing with 20+ people (Phase 1 validation)
 - [ ] Shareable link to specific section+depth
+- [x] Homepage category selector — side-by-side cards ("AI News Nubs", "AI & Strategic Branding Nubs")
+- [x] Route restructure — `/ai-digest`, `/ai-branding`, redirect `/digest`
+- [x] Generate 2026-03-18 AI News feed (10 stories, 78 sources)
+- [x] Generate 2026-03-18 AI & Strategic Branding feed (10 stories, 68 sources)
+- [x] Feed pipeline: support --category and --query flags
 
 ---
 

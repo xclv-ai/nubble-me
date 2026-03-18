@@ -14,7 +14,18 @@ import fs from "fs";
 const exec = promisify(execFile);
 
 const NLM_PATH = process.env.NLM_PATH || path.join(process.env.HOME || "/root", ".local/bin/nlm");
-const DATA_DIR = path.join(process.cwd(), "server/data/feed");
+
+// Parse --category and --query flags from CLI args
+const args = process.argv.slice(2);
+function getArg(flag: string, defaultVal: string): string {
+  const idx = args.indexOf(flag);
+  return idx !== -1 && args[idx + 1] ? args[idx + 1] : defaultVal;
+}
+
+const CATEGORY = getArg("--category", "ai-news");
+const CUSTOM_QUERY = getArg("--query", "");
+const DATA_DIR_SERVER = path.join(process.cwd(), "server/data/feed", CATEGORY);
+const DATA_DIR_PUBLIC = path.join(process.cwd(), "client/public/data/feed", CATEGORY);
 
 // ---------- logging ----------
 
@@ -105,14 +116,17 @@ async function runPipeline(): Promise<void> {
 
   try {
     // 1. Create notebook
-    log(`Creating notebook: "AI News - ${today}"`);
-    const createOutput = await runNLM(["notebook", "create", `AI News - ${today}`]);
+    const notebookName = CATEGORY === "ai-news" ? `AI News - ${today}` : `AI Branding - ${today}`;
+    log(`Creating notebook: "${notebookName}" (category: ${CATEGORY})`);
+    const createOutput = await runNLM(["notebook", "create", notebookName]);
     notebookId = parseUUID(createOutput, "notebook");
     log(`Notebook created: ${notebookId}`);
 
     // 2. Start deep research
-    const researchQuery =
-      "most important AI news, LLM releases, AI breakthroughs and industry updates this week";
+    const defaultQuery = CATEGORY === "ai-branding"
+      ? "AI adoption at major branding agencies WPP Landor FutureBrand Interbrand Superunion, AI tools for brand strategists and marketers, M&A in branding and creative industry, new AI marketing tools announcements this week"
+      : "most important AI news, LLM releases, AI breakthroughs and industry updates this week";
+    const researchQuery = CUSTOM_QUERY || defaultQuery;
     log(`Starting deep research: "${researchQuery}"`);
     const researchOutput = await runNLM(
       ["research", "start", researchQuery, "-n", notebookId, "-m", "deep"],
@@ -159,7 +173,11 @@ async function runPipeline(): Promise<void> {
 
     // 5. Query for top 10 stories
     log("Querying for top 10 stories...");
-    const rankPrompt = `Based on all sources in this notebook, rank the top 10 most important AI stories. For each story output EXACTLY in this format:
+    const brandingFocus = CATEGORY === "ai-branding"
+      ? `Focus on: how large branding agencies (WPP, Landor, FutureBrand, Interbrand, Superunion, Siegel+Gale, Wolff Olins, Pentagram) are adopting AI in their daily work. Include M&A moves in the creative/branding industry, new AI tools specifically useful for brand strategists and marketers, and shifts in how brands are built with AI. De-prioritize pure tech stories unless they directly impact branding work.`
+      : `Focus on: what's genuinely NEW and how it changes something — new capabilities, new limitations exposed, new ways people will work or build, shifts in who has power. De-prioritize funding rounds and valuations unless the money itself changes the game. Prioritize stories where something actually shifted — not just announcements.`;
+
+    const rankPrompt = `Based on all sources in this notebook, rank the top 10 most important ${CATEGORY === "ai-branding" ? "AI and strategic branding" : "AI"} stories. For each story output EXACTLY in this format:
 
 ---STORY 1---
 TITLE: [headline]
@@ -171,7 +189,7 @@ WHY: [one sentence about what this CHANGES — not what it costs, but what's dif
 TITLE: ...
 (continue through STORY 10)
 
-Focus on: what's genuinely NEW and how it changes something — new capabilities, new limitations exposed, new ways people will work or build, shifts in who has power. De-prioritize funding rounds and valuations unless the money itself changes the game. Prioritize stories where something actually shifted — not just announcements.`;
+${brandingFocus}`;
 
     const rankOutput = await runNLM(["notebook", "query", notebookId, rankPrompt], 120000);
     const stories = parseStoryList(rankOutput);
@@ -234,13 +252,18 @@ Total 300-500 words. No fabricated facts. No corporate speak.`;
       stories,
     };
 
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+    // Save to both server and public directories
+    for (const dir of [DATA_DIR_SERVER, DATA_DIR_PUBLIC]) {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      const outputPath = path.join(dir, `${today}.json`);
+      const latestPath = path.join(dir, "latest.json");
+      const jsonData = JSON.stringify(output, null, 2);
+      fs.writeFileSync(outputPath, jsonData);
+      fs.writeFileSync(latestPath, jsonData);
+      log(`Feed saved to: ${outputPath}`);
     }
-
-    const outputPath = path.join(DATA_DIR, `${today}.json`);
-    fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
-    log(`Feed saved to: ${outputPath}`);
 
     // 8. Cleanup notebook
     log("Cleaning up notebook...");
