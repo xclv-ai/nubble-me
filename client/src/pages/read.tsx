@@ -58,5 +58,9 @@ export default function ReadPage() {
     );
   }
 
-  return <NubbleReader document={document} />;
+  return (
+    <div className="h-screen w-screen">
+      <NubbleReader document={document} />
+    </div>
+  );
 }

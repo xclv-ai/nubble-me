@@ -227,7 +227,7 @@ export function NubbleReader({ document: doc }: NubbleReaderProps) {
   [doc.sections, activeSectionId]);
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-background">
+    <div className="h-full w-full flex flex-col overflow-hidden bg-background">
       {/* [2] Boundary flash overlay */}
       <AnimatePresence>
         {boundaryFlash && (

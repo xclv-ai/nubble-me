@@ -87,5 +87,9 @@ export default function AiDigestPage() {
       })),
   };
 
-  return <NubbleReader document={doc} />;
+  return (
+    <div className="h-screen w-screen">
+      <NubbleReader document={doc} />
+    </div>
+  );
 }

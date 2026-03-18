@@ -110,7 +110,7 @@ export default function ReadFeedPage() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative h-screen w-screen">
       {/* Back button overlay */}
       <button
         onClick={() => setLocation("/feed")}
