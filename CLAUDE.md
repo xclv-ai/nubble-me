@@ -139,8 +139,21 @@ NotebookLM-powered, $0/month:
 ### Feed Data Structure
 - `client/public/data/feed/ai-news/` — AI news JSON files + latest.json
 - `client/public/data/feed/ai-branding/` — AI branding JSON files + latest.json
+- `client/public/data/feed/ai-ecommerce/` — AI ecommerce JSON files + latest.json
 - `server/data/feed/ai-news/` — server-side mirror
 - `server/data/feed/ai-branding/` — server-side mirror
+- `server/data/feed/ai-ecommerce/` — server-side mirror
+
+### Supabase Storage
+- Table: `nubble_feed` on pokpok project (iyyuxilkacylpbweulsa)
+- Columns: date, category, story_rank, title, source, source_url, why_it_matters, summary, condensed, standard, expanded
+- Pipeline upserts to Supabase after saving JSON (requires SUPABASE_URL + SUPABASE_SERVICE_KEY in .env.local)
+
+### Nightly Automation
+- Script: `server/feed-nightly.sh` — runs all 3 categories, commits + pushes
+- Schedule: macOS launchd at 06:00 AM daily (`~/Library/LaunchAgents/com.nubble.feed-nightly.plist`)
+- Logs: `server/data/feed/nightly-YYYY-MM-DD.log`
+- Manual run: `npm run feed:nightly`
 
 ### Key Files
 - `server/feed-pipeline.ts` — standalone pipeline script

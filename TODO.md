@@ -11,11 +11,6 @@
 
 - [ ] User testing with 20+ people (Phase 1 validation)
 - [ ] Shareable link to specific section+depth
-- [x] Homepage category selector — side-by-side cards ("AI News Nubs", "AI & Strategic Branding Nubs")
-- [x] Route restructure — `/ai-digest`, `/ai-branding`, redirect `/digest`
-- [x] Generate 2026-03-18 AI News feed (10 stories, 78 sources)
-- [x] Generate 2026-03-18 AI & Strategic Branding feed (10 stories, 68 sources)
-- [x] Feed pipeline: support --category and --query flags
 
 ---
 
@@ -80,3 +75,12 @@
 - [x] [2026-03-17] Feed UI — card grid (featured/grid/list), `/feed` and `/read-feed/:id` routes
 - [x] [2026-03-17] First feed generated — 2026-03-17.json, 10 stories, all 4 depth levels
 - [x] [2026-03-17] Digest page — `/digest` renders all 10 stories in NubbleReader as one document
+- [x] [2026-03-18] Homepage category selector — 3 pill buttons below NUBBLE header (AI News, Branding, Ecommerce)
+- [x] [2026-03-18] Route restructure — `/ai-digest`, `/ai-branding`, `/ai-ecommerce`, redirect `/digest`
+- [x] [2026-03-18] Feed pipeline: support `--category` and `--query` flags, category-specific prompts
+- [x] [2026-03-18] Generated 2026-03-18 AI News feed (10 stories, 78 sources, Feynman-style depths)
+- [x] [2026-03-18] Generated 2026-03-18 AI & Strategic Branding feed (10 stories, 68 sources)
+- [x] [2026-03-18] Generated 2026-03-18 AI Ecommerce feed (10 stories, 63 sources)
+- [x] [2026-03-18] NUBBLE logo clickable → navigates to homepage
+- [x] [2026-03-18] Category pills centered below header
+- [x] [2026-03-18] NubbleReader subHeader prop for injecting content below header

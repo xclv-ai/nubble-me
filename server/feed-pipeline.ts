@@ -10,6 +10,7 @@ import { execFile } from "child_process";
 import { promisify } from "util";
 import path from "path";
 import fs from "fs";
+import { createClient } from "@supabase/supabase-js";
 
 const exec = promisify(execFile);
 
@@ -274,6 +275,37 @@ Total 300-500 words. No fabricated facts. No corporate speak.`;
       fs.writeFileSync(outputPath, jsonData);
       fs.writeFileSync(latestPath, jsonData);
       log(`Feed saved to: ${outputPath}`);
+    }
+
+    // 7b. Save to Supabase (nubble_feed table on pokpok project)
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+    if (supabaseUrl && supabaseKey) {
+      log("Saving to Supabase...");
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      const rows = stories.map((s) => ({
+        date: today,
+        category: CATEGORY,
+        story_rank: s.rank,
+        title: s.title,
+        source: s.source,
+        source_url: s.source_url,
+        why_it_matters: s.why_it_matters,
+        summary: s.sections[0]?.summary || "",
+        condensed: s.sections[0]?.condensed || "",
+        standard: s.sections[0]?.standard || "",
+        expanded: s.sections[0]?.expanded || "",
+      }));
+      const { error } = await supabase
+        .from("nubble_feed")
+        .upsert(rows, { onConflict: "date,category,story_rank" });
+      if (error) {
+        log(`Supabase upsert error: ${error.message}`, "supabase");
+      } else {
+        log(`Saved ${rows.length} stories to Supabase`, "supabase");
+      }
+    } else {
+      log("Skipping Supabase save (no SUPABASE_URL/SUPABASE_SERVICE_KEY)", "supabase");
     }
 
     // 8. Cleanup notebook
