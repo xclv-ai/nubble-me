@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUBBLE</title>
+<!--
+  NUBBLE v4 — Correct Dieter Rams
+
+  Design brief (from actual research):
+
+  RAMS ON COLOR: "Colour can dominate a room. And design shouldn't
+  dominate people, it should help people." Mostly achromatic — greys,
+  whites, off-whites. Color ONLY for functional signals: FM=blood orange,
+  phono=honey yellow, power=leaf green. Never decorative.
+
+  Actual Braun palette (from rams-foundation.org + Chad Ashley extraction):
+  - Shell whites: #dbd7d3, #e1e4e1, #d9d2c6
+  - Warm greys: #bcb3a6, #bfb1a8, #9c9c9c
+  - Dark: #261201, #372e3d, #5f503e
+  - Signal orange (functional): #ed8008, #ed3f1c
+  - Signal green (power/on): #736b1e
+
+  DESIGN RULES:
+  1. The product (content) is the hero. The interface disappears.
+  2. White/off-white surface. Grey for secondary. ONE color for function.
+  3. No decoration. No texture. No noise. No gradients. No shadows.
+  4. Grid precision. Mathematical spacing. Consistent rhythm.
+  5. Typography: one typeface, weight variations only.
+  6. Controls are honest — they look like what they do.
+  7. "Less, but better." If in doubt, remove it.
+
+  Physical references:
+  - Braun ET66 calculator: white body, grey keys, orange/yellow function keys
+  - Braun T3 radio: white body, perforated speaker, single green power dot
+  - Braun TP1: white, one switch, one dial, nothing else
+  - Vitsoe 606: the system IS the content, shelving disappears
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Braun palette — extracted from real products */
+    --white: #FAFAF8;
+    --off-white: #F2F0EC;
+    --shell: #E6E2DC;       /* Braun device body (#d9d2c6 lightened for screen) */
+    --grey-light: #CCC7BF;
+    --grey: #9C9C9C;
+    --grey-dark: #6B6560;
+    --black: #2A2520;
+    --near-black: #1C1A18;
+
+    /* Functional colors — Rams used color ONLY for function */
+    --fn-orange: #ED8008;   /* Braun FM/memory key */
+    --fn-green: #5A8C32;    /* Braun power indicator */
+
+    /* Single typeface. Rams never mixed fonts. Helvetica was Braun's typeface. */
+    --font: 'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+    /* Spacing: 8px base grid (mathematical, not arbitrary) */
+    --s1: 4px;
+    --s2: 8px;
+    --s3: 12px;
+    --s4: 16px;
+    --s5: 24px;
+    --s6: 32px;
+    --s7: 48px;
+    --s8: 64px;
+
+    --max-w: 640px;
+    --gutter: 32px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: var(--font);
+    font-weight: 400;
+    background: var(--off-white);
+    color: var(--near-black);
+    line-height: 1.0;
+  }
+
+  /* No decoration. The content IS the product. */
+
+  /* ═══════ HEADER ═══════
+     Like the top edge of a Braun T3: brand mark, one indicator, nothing else. */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--off-white);
+  }
+
+  .header-row {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mark {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    cursor: pointer;
+  }
+
+  /* Power dot — the only color. Like the green dot on Braun T3. */
+  .mark-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--fn-green);
+  }
+
+  .mark-text {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--grey-dark);
+  }
+
+  .header-meta {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--grey);
+    letter-spacing: 0.04em;
+  }
+
+  /* Hairline — Rams: precise, thin, structural */
+  .rule {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    border: none;
+    border-top: 1px solid var(--grey-light);
+  }
+
+  /* ═══════ DEPTH CONTROL ═══════
+     Four positions. Like the band selector on a Braun radio.
+     No decoration. Labels only. Active state = weight change, that's all. */
+  .depth-row {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    height: 36px;
+    display: flex;
+    align-items: center;
+  }
+
+  .depth-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-right: var(--s5);
+    flex-shrink: 0;
+  }
+
+  .depth-options {
+    display: flex;
+    gap: var(--s5);
+  }
+
+  .depth-opt {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    color: var(--grey);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+  }
+
+  .depth-opt:hover { color: var(--grey-dark); }
+
+  .depth-opt.on {
+    color: var(--near-black);
+    font-weight: 500;
+  }
+
+  /* ═══════ CATEGORIES ═══════
+     Minimal. Tabs, not pills. Active = underline. Rams: honest controls. */
+  .cats {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: var(--s4) var(--gutter) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--s5);
+  }
+
+  .cat {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--grey);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--s2) 0;
+    border-bottom: 1.5px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+
+  .cat:hover { color: var(--grey-dark); }
+
+  .cat.on {
+    color: var(--near-black);
+    font-weight: 500;
+    border-bottom-color: var(--near-black);
+  }
+
+  .cat-add {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--grey-light);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--s2) 0;
+    transition: color 0.15s;
+  }
+
+  .cat-add:hover { color: var(--fn-orange); }
+
+  /* ═══════ DATE ═══════ */
+  .date-row {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: var(--s5) var(--gutter) var(--s3);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .date-row span {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--grey);
+    letter-spacing: 0.04em;
+  }
+
+  /* ═══════ STORIES ═══════
+     Each story is a content unit. Separated by space and a hairline.
+     No cards. No boxes. No shadows. The content stands on its own.
+     Like entries in a Braun instruction booklet: clean, hierarchical, readable. */
+  .stories {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--gutter) var(--s8);
+  }
+
+  .story {
+    padding: var(--s5) 0;
+    opacity: 0;
+    animation: fadeUp 0.3s ease forwards;
+  }
+
+  .story:nth-child(1) { animation-delay: 0.04s; }
+  .story:nth-child(2) { animation-delay: 0.1s; }
+  .story:nth-child(3) { animation-delay: 0.16s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .story + .story {
+    border-top: 1px solid var(--grey-light);
+  }
+
+  /* Story meta */
+  .s-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--s2);
+    margin-bottom: var(--s3);
+  }
+
+  .s-num {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--fn-orange); /* Functional color — rank indicator */
+    letter-spacing: 0.02em;
+  }
+
+  .s-src {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--grey);
+  }
+
+  /* Headline */
+  .s-h {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--near-black);
+    margin-bottom: var(--s4);
+    letter-spacing: -0.01em;
+  }
+
+  /* Body */
+  .s-body {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--grey-dark);
+    margin-bottom: var(--s4);
+  }
+
+  .s-body p { margin-bottom: var(--s3); }
+  .s-body p:last-child { margin-bottom: 0; }
+  .s-body strong { font-weight: 500; color: var(--near-black); }
+
+  /* Depth 0: bolder, the summary IS the story at this level */
+  .s-body.d0 {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--near-black);
+    line-height: 1.6;
+  }
+
+  /* Signal line — "Why it matters"
+     Not a card, not a box. A left rule and text. Minimal. */
+  .signal {
+    padding-left: var(--s4);
+    border-left: 2px solid var(--fn-orange);
+    margin-bottom: var(--s4);
+  }
+
+  .signal-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fn-orange);
+    margin-bottom: var(--s1);
+  }
+
+  .signal-text {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--grey-dark);
+  }
+
+  /* ═══════ DEPTH CONTROL (per story) ═══════
+     A simple line with four positions. Like a Braun slider:
+     track, four detents, current position marked.
+     "Less" and "More" as text buttons flanking the track.
+     Honest. You see exactly what it does. */
+  .s-depth {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    padding-top: var(--s2);
+  }
+
+  .sd-btn {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--grey);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+    letter-spacing: 0.04em;
+  }
+
+  .sd-btn:hover { color: var(--near-black); }
+  .sd-btn.off { color: var(--grey-light); pointer-events: none; }
+
+  .sd-track {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 20px;
+  }
+
+  .sd-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: var(--grey-light);
+  }
+
+  .sd-stops {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+  }
+
+  .sd-stop {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--off-white);
+    border: 1.5px solid var(--grey-light);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .sd-stop:hover { border-color: var(--grey); }
+
+  /* Active: filled black. Like a Braun selector knob position. */
+  .sd-stop.on {
+    background: var(--near-black);
+    border-color: var(--near-black);
+  }
+
+  .sd-name {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: transparent;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+
+  .sd-stop.on .sd-name { color: var(--grey); }
+
+  /* ═══════ FOOTER ═══════
+     Almost nothing. Keyboard hints for desktop. */
+  .foot {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+  }
+
+  .foot-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: var(--s7) var(--gutter) var(--s3);
+    display: flex;
+    justify-content: center;
+    gap: var(--s5);
+    background: linear-gradient(transparent, var(--off-white) 60%);
+    pointer-events: auto;
+  }
+
+  .foot-h {
+    font-size: 9px;
+    font-weight: 300;
+    color: var(--grey-light);
+    letter-spacing: 0.04em;
+  }
+
+  /* ═══════ ADD TOPIC OVERLAY ═══════ */
+  .ov {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(26,25,24,0.15);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ov.open { display: flex; }
+
+  .dlg {
+    background: var(--white);
+    width: 90%;
+    max-width: 360px;
+    padding: var(--s6);
+  }
+
+  .dlg h3 {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: var(--s1);
+    color: var(--near-black);
+  }
+
+  .dlg p {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--grey);
+    margin-bottom: var(--s4);
+    line-height: 1.5;
+  }
+
+  .dlg input {
+    width: 100%;
+    padding: var(--s3) 0;
+    border: none;
+    border-bottom: 1px solid var(--grey-light);
+    background: transparent;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--near-black);
+    outline: none;
+    margin-bottom: var(--s4);
+  }
+
+  .dlg input:focus { border-bottom-color: var(--near-black); }
+  .dlg input::placeholder { color: var(--grey-light); }
+
+  .sgs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s2);
+    margin-bottom: var(--s5);
+  }
+
+  .sg {
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 300;
+    padding: var(--s1) var(--s3);
+    border: 1px solid var(--grey-light);
+    background: transparent;
+    color: var(--grey-dark);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .sg:hover { border-color: var(--near-black); color: var(--near-black); }
+
+  .dlg-a {
+    display: flex;
+    gap: var(--s2);
+    justify-content: flex-end;
+  }
+
+  .db {
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 400;
+    padding: var(--s2) var(--s4);
+    cursor: pointer;
+    border: 1px solid var(--grey-light);
+    background: transparent;
+    color: var(--grey-dark);
+    transition: all 0.15s;
+  }
+
+  .db:hover { border-color: var(--grey-dark); }
+
+  .db.pr {
+    background: var(--near-black);
+    color: var(--white);
+    border-color: var(--near-black);
+  }
+
+  .db.pr:hover { opacity: 0.85; }
+
+  /* ═══════ RESPONSIVE ═══════ */
+  @media (max-width: 640px) {
+    :root { --gutter: 20px; }
+    .depth-row { display: none; }
+    .s-h { font-size: 18px; }
+    .cats { gap: var(--s4); overflow-x: auto; scrollbar-width: none; }
+    .cats::-webkit-scrollbar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div class="mark">
+      <span class="mark-dot"></span>
+      <span class="mark-text">Nubble</span>
+    </div>
+    <span class="header-meta">March 18, 2026</span>
+  </div>
+  <hr class="rule">
+  <div class="depth-row">
+    <span class="depth-label">Depth</span>
+    <div class="depth-options">
+      <button class="depth-opt" onclick="gd(0)">Sneak Peek</button>
+      <button class="depth-opt" onclick="gd(1)">Brief</button>
+      <button class="depth-opt on" onclick="gd(2)">Full</button>
+      <button class="depth-opt" onclick="gd(3)">Deep Dive</button>
+    </div>
+  </div>
+  <hr class="rule">
+</header>
+
+<nav class="cats">
+  <button class="cat on" onclick="sc(this)">AI News</button>
+  <button class="cat" onclick="sc(this)">AI Branding</button>
+  <button class="cat" onclick="sc(this)">AI Ecommerce</button>
+  <button class="cat-add" onclick="om()">+ Add topic</button>
+</nav>
+
+<div class="date-row">
+  <span>AI News</span>
+  <span>10 stories &middot; 4 min</span>
+</div>
+
+<hr class="rule">
+
+<main class="stories">
+
+  <!-- STORY 1 — Depth 0 -->
+  <article class="story" data-d="0">
+    <div class="s-meta">
+      <span class="s-num">01</span>
+      <span class="s-src">Kersai</span>
+    </div>
+    <h2 class="s-h">GPT-5.4 Surpasses Human Performance on Desktop Navigation</h2>
+    <div class="s-body d0">
+      <p>GPT-5.4 is the first AI to beat humans at navigating desktop interfaces, unlocking massive screen-based workflow automation.</p>
+    </div>
+    <div class="signal">
+      <div class="signal-label">Why it matters</div>
+      <div class="signal-text">AI can now visually operate computer interfaces just like a human, making virtually any screen-based enterprise workflow automatable.</div>
+    </div>
+    <div class="s-depth">
+      <button class="sd-btn off" onclick="cd(0,-1)">&larr; Less</button>
+      <div class="sd-track">
+        <div class="sd-line"></div>
+        <div class="sd-stops">
+          <span class="sd-stop on" onclick="sd(0,0)"><span class="sd-name">Peek</span></span>
+          <span class="sd-stop" onclick="sd(0,1)"><span class="sd-name">Brief</span></span>
+          <span class="sd-stop" onclick="sd(0,2)"><span class="sd-name">Full</span></span>
+          <span class="sd-stop" onclick="sd(0,3)"><span class="sd-name">Deep</span></span>
+        </div>
+      </div>
+      <button class="sd-btn" onclick="cd(0,1)">More &rarr;</button>
+    </div>
+  </article>
+
+  <!-- STORY 2 — Depth 1 -->
+  <article class="story" data-d="1">
+    <div class="s-meta">
+      <span class="s-num">02</span>
+      <span class="s-src">Reddit / AISEOInsider</span>
+    </div>
+    <h2 class="s-h">DeepSeek V4: The Trillion-Parameter Open-Weight Model</h2>
+    <div class="s-body">
+      <p>DeepSeek V4 is a new open-weight AI model featuring one trillion parameters and a one-million-token context window. By activating only a fraction of its network per task, it rivals GPT-5's performance while drastically lowering hardware and energy requirements.</p>
+      <p>This architecture empowers startups, independent developers, and global enterprises to run elite AI locally, breaking reliance on big tech cloud monopolies.</p>
+    </div>
+    <div class="signal">
+      <div class="signal-label">Why it matters</div>
+      <div class="signal-text">DeepSeek permanently disrupts the Western tech monopoly and makes massive intelligence accessible for local, independent deployment.</div>
+    </div>
+    <div class="s-depth">
+      <button class="sd-btn" onclick="cd(1,-1)">&larr; Less</button>
+      <div class="sd-track">
+        <div class="sd-line"></div>
+        <div class="sd-stops">
+          <span class="sd-stop" onclick="sd(1,0)"><span class="sd-name">Peek</span></span>
+          <span class="sd-stop on" onclick="sd(1,1)"><span class="sd-name">Brief</span></span>
+          <span class="sd-stop" onclick="sd(1,2)"><span class="sd-name">Full</span></span>
+          <span class="sd-stop" onclick="sd(1,3)"><span class="sd-name">Deep</span></span>
+        </div>
+      </div>
+      <button class="sd-btn" onclick="cd(1,1)">More &rarr;</button>
+    </div>
+  </article>
+
+  <!-- STORY 3 — Depth 2 -->
+  <article class="story" data-d="2">
+    <div class="s-meta">
+      <span class="s-num">03</span>
+      <span class="s-src">NVIDIA Newsroom</span>
+    </div>
+    <h2 class="s-h">NVIDIA Announces NemoClaw for the OpenClaw Community</h2>
+    <div class="s-body">
+      <p>NVIDIA introduced NemoClaw, a software stack that installs privacy and security guardrails onto the viral OpenClaw AI agent platform with a single command. This transforms OpenClaw from an insecure consumer tool into an enterprise-ready system by using an isolated sandbox called OpenShell.</p>
+      <p>It primarily affects enterprise developers and companies wanting to deploy autonomous AI workers without exposing sensitive internal networks.</p>
+      <p><strong>Why it matters:</strong> The explosive rise of OpenClaw establishes a universal operating system for agentic AI, shifting from passive chatbots to persistent, autonomous personal agents.</p>
+    </div>
+    <div class="s-depth">
+      <button class="sd-btn" onclick="cd(2,-1)">&larr; Less</button>
+      <div class="sd-track">
+        <div class="sd-line"></div>
+        <div class="sd-stops">
+          <span class="sd-stop" onclick="sd(2,0)"><span class="sd-name">Peek</span></span>
+          <span class="sd-stop" onclick="sd(2,1)"><span class="sd-name">Brief</span></span>
+          <span class="sd-stop on" onclick="sd(2,2)"><span class="sd-name">Full</span></span>
+          <span class="sd-stop" onclick="sd(2,3)"><span class="sd-name">Deep</span></span>
+        </div>
+      </div>
+      <button class="sd-btn" onclick="cd(2,1)">More &rarr;</button>
+    </div>
+  </article>
+
+</main>
+
+<div class="foot">
+  <div class="foot-inner">
+    <span class="foot-h">&larr;&rarr; depth &nbsp;&nbsp; shift+&larr;&rarr; global &nbsp;&nbsp; scroll to read</span>
+  </div>
+</div>
+
+<!-- Add Topic -->
+<div class="ov" id="m" onclick="if(event.target===this)cm()">
+  <div class="dlg">
+    <h3>Add a topic</h3>
+    <p>Daily briefing generated overnight.</p>
+    <input type="text" placeholder="e.g. AI in Healthcare" id="ti">
+    <div class="sgs">
+      <button class="sg" onclick="pk(this)">Healthcare</button>
+      <button class="sg" onclick="pk(this)">Finance</button>
+      <button class="sg" onclick="pk(this)">Legal</button>
+      <button class="sg" onclick="pk(this)">Robotics</button>
+      <button class="sg" onclick="pk(this)">Education</button>
+    </div>
+    <div class="dlg-a">
+      <button class="db" onclick="cm()">Cancel</button>
+      <button class="db pr" onclick="sub()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function sc(e){document.querySelectorAll('.cat').forEach(c=>c.classList.remove('on'));e.classList.add('on')}
+function gd(n){document.querySelectorAll('.depth-opt').forEach((b,i)=>b.classList.toggle('on',i===n))}
+function cd(i,d){const m=document.querySelectorAll('.story')[i];let v=parseInt(m.dataset.d);v=Math.max(0,Math.min(3,v+d));sd(i,v)}
+function sd(i,v){const m=document.querySelectorAll('.story')[i];m.dataset.d=v;const bar=m.querySelector('.s-depth');bar.querySelectorAll('.sd-stop').forEach((s,j)=>s.classList.toggle('on',j===v));const btns=bar.querySelectorAll('.sd-btn');btns[0].classList.toggle('off',v===0);btns[1].classList.toggle('off',v===3)}
+function om(){document.getElementById('m').classList.add('open');setTimeout(()=>document.getElementById('ti').focus(),80)}
+function cm(){document.getElementById('m').classList.remove('open')}
+function pk(e){document.getElementById('ti').value=e.textContent}
+function sub(){const v=document.getElementById('ti').value.trim();if(!v)return;alert('"'+v+'" — available tomorrow.');cm()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')cm()})
+</script>
+
+</body>
+</html>

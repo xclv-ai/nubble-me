@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUBBLE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sand: #F5F1EB;
+    --white: #FFFFFF;
+    --peach: #FFDACA;
+    --peach-strong: #FFB89A;
+    --black: #0A0A08;
+    --text: #1A1A18;
+    --text-secondary: #6B6860;
+    --text-muted: #A09A90;
+    --text-faint: #C8C2B8;
+    --border: #E8E2D8;
+    --border-light: #EDE8E0;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 6px 16px rgba(0,0,0,0.02);
+
+    --font-display: 'Instrument Sans', -apple-system, sans-serif;
+    --font-serif: 'Source Serif 4', Georgia, serif;
+    --font-mono: 'Space Mono', monospace;
+
+    --max-w: 1080px;
+    --content-w: 640px;
+    --gutter: 40px;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-display);
+    background: var(--sand);
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1.0;
+  }
+
+  /* ═══════ TOP BAR ═══════ */
+  .topbar {
+    background: var(--sand);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--black);
+  }
+
+  .logo-mark {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-text {
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .nav-link {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .nav-link:hover { color: var(--black); }
+  .nav-link.active { color: var(--black); font-weight: 700; }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .depth-toggle {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2px;
+    gap: 1px;
+  }
+
+  .dt-btn {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .dt-btn:hover { color: var(--text-secondary); }
+
+  .dt-btn.on {
+    background: var(--peach);
+    color: var(--black);
+    font-weight: 700;
+  }
+
+  /* ═══════ HERO / PAGE TITLE ═══════ */
+  .hero {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 48px var(--gutter) 0;
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--black);
+    margin-bottom: 12px;
+  }
+
+  .hero h1 span {
+    color: var(--text-muted);
+  }
+
+  .hero-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  /* ═══════ CATEGORY TABS ═══════ */
+  .categories {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 32px var(--gutter) 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cat-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .cat-tab:hover { border-color: var(--text-faint); color: var(--text-secondary); }
+
+  .cat-tab.on {
+    background: var(--black);
+    border-color: var(--black);
+    color: var(--white);
+  }
+
+  .cat-tab .count {
+    font-size: 9px;
+    opacity: 0.5;
+  }
+
+  .cat-tab.on .count { opacity: 0.7; }
+
+  .cat-add {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .cat-add:hover { border-color: var(--peach-strong); color: var(--peach-strong); }
+  .cat-add svg { width: 12px; height: 12px; }
+
+  /* ═══════ STORIES ═══════ */
+  .stories {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 24px var(--gutter) 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    opacity: 0;
+    animation: cardUp 0.35s ease forwards;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.12s; }
+  .card:nth-child(3) { animation-delay: 0.19s; }
+
+  @keyframes cardUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:hover {
+    border-color: var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03), 0 12px 32px rgba(0,0,0,0.04);
+  }
+
+  .card-body {
+    padding: 28px 32px 24px;
+  }
+
+  /* Meta: monospace label row */
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .card-rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 22px;
+    padding: 0 6px;
+    background: var(--peach);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: 0.02em;
+  }
+
+  .card-source {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .card-arrow {
+    margin-left: auto;
+    color: var(--text-faint);
+    transition: color 0.15s, transform 0.15s;
+  }
+
+  .card:hover .card-arrow { color: var(--text-muted); transform: translateX(2px); }
+
+  /* Headline */
+  .card-headline {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--black);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Body */
+  .card-text {
+    font-family: var(--font-display);
+    font-size: 14.5px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .card-text p { margin-bottom: 10px; }
+  .card-text p:last-child { margin-bottom: 0; }
+  .card-text strong { color: var(--text); font-weight: 600; }
+
+  .card-text.d0 {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* Signal callout */
+  .signal {
+    background: rgba(255,218,202,0.2);
+    border-left: 3px solid var(--peach-strong);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 16px;
+  }
+
+  .signal-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--peach-strong);
+    margin-bottom: 4px;
+  }
+
+  .signal-body {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  /* ═══════ DEPTH CONTROL (per card) ═══════ */
+  .card-depth {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 32px;
+    background: rgba(0,0,0,0.015);
+    border-top: 1px solid var(--border-light);
+  }
+
+  .cd-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    background: none;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px 0;
+    transition: color 0.15s;
+  }
+
+  .cd-btn:hover { color: var(--black); }
+  .cd-btn.off { opacity: 0.25; pointer-events: none; }
+  .cd-btn svg { width: 12px; height: 12px; }
+
+  .cd-center {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .cd-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .cd-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .cd-dot:hover { background: var(--text-faint); }
+
+  .cd-dot.on {
+    background: var(--black);
+  }
+
+  .cd-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    min-width: 70px;
+    text-align: center;
+  }
+
+  /* ═══════ FOOTER ═══════ */
+  .foot {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 40;
+  }
+
+  .foot-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 40px var(--gutter) 12px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    background: linear-gradient(transparent, var(--sand) 60%);
+    pointer-events: auto;
+  }
+
+  .foot-h {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-transform: uppercase;
+  }
+
+  .foot-h kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 16px;
+    padding: 0 4px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--text-muted);
+  }
+
+  /* ═══════ MODAL ═══════ */
+  .ov { position: fixed; inset: 0; z-index: 100; background: rgba(10,10,8,0.15); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; }
+  .ov.open { display: flex; }
+
+  .dlg {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 400px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  }
+
+  .dlg h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .dlg p { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+
+  .dlg input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--sand);
+    font-family: var(--font-display);
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.15s;
+  }
+
+  .dlg input:focus { border-color: var(--peach-strong); }
+  .dlg input::placeholder { color: var(--text-faint); }
+
+  .sgs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+
+  .sg {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .sg:hover { border-color: var(--peach-strong); color: var(--peach-strong); background: rgba(255,218,202,0.1); }
+
+  .dlg-a { display: flex; gap: 8px; justify-content: flex-end; }
+
+  .db {
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+
+  .db:hover { background: var(--sand); }
+  .db.pr { background: var(--black); color: var(--white); border-color: var(--black); }
+  .db.pr:hover { opacity: 0.85; }
+
+  /* ═══════ RESPONSIVE ═══════ */
+  @media (max-width: 768px) {
+    :root { --gutter: 20px; }
+    .nav-links { display: none; }
+    .depth-toggle { display: none; }
+    .hero h1 { font-size: 32px; }
+    .card-body { padding: 20px; }
+    .card-depth { padding: 10px 20px; }
+    .card-headline { font-size: 19px; }
+    .categories { overflow-x: auto; scrollbar-width: none; }
+    .categories::-webkit-scrollbar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ TOP BAR ═══════ -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="logo" href="#">
+      <div class="logo-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <rect x="3" y="5" width="12" height="14" rx="2.5" opacity="0.3"/>
+          <rect x="9" y="5" width="12" height="14" rx="2.5"/>
+        </svg>
+      </div>
+      <span class="logo-text">Nubble</span>
+    </a>
+
+    <nav class="nav-links">
+      <a class="nav-link active" href="#">AI News</a>
+      <a class="nav-link" href="#">AI Branding</a>
+      <a class="nav-link" href="#">AI Ecommerce</a>
+    </nav>
+
+    <div class="nav-right">
+      <div class="depth-toggle">
+        <button class="dt-btn" onclick="gd(0)">Peek</button>
+        <button class="dt-btn" onclick="gd(1)">Brief</button>
+        <button class="dt-btn on" onclick="gd(2)">Full</button>
+        <button class="dt-btn" onclick="gd(3)">Deep</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <h1>AI News <span>Nubs</span></h1>
+  <div class="hero-meta">March 18, 2026 &middot; 10 stories &middot; 4 min read</div>
+</section>
+
+<!-- ═══════ CATEGORIES ═══════ -->
+<div class="categories">
+  <button class="cat-tab on" onclick="sc(this)">AI News <span class="count">10</span></button>
+  <button class="cat-tab" onclick="sc(this)">AI Branding <span class="count">10</span></button>
+  <button class="cat-tab" onclick="sc(this)">AI Ecommerce <span class="count">10</span></button>
+  <button class="cat-add" onclick="om()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Add Topic
+  </button>
+</div>
+
+<!-- ═══════ STORIES ═══════ -->
+<div class="stories">
+
+  <!-- CARD 1 — Depth 0 -->
+  <article class="card" data-d="0">
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="card-rank">01</span>
+        <span class="card-source">Kersai</span>
+        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <h2 class="card-headline">GPT-5.4 Surpasses Human Performance on Desktop Navigation</h2>
+      <div class="card-text d0">
+        <p>GPT-5.4 is the first AI to beat humans at navigating desktop interfaces, unlocking massive screen-based workflow automation.</p>
+      </div>
+      <div class="signal">
+        <div class="signal-tag">Why it matters</div>
+        <div class="signal-body">AI can now visually operate computer interfaces just like a human, making virtually any screen-based enterprise workflow automatable.</div>
+      </div>
+    </div>
+    <div class="card-depth">
+      <button class="cd-btn off" onclick="cd(0,-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Less</button>
+      <div class="cd-center">
+        <div class="cd-dots">
+          <span class="cd-dot on" onclick="sd(0,0)"></span>
+          <span class="cd-dot" onclick="sd(0,1)"></span>
+          <span class="cd-dot" onclick="sd(0,2)"></span>
+          <span class="cd-dot" onclick="sd(0,3)"></span>
+        </div>
+        <span class="cd-label">Sneak Peek</span>
+      </div>
+      <button class="cd-btn" onclick="cd(0,1)">More<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </article>
+
+  <!-- CARD 2 — Depth 1 -->
+  <article class="card" data-d="1">
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="card-rank">02</span>
+        <span class="card-source">Reddit / AISEOInsider</span>
+        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <h2 class="card-headline">DeepSeek V4: The Trillion-Parameter Open-Weight Model</h2>
+      <div class="card-text">
+        <p>DeepSeek V4 is a new open-weight AI model featuring one trillion parameters and a one-million-token context window. By activating only a fraction of its network per task, it rivals GPT-5's performance while drastically lowering hardware and energy requirements.</p>
+        <p>This architecture empowers startups, independent developers, and global enterprises to run elite AI locally, breaking reliance on big tech cloud monopolies.</p>
+      </div>
+      <div class="signal">
+        <div class="signal-tag">Why it matters</div>
+        <div class="signal-body">DeepSeek permanently disrupts the Western tech monopoly and makes massive intelligence accessible for local, independent deployment.</div>
+      </div>
+    </div>
+    <div class="card-depth">
+      <button class="cd-btn" onclick="cd(1,-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Less</button>
+      <div class="cd-center">
+        <div class="cd-dots">
+          <span class="cd-dot" onclick="sd(1,0)"></span>
+          <span class="cd-dot on" onclick="sd(1,1)"></span>
+          <span class="cd-dot" onclick="sd(1,2)"></span>
+          <span class="cd-dot" onclick="sd(1,3)"></span>
+        </div>
+        <span class="cd-label">Brief</span>
+      </div>
+      <button class="cd-btn" onclick="cd(1,1)">More<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </article>
+
+  <!-- CARD 3 — Depth 2 -->
+  <article class="card" data-d="2">
+    <div class="card-body">
+      <div class="card-meta">
+        <span class="card-rank">03</span>
+        <span class="card-source">NVIDIA Newsroom</span>
+        <svg class="card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <h2 class="card-headline">NVIDIA Announces NemoClaw for the OpenClaw Community</h2>
+      <div class="card-text">
+        <p>NVIDIA introduced NemoClaw, a software stack that installs privacy and security guardrails onto the viral OpenClaw AI agent platform with a single command. This transforms OpenClaw from an insecure consumer tool into an enterprise-ready system by using an isolated sandbox called OpenShell.</p>
+        <p>It primarily affects enterprise developers and companies wanting to deploy autonomous AI workers without exposing sensitive internal networks.</p>
+        <p><strong>Why it matters:</strong> The explosive rise of OpenClaw establishes a universal operating system for agentic AI, shifting from passive chatbots to persistent, autonomous personal agents.</p>
+      </div>
+    </div>
+    <div class="card-depth">
+      <button class="cd-btn" onclick="cd(2,-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Less</button>
+      <div class="cd-center">
+        <div class="cd-dots">
+          <span class="cd-dot" onclick="sd(2,0)"></span>
+          <span class="cd-dot" onclick="sd(2,1)"></span>
+          <span class="cd-dot on" onclick="sd(2,2)"></span>
+          <span class="cd-dot" onclick="sd(2,3)"></span>
+        </div>
+        <span class="cd-label">Full</span>
+      </div>
+      <button class="cd-btn" onclick="cd(2,1)">More<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </article>
+
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<div class="foot">
+  <div class="foot-inner">
+    <span class="foot-h"><kbd>&larr;&rarr;</kbd> depth</span>
+    <span class="foot-h"><kbd>shift</kbd><kbd>&larr;&rarr;</kbd> global</span>
+    <span class="foot-h">scroll to read</span>
+  </div>
+</div>
+
+<!-- ═══════ MODAL ═══════ -->
+<div class="ov" id="m" onclick="if(event.target===this)cm()">
+  <div class="dlg">
+    <h3>Add a new topic</h3>
+    <p>We'll generate a daily AI briefing with 4 depth levels overnight.</p>
+    <input type="text" placeholder="e.g. AI in Healthcare, Robotics..." id="ti">
+    <div class="sgs">
+      <button class="sg" onclick="pk(this)">Healthcare</button>
+      <button class="sg" onclick="pk(this)">Finance</button>
+      <button class="sg" onclick="pk(this)">Legal</button>
+      <button class="sg" onclick="pk(this)">Robotics</button>
+      <button class="sg" onclick="pk(this)">Education</button>
+      <button class="sg" onclick="pk(this)">Climate</button>
+    </div>
+    <div class="dlg-a">
+      <button class="db" onclick="cm()">Cancel</button>
+      <button class="db pr" onclick="sub()">Add Topic</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const NAMES=['Sneak Peek','Brief','Full','Deep Dive'];
+function sc(e){document.querySelectorAll('.cat-tab').forEach(c=>c.classList.remove('on'));e.classList.add('on')}
+function gd(n){document.querySelectorAll('.dt-btn').forEach((b,i)=>b.classList.toggle('on',i===n))}
+function cd(i,d){const m=document.querySelectorAll('.card')[i];let v=parseInt(m.dataset.d);v=Math.max(0,Math.min(3,v+d));sd(i,v)}
+function sd(i,v){const m=document.querySelectorAll('.card')[i];m.dataset.d=v;const bar=m.querySelector('.card-depth');bar.querySelectorAll('.cd-dot').forEach((s,j)=>s.classList.toggle('on',j===v));bar.querySelector('.cd-label').textContent=NAMES[v];const btns=bar.querySelectorAll('.cd-btn');btns[0].classList.toggle('off',v===0);btns[1].classList.toggle('off',v===3)}
+function om(){document.getElementById('m').classList.add('open');setTimeout(()=>document.getElementById('ti').focus(),80)}
+function cm(){document.getElementById('m').classList.remove('open')}
+function pk(e){document.getElementById('ti').value=e.textContent}
+function sub(){const v=document.getElementById('ti').value.trim();if(!v)return;alert('"'+v+'" — available tomorrow morning.');cm()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')cm()})
+</script>
+
+</body>
+</html>

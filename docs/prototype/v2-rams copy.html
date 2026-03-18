@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUBBLE — Dieter Rams Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /*
+   * NUBBLE v2 — Dieter Rams / Braun
+   *
+   * "Good design is as little design as possible."
+   *
+   * Principles applied:
+   * - Functional form: every element earns its space
+   * - Systematic grid: strict alignment, no decorative noise
+   * - Material honesty: flat surfaces, precise edges, no shadows-as-decoration
+   * - Color restraint: warm grey device body, single signal color (Braun orange-red)
+   * - Typography as interface: Archivo (geometric neo-grotesque) + Space Mono (readout)
+   * - Hardware metaphor: the page IS the device — header is the control panel,
+   *   cards are display modules, depth bar is a physical slider/switch
+   */
+
+  :root {
+    /* The Braun palette */
+    --device: #F4F1EC;        /* warm device shell — like T3 radio body */
+    --surface: #FFFFFF;        /* display panel — clean white module */
+    --panel: #E8E4DE;          /* recessed control panel area */
+    --text-primary: #1C1C1A;   /* near-black — high contrast readout */
+    --text-secondary: #5C5A54; /* secondary information */
+    --text-caption: #9B9890;   /* captions, labels */
+    --text-ghost: #C8C4BC;     /* ghost/disabled */
+    --signal: #E05A2B;         /* Braun signal orange-red — the ONE accent */
+    --signal-light: rgba(224,90,43,0.08);
+    --signal-mid: rgba(224,90,43,0.15);
+    --divider: #DDD9D2;        /* precise hairline */
+    --control-bg: #EDEAE4;     /* button/switch background */
+    --control-active: #1C1C1A; /* active switch = black (like a Braun toggle) */
+
+    --font-ui: 'Archivo', 'Helvetica Neue', sans-serif;
+    --font-mono: 'Space Mono', 'Courier New', monospace;
+
+    --radius: 0px;             /* Rams: no rounded corners. Precision. */
+    --radius-sm: 2px;          /* minimal rounding only for interactive elements */
+    --max-w: 680px;
+    --gutter: 28px;
+    --card-gap: 2px;           /* tight module gap — like stacked Braun components */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-ui);
+    background: var(--device);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* ═══════════════════════════════════════
+     CONTROL PANEL (header)
+     Like the top panel of a Braun SK 4
+     ═══════════════════════════════════════ */
+  .control-panel {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--device);
+    border-bottom: 1px solid var(--divider);
+  }
+
+  .control-panel-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* Row 1: Brand + utility */
+  .cp-row-1 {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  .brand-mark {
+    width: 8px;
+    height: 8px;
+    background: var(--signal);
+    /* Braun power indicator — a simple filled circle */
+    border-radius: 50%;
+  }
+
+  .brand-name {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .utility {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .util-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--text-caption);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .util-btn:hover { color: var(--text-primary); }
+
+  /* Row 2: Depth switch — like a Braun radio band selector */
+  .cp-row-2 {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid var(--divider);
+  }
+
+  .depth-switch {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .depth-switch-option {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+  }
+
+  .depth-switch-option:not(:last-child) {
+    border-right: 1px solid var(--divider);
+  }
+
+  .depth-switch-option:hover { color: var(--text-secondary); }
+
+  .depth-switch-option.active {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  /* Active indicator — a thin line at bottom, like a Braun selector notch */
+  .depth-switch-option.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: var(--signal);
+  }
+
+  /* ═══════════════════════════════════════
+     CHANNEL SELECTOR (categories)
+     Like preset buttons on a Braun T 1000
+     ═══════════════════════════════════════ */
+  .channel-bar {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 16px var(--gutter) 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .channel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-caption);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .channel:hover {
+    color: var(--text-secondary);
+    background: var(--panel);
+  }
+
+  .channel.active {
+    color: var(--text-primary);
+    font-weight: 500;
+    background: var(--surface);
+    border-color: var(--divider);
+  }
+
+  .channel-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  .channel.active .channel-dot { opacity: 1; }
+
+  .channel-num {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-ghost);
+    margin-left: 2px;
+  }
+
+  .channel.active .channel-num { color: var(--text-caption); }
+
+  .channel-add {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border: 1px dashed var(--divider);
+    background: transparent;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    color: var(--text-ghost);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-left: 2px;
+  }
+
+  .channel-add:hover {
+    border-color: var(--signal);
+    color: var(--signal);
+  }
+
+  .channel-add svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  /* ═══════════════════════════════════════
+     READOUT (date/meta)
+     Like the frequency display on a Braun radio
+     ═══════════════════════════════════════ */
+  .readout {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 14px var(--gutter) 6px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .readout-date {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-caption);
+    letter-spacing: 0.06em;
+  }
+
+  .readout-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-ghost);
+  }
+
+  /* ═══════════════════════════════════════
+     DISPLAY MODULES (story cards)
+     Like stacked Braun hi-fi components
+     ═══════════════════════════════════════ */
+  .modules {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 8px var(--gutter) 100px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--card-gap);
+  }
+
+  .module {
+    background: var(--surface);
+    border: 1px solid var(--divider);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: moduleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .module:nth-child(1) { animation-delay: 0.06s; }
+  .module:nth-child(2) { animation-delay: 0.14s; }
+  .module:nth-child(3) { animation-delay: 0.22s; }
+
+  @keyframes moduleIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .module-content {
+    padding: 22px var(--gutter) 18px;
+  }
+
+  /* Meta: rank + source — like a channel indicator on a Braun display */
+  .module-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .module-rank {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--signal);
+    letter-spacing: 0.04em;
+  }
+
+  .module-source {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-ghost);
+    letter-spacing: 0.04em;
+    position: relative;
+    padding-left: 12px;
+  }
+
+  .module-source::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 1px;
+    background: var(--divider);
+  }
+
+  /* Headline */
+  .module-headline {
+    font-family: var(--font-ui);
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Body text */
+  .module-body {
+    font-size: 14px;
+    line-height: 1.72;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+  }
+
+  .module-body p { margin-bottom: 10px; }
+  .module-body p:last-child { margin-bottom: 0; }
+  .module-body strong { color: var(--text-primary); font-weight: 500; }
+
+  .module-body.depth-0 {
+    font-size: 15px;
+    color: var(--text-primary);
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  /* Signal callout — a Braun-style alert strip */
+  .signal-strip {
+    margin-top: 14px;
+    padding: 10px 16px;
+    background: var(--signal-light);
+    border-left: 2px solid var(--signal);
+    position: relative;
+  }
+
+  .signal-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--signal);
+    margin-bottom: 4px;
+  }
+
+  .signal-text {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+
+  /* ═══════════════════════════════════════
+     DEPTH SLIDER (per-card)
+     Like a Braun volume/tone slider:
+     a track with a position indicator
+     ═══════════════════════════════════════ */
+  .depth-bar {
+    display: flex;
+    align-items: center;
+    height: 38px;
+    padding: 0 var(--gutter);
+    background: var(--panel);
+    border-top: 1px solid var(--divider);
+  }
+
+  .depth-bar-left,
+  .depth-bar-right {
+    flex-shrink: 0;
+  }
+
+  .depth-action {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-caption);
+    cursor: pointer;
+    padding: 4px 0;
+    transition: color 0.15s;
+  }
+
+  .depth-action:hover { color: var(--signal); }
+
+  .depth-action.disabled {
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  .depth-action svg {
+    width: 10px;
+    height: 10px;
+    stroke-width: 2.5;
+  }
+
+  /* The slider track — center of the depth bar */
+  .depth-track {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 0 20px;
+    position: relative;
+    height: 100%;
+  }
+
+  .depth-track-line {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    right: 20px;
+    height: 1px;
+    background: var(--divider);
+    transform: translateY(-50%);
+  }
+
+  .depth-track-stops {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .depth-stop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+
+  .depth-stop-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--control-bg);
+    border: 1.5px solid var(--divider);
+    transition: all 0.2s;
+  }
+
+  .depth-stop.active .depth-stop-dot {
+    background: var(--control-active);
+    border-color: var(--control-active);
+    box-shadow: 0 0 0 3px rgba(28,28,26,0.08);
+  }
+
+  .depth-stop-label {
+    font-family: var(--font-mono);
+    font-size: 0;  /* hidden by default */
+    color: var(--text-caption);
+    letter-spacing: 0.04em;
+    margin-top: 0;
+    transition: all 0.15s;
+    white-space: nowrap;
+    position: absolute;
+    bottom: -14px;
+    opacity: 0;
+  }
+
+  .depth-stop.active .depth-stop-label {
+    font-size: 8px;
+    opacity: 1;
+  }
+
+  /* ═══════════════════════════════════════
+     FOOTER — minimal, functional
+     ═══════════════════════════════════════ */
+  .base-plate {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background: linear-gradient(transparent, var(--device) 50%);
+    pointer-events: none;
+  }
+
+  .base-plate-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 30px var(--gutter) 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    pointer-events: auto;
+  }
+
+  .bp-hint {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-ghost);
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .bp-hint kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 16px;
+    padding: 0 4px;
+    background: var(--panel);
+    border: 1px solid var(--divider);
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--text-caption);
+  }
+
+  /* ═══════════════════════════════════════
+     ADD TOPIC MODAL
+     ═══════════════════════════════════════ */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(28,28,26,0.25);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.15s ease;
+  }
+
+  .overlay.open { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } }
+
+  .dialog {
+    background: var(--surface);
+    border: 1px solid var(--divider);
+    width: 90%;
+    max-width: 400px;
+    padding: 28px;
+    animation: dialogIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes dialogIn {
+    from { opacity: 0; transform: translateY(8px); }
+  }
+
+  .dialog h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .dialog p {
+    font-size: 13px;
+    color: var(--text-caption);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .dialog input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--divider);
+    background: var(--device);
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s;
+    margin-bottom: 12px;
+  }
+
+  .dialog input:focus { border-color: var(--signal); }
+  .dialog input::placeholder { color: var(--text-ghost); }
+
+  .suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 18px;
+  }
+
+  .sug {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid var(--divider);
+    background: var(--device);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .sug:hover {
+    border-color: var(--signal);
+    color: var(--signal);
+  }
+
+  .dialog-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+
+  .d-btn {
+    padding: 7px 16px;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--divider);
+    background: var(--device);
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+
+  .d-btn:hover { background: var(--panel); }
+
+  .d-btn.primary {
+    background: var(--control-active);
+    color: white;
+    border-color: var(--control-active);
+  }
+
+  .d-btn.primary:hover { opacity: 0.85; }
+
+  /* ═══════════════════════════════════════
+     RESPONSIVE
+     ═══════════════════════════════════════ */
+  @media (max-width: 640px) {
+    :root { --gutter: 18px; }
+    .cp-row-2 { display: none; }
+    .module-headline { font-size: 17px; }
+    .channel-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .channel-bar::-webkit-scrollbar { display: none; }
+    .bp-hint kbd { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ CONTROL PANEL ═══════ -->
+<header class="control-panel">
+  <div class="control-panel-inner">
+    <div class="cp-row-1">
+      <a class="brand" href="#">
+        <span class="brand-mark"></span>
+        <span class="brand-name">Nubble</span>
+      </a>
+      <div class="utility">
+        <button class="util-btn" title="Toggle dark mode">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="cp-row-2">
+      <div class="depth-switch">
+        <button class="depth-switch-option" onclick="setGlobal(0)">Sneak Peek</button>
+        <button class="depth-switch-option" onclick="setGlobal(1)">Brief</button>
+        <button class="depth-switch-option active" onclick="setGlobal(2)">Full</button>
+        <button class="depth-switch-option" onclick="setGlobal(3)">Deep Dive</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ CHANNEL SELECTOR ═══════ -->
+<div class="channel-bar">
+  <button class="channel active" onclick="selectCh(this)">
+    <span class="channel-dot" style="background:#E05A2B"></span>
+    AI News
+    <span class="channel-num">10</span>
+  </button>
+  <button class="channel" onclick="selectCh(this)">
+    <span class="channel-dot" style="background:#7C5CBF"></span>
+    AI Branding
+    <span class="channel-num">10</span>
+  </button>
+  <button class="channel" onclick="selectCh(this)">
+    <span class="channel-dot" style="background:#2D9B6E"></span>
+    AI Ecommerce
+    <span class="channel-num">10</span>
+  </button>
+  <button class="channel-add" onclick="openModal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Add
+  </button>
+</div>
+
+<!-- ═══════ READOUT ═══════ -->
+<div class="readout">
+  <span class="readout-date">2026-03-18 &middot; AI News</span>
+  <span class="readout-meta">10 stories &middot; 4 min</span>
+</div>
+
+<!-- ═══════ DISPLAY MODULES ═══════ -->
+<div class="modules">
+
+  <!-- MODULE 1 — Depth 0 -->
+  <article class="module" data-depth="0">
+    <div class="module-content">
+      <div class="module-meta">
+        <span class="module-rank">01</span>
+        <span class="module-source">Kersai</span>
+      </div>
+      <h2 class="module-headline">GPT-5.4 Surpasses Human Performance on Desktop Navigation</h2>
+      <div class="module-body depth-0">
+        <p>GPT-5.4 is the first AI to beat humans at navigating desktop interfaces, unlocking massive screen-based workflow automation.</p>
+      </div>
+      <div class="signal-strip">
+        <div class="signal-label">Why it matters</div>
+        <div class="signal-text">AI can now visually operate computer interfaces just like a human, making virtually any screen-based enterprise workflow automatable.</div>
+      </div>
+    </div>
+    <div class="depth-bar">
+      <div class="depth-bar-left">
+        <button class="depth-action disabled" onclick="cd(0,-1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Less
+        </button>
+      </div>
+      <div class="depth-track">
+        <div class="depth-track-line"></div>
+        <div class="depth-track-stops">
+          <div class="depth-stop active" onclick="sd(0,0)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Sneak Peek</span></div>
+          <div class="depth-stop" onclick="sd(0,1)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Brief</span></div>
+          <div class="depth-stop" onclick="sd(0,2)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Full</span></div>
+          <div class="depth-stop" onclick="sd(0,3)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Deep Dive</span></div>
+        </div>
+      </div>
+      <div class="depth-bar-right">
+        <button class="depth-action" onclick="cd(0,1)">
+          More
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </article>
+
+  <!-- MODULE 2 — Depth 1 -->
+  <article class="module" data-depth="1">
+    <div class="module-content">
+      <div class="module-meta">
+        <span class="module-rank">02</span>
+        <span class="module-source">Reddit / AISEOInsider</span>
+      </div>
+      <h2 class="module-headline">DeepSeek V4: The Trillion-Parameter Open-Weight Model</h2>
+      <div class="module-body">
+        <p>DeepSeek V4 is a new open-weight AI model featuring one trillion parameters and a one-million-token context window. By activating only a fraction of its network per task, it rivals GPT-5's performance while drastically lowering hardware and energy requirements.</p>
+        <p>This architecture empowers startups, independent developers, and global enterprises to run elite AI locally, breaking reliance on big tech cloud monopolies.</p>
+      </div>
+      <div class="signal-strip">
+        <div class="signal-label">Why it matters</div>
+        <div class="signal-text">DeepSeek permanently disrupts the Western tech monopoly and makes massive intelligence accessible for local, independent deployment.</div>
+      </div>
+    </div>
+    <div class="depth-bar">
+      <div class="depth-bar-left">
+        <button class="depth-action" onclick="cd(1,-1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Less
+        </button>
+      </div>
+      <div class="depth-track">
+        <div class="depth-track-line"></div>
+        <div class="depth-track-stops">
+          <div class="depth-stop" onclick="sd(1,0)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Sneak Peek</span></div>
+          <div class="depth-stop active" onclick="sd(1,1)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Brief</span></div>
+          <div class="depth-stop" onclick="sd(1,2)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Full</span></div>
+          <div class="depth-stop" onclick="sd(1,3)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Deep Dive</span></div>
+        </div>
+      </div>
+      <div class="depth-bar-right">
+        <button class="depth-action" onclick="cd(1,1)">
+          More
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </article>
+
+  <!-- MODULE 3 — Depth 2 -->
+  <article class="module" data-depth="2">
+    <div class="module-content">
+      <div class="module-meta">
+        <span class="module-rank">03</span>
+        <span class="module-source">NVIDIA Newsroom</span>
+      </div>
+      <h2 class="module-headline">NVIDIA Announces NemoClaw for the OpenClaw Community</h2>
+      <div class="module-body">
+        <p>NVIDIA introduced NemoClaw, a software stack that installs privacy and security guardrails onto the viral OpenClaw AI agent platform with a single command. This transforms OpenClaw from an insecure consumer tool into an enterprise-ready system by using an isolated sandbox called OpenShell to restrict what data agents can access and what code they can execute.</p>
+        <p>It primarily affects enterprise developers and companies wanting to deploy autonomous AI workers without exposing sensitive internal networks.</p>
+        <p><strong>Why it matters:</strong> The explosive rise of OpenClaw establishes a universal operating system for agentic AI, shifting the paradigm from passive chatbots to persistent, autonomous personal agents.</p>
+      </div>
+    </div>
+    <div class="depth-bar">
+      <div class="depth-bar-left">
+        <button class="depth-action" onclick="cd(2,-1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Less
+        </button>
+      </div>
+      <div class="depth-track">
+        <div class="depth-track-line"></div>
+        <div class="depth-track-stops">
+          <div class="depth-stop" onclick="sd(2,0)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Sneak Peek</span></div>
+          <div class="depth-stop" onclick="sd(2,1)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Brief</span></div>
+          <div class="depth-stop active" onclick="sd(2,2)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Full</span></div>
+          <div class="depth-stop" onclick="sd(2,3)"><span class="depth-stop-dot"></span><span class="depth-stop-label">Deep Dive</span></div>
+        </div>
+      </div>
+      <div class="depth-bar-right">
+        <button class="depth-action" onclick="cd(2,1)">
+          More
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </article>
+
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<div class="base-plate">
+  <div class="base-plate-inner">
+    <span class="bp-hint"><kbd>&larr;&rarr;</kbd> depth</span>
+    <span class="bp-hint"><kbd>shift</kbd><kbd>&larr;&rarr;</kbd> global</span>
+    <span class="bp-hint">scroll to read</span>
+  </div>
+</div>
+
+<!-- ═══════ ADD TOPIC MODAL ═══════ -->
+<div class="overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="dialog">
+    <h3>Add a topic</h3>
+    <p>Daily AI-powered briefing generated overnight with 4 depth levels.</p>
+    <input type="text" placeholder="e.g. AI in Healthcare, Robotics, Climate Tech..." id="ti">
+    <div class="suggestions">
+      <button class="sug" onclick="pick(this)">AI in Healthcare</button>
+      <button class="sug" onclick="pick(this)">AI in Finance</button>
+      <button class="sug" onclick="pick(this)">AI in Legal</button>
+      <button class="sug" onclick="pick(this)">Robotics</button>
+      <button class="sug" onclick="pick(this)">AI in Education</button>
+      <button class="sug" onclick="pick(this)">Climate Tech</button>
+    </div>
+    <div class="dialog-actions">
+      <button class="d-btn" onclick="closeModal()">Cancel</button>
+      <button class="d-btn primary" onclick="submit()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function selectCh(el) {
+    document.querySelectorAll('.channel').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function setGlobal(n) {
+    document.querySelectorAll('.depth-switch-option').forEach((b,i) => b.classList.toggle('active', i===n));
+  }
+
+  // Per-card depth change
+  function cd(idx, delta) {
+    const m = document.querySelectorAll('.module')[idx];
+    let d = parseInt(m.dataset.depth);
+    d = Math.max(0, Math.min(3, d + delta));
+    sd(idx, d);
+  }
+
+  // Set depth directly
+  function sd(idx, d) {
+    const m = document.querySelectorAll('.module')[idx];
+    m.dataset.depth = d;
+    const bar = m.querySelector('.depth-bar');
+    const stops = bar.querySelectorAll('.depth-stop');
+    stops.forEach((s, i) => s.classList.toggle('active', i === d));
+    const less = bar.querySelector('.depth-action');
+    const more = bar.querySelectorAll('.depth-action')[1];
+    less.classList.toggle('disabled', d === 0);
+    more.classList.toggle('disabled', d === 3);
+  }
+
+  function openModal() { document.getElementById('modal').classList.add('open'); setTimeout(()=>document.getElementById('ti').focus(),80); }
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  function pick(el) { document.getElementById('ti').value = el.textContent; }
+  function submit() { const v=document.getElementById('ti').value.trim(); if(!v)return; alert('"'+v+'" queued. Available tomorrow.'); closeModal(); }
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+</script>
+
+</body>
+</html>

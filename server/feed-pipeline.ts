@@ -117,7 +117,7 @@ async function runPipeline(): Promise<void> {
 
   try {
     // 1. Create notebook
-    const notebookNames: Record<string, string> = { "ai-news": "AI News", "ai-branding": "AI Branding", "ai-ecommerce": "AI Ecommerce" };
+    const notebookNames: Record<string, string> = { "ai-news": "AI News", "ai-branding": "AI Branding", "ai-ecommerce": "AI Ecommerce", "a16z-portfolio": "a16z Portfolio" };
     const notebookName = `${notebookNames[CATEGORY] || CATEGORY} - ${today}`;
     log(`Creating notebook: "${notebookName}" (category: ${CATEGORY})`);
     const createOutput = await runNLM(["notebook", "create", notebookName]);
@@ -128,6 +128,7 @@ async function runPipeline(): Promise<void> {
     const defaultQueries: Record<string, string> = {
       "ai-branding": "AI adoption at major branding agencies WPP Landor FutureBrand Interbrand Superunion, AI tools for brand strategists and marketers, M&A in branding and creative industry, new AI marketing tools announcements this week",
       "ai-ecommerce": "AI transforming ecommerce, DTC brands using AI, Amazon AI tools for sellers, Shopify AI features, AI product photography, AI pricing optimization, AI personalization for online retail, AI supply chain ecommerce this week",
+      "a16z-portfolio": "Latest news updates from a16z Andreessen Horowitz portfolio AI startups: Nexthop AI, Mind Robotics, Replit, Lio procurement, Ease Health, QuiverAI, Chariot Defense, Heron Power, Temporal, Shizuku AI, Inferact vLLM, Mirelo audio AI, Unconventional analog chips, Keycard AI security, Reducto document AI",
     };
     const defaultQuery = defaultQueries[CATEGORY] || "most important AI news, LLM releases, AI breakthroughs and industry updates this week";
     const researchQuery = CUSTOM_QUERY || defaultQuery;
@@ -180,12 +181,14 @@ async function runPipeline(): Promise<void> {
     const focusPrompts: Record<string, string> = {
       "ai-branding": `Focus on: how large branding agencies (WPP, Landor, FutureBrand, Interbrand, Superunion, Siegel+Gale, Wolff Olins, Pentagram) are adopting AI in their daily work. Include M&A moves in the creative/branding industry, new AI tools specifically useful for brand strategists and marketers, and shifts in how brands are built with AI. De-prioritize pure tech stories unless they directly impact branding work.`,
       "ai-ecommerce": `Focus on: how AI is transforming ecommerce operations — new AI tools for Amazon sellers, Shopify merchants, DTC brands. Include AI product photography, listing optimization, pricing intelligence, personalization engines, supply chain AI, and conversational commerce. Prioritize stories that change how ecommerce teams work daily. De-prioritize pure tech stories unless they directly impact online retail.`,
+      "a16z-portfolio": `Focus on: the latest product updates, partnerships, customer wins, and milestones from these specific a16z-backed AI startups: Nexthop AI, Mind Robotics, Replit, Lio, Ease Health, QuiverAI, Chariot Defense, Heron Power, Temporal, Shizuku AI, Inferact, Mirelo, Unconventional, Keycard, Reducto. Each story should be about ONE specific company. Prioritize product launches, major customer announcements, technical breakthroughs, and strategic partnerships over funding news.`,
     };
     const categoryFocus = focusPrompts[CATEGORY] || `Focus on: what's genuinely NEW and how it changes something — new capabilities, new limitations exposed, new ways people will work or build, shifts in who has power. De-prioritize funding rounds and valuations unless the money itself changes the game. Prioritize stories where something actually shifted — not just announcements.`;
 
     const categoryLabels: Record<string, string> = {
       "ai-branding": "AI and strategic branding",
       "ai-ecommerce": "AI and ecommerce",
+      "a16z-portfolio": "a16z AI portfolio startup",
     };
     const categoryLabel = categoryLabels[CATEGORY] || "AI";
 

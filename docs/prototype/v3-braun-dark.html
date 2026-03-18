@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NUBBLE — Braun Dark Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  /*
+   * NUBBLE v3 — BRAUN DARK TERMINAL
+   *
+   * Inspired by: Braun T 1000 world receiver, TP1 portable,
+   * Teenage Engineering OP-1, Nothing Phone glyph interface.
+   *
+   * Concept: The page IS a device. Dark anthracite shell.
+   * Stories are display readouts. Depth control is a physical
+   * 4-position rotary switch rendered as clickable segments.
+   * Signal color: Braun orange (#FF6B2B) on near-black.
+   */
+
+  @font-face {
+    font-family: 'Segment';
+    src: local('IBM Plex Mono');
+  }
+
+  :root {
+    --shell: #1A1A1A;
+    --shell-light: #222221;
+    --surface: #0F0F0E;
+    --surface-raised: #262624;
+    --surface-inset: #0A0A09;
+    --text: #E8E4DC;
+    --text-dim: #7A7770;
+    --text-ghost: #4A4844;
+    --text-readout: #F0ECE4;
+    --signal: #FF6B2B;
+    --signal-dim: rgba(255,107,43,0.15);
+    --signal-glow: rgba(255,107,43,0.06);
+    --green: #2BDB6E;
+    --green-dim: rgba(43,219,110,0.12);
+    --divider: rgba(255,255,255,0.06);
+    --divider-strong: rgba(255,255,255,0.1);
+
+    --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
+    --font-serif: 'Instrument Serif', Georgia, serif;
+
+    --max-w: 700px;
+    --gutter: 28px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: var(--font-mono);
+    background: var(--shell);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Subtle scanline texture */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+  }
+
+  /* ═══════ DEVICE FRAME ═══════ */
+  .device {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    min-height: 100vh;
+    border-left: 1px solid var(--divider);
+    border-right: 1px solid var(--divider);
+    background: var(--surface);
+  }
+
+  /* ═══════ CONTROL STRIP (header) ═══════ */
+  .control-strip {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--shell);
+    border-bottom: 1px solid var(--divider-strong);
+  }
+
+  .cs-top {
+    height: 52px;
+    padding: 0 var(--gutter);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text);
+  }
+
+  /* Power LED — the signature Braun dot */
+  .power-led {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 8px rgba(255,107,43,0.4), 0 0 20px rgba(255,107,43,0.15);
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .brand-name {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .cs-utils {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .u-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--text-ghost);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .u-btn:hover { color: var(--text-dim); }
+
+  /* ═══════ DEPTH ROTARY (4-position switch) ═══════ */
+  .rotary-strip {
+    height: 36px;
+    padding: 0 var(--gutter);
+    display: flex;
+    align-items: center;
+    border-top: 1px solid var(--divider);
+    gap: 0;
+  }
+
+  .rotary-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    margin-right: 16px;
+    flex-shrink: 0;
+  }
+
+  .rotary {
+    display: flex;
+    flex: 1;
+    height: 100%;
+  }
+
+  .rotary-pos {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.15s;
+    border-left: 1px solid var(--divider);
+  }
+
+  .rotary-pos:first-child { border-left: none; }
+  .rotary-pos:hover { color: var(--text-dim); }
+
+  .rotary-pos.active {
+    color: var(--signal);
+    font-weight: 500;
+  }
+
+  .rotary-pos.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--signal);
+    box-shadow: 0 0 6px rgba(255,107,43,0.3);
+  }
+
+  /* ═══════ CHANNEL STRIP ═══════ */
+  .channels {
+    padding: 14px var(--gutter) 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .channels::-webkit-scrollbar { display: none; }
+
+  .ch {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-ghost);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  .ch:hover { color: var(--text-dim); }
+
+  .ch.active {
+    color: var(--text);
+    border-color: var(--divider-strong);
+    background: var(--surface-raised);
+  }
+
+  .ch-led {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    opacity: 0.4;
+  }
+
+  .ch.active .ch-led {
+    opacity: 1;
+    box-shadow: 0 0 4px currentColor;
+  }
+
+  .ch-n {
+    font-size: 9px;
+    color: var(--text-ghost);
+    margin-left: 2px;
+  }
+
+  .ch-add {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border: 1px dashed var(--divider-strong);
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-ghost);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .ch-add:hover {
+    border-color: var(--signal);
+    color: var(--signal);
+  }
+
+  .ch-add svg { width: 10px; height: 10px; }
+
+  /* ═══════ READOUT LINE ═══════ */
+  .readout {
+    padding: 12px var(--gutter) 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .readout span {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--text-ghost);
+  }
+
+  /* ═══════ MODULES ═══════ */
+  .modules {
+    padding: 8px 0 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .mod {
+    background: var(--surface);
+    border-top: 1px solid var(--divider);
+    opacity: 0;
+    animation: modIn 0.35s ease forwards;
+  }
+
+  .mod:nth-child(1) { animation-delay: 0.08s; }
+  .mod:nth-child(2) { animation-delay: 0.18s; }
+  .mod:nth-child(3) { animation-delay: 0.28s; }
+
+  @keyframes modIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .mod-content {
+    padding: 20px var(--gutter) 16px;
+  }
+
+  .mod-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .mod-rank {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--signal);
+    letter-spacing: 0.04em;
+  }
+
+  .mod-src {
+    font-size: 9px;
+    color: var(--text-ghost);
+    letter-spacing: 0.04em;
+  }
+
+  .mod-src::before {
+    content: '\2014';
+    margin-right: 8px;
+    color: var(--divider-strong);
+  }
+
+  /* Headline — the one serif element. Like a newspaper in a machine. */
+  .mod-h {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.3;
+    color: var(--text-readout);
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  .mod-body {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--text-dim);
+  }
+
+  .mod-body p { margin-bottom: 10px; }
+  .mod-body p:last-child { margin-bottom: 0; }
+  .mod-body strong { color: var(--text); font-weight: 500; }
+
+  .mod-body.d0 {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* Signal callout */
+  .sig {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: var(--signal-dim);
+    border-left: 2px solid var(--signal);
+  }
+
+  .sig-label {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--signal);
+    margin-bottom: 4px;
+  }
+
+  .sig-text {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+
+  /* ═══════ DEPTH SLIDER (per-module) ═══════ */
+  .mod-depth {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 var(--gutter);
+    background: var(--shell-light);
+    border-top: 1px solid var(--divider);
+  }
+
+  .md-action {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    cursor: pointer;
+    padding: 4px 0;
+    transition: color 0.15s;
+  }
+
+  .md-action:hover { color: var(--signal); }
+  .md-action.off { opacity: 0.2; pointer-events: none; }
+  .md-action svg { width: 9px; height: 9px; stroke-width: 2.5; }
+
+  /* Track: 4 position dots on a line */
+  .md-track {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    position: relative;
+    height: 100%;
+  }
+
+  .md-line {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 50%;
+    height: 1px;
+    background: var(--divider-strong);
+  }
+
+  .md-stops {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .md-stop {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--surface-raised);
+    border: 1.5px solid var(--divider-strong);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .md-stop:hover { border-color: var(--text-ghost); }
+
+  .md-stop.on {
+    background: var(--signal);
+    border-color: var(--signal);
+    box-shadow: 0 0 6px rgba(255,107,43,0.35);
+  }
+
+  .md-stop-tip {
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 7px;
+    letter-spacing: 0.06em;
+    color: transparent;
+    white-space: nowrap;
+    transition: color 0.15s;
+    text-transform: uppercase;
+  }
+
+  .md-stop.on .md-stop-tip { color: var(--text-ghost); }
+
+  /* ═══════ FOOTER ═══════ */
+  .base {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    pointer-events: none;
+  }
+
+  .base-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 30px var(--gutter) 8px;
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    background: linear-gradient(transparent, var(--shell) 60%);
+    pointer-events: auto;
+  }
+
+  .base-h {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    color: var(--text-ghost);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .base-h kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 14px;
+    padding: 0 3px;
+    background: var(--surface-raised);
+    border: 1px solid var(--divider-strong);
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: var(--text-ghost);
+  }
+
+  /* ═══════ MODAL ═══════ */
+  .ov { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; }
+  .ov.open { display: flex; }
+
+  .dlg {
+    background: var(--shell);
+    border: 1px solid var(--divider-strong);
+    width: 90%;
+    max-width: 380px;
+    padding: 24px;
+  }
+
+  .dlg h3 { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .dlg p { font-size: 12px; color: var(--text-ghost); margin-bottom: 14px; line-height: 1.5; font-weight: 300; }
+
+  .dlg input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--divider-strong);
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    margin-bottom: 10px;
+  }
+
+  .dlg input:focus { border-color: var(--signal); }
+  .dlg input::placeholder { color: var(--text-ghost); }
+
+  .sgs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 16px; }
+
+  .sg {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 4px 8px;
+    border: 1px solid var(--divider-strong);
+    background: var(--surface);
+    color: var(--text-ghost);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .sg:hover { border-color: var(--signal); color: var(--signal); }
+
+  .dlg-a { display: flex; gap: 6px; justify-content: flex-end; }
+
+  .db {
+    padding: 6px 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid var(--divider-strong);
+    background: var(--surface);
+    color: var(--text-dim);
+  }
+
+  .db:hover { background: var(--surface-raised); }
+  .db.pr { background: var(--signal); color: white; border-color: var(--signal); }
+  .db.pr:hover { opacity: 0.85; }
+
+  /* ═══════ RESPONSIVE ═══════ */
+  @media (max-width: 640px) {
+    :root { --gutter: 18px; }
+    .rotary-strip { display: none; }
+    .mod-h { font-size: 19px; }
+    .device { border: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+
+  <!-- ═══════ CONTROL STRIP ═══════ -->
+  <header class="control-strip">
+    <div class="cs-top">
+      <a class="brand" href="#">
+        <span class="power-led"></span>
+        <span class="brand-name">Nubble</span>
+      </a>
+      <div class="cs-utils">
+        <button class="u-btn" title="Light mode">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="rotary-strip">
+      <span class="rotary-label">Depth</span>
+      <div class="rotary">
+        <button class="rotary-pos" onclick="gd(0)">Sneak Peek</button>
+        <button class="rotary-pos" onclick="gd(1)">Brief</button>
+        <button class="rotary-pos active" onclick="gd(2)">Full</button>
+        <button class="rotary-pos" onclick="gd(3)">Deep Dive</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════ CHANNELS ═══════ -->
+  <div class="channels">
+    <button class="ch active" onclick="sc(this)">
+      <span class="ch-led" style="color:#FF6B2B"></span>
+      AI News <span class="ch-n">10</span>
+    </button>
+    <button class="ch" onclick="sc(this)">
+      <span class="ch-led" style="color:#A78BFA"></span>
+      AI Branding <span class="ch-n">10</span>
+    </button>
+    <button class="ch" onclick="sc(this)">
+      <span class="ch-led" style="color:#34D399"></span>
+      AI Ecommerce <span class="ch-n">10</span>
+    </button>
+    <button class="ch-add" onclick="om()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add
+    </button>
+  </div>
+
+  <!-- ═══════ READOUT ═══════ -->
+  <div class="readout">
+    <span>2026-03-18 &middot; AI NEWS</span>
+    <span>10 STORIES &middot; 4 MIN</span>
+  </div>
+
+  <!-- ═══════ MODULES ═══════ -->
+  <div class="modules">
+
+    <!-- MOD 1 — Depth 0 -->
+    <article class="mod" data-d="0">
+      <div class="mod-content">
+        <div class="mod-meta">
+          <span class="mod-rank">01</span>
+          <span class="mod-src">Kersai</span>
+        </div>
+        <h2 class="mod-h">GPT-5.4 Surpasses Human Performance on Desktop Navigation</h2>
+        <div class="mod-body d0">
+          <p>GPT-5.4 is the first AI to beat humans at navigating desktop interfaces, unlocking massive screen-based workflow automation.</p>
+        </div>
+        <div class="sig">
+          <div class="sig-label">Signal</div>
+          <div class="sig-text">AI can now visually operate computer interfaces just like a human, making virtually any screen-based enterprise workflow automatable.</div>
+        </div>
+      </div>
+      <div class="mod-depth">
+        <button class="md-action off" onclick="cd(0,-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Less</button>
+        <div class="md-track">
+          <div class="md-line"></div>
+          <div class="md-stops">
+            <span class="md-stop on" onclick="sd(0,0)"><span class="md-stop-tip">peek</span></span>
+            <span class="md-stop" onclick="sd(0,1)"><span class="md-stop-tip">brief</span></span>
+            <span class="md-stop" onclick="sd(0,2)"><span class="md-stop-tip">full</span></span>
+            <span class="md-stop" onclick="sd(0,3)"><span class="md-stop-tip">deep</span></span>
+          </div>
+        </div>
+        <button class="md-action" onclick="cd(0,1)">More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </article>
+
+    <!-- MOD 2 — Depth 1 -->
+    <article class="mod" data-d="1">
+      <div class="mod-content">
+        <div class="mod-meta">
+          <span class="mod-rank">02</span>
+          <span class="mod-src">Reddit / AISEOInsider</span>
+        </div>
+        <h2 class="mod-h">DeepSeek V4: The Trillion-Parameter Open-Weight Model</h2>
+        <div class="mod-body">
+          <p>DeepSeek V4 is a new open-weight AI model featuring one trillion parameters and a one-million-token context window. By activating only a fraction of its network per task, it rivals GPT-5's performance while drastically lowering hardware and energy requirements.</p>
+          <p>This architecture empowers startups, independent developers, and global enterprises to run elite AI locally, breaking reliance on big tech cloud monopolies.</p>
+        </div>
+        <div class="sig">
+          <div class="sig-label">Signal</div>
+          <div class="sig-text">DeepSeek permanently disrupts the Western tech monopoly and makes massive intelligence accessible for local, independent deployment.</div>
+        </div>
+      </div>
+      <div class="mod-depth">
+        <button class="md-action" onclick="cd(1,-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Less</button>
+        <div class="md-track">
+          <div class="md-line"></div>
+          <div class="md-stops">
+            <span class="md-stop" onclick="sd(1,0)"><span class="md-stop-tip">peek</span></span>
+            <span class="md-stop on" onclick="sd(1,1)"><span class="md-stop-tip">brief</span></span>
+            <span class="md-stop" onclick="sd(1,2)"><span class="md-stop-tip">full</span></span>
+            <span class="md-stop" onclick="sd(1,3)"><span class="md-stop-tip">deep</span></span>
+          </div>
+        </div>
+        <button class="md-action" onclick="cd(1,1)">More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </article>
+
+    <!-- MOD 3 — Depth 2 -->
+    <article class="mod" data-d="2">
+      <div class="mod-content">
+        <div class="mod-meta">
+          <span class="mod-rank">03</span>
+          <span class="mod-src">NVIDIA Newsroom</span>
+        </div>
+        <h2 class="mod-h">NVIDIA Announces NemoClaw for the OpenClaw Community</h2>
+        <div class="mod-body">
+          <p>NVIDIA introduced NemoClaw, a software stack that installs privacy and security guardrails onto the viral OpenClaw AI agent platform with a single command. This transforms OpenClaw from an insecure consumer tool into an enterprise-ready system.</p>
+          <p>It uses an isolated sandbox called OpenShell to restrict what data agents can access and what code they can execute. It primarily affects enterprise developers wanting to deploy autonomous AI workers without exposing sensitive networks.</p>
+          <p><strong>Why it matters:</strong> The explosive rise of OpenClaw establishes a universal operating system for agentic AI, shifting from passive chatbots to persistent, autonomous personal agents.</p>
+        </div>
+      </div>
+      <div class="mod-depth">
+        <button class="md-action" onclick="cd(2,-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Less</button>
+        <div class="md-track">
+          <div class="md-line"></div>
+          <div class="md-stops">
+            <span class="md-stop" onclick="sd(2,0)"><span class="md-stop-tip">peek</span></span>
+            <span class="md-stop" onclick="sd(2,1)"><span class="md-stop-tip">brief</span></span>
+            <span class="md-stop on" onclick="sd(2,2)"><span class="md-stop-tip">full</span></span>
+            <span class="md-stop" onclick="sd(2,3)"><span class="md-stop-tip">deep</span></span>
+          </div>
+        </div>
+        <button class="md-action" onclick="cd(2,1)">More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+    </article>
+
+  </div>
+
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<div class="base">
+  <div class="base-inner">
+    <span class="base-h"><kbd>&larr;&rarr;</kbd> depth</span>
+    <span class="base-h"><kbd>shift</kbd><kbd>&larr;&rarr;</kbd> global</span>
+    <span class="base-h">scroll to read</span>
+  </div>
+</div>
+
+<!-- ═══════ MODAL ═══════ -->
+<div class="ov" id="m" onclick="if(event.target===this)cm()">
+  <div class="dlg">
+    <h3>Add a topic</h3>
+    <p>Daily AI briefing generated overnight.</p>
+    <input type="text" placeholder="e.g. AI in Healthcare..." id="ti">
+    <div class="sgs">
+      <button class="sg" onclick="pk(this)">Healthcare</button>
+      <button class="sg" onclick="pk(this)">Finance</button>
+      <button class="sg" onclick="pk(this)">Legal</button>
+      <button class="sg" onclick="pk(this)">Robotics</button>
+      <button class="sg" onclick="pk(this)">Education</button>
+      <button class="sg" onclick="pk(this)">Climate</button>
+    </div>
+    <div class="dlg-a">
+      <button class="db" onclick="cm()">Cancel</button>
+      <button class="db pr" onclick="sub()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function sc(e){document.querySelectorAll('.ch').forEach(c=>c.classList.remove('active'));e.classList.add('active')}
+  function gd(n){document.querySelectorAll('.rotary-pos').forEach((b,i)=>b.classList.toggle('active',i===n))}
+  function cd(i,d){const m=document.querySelectorAll('.mod')[i];let v=parseInt(m.dataset.d);v=Math.max(0,Math.min(3,v+d));sd(i,v)}
+  function sd(i,v){const m=document.querySelectorAll('.mod')[i];m.dataset.d=v;const b=m.querySelector('.mod-depth');b.querySelectorAll('.md-stop').forEach((s,j)=>s.classList.toggle('on',j===v));const[l,r]=b.querySelectorAll('.md-action');l.classList.toggle('off',v===0);r.classList.toggle('off',v===3)}
+  function om(){document.getElementById('m').classList.add('open');setTimeout(()=>document.getElementById('ti').focus(),80)}
+  function cm(){document.getElementById('m').classList.remove('open')}
+  function pk(e){document.getElementById('ti').value=e.textContent}
+  function sub(){const v=document.getElementById('ti').value.trim();if(!v)return;alert('"'+v+'" queued.');cm()}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')cm()})
+</script>
+
+</body>
+</html>

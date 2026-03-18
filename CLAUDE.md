@@ -150,10 +150,38 @@ NotebookLM-powered, $0/month:
 - Pipeline upserts to Supabase after saving JSON (requires SUPABASE_URL + SUPABASE_SERVICE_KEY in .env.local)
 
 ### Nightly Automation
-- Script: `server/feed-nightly.sh` — runs all 3 categories, commits + pushes
+- Script: `server/feed-nightly.sh` — runs all 3 categories sequentially, commits + pushes to trigger Vercel deploy
 - Schedule: macOS launchd at 06:00 AM daily (`~/Library/LaunchAgents/com.nubble.feed-nightly.plist`)
 - Logs: `server/data/feed/nightly-YYYY-MM-DD.log`
-- Manual run: `npm run feed:nightly`
+- Mac must be on/awake at 6 AM (launchd catches up on missed jobs when Mac wakes)
+- Each category takes ~10 min (deep research), total ~30 min for all 3
+
+#### Commands
+```bash
+# Run nightly feed manually (all 3 categories)
+npm run feed:nightly
+
+# Run single category
+npx tsx server/feed-pipeline.ts --category ai-news
+npx tsx server/feed-pipeline.ts --category ai-branding
+npx tsx server/feed-pipeline.ts --category ai-ecommerce
+
+# Check launchd schedule
+launchctl list | grep nubble
+
+# Reload launchd (after editing plist)
+launchctl unload ~/Library/LaunchAgents/com.nubble.feed-nightly.plist
+launchctl load ~/Library/LaunchAgents/com.nubble.feed-nightly.plist
+
+# Check latest log
+cat server/data/feed/nightly-$(date +%Y-%m-%d).log
+```
+
+#### What the nightly script does
+1. Runs NotebookLM pipeline for ai-news, ai-branding, ai-ecommerce
+2. Each run: create notebook → deep research (~5min, 40-80 sources) → import → rank top 10 → generate 4 depths → save JSON + upsert Supabase
+3. Commits feed files + pushes to GitHub → triggers Vercel deploy
+4. Cleans up NotebookLM notebooks after each run
 
 ### Key Files
 - `server/feed-pipeline.ts` — standalone pipeline script

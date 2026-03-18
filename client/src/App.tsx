@@ -16,6 +16,7 @@ import ReadFeedPage from "@/pages/read-feed";
 import AiDigestPage from "@/pages/ai-digest";
 import AiBrandingPage from "@/pages/ai-branding";
 import AiEcommercePage from "@/pages/ai-ecommerce";
+import A16zPortfolioPage from "@/pages/a16z-portfolio";
 
 function AppRouter() {
   return (
@@ -31,6 +32,7 @@ function AppRouter() {
       <Route path="/ai-digest" component={AiDigestPage} />
       <Route path="/ai-branding" component={AiBrandingPage} />
       <Route path="/ai-ecommerce" component={AiEcommercePage} />
+      <Route path="/a16z-portfolio" component={A16zPortfolioPage} />
       <Route path="/digest">{() => <Redirect to="/ai-digest" />}</Route>
       <Route component={NotFound} />
     </Switch>

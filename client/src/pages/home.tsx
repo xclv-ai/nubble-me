@@ -60,6 +60,15 @@ const categories: { id: Category; title: string; subtitle: string; path: string;
     accent: "border-transparent hover:bg-emerald-500/10",
     activeAccent: "bg-emerald-500/15 border-emerald-500/30",
   },
+  {
+    id: "a16z-portfolio",
+    title: "a16z AI Portfolio",
+    subtitle: "Latest from a16z startups",
+    path: "/data/feed/a16z-portfolio/latest.json",
+    dot: "bg-rose-500",
+    accent: "border-transparent hover:bg-rose-500/10",
+    activeAccent: "bg-rose-500/15 border-rose-500/30",
+  },
 ];
 
 function feedToDocument(feed: FeedResponse, title: string): ContentDocument {
