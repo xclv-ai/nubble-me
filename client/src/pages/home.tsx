@@ -112,11 +112,8 @@ export default function Home() {
 
   if (isLoading || !feed || !feed.stories?.length) {
     return (
-      <div className="h-screen w-screen flex flex-col bg-background text-foreground">
-        <CategoryBar active={activeCategory} onSelect={setActiveCategory} />
-        <div className="flex-1 flex items-center justify-center">
-          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-        </div>
+      <div className="h-screen w-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -124,11 +121,11 @@ export default function Home() {
   const doc = feedToDocument(feed, cat.title);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden">
-      <CategoryBar active={activeCategory} onSelect={setActiveCategory} />
-      <div className="flex-1 overflow-hidden">
-        <NubbleReader document={doc} />
-      </div>
+    <div className="h-screen w-screen">
+      <NubbleReader
+        document={doc}
+        subHeader={<CategoryBar active={activeCategory} onSelect={setActiveCategory} />}
+      />
     </div>
   );
 }

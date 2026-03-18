@@ -39,9 +39,11 @@ function estimateReadingTime(doc: ContentDocument, depthKey: keyof ContentSectio
 
 interface NubbleReaderProps {
   document: ContentDocument;
+  /** Optional element rendered between header and content */
+  subHeader?: React.ReactNode;
 }
 
-export function NubbleReader({ document: doc }: NubbleReaderProps) {
+export function NubbleReader({ document: doc, subHeader }: NubbleReaderProps) {
   const [, setLocation] = useLocation();
   const [globalDepth, setGlobalDepth] = useState<DepthLevel>(2);
   const [sectionOverrides, setSectionOverrides] = useState<Record<string, DepthLevel>>({});
@@ -368,6 +370,8 @@ export function NubbleReader({ document: doc }: NubbleReaderProps) {
           </button>
         </div>
       </header>
+
+      {subHeader}
 
       <div className="flex-1 flex overflow-hidden">
         {/* [9] Section nav rail with tooltips */}
