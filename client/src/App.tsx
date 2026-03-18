@@ -15,6 +15,7 @@ import FeedPage from "@/pages/feed";
 import ReadFeedPage from "@/pages/read-feed";
 import AiDigestPage from "@/pages/ai-digest";
 import AiBrandingPage from "@/pages/ai-branding";
+import AiEcommercePage from "@/pages/ai-ecommerce";
 
 function AppRouter() {
   return (
@@ -29,6 +30,7 @@ function AppRouter() {
       <Route path="/read-feed/:id" component={ReadFeedPage} />
       <Route path="/ai-digest" component={AiDigestPage} />
       <Route path="/ai-branding" component={AiBrandingPage} />
+      <Route path="/ai-ecommerce" component={AiEcommercePage} />
       <Route path="/digest">{() => <Redirect to="/ai-digest" />}</Route>
       <Route component={NotFound} />
     </Switch>

@@ -51,6 +51,15 @@ const categories: { id: Category; title: string; subtitle: string; path: string;
     accent: "border-transparent hover:bg-violet-500/10",
     activeAccent: "bg-violet-500/15 border-violet-500/30",
   },
+  {
+    id: "ai-ecommerce",
+    title: "AI Ecommerce Nubs",
+    subtitle: "AI transforming DTC & ecomm",
+    path: "/data/feed/ai-ecommerce/latest.json",
+    dot: "bg-emerald-500",
+    accent: "border-transparent hover:bg-emerald-500/10",
+    activeAccent: "bg-emerald-500/15 border-emerald-500/30",
+  },
 ];
 
 function feedToDocument(feed: FeedResponse, title: string): ContentDocument {
@@ -72,7 +81,7 @@ function feedToDocument(feed: FeedResponse, title: string): ContentDocument {
 
 function CategoryBar({ active, onSelect }: { active: Category; onSelect: (c: Category) => void }) {
   return (
-    <div className="flex-shrink-0 px-5 py-2.5 border-b border-border/40 flex items-center gap-2 overflow-x-auto">
+    <div className="flex-shrink-0 px-5 py-2.5 border-b border-border/40 flex items-center justify-center gap-2 overflow-x-auto">
       {categories.map((cat) => (
         <button
           key={cat.id}

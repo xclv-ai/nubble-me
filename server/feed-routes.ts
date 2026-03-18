@@ -10,7 +10,7 @@ import fs from "fs";
 import { log } from "./index";
 
 const DATA_BASE = path.join(process.cwd(), "server/data/feed");
-const VALID_CATEGORIES = ["ai-news", "ai-branding"];
+const VALID_CATEGORIES = ["ai-news", "ai-branding", "ai-ecommerce"];
 
 /** Resolve data directory for a category */
 function dataDir(category: string): string {

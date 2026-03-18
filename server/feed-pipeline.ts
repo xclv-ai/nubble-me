@@ -116,16 +116,19 @@ async function runPipeline(): Promise<void> {
 
   try {
     // 1. Create notebook
-    const notebookName = CATEGORY === "ai-news" ? `AI News - ${today}` : `AI Branding - ${today}`;
+    const notebookNames: Record<string, string> = { "ai-news": "AI News", "ai-branding": "AI Branding", "ai-ecommerce": "AI Ecommerce" };
+    const notebookName = `${notebookNames[CATEGORY] || CATEGORY} - ${today}`;
     log(`Creating notebook: "${notebookName}" (category: ${CATEGORY})`);
     const createOutput = await runNLM(["notebook", "create", notebookName]);
     notebookId = parseUUID(createOutput, "notebook");
     log(`Notebook created: ${notebookId}`);
 
     // 2. Start deep research
-    const defaultQuery = CATEGORY === "ai-branding"
-      ? "AI adoption at major branding agencies WPP Landor FutureBrand Interbrand Superunion, AI tools for brand strategists and marketers, M&A in branding and creative industry, new AI marketing tools announcements this week"
-      : "most important AI news, LLM releases, AI breakthroughs and industry updates this week";
+    const defaultQueries: Record<string, string> = {
+      "ai-branding": "AI adoption at major branding agencies WPP Landor FutureBrand Interbrand Superunion, AI tools for brand strategists and marketers, M&A in branding and creative industry, new AI marketing tools announcements this week",
+      "ai-ecommerce": "AI transforming ecommerce, DTC brands using AI, Amazon AI tools for sellers, Shopify AI features, AI product photography, AI pricing optimization, AI personalization for online retail, AI supply chain ecommerce this week",
+    };
+    const defaultQuery = defaultQueries[CATEGORY] || "most important AI news, LLM releases, AI breakthroughs and industry updates this week";
     const researchQuery = CUSTOM_QUERY || defaultQuery;
     log(`Starting deep research: "${researchQuery}"`);
     const researchOutput = await runNLM(
@@ -173,11 +176,19 @@ async function runPipeline(): Promise<void> {
 
     // 5. Query for top 10 stories
     log("Querying for top 10 stories...");
-    const brandingFocus = CATEGORY === "ai-branding"
-      ? `Focus on: how large branding agencies (WPP, Landor, FutureBrand, Interbrand, Superunion, Siegel+Gale, Wolff Olins, Pentagram) are adopting AI in their daily work. Include M&A moves in the creative/branding industry, new AI tools specifically useful for brand strategists and marketers, and shifts in how brands are built with AI. De-prioritize pure tech stories unless they directly impact branding work.`
-      : `Focus on: what's genuinely NEW and how it changes something — new capabilities, new limitations exposed, new ways people will work or build, shifts in who has power. De-prioritize funding rounds and valuations unless the money itself changes the game. Prioritize stories where something actually shifted — not just announcements.`;
+    const focusPrompts: Record<string, string> = {
+      "ai-branding": `Focus on: how large branding agencies (WPP, Landor, FutureBrand, Interbrand, Superunion, Siegel+Gale, Wolff Olins, Pentagram) are adopting AI in their daily work. Include M&A moves in the creative/branding industry, new AI tools specifically useful for brand strategists and marketers, and shifts in how brands are built with AI. De-prioritize pure tech stories unless they directly impact branding work.`,
+      "ai-ecommerce": `Focus on: how AI is transforming ecommerce operations — new AI tools for Amazon sellers, Shopify merchants, DTC brands. Include AI product photography, listing optimization, pricing intelligence, personalization engines, supply chain AI, and conversational commerce. Prioritize stories that change how ecommerce teams work daily. De-prioritize pure tech stories unless they directly impact online retail.`,
+    };
+    const categoryFocus = focusPrompts[CATEGORY] || `Focus on: what's genuinely NEW and how it changes something — new capabilities, new limitations exposed, new ways people will work or build, shifts in who has power. De-prioritize funding rounds and valuations unless the money itself changes the game. Prioritize stories where something actually shifted — not just announcements.`;
 
-    const rankPrompt = `Based on all sources in this notebook, rank the top 10 most important ${CATEGORY === "ai-branding" ? "AI and strategic branding" : "AI"} stories. For each story output EXACTLY in this format:
+    const categoryLabels: Record<string, string> = {
+      "ai-branding": "AI and strategic branding",
+      "ai-ecommerce": "AI and ecommerce",
+    };
+    const categoryLabel = categoryLabels[CATEGORY] || "AI";
+
+    const rankPrompt = `Based on all sources in this notebook, rank the top 10 most important ${categoryLabel} stories. For each story output EXACTLY in this format:
 
 ---STORY 1---
 TITLE: [headline]
@@ -189,7 +200,7 @@ WHY: [one sentence about what this CHANGES — not what it costs, but what's dif
 TITLE: ...
 (continue through STORY 10)
 
-${brandingFocus}`;
+${categoryFocus}`;
 
     const rankOutput = await runNLM(["notebook", "query", notebookId, rankPrompt], 120000);
     const stories = parseStoryList(rankOutput);

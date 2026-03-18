@@ -260,10 +260,10 @@ export function NubbleReader({ document: doc, subHeader }: NubbleReaderProps) {
           data-testid="progress-bar"
         />
 
-        <div className="flex items-center gap-2.5">
+        <button onClick={() => setLocation("/")} className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
           <NubbleLogo />
           <span className="text-[11px] text-muted-foreground tracking-[0.15em] uppercase font-medium">nubble</span>
-        </div>
+        </button>
 
         {/* Global depth control */}
         <div className="flex items-center gap-1.5" data-testid="global-depth-control">
