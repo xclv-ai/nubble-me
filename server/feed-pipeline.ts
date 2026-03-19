@@ -481,12 +481,29 @@ Total 300-500 words. No fabricated facts. No corporate speak.`;
 
 // ---------- parsers ----------
 
-/** Strip literal \n sequences and citation markers like [1-3] from text */
+/** Strip NotebookLM metadata, literal \n, unicode escapes, citations from text */
 function cleanText(s: string): string {
   return s
-    .replace(/\\n/g, "\n")     // literal \n → real newline
-    .replace(/\n{3,}/g, "\n\n") // collapse excess newlines
-    .replace(/\s*\[\d+(?:[,\s-]+\d+)*\]\s*/g, " ") // remove [1-3] citations
+    // Strip leaked NLM API metadata (conversation_id, sources_used, citations)
+    .replace(/[",]\s*"conversation_id"\s*:[\s\S]*$/, "")
+    .replace(/[",]\s*"sources_used"\s*:[\s\S]*$/, "")
+    .replace(/[",]\s*"citations"\s*:[\s\S]*$/, "")
+    // Unicode escapes
+    .replace(/\\u2014/g, "—").replace(/\\u2013/g, "–")
+    .replace(/\\u2018/g, "'").replace(/\\u2019/g, "'")
+    .replace(/\\u201c/g, '"').replace(/\\u201d/g, '"')
+    .replace(/\\"/g, '"')
+    // Literal \n → real newline
+    .replace(/\\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    // Remove [1], [1-3], [1, 2] citation markers
+    .replace(/\s*\[[\d,\s\-–]+\]\s*/g, " ")
+    // Fix spacing before punctuation
+    .replace(/\s+([.,;:!?])/g, "$1")
+    // Collapse spaces
+    .replace(/  +/g, " ")
+    // Strip trailing JSON junk
+    .replace(/[\s{}]+$/, "")
     .trim();
 }
 
