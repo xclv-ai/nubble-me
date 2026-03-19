@@ -84,6 +84,47 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// ---------- studio polling ----------
+
+/**
+ * Poll `nlm studio status --json` until the specified artifact type is complete.
+ * Parses JSON output to find artifacts matching the given type.
+ */
+async function pollArtifactReady(notebookId: string, artifactType: string, timeoutMs: number): Promise<void> {
+  const POLL_INTERVAL = 30000;
+  const start = Date.now();
+
+  while (Date.now() - start < timeoutMs) {
+    await sleep(POLL_INTERVAL);
+    const raw = await runNLM(["studio", "status", notebookId, "--json"], 30000);
+    log(`Studio status (${artifactType}): ${raw.substring(0, 120)}`, "studio");
+
+    try {
+      const artifacts = JSON.parse(raw);
+      const matching = (Array.isArray(artifacts) ? artifacts : []).filter(
+        (a: any) => a.type?.toLowerCase() === artifactType.toLowerCase()
+      );
+      const completed = matching.find((a: any) => a.status?.toLowerCase() === "completed");
+      if (completed) {
+        log(`${artifactType} artifact ready`, "studio");
+        return;
+      }
+      const failed = matching.find((a: any) =>
+        a.status?.toLowerCase() === "failed" || a.status?.toLowerCase() === "error"
+      );
+      if (failed) {
+        throw new Error(`${artifactType} artifact failed: ${JSON.stringify(failed)}`);
+      }
+    } catch (parseErr: any) {
+      // If JSON parse fails, fall back to text matching
+      if (parseErr.message.includes("artifact failed")) throw parseErr;
+      log(`Could not parse studio status JSON, retrying...`, "studio");
+    }
+  }
+
+  throw new Error(`${artifactType} timed out after ${Math.round(timeoutMs / 60000)} minutes`);
+}
+
 // ---------- pipeline ----------
 
 interface FeedStory {
@@ -109,6 +150,8 @@ interface FeedOutput {
   notebook_id: string;
   sources_found: number;
   stories: FeedStory[];
+  audioUrl?: string;
+  infographicUrl?: string;
 }
 
 async function runPipeline(): Promise<void> {
@@ -311,7 +354,113 @@ Total 300-500 words. No fabricated facts. No corporate speak.`;
       log("Skipping Supabase save (no SUPABASE_URL/SUPABASE_SERVICE_KEY)", "supabase");
     }
 
-    // 8. Cleanup notebook
+    // 8. Generate podcast audio (graceful — failure doesn't block feed)
+    try {
+      log("Configuring chat tone for podcast...");
+      const feynmanPrompt = `You are two friends who are deeply curious about technology — like Richard Feynman having coffee with a sharp journalist. Explain things in plain English, be provocative when something doesn't add up, never use marketing jargon. When something is uncertain, say so. When something is genuinely exciting, say why without hype. Keep it conversational, interrupt each other, disagree when you see it differently. No corporate speak. No "exciting developments." Just two people trying to figure out what actually matters.`;
+      await runNLM(["chat", "configure", notebookId, "-g", "custom", "--prompt", feynmanPrompt], 30000);
+      log("Chat tone configured");
+
+      log("Creating audio podcast...");
+      await runNLM(["audio", "create", notebookId, "-f", "debate", "-l", "short", "-y"], 120000);
+      log("Audio creation started, polling status...");
+
+      await pollArtifactReady(notebookId, "audio", 15 * 60 * 1000);
+
+      // Download audio (nlm outputs .m4a) → decode to wav → encode to mp3 via lame
+      const podcastDir = path.join(DATA_DIR_PUBLIC, "podcasts");
+      if (!fs.existsSync(podcastDir)) {
+        fs.mkdirSync(podcastDir, { recursive: true });
+      }
+      const m4aPath = path.join(podcastDir, `${today}_raw.m4a`);
+      const wavPath = path.join(podcastDir, `${today}_raw.wav`);
+      const audioFilename = `${today}.mp3`;
+      const audioPath = path.join(podcastDir, audioFilename);
+      log(`Downloading audio to: ${m4aPath}`);
+      await runNLM(["download", "audio", notebookId, "-o", m4aPath, "--no-progress"], 120000);
+      log("Audio downloaded, converting to mp3...");
+      await exec("ffmpeg", ["-i", m4aPath, "-ac", "1", "-ar", "44100", wavPath, "-y"], { timeout: 60000 });
+
+      const LAME_PATH = process.env.LAME_PATH || path.join(process.env.HOME || "/root", ".local/bin/lame");
+      const lamePaths = [LAME_PATH, "/tmp/lame-install/bin/lame", "/usr/local/bin/lame", "lame"];
+      let lameUsed = false;
+      for (const lame of lamePaths) {
+        try {
+          await exec(lame, ["--preset", "voice", wavPath, audioPath], { timeout: 60000 });
+          lameUsed = true;
+          break;
+        } catch { continue; }
+      }
+      if (!lameUsed) {
+        // Fallback: keep as compressed m4a
+        await exec("ffmpeg", ["-i", m4aPath, "-codec:a", "aac", "-b:a", "64k", "-ac", "1", audioPath.replace(".mp3", ".m4a"), "-y"], { timeout: 60000 });
+        log("lame not found, fell back to compressed m4a");
+      }
+      // Cleanup temp files
+      if (fs.existsSync(m4aPath)) fs.unlinkSync(m4aPath);
+      if (fs.existsSync(wavPath)) fs.unlinkSync(wavPath);
+      const finalPath = fs.existsSync(audioPath) ? audioPath : audioPath.replace(".mp3", ".m4a");
+      const audioSize = (fs.statSync(finalPath).size / (1024 * 1024)).toFixed(1);
+      log(`Audio compressed: ${audioSize}MB`);
+
+      // Update feed JSON with audioUrl
+      const audioUrl = `/data/feed/${CATEGORY}/podcasts/${audioFilename}`;
+      output.audioUrl = audioUrl;
+
+      for (const dir of [DATA_DIR_SERVER, DATA_DIR_PUBLIC]) {
+        const outputPath = path.join(dir, `${today}.json`);
+        const latestPath = path.join(dir, "latest.json");
+        const jsonData = JSON.stringify(output, null, 2);
+        fs.writeFileSync(outputPath, jsonData);
+        fs.writeFileSync(latestPath, jsonData);
+      }
+      log(`Feed JSON updated with audioUrl: ${audioUrl}`);
+    } catch (podcastErr: any) {
+      log(`Podcast generation failed (feed still published): ${podcastErr.message}`, "podcast");
+    }
+
+    // 8b. Generate 8-bit infographics — landscape (for web) + portrait (archive)
+    // Both saved locally, only landscape referenced in feed JSON
+    for (const orientation of ["landscape", "portrait"] as const) {
+      try {
+        log(`Creating ${orientation} infographic...`);
+        await runNLM(["infographic", "create", notebookId, "--style", "bricks", "-o", orientation, "-d", "concise", "-y"], 120000);
+        log(`${orientation} infographic creation started, polling...`);
+
+        await pollArtifactReady(notebookId, "infographic", 15 * 60 * 1000);
+
+        const suffix = orientation === "landscape" ? "_landscape" : "";
+        for (const dir of [DATA_DIR_PUBLIC, DATA_DIR_SERVER]) {
+          const infographicDir = path.join(dir, "infographics");
+          if (!fs.existsSync(infographicDir)) fs.mkdirSync(infographicDir, { recursive: true });
+
+          const pngPath = path.join(infographicDir, `${today}${suffix}.png`);
+          const jpgPath = path.join(infographicDir, `${today}${suffix}.jpg`);
+
+          await runNLM(["download", "infographic", notebookId, "-o", pngPath, "--no-progress"], 120000);
+          await exec("sips", ["-Z", "1400", pngPath, "-s", "format", "jpeg", "-s", "formatOptions", "75", "--out", jpgPath], { timeout: 30000 });
+          fs.unlinkSync(pngPath);
+        }
+        const sampleJpg = path.join(DATA_DIR_PUBLIC, "infographics", `${today}${suffix}.jpg`);
+        const jpgSize = (fs.statSync(sampleJpg).size / 1024).toFixed(0);
+        log(`${orientation} infographic saved: ${jpgSize}KB`);
+
+        // Only landscape goes into feed JSON (shown on web)
+        if (orientation === "landscape") {
+          const infographicUrl = `/data/feed/${CATEGORY}/infographics/${today}_landscape.jpg`;
+          output.infographicUrl = infographicUrl;
+          for (const dir of [DATA_DIR_SERVER, DATA_DIR_PUBLIC]) {
+            fs.writeFileSync(path.join(dir, `${today}.json`), JSON.stringify(output, null, 2));
+            fs.writeFileSync(path.join(dir, "latest.json"), JSON.stringify(output, null, 2));
+          }
+          log(`Feed JSON updated with infographicUrl: ${infographicUrl}`);
+        }
+      } catch (err: any) {
+        log(`${orientation} infographic failed: ${err.message}`, "infographic");
+      }
+    }
+
+    // 9. Cleanup notebook
     log("Cleaning up notebook...");
     await runNLM(["notebook", "delete", notebookId, "-y"], 30000);
     log("Notebook deleted");

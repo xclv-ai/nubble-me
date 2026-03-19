@@ -316,12 +316,12 @@ export async function parseFeed(source: FeedSource): Promise<FeedArticle[]> {
 // ── Deduplication ──────────────────────────────────────────────────────────
 
 function jaccard(a: string, b: string): number {
-  const setA = new Set(a.toLowerCase().split(/\s+/));
-  const setB = new Set(b.toLowerCase().split(/\s+/));
+  const setA: Set<string> = new Set(a.toLowerCase().split(/\s+/));
+  const setB: Set<string> = new Set(b.toLowerCase().split(/\s+/));
   let intersectionCount = 0;
-  for (const word of setA) {
+  Array.from(setA).forEach((word) => {
     if (setB.has(word)) intersectionCount++;
-  }
+  });
   const unionCount = setA.size + setB.size - intersectionCount;
   return unionCount > 0 ? intersectionCount / unionCount : 0;
 }

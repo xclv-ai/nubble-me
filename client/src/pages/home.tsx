@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { NubbleReader } from "@/components/NubbleReader";
+import { FeedMedia } from "@/components/FeedMedia";
 import type { ContentDocument } from "@/lib/sample-content";
 
 interface FeedSection {
@@ -28,9 +29,11 @@ interface FeedResponse {
   date: string;
   generated_at: string;
   stories: FeedStory[];
+  audioUrl?: string;
+  infographicUrl?: string;
 }
 
-type Category = "ai-news" | "ai-branding";
+type Category = "ai-news" | "ai-branding" | "ai-ecommerce" | "a16z-portfolio";
 
 const categories: { id: Category; title: string; subtitle: string; path: string; dot: string; accent: string; activeAccent: string }[] = [
   {
@@ -142,7 +145,12 @@ export default function Home() {
     <div className="h-screen w-screen">
       <NubbleReader
         document={doc}
-        subHeader={<CategoryBar active={activeCategory} onSelect={setActiveCategory} />}
+        subHeader={
+          <>
+            <CategoryBar active={activeCategory} onSelect={setActiveCategory} />
+            <FeedMedia audioUrl={feed.audioUrl} infographicUrl={feed.infographicUrl} />
+          </>
+        }
       />
     </div>
   );

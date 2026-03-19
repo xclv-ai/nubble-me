@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Newspaper, RefreshCw } from "lucide-react";
 import { NubbleReader } from "@/components/NubbleReader";
+import { FeedMedia } from "@/components/FeedMedia";
 import type { ContentDocument } from "@/lib/sample-content";
 
 interface FeedSection {
@@ -26,6 +27,8 @@ interface FeedResponse {
   date: string;
   generated_at: string;
   stories: FeedStory[];
+  audioUrl?: string;
+  infographicUrl?: string;
 }
 
 export default function A16zPortfolioPage() {
@@ -89,7 +92,7 @@ export default function A16zPortfolioPage() {
 
   return (
     <div className="h-screen w-screen">
-      <NubbleReader document={doc} />
+      <NubbleReader document={doc} subHeader={<FeedMedia audioUrl={feed.audioUrl} infographicUrl={feed.infographicUrl} />} />
     </div>
   );
 }
