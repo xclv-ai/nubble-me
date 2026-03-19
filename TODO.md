@@ -11,9 +11,6 @@
 
 - [ ] User testing with 20+ people (Phase 1 validation)
 - [ ] Shareable link to specific section+depth
-- [x] [2026-03-19] Fix nightly feed: `nlm research status` timeout — add `--max-wait 0` flag so pipeline's own polling loop works
-- [x] [2026-03-19] Add `a16z-portfolio` as 4th category in `feed-nightly.sh`
-
 ---
 
 ## Bugs
@@ -60,7 +57,7 @@
 - [ ] Android app
 - [ ] API access (Power tier)
 - [ ] News feed: topic customization (custom research queries)
-- [ ] News feed: daily cron automation (Vercel cron or local launchd)
+- [x] News feed: daily cron automation (launchd, 06:00 AM, all 4 categories)
 - [ ] News feed: date picker / archive navigation
 
 ---
@@ -86,3 +83,11 @@
 - [x] [2026-03-18] NUBBLE logo clickable → navigates to homepage
 - [x] [2026-03-18] Category pills centered below header
 - [x] [2026-03-18] NubbleReader subHeader prop for injecting content below header
+- [x] [2026-03-19] Fix nightly feed: `nlm research status` timeout — add `--max-wait 0` flag
+- [x] [2026-03-19] Fix nightly feed: increase import timeout 120s → 300s for concurrent runs
+- [x] [2026-03-19] Add `a16z-portfolio` as 4th category in `feed-nightly.sh`
+- [x] [2026-03-19] Generated 2026-03-19 AI News feed (10 stories, 61 sources)
+- [x] [2026-03-19] Generated 2026-03-19 AI & Strategic Branding feed (10 stories, 76 sources)
+- [x] [2026-03-19] Generated 2026-03-19 AI Ecommerce feed (10 stories, 51 sources)
+- [x] [2026-03-19] Generated 2026-03-19 a16z AI Portfolio feed (10 stories, 49 sources)
+- [x] [2026-03-19] Upserted all 40 stories to Supabase (nubble_feed table)

@@ -39,11 +39,13 @@ function estimateReadingTime(doc: ContentDocument, depthKey: keyof ContentSectio
 
 interface NubbleReaderProps {
   document: ContentDocument;
-  /** Optional element rendered between header and content */
+  /** Optional element rendered between header and content (sticky) */
   subHeader?: React.ReactNode;
+  /** Optional element rendered inside scrollable content, before the title */
+  contentHeader?: React.ReactNode;
 }
 
-export function NubbleReader({ document: doc, subHeader }: NubbleReaderProps) {
+export function NubbleReader({ document: doc, subHeader, contentHeader }: NubbleReaderProps) {
   const [, setLocation] = useLocation();
   const [globalDepth, setGlobalDepth] = useState<DepthLevel>(2);
   const [sectionOverrides, setSectionOverrides] = useState<Record<string, DepthLevel>>({});
@@ -407,6 +409,7 @@ export function NubbleReader({ document: doc, subHeader }: NubbleReaderProps) {
           className="flex-1 overflow-y-auto overflow-x-hidden"
           style={{ scrollBehavior: "smooth" }}
         >
+          {contentHeader}
           <div className="max-w-[660px] mx-auto px-4 sm:px-6 pt-8 pb-24">
             {/* Document title */}
             <motion.div

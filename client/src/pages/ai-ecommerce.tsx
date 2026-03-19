@@ -92,7 +92,7 @@ export default function AiEcommercePage() {
 
   return (
     <div className="h-screen w-screen">
-      <NubbleReader document={doc} subHeader={<FeedMedia audioUrl={feed.audioUrl} infographicUrl={feed.infographicUrl} />} />
+      <NubbleReader document={doc} contentHeader={<FeedMedia audioUrl={feed.audioUrl} infographicUrl={feed.infographicUrl} />} />
     </div>
   );
 }

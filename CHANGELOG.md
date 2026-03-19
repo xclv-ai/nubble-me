@@ -6,7 +6,14 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 
 ## [Unreleased]
 
+### Fixed
+- **Nightly pipeline broken** — `nlm research status` was blocking for 5min inside a 30s timeout, killing every run. Added `--max-wait 0` so pipeline's own polling loop handles retries
+- **Import timeout** — increased from 120s → 300s to handle concurrent pipelines and large source sets
+
 ### Added
+- **4th feed category: a16z AI Portfolio** — tracks latest from a16z-backed AI startups (Replit, Lio, Reducto, Temporal, etc.)
+- Nightly automation now runs all 4 categories (was 3)
+- Generated 2026-03-19 feeds: 40 stories across 4 categories (237 total sources)
 - Project management structure: TODO.md, CHANGELOG.md, docs/ reorg
 - **AI News Feed Pipeline** — automated content discovery via NotebookLM research
   - `server/feed-pipeline.ts` — standalone script: research → curate → depth gen → JSON

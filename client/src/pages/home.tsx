@@ -145,12 +145,8 @@ export default function Home() {
     <div className="h-screen w-screen">
       <NubbleReader
         document={doc}
-        subHeader={
-          <>
-            <CategoryBar active={activeCategory} onSelect={setActiveCategory} />
-            <FeedMedia audioUrl={feed.audioUrl} infographicUrl={feed.infographicUrl} />
-          </>
-        }
+        subHeader={<CategoryBar active={activeCategory} onSelect={setActiveCategory} />}
+        contentHeader={<FeedMedia audioUrl={feed.audioUrl} infographicUrl={feed.infographicUrl} />}
       />
     </div>
   );
