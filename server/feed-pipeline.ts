@@ -517,10 +517,13 @@ function parseStoryList(raw: string): FeedStory[] {
 
   for (let i = 0; i < storyBlocks.length && i < 10; i++) {
     const block = storyBlocks[i];
-    const title = block.match(/TITLE:\s*(.+)/i)?.[1]?.trim() || `Story ${i + 1}`;
+    const rawTitle = block.match(/TITLE:\s*(.+)/i)?.[1]?.trim() || `Story ${i + 1}`;
+    // Clean title: strip anything after \nSOURCE, remove citations, collapse whitespace
+    const title = cleanText(rawTitle.split(/\\n/)[0]);
     const source = block.match(/SOURCE:\s*(.+)/i)?.[1]?.trim() || "Unknown";
     const url = block.match(/URL:\s*(.+)/i)?.[1]?.trim() || "unknown";
-    const why = block.match(/WHY:\s*(.+)/i)?.[1]?.trim() || "";
+    const rawWhy = block.match(/WHY:\s*(.+)/i)?.[1]?.trim() || "";
+    const why = cleanText(rawWhy.split(/\\n/)[0]);
 
     stories.push({
       id: `s${i + 1}`,
