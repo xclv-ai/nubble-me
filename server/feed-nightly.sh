@@ -28,7 +28,7 @@ log() {
 
 log "=== Nightly feed generation started ==="
 
-CATEGORIES=("ai-news" "ai-branding" "ai-ecommerce")
+CATEGORIES=("ai-news" "ai-branding" "ai-ecommerce" "a16z-portfolio")
 SUCCESS=0
 FAIL=0
 
@@ -49,7 +49,7 @@ log "Results: ${SUCCESS} succeeded, ${FAIL} failed"
 if [ "$SUCCESS" -gt 0 ]; then
   log "Committing and pushing..."
   git add client/public/data/feed/ server/data/feed/
-  git commit -m "Daily feed ${DATE} (${SUCCESS}/3 categories)" --no-verify 2>> "$LOG" || true
+  git commit -m "Daily feed ${DATE} (${SUCCESS}/4 categories)" --no-verify 2>> "$LOG" || true
   git push origin main 2>> "$LOG" || log "Push failed — will retry next run"
   log "Deploy triggered"
 else

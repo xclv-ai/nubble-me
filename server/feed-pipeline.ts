@@ -149,7 +149,7 @@ async function runPipeline(): Promise<void> {
 
     while (Date.now() - pollStart < POLL_TIMEOUT) {
       await sleep(POLL_INTERVAL);
-      statusOutput = await runNLM(["research", "status", notebookId], 30000);
+      statusOutput = await runNLM(["research", "status", notebookId, "--max-wait", "0"], 30000);
       log(`Research status: ${statusOutput.split("\n")[0]}`);
 
       if (
@@ -169,7 +169,7 @@ async function runPipeline(): Promise<void> {
 
     // 4. Import all discovered sources
     log("Importing discovered sources...");
-    const importOutput = await runNLM(["research", "import", notebookId, taskId], 120000);
+    const importOutput = await runNLM(["research", "import", notebookId, taskId], 300000);
     const sourcesFound = parseNumber(importOutput);
     log(`Imported sources (${sourcesFound} found)`);
 

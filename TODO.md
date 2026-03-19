@@ -11,6 +11,8 @@
 
 - [ ] User testing with 20+ people (Phase 1 validation)
 - [ ] Shareable link to specific section+depth
+- [x] [2026-03-19] Fix nightly feed: `nlm research status` timeout — add `--max-wait 0` flag so pipeline's own polling loop works
+- [x] [2026-03-19] Add `a16z-portfolio` as 4th category in `feed-nightly.sh`
 
 ---
 

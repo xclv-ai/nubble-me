@@ -135,6 +135,7 @@ NotebookLM-powered, $0/month:
 ### Feed Categories
 - `ai-news` — general AI news, LLM releases, breakthroughs
 - `ai-branding` — AI adoption at branding agencies (WPP, Landor, FutureBrand), AI marketing tools, M&A
+- `a16z-portfolio` — latest from a16z-backed AI startups (Replit, Lio, Reducto, etc.)
 
 ### Feed Data Structure
 - `client/public/data/feed/ai-news/` — AI news JSON files + latest.json
@@ -150,7 +151,7 @@ NotebookLM-powered, $0/month:
 - Pipeline upserts to Supabase after saving JSON (requires SUPABASE_URL + SUPABASE_SERVICE_KEY in .env.local)
 
 ### Nightly Automation
-- Script: `server/feed-nightly.sh` — runs all 3 categories sequentially, commits + pushes to trigger Vercel deploy
+- Script: `server/feed-nightly.sh` — runs all 4 categories sequentially, commits + pushes to trigger Vercel deploy
 - Schedule: macOS launchd at 06:00 AM daily (`~/Library/LaunchAgents/com.nubble.feed-nightly.plist`)
 - Logs: `server/data/feed/nightly-YYYY-MM-DD.log`
 - Mac must be on/awake at 6 AM (launchd catches up on missed jobs when Mac wakes)
