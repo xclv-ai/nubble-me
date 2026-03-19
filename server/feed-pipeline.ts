@@ -247,7 +247,9 @@ WHY: [one sentence about what this CHANGES — not what it costs, but what's dif
 TITLE: ...
 (continue through STORY 10)
 
-${categoryFocus}`;
+${categoryFocus}
+
+IMPORTANT: Do NOT include citation numbers like [1], [2], [3] anywhere in your response. Write clean text only.`;
 
     const rankOutput = await runNLM(["notebook", "query", notebookId, rankPrompt], 120000);
     const stories = parseStoryList(rankOutput);
@@ -281,7 +283,9 @@ Write in the style of Richard Feynman — clear, provocative, no jargon without 
 **SO WHAT**
 (One sentence. The punchline. What changes tomorrow.)
 
-Total 300-500 words. No fabricated facts. No corporate speak.`;
+Total 300-500 words. No fabricated facts. No corporate speak.
+
+IMPORTANT: Do NOT include citation numbers like [1], [2], [3] anywhere in your response. Do NOT include source references. Write clean, readable prose only.`;
 
       const depthOutput = await runNLM(["notebook", "query", notebookId, depthPrompt], 120000);
       const depths = parseDepthResponse(depthOutput);
