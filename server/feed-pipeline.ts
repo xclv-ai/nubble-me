@@ -196,7 +196,7 @@ async function runPipeline(): Promise<void> {
 
     // 3. Poll research status (every 30s, timeout 10min)
     const POLL_INTERVAL = 30000;
-    const POLL_TIMEOUT = 10 * 60 * 1000;
+    const POLL_TIMEOUT = 15 * 60 * 1000;
     const pollStart = Date.now();
     let researchComplete = false;
     let statusOutput = "";
@@ -221,11 +221,12 @@ async function runPipeline(): Promise<void> {
     }
     log("Research complete");
 
-    // 4. Import all discovered sources
-    log("Importing discovered sources...");
-    const importOutput = await runNLM(["research", "import", notebookId, taskId], 300000);
+    // 4. Import top 25 most relevant sources (not all — avoids timeouts + noise)
+    log("Importing top 25 sources...");
+    const indices = Array.from({ length: 25 }, (_, i) => i).join(",");
+    const importOutput = await runNLM(["research", "import", notebookId, taskId, "-i", indices], 120000);
     const sourcesFound = parseNumber(importOutput);
-    log(`Imported sources (${sourcesFound} found)`);
+    log(`Imported ${sourcesFound} sources (top 25 requested)`);
 
     // Wait for indexing
     await sleep(10000);
@@ -473,21 +474,15 @@ IMPORTANT: Do NOT include citation numbers like [1], [2], [3] anywhere in your r
       }
     }
 
-    // 9. Cleanup notebook
-    log("Cleaning up notebook...");
-    await runNLM(["notebook", "delete", notebookId, "-y"], 30000);
-    log("Notebook deleted");
-    notebookId = null; // prevent double-delete in finally
+    // 9. Keep notebook for review (do NOT delete — user inspects them)
+    log(`Notebook kept for review: ${notebookId}`);
+    notebookId = null; // prevent cleanup in finally
 
     log(`Pipeline complete! ${stories.length} stories generated for ${today}`);
   } finally {
     if (notebookId) {
-      try {
-        await runNLM(["notebook", "delete", notebookId, "-y"], 30000);
-        log(`Cleaned up notebook: ${notebookId}`, "cleanup");
-      } catch {
-        log(`Failed to cleanup notebook: ${notebookId}`, "cleanup");
-      }
+      // Keep notebook for review even on failure (do NOT delete)
+      log(`Notebook kept for review (pipeline failed): ${notebookId}`, "cleanup");
     }
   }
 }
