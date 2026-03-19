@@ -106,11 +106,13 @@ script/build.ts                 # Custom build: Vite + esbuild bundling
 
 ### Pipeline (`npm run feed:generate`)
 NotebookLM-powered, $0/month:
-1. Creates notebook → runs deep research (~5min, finds 40-80 sources)
-2. Imports sources → queries for top 10 stories ranked by importance
-3. Generates 3 depth levels per story (summary/condensed/expanded) + standard
-4. Saves to `server/data/feed/{YYYY-MM-DD}.json`
-5. Cleans up notebook
+1. Creates notebook → runs deep research (~5-10min, finds 150-200 sources)
+2. Imports top 25 most relevant sources (via `--indices` flag)
+3. Queries for top 10 stories ranked by importance
+4. Generates 3 depth levels per story (summary/condensed/expanded) + standard
+5. Generates podcast audio + infographics
+6. Saves to `client/public/data/feed/{category}/{YYYY-MM-DD}.json` + `latest.json`
+7. Notebooks kept for 1 week review (NOT deleted)
 
 ### Feed Routes
 - `GET /api/nubble-feed` — latest feed
@@ -152,10 +154,10 @@ NotebookLM-powered, $0/month:
 
 ### Nightly Automation
 - Script: `server/feed-nightly.sh` — runs all 4 categories sequentially, commits + pushes to trigger Vercel deploy
-- Schedule: macOS launchd at 06:00 AM daily (`~/Library/LaunchAgents/com.nubble.feed-nightly.plist`)
+- Schedule: macOS launchd Mon+Thu at 06:00 AM (`~/Library/LaunchAgents/com.nubble.feed-nightly.plist`)
 - Logs: `server/data/feed/nightly-YYYY-MM-DD.log`
 - Mac must be on/awake at 6 AM (launchd catches up on missed jobs when Mac wakes)
-- Each category takes ~10 min (deep research), total ~30 min for all 3
+- Each category takes ~12 min (research + top 25 import + queries), total ~50 min for all 4
 
 #### Commands
 ```bash

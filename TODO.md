@@ -91,3 +91,9 @@
 - [x] [2026-03-19] Generated 2026-03-19 AI Ecommerce feed (10 stories, 51 sources)
 - [x] [2026-03-19] Generated 2026-03-19 a16z AI Portfolio feed (10 stories, 49 sources)
 - [x] [2026-03-19] Upserted all 40 stories to Supabase (nubble_feed table)
+- [x] [2026-03-19] Fix dirty feed data — runNLM now extracts answer from NLM JSON wrapper
+- [x] [2026-03-19] Re-generated all 4 feeds with clean data (no citation markers, no escaped unicode, no metadata leaks)
+- [x] [2026-03-19] Pipeline: import top 25 sources instead of all (faster, no timeouts)
+- [x] [2026-03-19] Pipeline: keep notebooks for review (no auto-delete, 1 week retention)
+- [x] [2026-03-19] Pipeline: research timeout increased 10min → 15min
+- [x] [2026-03-19] Schedule changed: Mon+Thu at 06:00 (was daily) to avoid NLM overuse

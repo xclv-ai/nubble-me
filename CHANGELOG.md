@@ -7,13 +7,22 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 ## [Unreleased]
 
 ### Fixed
+- **Dirty feed data** — `nlm notebook query` returns JSON wrapper `{value:{answer:"..."}}` even without `--json` flag. `runNLM` now extracts `parsed.value.answer` for query responses
 - **Nightly pipeline broken** — `nlm research status` was blocking for 5min inside a 30s timeout, killing every run. Added `--max-wait 0` so pipeline's own polling loop handles retries
 - **Import timeout** — increased from 120s → 300s to handle concurrent pipelines and large source sets
+- **Re-generated all 4 feeds** with clean text — no `[1]` citations, no `\u2014` escaped unicode, no `conversation_id` metadata leaks
+
+### Changed
+- **Source import: top 25 only** — pipeline imports top 25 sources via `--indices` flag instead of all 150-200 (eliminates timeouts, reduces noise)
+- **Notebook retention** — pipeline no longer deletes notebooks after runs; kept for 1 week review
+- **Research timeout** — increased from 10min to 15min for branding/ecommerce deep research
+- **Schedule: Mon+Thu at 06:00** — changed from daily to every 3 days to avoid NLM overuse and improve output stability
 
 ### Added
 - **4th feed category: a16z AI Portfolio** — tracks latest from a16z-backed AI startups (Replit, Lio, Reducto, Temporal, etc.)
+- `server/feed-continue.ts` — resume pipeline from existing notebook (skip create+research+import)
 - Nightly automation now runs all 4 categories (was 3)
-- Generated 2026-03-19 feeds: 40 stories across 4 categories (237 total sources)
+- Generated 2026-03-19 feeds: 40 stories across 4 categories, all with audio + infographic
 - Project management structure: TODO.md, CHANGELOG.md, docs/ reorg
 - **AI News Feed Pipeline** — automated content discovery via NotebookLM research
   - `server/feed-pipeline.ts` — standalone script: research → curate → depth gen → JSON
