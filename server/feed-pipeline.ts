@@ -238,10 +238,8 @@ async function runPipeline(): Promise<void> {
     const rankPrompt = `Based on all sources in this notebook, rank the top 10 most important ${categoryLabel} stories. For each story output EXACTLY in this format:
 
 ---STORY 1---
-TITLE: [headline]
-SOURCE: [publication name]
-URL: [source URL if available, otherwise "unknown"]
-WHY: [one sentence about what this CHANGES — not what it costs, but what's different now]
+TITLE: [short headline, max 10 words]
+WHY: [one sentence about what this CHANGES]
 
 ---STORY 2---
 TITLE: ...
@@ -249,7 +247,7 @@ TITLE: ...
 
 ${categoryFocus}
 
-IMPORTANT: Do NOT include citation numbers like [1], [2], [3] anywhere in your response. Write clean text only.`;
+IMPORTANT: Do NOT include citation numbers, source names, URLs, or references. Just clean headlines and one-sentence explanations.`;
 
     const rankOutput = await runNLM(["notebook", "query", notebookId, rankPrompt], 120000);
     const stories = parseStoryList(rankOutput);
@@ -260,7 +258,7 @@ IMPORTANT: Do NOT include citation numbers like [1], [2], [3] anywhere in your r
       const story = stories[i];
       log(`Generating depths for story ${i + 1}/${stories.length}: "${story.title}"`);
 
-      const depthPrompt = `For the story "${story.title}" from ${story.source}, produce three depth versions. Output EXACTLY in this format:
+      const depthPrompt = `For the story "${story.title}", produce three depth versions. Output EXACTLY in this format:
 
 ---SUMMARY---
 (One sentence, max 20 words. What changed and why it matters — not dollar amounts.)
@@ -518,10 +516,9 @@ function parseStoryList(raw: string): FeedStory[] {
   for (let i = 0; i < storyBlocks.length && i < 10; i++) {
     const block = storyBlocks[i];
     const rawTitle = block.match(/TITLE:\s*(.+)/i)?.[1]?.trim() || `Story ${i + 1}`;
-    // Clean title: strip anything after \nSOURCE, remove citations, collapse whitespace
     const title = cleanText(rawTitle.split(/\\n/)[0]);
-    const source = block.match(/SOURCE:\s*(.+)/i)?.[1]?.trim() || "Unknown";
-    const url = block.match(/URL:\s*(.+)/i)?.[1]?.trim() || "unknown";
+    const source = "nubble";
+    const url = "unknown";
     const rawWhy = block.match(/WHY:\s*(.+)/i)?.[1]?.trim() || "";
     const why = cleanText(rawWhy.split(/\\n/)[0]);
 
