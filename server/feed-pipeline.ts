@@ -46,7 +46,18 @@ async function runNLM(args: string[], timeoutMs = 60000): Promise<string> {
   try {
     const { stdout, stderr } = await exec(NLM_PATH, args, { timeout: timeoutMs });
     if (stderr) log(`nlm stderr: ${stderr}`, "nlm");
-    return stdout.trim();
+    const raw = stdout.trim();
+
+    // nlm notebook query returns JSON with { value: { answer: "..." } }
+    // Extract just the answer text
+    if (args[0] === "notebook" && args[1] === "query") {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed?.value?.answer) return parsed.value.answer;
+      } catch { /* not JSON, return raw */ }
+    }
+
+    return raw;
   } catch (err: any) {
     log(`nlm error: ${err.message}`, "nlm");
     throw new Error(`nlm command failed: ${args.join(" ")}: ${err.message}`);
