@@ -481,6 +481,15 @@ Total 300-500 words. No fabricated facts. No corporate speak.`;
 
 // ---------- parsers ----------
 
+/** Strip literal \n sequences and citation markers like [1-3] from text */
+function cleanText(s: string): string {
+  return s
+    .replace(/\\n/g, "\n")     // literal \n → real newline
+    .replace(/\n{3,}/g, "\n\n") // collapse excess newlines
+    .replace(/\s*\[\d+(?:[,\s-]+\d+)*\]\s*/g, " ") // remove [1-3] citations
+    .trim();
+}
+
 function parseStoryList(raw: string): FeedStory[] {
   const stories: FeedStory[] = [];
   const storyBlocks = raw.split(/---STORY\s+\d+---/i).filter(b => b.trim());
@@ -515,9 +524,9 @@ function parseDepthResponse(raw: string): {
   const condensedMatch = raw.match(/---CONDENSED---\s*([\s\S]*?)(?=---EXPANDED---|$)/);
   const expandedMatch = raw.match(/---EXPANDED---\s*([\s\S]*?)$/);
 
-  const summary = summaryMatch?.[1]?.trim() || "Summary unavailable.";
-  const condensed = condensedMatch?.[1]?.trim() || "Details unavailable.";
-  const expanded = expandedMatch?.[1]?.trim() || "Full analysis unavailable.";
+  const summary = cleanText(summaryMatch?.[1] || "Summary unavailable.");
+  const condensed = cleanText(condensedMatch?.[1] || "Details unavailable.");
+  const expanded = cleanText(expandedMatch?.[1] || "Full analysis unavailable.");
 
   return { summary, condensed, expanded };
 }

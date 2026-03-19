@@ -55,7 +55,7 @@ export function AudioPlayer({ src, className }: { src: string; className?: strin
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className={`flex-shrink-0 flex items-center gap-3 px-4 py-2 bg-[#E8FF00] ${className || ""}`}>
+    <div className={`flex-shrink-0 flex items-center gap-3 px-4 py-2 bg-[#E8FF00] rounded-lg ${className || ""}`}>
       <audio ref={audioRef} src={src} preload="metadata" />
 
       <button
