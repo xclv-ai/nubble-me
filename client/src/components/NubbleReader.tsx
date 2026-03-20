@@ -252,7 +252,7 @@ export function NubbleReader({ document: doc, subHeader, contentHeader }: Nubble
       </AnimatePresence>
 
       {/* Header */}
-      <header className="flex-shrink-0 h-12 px-5 flex items-center justify-between border-b border-border/40 relative" data-testid="header">
+      <header className="flex-shrink-0 h-12 px-5 flex items-center border-b border-border/40 relative" data-testid="header">
         {/* [3] Reading progress bar */}
         <motion.div
           className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary/25"
@@ -262,13 +262,13 @@ export function NubbleReader({ document: doc, subHeader, contentHeader }: Nubble
           data-testid="progress-bar"
         />
 
-        <button onClick={() => setLocation("/")} className="flex items-center gap-2.5 hover:opacity-70 transition-opacity">
+        <button onClick={() => setLocation("/")} className="flex items-center gap-2.5 hover:opacity-70 transition-opacity flex-shrink-0">
           <NubbleLogo />
           <span className="text-[11px] text-muted-foreground tracking-[0.15em] uppercase font-medium">nubble</span>
         </button>
 
-        {/* Global depth control */}
-        <div className="flex items-center gap-1.5" data-testid="global-depth-control">
+        {/* Global depth control — absolutely centered */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5" data-testid="global-depth-control">
           <button
             onClick={() => changeGlobalDepth(-1)}
             disabled={globalDepth === 0}
@@ -322,7 +322,7 @@ export function NubbleReader({ document: doc, subHeader, contentHeader }: Nubble
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ml-auto flex-shrink-0">
           {/* [5] Sticky section label */}
           <AnimatePresence mode="popLayout">
             <motion.span
@@ -331,7 +331,7 @@ export function NubbleReader({ document: doc, subHeader, contentHeader }: Nubble
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -6, filter: "blur(3px)" }}
               transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
-              className="text-[10px] text-muted-foreground/40 hidden md:inline font-medium tracking-wide whitespace-nowrap"
+              className="text-[10px] text-muted-foreground/40 hidden md:inline-block font-medium tracking-wide truncate max-w-[280px]"
             >
               <span className="text-primary/50 font-semibold mr-1">{String(activeSectionIndex + 1).padStart(2, "0")}</span>
               {activeSection?.title}
