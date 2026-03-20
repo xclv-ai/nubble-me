@@ -293,32 +293,36 @@ export function NubbleReader({ document: doc, subHeader, contentHeader }: Nubble
             <Plus size={14} />
           </button>
 
-          {/* Depth label + [4] reading time */}
-          <div className="relative ml-0.5 hidden sm:flex items-center gap-2 h-4 overflow-hidden">
-            <AnimatePresence mode="popLayout">
-              <motion.span
-                key={globalDepth}
-                initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
-                transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
-                className="text-[10px] text-muted-foreground/50 font-medium tracking-[0.15em] uppercase whitespace-nowrap"
-              >
-                {DEPTH_LABELS[globalDepth]}
-              </motion.span>
-            </AnimatePresence>
-            <AnimatePresence mode="popLayout">
-              <motion.span
-                key={readingTime}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
-                className="text-[10px] text-muted-foreground/30 font-medium whitespace-nowrap"
-              >
-                {readingTime} min
-              </motion.span>
-            </AnimatePresence>
+          {/* Depth label + [4] reading time — fixed width to prevent jumps */}
+          <div className="ml-0.5 hidden sm:flex items-center gap-2 h-4">
+            <div className="relative w-[70px] h-4 overflow-hidden">
+              <AnimatePresence mode="popLayout">
+                <motion.span
+                  key={globalDepth}
+                  initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+                  transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
+                  className="absolute inset-0 text-[10px] text-muted-foreground/50 font-medium tracking-[0.15em] uppercase whitespace-nowrap flex items-center"
+                >
+                  {DEPTH_LABELS[globalDepth]}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+            <div className="relative w-[36px] h-4 overflow-hidden">
+              <AnimatePresence mode="popLayout">
+                <motion.span
+                  key={readingTime}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
+                  className="absolute inset-0 text-[10px] text-muted-foreground/30 font-medium whitespace-nowrap flex items-center"
+                >
+                  {readingTime} min
+                </motion.span>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
