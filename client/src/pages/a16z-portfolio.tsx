@@ -76,7 +76,7 @@ export default function A16zPortfolioPage() {
   }
 
   const doc: ContentDocument = {
-    title: `a16z AI Portfolio — ${feed.date}`,
+    title: `a16z AI Portfolio — Weekly`,
     author: "nubble",
     sections: [...feed.stories]
       .sort((a, b) => a.rank - b.rank)

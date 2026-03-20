@@ -1,6 +1,6 @@
 #!/bin/bash
-# Nubble.me — Nightly Feed Generation
-# Runs all 3 feed categories via NotebookLM pipeline, saves to JSON + Supabase,
+# Nubble.me — Weekly Feed Generation
+# Runs all 4 feed categories via NotebookLM pipeline, saves to JSON + Supabase,
 # then commits and pushes to trigger Vercel deploy.
 #
 # Usage: ./server/feed-nightly.sh
@@ -26,7 +26,7 @@ log() {
   echo "$(date '+%H:%M:%S') $1" | tee -a "$LOG"
 }
 
-log "=== Nightly feed generation started ==="
+log "=== Weekly feed generation started ==="
 
 CATEGORIES=("ai-news" "ai-branding" "ai-ecommerce" "a16z-portfolio")
 SUCCESS=0
@@ -49,11 +49,11 @@ log "Results: ${SUCCESS} succeeded, ${FAIL} failed"
 if [ "$SUCCESS" -gt 0 ]; then
   log "Committing and pushing..."
   git add client/public/data/feed/ server/data/feed/
-  git commit -m "Daily feed ${DATE} (${SUCCESS}/4 categories)" --no-verify 2>> "$LOG" || true
+  git commit -m "Weekly feed ${DATE} (${SUCCESS}/4 categories)" --no-verify 2>> "$LOG" || true
   git push origin main 2>> "$LOG" || log "Push failed — will retry next run"
   log "Deploy triggered"
 else
   log "No feeds generated — skipping deploy"
 fi
 
-log "=== Nightly feed complete ==="
+log "=== Weekly feed complete ==="

@@ -76,7 +76,7 @@ export default function AiDigestPage() {
   }
 
   const doc: ContentDocument = {
-    title: `AI News — ${feed.date}`,
+    title: `AI News — Weekly`,
     author: "nubble",
     sections: [...feed.stories]
       .sort((a, b) => a.rank - b.rank)

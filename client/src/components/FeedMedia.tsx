@@ -14,7 +14,7 @@ export function FeedMedia({ audioUrl, infographicUrl }: { audioUrl?: string; inf
         <div className="max-w-[660px] mx-auto px-4 sm:px-6 pt-2 pb-1">
           <img
             src={infographicUrl}
-            alt="Daily infographic"
+            alt="Weekly infographic"
             className="w-full rounded-lg"
           />
         </div>

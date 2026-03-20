@@ -76,7 +76,7 @@ export default function AiEcommercePage() {
   }
 
   const doc: ContentDocument = {
-    title: `AI & Ecommerce — ${feed.date}`,
+    title: `AI & Ecommerce — Weekly`,
     author: "nubble",
     sections: [...feed.stories]
       .sort((a, b) => a.rank - b.rank)

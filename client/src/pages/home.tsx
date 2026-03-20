@@ -39,7 +39,7 @@ const categories: { id: Category; title: string; subtitle: string; path: string;
   {
     id: "ai-news",
     title: "AI News Nubs",
-    subtitle: "Daily AI briefing",
+    subtitle: "Weekly AI briefing",
     path: "/data/feed/ai-news/latest.json",
     dot: "bg-amber-500",
     accent: "border-transparent hover:bg-amber-500/10",
@@ -76,7 +76,7 @@ const categories: { id: Category; title: string; subtitle: string; path: string;
 
 function feedToDocument(feed: FeedResponse, title: string): ContentDocument {
   return {
-    title: `${title} — ${feed.date}`,
+    title: `${title} — Weekly`,
     author: "nubble",
     sections: [...feed.stories]
       .sort((a, b) => a.rank - b.rank)

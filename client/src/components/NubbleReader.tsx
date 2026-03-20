@@ -775,20 +775,28 @@ const SectionBlock = forwardRef<HTMLDivElement, SectionBlockProps>(
             <AnimatePresence>
               {isActive && hasSwipedOnce && (
                 <motion.div
-                  className="flex items-center justify-between mt-3 select-none pointer-events-none"
+                  className="flex items-center justify-between mt-3 select-none"
                   initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 0.2, y: 0 }}
+                  animate={{ opacity: 0.35, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                 >
-                  <div className="flex items-center gap-1 text-[9px] text-muted-foreground tracking-wider uppercase">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onChangeDepth(-1); }}
+                    disabled={depth <= 0}
+                    className="flex items-center gap-1 text-[9px] text-muted-foreground tracking-wider uppercase hover:text-foreground hover:opacity-100 transition-colors cursor-pointer disabled:opacity-20 disabled:cursor-default"
+                  >
                     <ChevronsLeft size={10} />
                     <span>less</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-[9px] text-muted-foreground tracking-wider uppercase">
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onChangeDepth(1); }}
+                    disabled={depth >= 3}
+                    className="flex items-center gap-1 text-[9px] text-muted-foreground tracking-wider uppercase hover:text-foreground hover:opacity-100 transition-colors cursor-pointer disabled:opacity-20 disabled:cursor-default"
+                  >
                     <span>more</span>
                     <ChevronsRight size={10} />
-                  </div>
+                  </button>
                 </motion.div>
               )}
             </AnimatePresence>

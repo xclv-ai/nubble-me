@@ -76,7 +76,7 @@ export default function AiBrandingPage() {
   }
 
   const doc: ContentDocument = {
-    title: `AI & Strategic Branding — ${feed.date}`,
+    title: `AI & Strategic Branding — Weekly`,
     author: "nubble",
     sections: [...feed.stories]
       .sort((a, b) => a.rank - b.rank)

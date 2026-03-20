@@ -128,7 +128,7 @@ NotebookLM-powered, $0/month:
 
 ### Feed UI
 - `/` — homepage with category selector cards ("AI News Nubs", "AI and Strategic Branding Nubs")
-- `/ai-digest` — AI News daily digest in NubbleReader (fetches from `/data/feed/ai-news/latest.json`)
+- `/ai-digest` — AI News weekly digest in NubbleReader (fetches from `/data/feed/ai-news/latest.json`)
 - `/ai-branding` — AI & Strategic Branding digest in NubbleReader (fetches from `/data/feed/ai-branding/latest.json`)
 - `/feed` — card grid: featured (rank 1), grid (2-4), list (5-10)
 - `/read-feed/:id` — story in NubbleReader with back button
@@ -152,16 +152,16 @@ NotebookLM-powered, $0/month:
 - Columns: date, category, story_rank, title, source, source_url, why_it_matters, summary, condensed, standard, expanded
 - Pipeline upserts to Supabase after saving JSON (requires SUPABASE_URL + SUPABASE_SERVICE_KEY in .env.local)
 
-### Nightly Automation
+### Weekly Automation
 - Script: `server/feed-nightly.sh` — runs all 4 categories sequentially, commits + pushes to trigger Vercel deploy
-- Schedule: macOS launchd Mon+Thu at 06:00 AM (`~/Library/LaunchAgents/com.nubble.feed-nightly.plist`)
+- Schedule: macOS launchd **Monday at 06:00 AM** (`~/Library/LaunchAgents/com.nubble.feed-nightly.plist`)
 - Logs: `server/data/feed/nightly-YYYY-MM-DD.log`
-- Mac must be on/awake at 6 AM (launchd catches up on missed jobs when Mac wakes)
+- Mac must be on/awake at 6 AM Monday (launchd catches up on missed jobs when Mac wakes)
 - Each category takes ~12 min (research + top 25 import + queries), total ~50 min for all 4
 
 #### Commands
 ```bash
-# Run nightly feed manually (all 3 categories)
+# Run weekly feed manually (all 4 categories)
 npm run feed:nightly
 
 # Run single category
