@@ -295,7 +295,7 @@ export function NubbleReader({ document: doc, subHeader, contentHeader }: Nubble
 
           {/* Depth label + [4] reading time — fixed width to prevent jumps */}
           <div className="ml-0.5 hidden sm:flex items-center gap-2 h-4">
-            <div className="relative w-[70px] h-4 overflow-hidden">
+            <div className="relative w-[85px] h-4 overflow-hidden">
               <AnimatePresence mode="popLayout">
                 <motion.span
                   key={globalDepth}
