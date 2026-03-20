@@ -11,6 +11,7 @@ import HomeV3 from "@/pages/home-v3";
 import HomeV4 from "@/pages/home-v4";
 import ImportPage from "@/pages/import";
 import ReadPage from "@/pages/read";
+import ReadDocPage from "@/pages/read-doc";
 import FeedPage from "@/pages/feed";
 import ReadFeedPage from "@/pages/read-feed";
 import AiDigestPage from "@/pages/ai-digest";
@@ -27,6 +28,7 @@ function AppRouter() {
       <Route path="/v4" component={HomeV4} />
       <Route path="/import" component={ImportPage} />
       <Route path="/read/:id" component={ReadPage} />
+      <Route path="/read-doc/:id" component={ReadDocPage} />
       <Route path="/feed" component={FeedPage} />
       <Route path="/read-feed/:id" component={ReadFeedPage} />
       <Route path="/ai-digest" component={AiDigestPage} />

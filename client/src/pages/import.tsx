@@ -1,99 +1,20 @@
-import { useState, useCallback, useRef } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
-import { Upload, FileText, BookOpen, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-
-type UploadStage = "idle" | "uploading" | "processing" | "done" | "error";
-
-interface UploadResult {
-  id: string;
-  title: string;
-  author: string;
-  sectionCount: number;
-  wordCount: number;
-}
+import { Upload, Send, CheckCircle2 } from "lucide-react";
 
 export default function ImportPage() {
   const [, setLocation] = useLocation();
-  const [stage, setStage] = useState<UploadStage>("idle");
-  const [progress, setProgress] = useState("");
-  const [result, setResult] = useState<UploadResult | null>(null);
-  const [error, setError] = useState("");
-  const [isDragOver, setIsDragOver] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [sent, setSent] = useState(false);
 
-  const handleFile = useCallback(async (file: File) => {
-    const ext = file.name.split(".").pop()?.toLowerCase();
-    if (!["pdf", "epub", "txt"].includes(ext || "")) {
-      setError("Unsupported file type. Please upload a PDF, ePub, or TXT file.");
-      setStage("error");
-      return;
-    }
-
-    setStage("uploading");
-    setProgress(`Uploading ${file.name}...`);
-    setError("");
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      setStage("processing");
-      setProgress("Extracting text and generating depth levels via NotebookLM...");
-
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "Upload failed");
-      }
-
-      const data: UploadResult = await response.json();
-      setResult(data);
-      setStage("done");
-      setProgress("");
-    } catch (err: any) {
-      setError(err.message);
-      setStage("error");
-    }
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsDragOver(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  }, []);
-
-  const handleDragLeave = useCallback(() => {
-    setIsDragOver(false);
-  }, []);
-
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
-
-  const openReader = useCallback(() => {
-    if (result) {
-      setLocation(`/read/${result.id}`);
-    }
-  }, [result, setLocation]);
-
-  const reset = useCallback(() => {
-    setStage("idle");
-    setResult(null);
-    setError("");
-    setProgress("");
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  }, []);
+    const subject = encodeURIComponent("nubble.me beta access request");
+    const body = encodeURIComponent(`${message}\n\n— ${email}`);
+    window.open(`mailto:ceo@xclv.com?subject=${subject}&body=${body}`, "_self");
+    setSent(true);
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
@@ -108,99 +29,66 @@ export default function ImportPage() {
           </p>
         </div>
 
-        {/* Upload area */}
-        {stage === "idle" && (
-          <div
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onClick={() => fileInputRef.current?.click()}
-            className={`
-              border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
-              transition-all duration-200
-              ${isDragOver
-                ? "border-primary bg-primary/5 scale-[1.02]"
-                : "border-border hover:border-primary/50 hover:bg-muted/30"
-              }
-            `}
-          >
-            <Upload className="w-10 h-10 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-sm font-medium text-foreground mb-1">
-              Drop file here or click to browse
-            </p>
-            <p className="text-xs text-muted-foreground">
-              PDF, ePub, or TXT — up to 100MB
-            </p>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,.epub,.txt"
-              onChange={handleFileInput}
-              className="hidden"
-            />
-          </div>
-        )}
+        {/* Disabled upload area */}
+        <div className="border-2 border-dashed rounded-xl p-10 text-center opacity-30 cursor-not-allowed select-none">
+          <Upload className="w-8 h-8 mx-auto mb-3 text-muted-foreground" />
+          <p className="text-sm font-medium text-foreground mb-1">
+            File upload
+          </p>
+          <p className="text-xs text-muted-foreground">
+            PDF, ePub, TXT — coming soon
+          </p>
+        </div>
 
-        {/* Processing state */}
-        {(stage === "uploading" || stage === "processing") && (
-          <div className="border rounded-xl p-12 text-center">
-            <Loader2 className="w-10 h-10 mx-auto mb-4 text-primary animate-spin" />
-            <p className="text-sm font-medium text-foreground mb-1">{progress}</p>
-            <p className="text-xs text-muted-foreground">
-              This may take a moment for large documents
-            </p>
-          </div>
-        )}
+        {/* Beta notice */}
+        <div className="mt-4 rounded-lg bg-amber-500/10 border border-amber-500/20 px-4 py-3 text-center">
+          <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+            This feature is burning API tokens.
+          </p>
+          <p className="text-sm text-amber-600/80 dark:text-amber-400/80 mt-0.5">
+            Available for beta testers now.
+          </p>
+        </div>
 
-        {/* Success state */}
-        {stage === "done" && result && (
-          <div className="border rounded-xl p-8 text-center">
-            <CheckCircle2 className="w-10 h-10 mx-auto mb-4 text-green-500" />
-            <h2 className="text-lg font-semibold text-foreground mb-1">{result.title}</h2>
-            <p className="text-sm text-muted-foreground mb-4">{result.author}</p>
+        {/* Contact form */}
+        <div className="mt-8">
+          <h2 className="text-base font-medium text-foreground text-center mb-4">
+            Drop me a line
+          </h2>
 
-            <div className="flex justify-center gap-6 mb-6 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <FileText className="w-3.5 h-3.5" />
-                {result.sectionCount} sections
-              </div>
-              <div className="flex items-center gap-1.5">
-                <BookOpen className="w-3.5 h-3.5" />
-                {result.wordCount.toLocaleString()} words
-              </div>
+          {sent ? (
+            <div className="border rounded-xl p-8 text-center">
+              <CheckCircle2 className="w-10 h-10 mx-auto mb-3 text-green-500" />
+              <p className="text-sm font-medium text-foreground">Thanks! I'll get back to you.</p>
             </div>
-
-            <div className="flex gap-3 justify-center">
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <input
+                type="email"
+                required
+                placeholder="Your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-lg border bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
+              <textarea
+                required
+                placeholder="What are you working on? Why do you want beta access?"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={3}
+                className="w-full px-4 py-2.5 rounded-lg border bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
+              />
               <button
-                onClick={openReader}
-                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
+                type="submit"
+                className="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
               >
-                Start Reading
+                <Send className="w-4 h-4" />
+                Send Request
               </button>
-              <button
-                onClick={reset}
-                className="px-6 py-2.5 border rounded-lg text-sm font-medium hover:bg-muted transition-colors"
-              >
-                Import Another
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Error state */}
-        {stage === "error" && (
-          <div className="border border-destructive/30 rounded-xl p-8 text-center">
-            <AlertCircle className="w-10 h-10 mx-auto mb-4 text-destructive" />
-            <p className="text-sm font-medium text-foreground mb-1">Import Failed</p>
-            <p className="text-xs text-destructive mb-4">{error}</p>
-            <button
-              onClick={reset}
-              className="px-6 py-2.5 border rounded-lg text-sm font-medium hover:bg-muted transition-colors"
-            >
-              Try Again
-            </button>
-          </div>
-        )}
+            </form>
+          )}
+        </div>
 
         {/* Back link */}
         <div className="text-center mt-6">
@@ -208,7 +96,7 @@ export default function ImportPage() {
             onClick={() => setLocation("/")}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            ← Back to sample article
+            ← Back to feed
           </button>
         </div>
       </div>

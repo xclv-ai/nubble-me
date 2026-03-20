@@ -10,7 +10,8 @@
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "feed:generate": "tsx server/feed-pipeline.ts",
-    "feed:nightly": "bash server/feed-nightly.sh"
+    "feed:nightly": "bash server/feed-nightly.sh",
+    "watch:requests": "tsx server/request-watcher.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
