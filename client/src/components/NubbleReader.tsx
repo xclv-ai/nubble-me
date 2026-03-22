@@ -505,13 +505,12 @@ export function NubbleReader({ document: doc, subHeader, contentHeader }: Nubble
           <span className="hidden md:inline">or swipe</span>
         </div>
         <a
-          href="https://www.perplexity.ai/computer"
+          href="https://xclv.com/"
           target="_blank"
           rel="noopener noreferrer"
           className="text-[10px] text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors duration-200 flex-shrink-0 ml-2"
         >
-          <span className="hidden sm:inline">Created with Perplexity Computer</span>
-          <span className="sm:hidden">Perplexity</span>
+          &copy; Viktor Konovalov XCLV.COM
         </a>
       </footer>
     </div>
