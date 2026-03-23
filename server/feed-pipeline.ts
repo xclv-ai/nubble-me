@@ -59,7 +59,9 @@ async function runNLM(args: string[], timeoutMs = 60000): Promise<string> {
 
     return raw;
   } catch (err: any) {
-    log(`nlm error: ${err.message}`, "nlm");
+    const stderr = err.stderr ? `\nstderr: ${err.stderr}` : "";
+    const code = err.code ? ` (code: ${err.code})` : "";
+    log(`nlm error: ${err.message}${code}${stderr}`, "nlm");
     throw new Error(`nlm command failed: ${args.join(" ")}: ${err.message}`);
   }
 }
@@ -224,7 +226,7 @@ async function runPipeline(): Promise<void> {
     // 4. Import top 25 most relevant sources (not all — avoids timeouts + noise)
     log("Importing top 25 sources...");
     const indices = Array.from({ length: 25 }, (_, i) => i).join(",");
-    const importOutput = await runNLM(["research", "import", notebookId, taskId, "-i", indices], 120000);
+    const importOutput = await runNLM(["research", "import", notebookId, "-i", indices], 120000);
     const sourcesFound = parseNumber(importOutput);
     log(`Imported ${sourcesFound} sources (top 25 requested)`);
 
@@ -433,45 +435,42 @@ IMPORTANT: Do NOT include citation numbers like [1], [2], [3] anywhere in your r
       log(`Podcast generation failed (feed still published): ${podcastErr.message}`, "podcast");
     }
 
-    // 8b. Generate 8-bit infographics — landscape (for web) + portrait (archive)
-    // Both saved locally, only landscape referenced in feed JSON
-    for (const orientation of ["landscape", "portrait"] as const) {
-      try {
-        log(`Creating ${orientation} infographic...`);
-        await runNLM(["infographic", "create", notebookId, "--style", "bricks", "-o", orientation, "-d", "concise", "-y"], 120000);
-        log(`${orientation} infographic creation started, polling...`);
+    // 8b. Generate landscape 16:9 infographic (preview image for web)
+    try {
+      log(`Creating landscape infographic...`);
+      await runNLM(["infographic", "create", notebookId, "--style", "bricks", "-o", "landscape", "-d", "concise", "-y"], 120000);
+      log(`Infographic creation started, polling...`);
 
-        await pollArtifactReady(notebookId, "infographic", 15 * 60 * 1000);
+      await pollArtifactReady(notebookId, "infographic", 15 * 60 * 1000);
 
-        const suffix = orientation === "landscape" ? "_landscape" : "";
-        for (const dir of [DATA_DIR_PUBLIC, DATA_DIR_SERVER]) {
-          const infographicDir = path.join(dir, "infographics");
-          if (!fs.existsSync(infographicDir)) fs.mkdirSync(infographicDir, { recursive: true });
+      for (const dir of [DATA_DIR_PUBLIC, DATA_DIR_SERVER]) {
+        const infographicDir = path.join(dir, "infographics");
+        if (!fs.existsSync(infographicDir)) fs.mkdirSync(infographicDir, { recursive: true });
 
-          const pngPath = path.join(infographicDir, `${today}${suffix}.png`);
-          const jpgPath = path.join(infographicDir, `${today}${suffix}.jpg`);
+        const pngPath = path.join(infographicDir, `${today}_landscape.png`);
+        const jpgPath = path.join(infographicDir, `${today}_landscape.jpg`);
 
-          await runNLM(["download", "infographic", notebookId, "-o", pngPath, "--no-progress"], 120000);
-          await exec("sips", ["-Z", "1400", pngPath, "-s", "format", "jpeg", "-s", "formatOptions", "75", "--out", jpgPath], { timeout: 30000 });
-          fs.unlinkSync(pngPath);
-        }
-        const sampleJpg = path.join(DATA_DIR_PUBLIC, "infographics", `${today}${suffix}.jpg`);
-        const jpgSize = (fs.statSync(sampleJpg).size / 1024).toFixed(0);
-        log(`${orientation} infographic saved: ${jpgSize}KB`);
-
-        // Only landscape goes into feed JSON (shown on web)
-        if (orientation === "landscape") {
-          const infographicUrl = `/data/feed/${CATEGORY}/infographics/${today}_landscape.jpg`;
-          output.infographicUrl = infographicUrl;
-          for (const dir of [DATA_DIR_SERVER, DATA_DIR_PUBLIC]) {
-            fs.writeFileSync(path.join(dir, `${today}.json`), JSON.stringify(output, null, 2));
-            fs.writeFileSync(path.join(dir, "latest.json"), JSON.stringify(output, null, 2));
-          }
-          log(`Feed JSON updated with infographicUrl: ${infographicUrl}`);
-        }
-      } catch (err: any) {
-        log(`${orientation} infographic failed: ${err.message}`, "infographic");
+        await runNLM(["download", "infographic", notebookId, "-o", pngPath, "--no-progress"], 120000);
+        // Resize to 1400px wide, convert to JPEG
+        await exec("sips", ["-Z", "1400", pngPath, "-s", "format", "jpeg", "-s", "formatOptions", "75", "--out", jpgPath], { timeout: 30000 });
+        // Crop to exact 16:9 (1400x788) — center crop from top
+        await exec("sips", ["--cropToHeightWidth", "788", "1400", jpgPath], { timeout: 30000 });
+        fs.unlinkSync(pngPath);
       }
+      const sampleJpg = path.join(DATA_DIR_PUBLIC, "infographics", `${today}_landscape.jpg`);
+      const { size } = fs.statSync(sampleJpg);
+      const dims = await exec("sips", ["-g", "pixelWidth", "-g", "pixelHeight", sampleJpg]);
+      log(`Infographic saved: ${(size / 1024).toFixed(0)}KB (${dims.stdout.trim().replace(/\n/g, ", ")})`);
+
+      const infographicUrl = `/data/feed/${CATEGORY}/infographics/${today}_landscape.jpg`;
+      output.infographicUrl = infographicUrl;
+      for (const dir of [DATA_DIR_SERVER, DATA_DIR_PUBLIC]) {
+        fs.writeFileSync(path.join(dir, `${today}.json`), JSON.stringify(output, null, 2));
+        fs.writeFileSync(path.join(dir, "latest.json"), JSON.stringify(output, null, 2));
+      }
+      log(`Feed JSON updated with infographicUrl: ${infographicUrl}`);
+    } catch (err: any) {
+      log(`Infographic failed: ${err.message}`, "infographic");
     }
 
     // 9. Keep notebook for review (do NOT delete — user inspects them)

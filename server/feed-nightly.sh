@@ -21,9 +21,34 @@ fi
 
 DATE=$(date +%Y-%m-%d)
 LOG="server/data/feed/nightly-${DATE}.log"
+MAX_RETRIES=2
+RETRY_DELAY=30
 
 log() {
   echo "$(date '+%H:%M:%S') $1" | tee -a "$LOG"
+}
+
+run_category() {
+  local cat="$1"
+  local attempt=1
+
+  while [ $attempt -le $((MAX_RETRIES + 1)) ]; do
+    if [ $attempt -gt 1 ]; then
+      log "${cat} — retry ${attempt}/$((MAX_RETRIES + 1)) (waiting ${RETRY_DELAY}s)..."
+      sleep $RETRY_DELAY
+    fi
+
+    if npx tsx server/feed-pipeline.ts --category "$cat" >> "$LOG" 2>&1; then
+      log "${cat} ✓"
+      return 0
+    fi
+
+    log "${cat} attempt ${attempt} failed (exit code $?)"
+    ((attempt++))
+  done
+
+  log "${cat} FAILED after $((MAX_RETRIES + 1)) attempts"
+  return 1
 }
 
 log "=== Weekly feed generation started ==="
@@ -34,11 +59,9 @@ FAIL=0
 
 for cat in "${CATEGORIES[@]}"; do
   log "Generating ${cat}..."
-  if npx tsx server/feed-pipeline.ts --category "$cat" >> "$LOG" 2>&1; then
-    log "${cat} ✓"
+  if run_category "$cat"; then
     ((SUCCESS++))
   else
-    log "${cat} FAILED (exit code $?)"
     ((FAIL++))
   fi
 done
@@ -54,6 +77,19 @@ if [ "$SUCCESS" -gt 0 ]; then
   log "Deploy triggered"
 else
   log "No feeds generated — skipping deploy"
+  # Send failure notification via Resend
+  if [ -n "${RESEND_API_KEY:-}" ]; then
+    curl -s -X POST 'https://api.resend.com/emails' \
+      -H "Authorization: Bearer ${RESEND_API_KEY}" \
+      -H 'Content-Type: application/json' \
+      -d "{
+        \"from\": \"nubble <hey@hey.pokpok.ai>\",
+        \"to\": [\"ceo@xclv.com\"],
+        \"subject\": \"[nubble] Feed generation failed ${DATE}\",
+        \"text\": \"All 4 feed categories failed on ${DATE}.\\n\\nCheck log: server/data/feed/nightly-${DATE}.log\\n\\nRun manually: cd ~/dev/nubble-me && npm run feed:nightly\"
+      }" >> "$LOG" 2>&1 || log "Failed to send notification email"
+    log "Failure notification sent"
+  fi
 fi
 
 log "=== Weekly feed complete ==="
