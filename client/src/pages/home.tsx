@@ -91,13 +91,31 @@ function feedToDocument(feed: FeedResponse, title: string): ContentDocument {
   };
 }
 
+const categoryRoutes: Record<Category, string> = {
+  "ai-news": "/",
+  "ai-branding": "/ai-branding",
+  "ai-ecommerce": "/ai-ecommerce",
+  "a16z-portfolio": "/a16z-portfolio",
+};
+
+const routeToCategory: Record<string, Category> = {
+  "/": "ai-news",
+  "/ai-branding": "ai-branding",
+  "/ai-ecommerce": "ai-ecommerce",
+  "/a16z-portfolio": "a16z-portfolio",
+};
+
 function CategoryBar({ active, onSelect }: { active: Category; onSelect: (c: Category) => void }) {
+  const [, navigate] = useLocation();
   return (
     <div className="flex-shrink-0 px-5 py-2.5 border-b border-border/40 flex items-center justify-center gap-2 overflow-x-auto">
       {categories.map((cat) => (
         <button
           key={cat.id}
-          onClick={() => onSelect(cat.id)}
+          onClick={() => {
+            onSelect(cat.id);
+            navigate(categoryRoutes[cat.id]);
+          }}
           className={`flex items-center gap-2 rounded-lg border px-3.5 py-2 text-left transition-all duration-200 cursor-pointer whitespace-nowrap ${
             active === cat.id ? cat.activeAccent : cat.accent
           }`}
@@ -111,10 +129,18 @@ function CategoryBar({ active, onSelect }: { active: Category; onSelect: (c: Cat
 }
 
 export default function Home() {
-  const [activeCategory, setActiveCategory] = useState<Category>("ai-news");
+  const [location] = useLocation();
+  const initialCategory = routeToCategory[location] || "ai-news";
+  const [activeCategory, setActiveCategory] = useState<Category>(initialCategory);
   const [isDark, setIsDark] = useState(() =>
     typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
   );
+
+  // Sync category when URL changes (e.g. back/forward navigation)
+  useEffect(() => {
+    const cat = routeToCategory[location];
+    if (cat && cat !== activeCategory) setActiveCategory(cat);
+  }, [location]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
