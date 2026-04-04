@@ -1,5 +1,5 @@
 /**
- * Test: Gemini personalization quality against real feed data
+ * Test: Personalization quality via BytePlus ModelArk (OpenAI-compatible)
  *
  * Tests:
  * 1. CURATION — send 30 story titles + startup profile → which stories matter?
@@ -8,13 +8,16 @@
  * 3 startup profiles × real feed data
  */
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 
-const API_KEY = "AIzaSyCrGgTq9QKWzZOINWXBxspy5o2dAhj8ng0";
-const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+const client = new OpenAI({
+  baseURL: "https://ark.ap-southeast.bytepluses.com/api/v3",
+  apiKey: "b0ec377d-6dad-4e52-b51e-b5cd46d854cd",
+});
+
+const MODEL = "seed-2-0-pro-260328";
 
 // --- 3 Test Startup Profiles ---
 
@@ -48,7 +51,7 @@ Competitors: Bain AI practice, McKinsey QuantumBlack, Accenture AI.`,
 
 // --- Load all stories from all categories ---
 
-function loadStories(): { title: string; rank: number; category: string; expanded: string; why: string }[] {
+function loadStories() {
   const stories: any[] = [];
   const categories = ["ai-news", "ai-branding", "ai-ecommerce"];
 
@@ -79,7 +82,7 @@ async function testCuration(stories: any[], profile: typeof PROFILES[0]) {
 USER'S BUSINESS:
 ${profile.description}
 
-HERE ARE THIS WEEK'S 30 AI STORIES:
+HERE ARE THIS WEEK'S ${stories.length} AI STORIES:
 ${storyList}
 
 TASK: Select ONLY the stories that are directly relevant to this specific business. Not "interesting to read" — relevant to their operations, strategy, customers, or competitive position.
@@ -95,9 +98,13 @@ Select 5-10 stories maximum. Be ruthless — if it doesn't affect their business
   console.log(`${"=".repeat(70)}`);
 
   const start = Date.now();
-  const result = await model.generateContent(prompt);
+  const response = await client.chat.completions.create({
+    model: MODEL,
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.3,
+  });
   const latency = Date.now() - start;
-  const text = result.response.text();
+  const text = response.choices[0]?.message?.content || "";
 
   console.log(`Latency: ${latency}ms`);
   console.log(text);
@@ -133,9 +140,13 @@ Write a section called "What This Means For Your Startup" that goes BELOW the st
 200-300 words. No filler. No disclaimers. Write like a sharp advisor who knows their business.`;
 
   const start = Date.now();
-  const result = await model.generateContent(prompt);
+  const response = await client.chat.completions.create({
+    model: MODEL,
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.4,
+  });
   const latency = Date.now() - start;
-  const text = result.response.text();
+  const text = response.choices[0]?.message?.content || "";
   const words = text.split(/\s+/).length;
 
   console.log(`\n--- ${story.title} × ${profile.name} ---`);
@@ -152,23 +163,57 @@ async function main() {
   const stories = loadStories();
   console.log(`Loaded ${stories.length} stories across categories\n`);
 
+  // First, test if API works with a simple call
+  console.log("Testing API connectivity...");
+  try {
+    const test = await client.chat.completions.create({
+      model: MODEL,
+      messages: [{ role: "user", content: "Say 'OK' if you can read this." }],
+      max_tokens: 10,
+    });
+    console.log(`API OK: ${test.choices[0]?.message?.content}\n`);
+  } catch (err: any) {
+    console.error(`API FAILED: ${err.message}`);
+    console.error(`Status: ${err.status}, Body: ${JSON.stringify(err.error || {})}`);
+
+    // Try listing models or different model name
+    console.log("\nTrying alternative model names...");
+    for (const m of ["seed-2-0-pro-260328", "seed-2-0-lite-260228", "doubao-1-5-pro-256k-250115", "doubao-pro-32k", "doubao-lite-32k"]) {
+      try {
+        const t = await client.chat.completions.create({
+          model: m,
+          messages: [{ role: "user", content: "Say OK" }],
+          max_tokens: 5,
+        });
+        console.log(`  Model "${m}" works: ${t.choices[0]?.message?.content}`);
+      } catch (e: any) {
+        console.log(`  Model "${m}" failed: ${e.status || e.message}`);
+      }
+    }
+    return;
+  }
+
   const allResults: any = { curation: [], personalization: [] };
 
   // Test curation for all 3 profiles
   for (const profile of PROFILES) {
-    const { picks, latency } = await testCuration(stories, profile);
-    allResults.curation.push({ profile: profile.name, picks: picks.length, latency });
+    try {
+      const { picks, latency } = await testCuration(stories, profile);
+      allResults.curation.push({ profile: profile.name, picks: picks.length, latency });
 
-    // Test depth 3 personalization on first 2 picked stories
-    const pickedStories = picks.slice(0, 2).map(i => stories[i]).filter(Boolean);
-    for (const story of pickedStories) {
-      const result = await testPersonalization(story, profile);
-      allResults.personalization.push({
-        profile: profile.name,
-        story: story.title,
-        latency: result.latency,
-        words: result.words,
-      });
+      // Test depth 3 personalization on first 2 picked stories
+      const pickedStories = picks.slice(0, 2).map(i => stories[i]).filter(Boolean);
+      for (const story of pickedStories) {
+        const result = await testPersonalization(story, profile);
+        allResults.personalization.push({
+          profile: profile.name,
+          story: story.title,
+          latency: result.latency,
+          words: result.words,
+        });
+      }
+    } catch (err: any) {
+      console.error(`Error for ${profile.name}: ${err.message}`);
     }
   }
 
@@ -185,11 +230,16 @@ async function main() {
     console.log(`  ${r.profile} × "${r.story}": ${r.words} words, ${r.latency}ms`);
   }
 
-  const avgCuration = Math.round(allResults.curation.reduce((a: number, r: any) => a + r.latency, 0) / allResults.curation.length);
-  const avgPersonal = Math.round(allResults.personalization.reduce((a: number, r: any) => a + r.latency, 0) / allResults.personalization.length);
-  console.log(`\nAvg curation latency: ${avgCuration}ms`);
-  console.log(`Avg personalization latency: ${avgPersonal}ms`);
-  console.log(`Avg personalization words: ${Math.round(allResults.personalization.reduce((a: number, r: any) => a + r.words, 0) / allResults.personalization.length)}`);
+  if (allResults.curation.length > 0) {
+    const avgCuration = Math.round(allResults.curation.reduce((a: number, r: any) => a + r.latency, 0) / allResults.curation.length);
+    console.log(`\nAvg curation latency: ${avgCuration}ms`);
+  }
+  if (allResults.personalization.length > 0) {
+    const avgPersonal = Math.round(allResults.personalization.reduce((a: number, r: any) => a + r.latency, 0) / allResults.personalization.length);
+    const avgWords = Math.round(allResults.personalization.reduce((a: number, r: any) => a + r.words, 0) / allResults.personalization.length);
+    console.log(`Avg personalization latency: ${avgPersonal}ms`);
+    console.log(`Avg personalization words: ${avgWords}`);
+  }
 }
 
 main().catch(console.error);
