@@ -8,3 +8,4 @@ vite.config.ts.*
 .env.local
 server/data/feed/launchd-*.log
 server/data/feed/nightly-*.log
+.claude/worktrees/
