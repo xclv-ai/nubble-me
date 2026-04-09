@@ -21,6 +21,7 @@ function AppRouter() {
       <Route path="/ai-branding" component={Home} />
       <Route path="/ai-ecommerce" component={Home} />
       <Route path="/a16z-portfolio" component={Home} />
+      <Route path="/pokpok" component={Home} />
       <Route path="/ai-digest">{() => <Redirect to="/" />}</Route>
       <Route path="/digest">{() => <Redirect to="/" />}</Route>
       <Route path="/v2" component={HomeV2} />

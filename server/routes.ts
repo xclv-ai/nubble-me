@@ -7,6 +7,7 @@ import { extractFile } from "./extract";
 import { chunkText, type ChunkedSection } from "./chunking";
 import { isNLMAvailable, generateDepths } from "./notebooklm";
 import { registerFeedRoutes } from "./feed-routes";
+import { registerPersonalizeRoutes } from "./personalize-routes";
 import { FeedAggregator } from "./feed";
 import { log } from "./index";
 
@@ -47,6 +48,9 @@ export async function registerRoutes(
 
   // Register feed routes (NLM-powered daily feed)
   registerFeedRoutes(app);
+
+  // Register personalization routes (LLM-powered curation)
+  registerPersonalizeRoutes(app);
 
   // Check if NotebookLM (nlm) is available
   app.get("/api/nlm/status", async (_req, res) => {

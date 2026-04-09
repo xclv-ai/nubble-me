@@ -173,7 +173,7 @@ async function runPipeline(): Promise<void> {
 
   try {
     // 1. Create notebook
-    const notebookNames: Record<string, string> = { "ai-news": "AI News", "ai-branding": "AI Branding", "ai-ecommerce": "AI Ecommerce", "a16z-portfolio": "a16z Portfolio" };
+    const notebookNames: Record<string, string> = { "ai-news": "AI News", "ai-branding": "AI Branding", "ai-ecommerce": "AI Ecommerce", "a16z-portfolio": "a16z Portfolio", "pokpok-personalized": "POKPOK Personalized" };
     const notebookName = `${notebookNames[CATEGORY] || CATEGORY} - ${today}`;
     log(`Creating notebook: "${notebookName}" (category: ${CATEGORY})`);
     const createOutput = await runNLM(["notebook", "create", notebookName]);

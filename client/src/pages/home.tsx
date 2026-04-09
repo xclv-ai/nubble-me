@@ -31,9 +31,11 @@ interface FeedResponse {
   stories: FeedStory[];
   audioUrl?: string;
   infographicUrl?: string;
+  persona?: string;
+  persona_description?: string;
 }
 
-type Category = "ai-news" | "ai-branding" | "ai-ecommerce" | "a16z-portfolio";
+type Category = "ai-news" | "ai-branding" | "ai-ecommerce" | "a16z-portfolio" | "pokpok-personalized";
 
 const categories: { id: Category; title: string; subtitle: string; path: string; dot: string; accent: string; activeAccent: string }[] = [
   {
@@ -72,12 +74,23 @@ const categories: { id: Category; title: string; subtitle: string; path: string;
     accent: "border-transparent hover:bg-rose-500/10",
     activeAccent: "bg-rose-500/15 border-rose-500/30",
   },
+  {
+    id: "pokpok-personalized",
+    title: "pokpok.ai personalized",
+    subtitle: "Curated for pokpok.ai",
+    path: "/data/feed/pokpok-personalized/latest.json",
+    dot: "bg-cyan-500",
+    accent: "border-transparent hover:bg-cyan-500/10",
+    activeAccent: "bg-cyan-500/15 border-cyan-500/30",
+  },
 ];
 
 function feedToDocument(feed: FeedResponse, title: string): ContentDocument {
   return {
-    title: `${title} — Weekly`,
-    author: "nubble",
+    title: feed.persona
+      ? `${feed.persona} — Personalized Intelligence`
+      : `${title} — Weekly`,
+    author: feed.persona ? `nubble × ${feed.persona}` : "nubble",
     sections: [...feed.stories]
       .sort((a, b) => a.rank - b.rank)
       .map((story) => ({
@@ -96,6 +109,7 @@ const categoryRoutes: Record<Category, string> = {
   "ai-branding": "/ai-branding",
   "ai-ecommerce": "/ai-ecommerce",
   "a16z-portfolio": "/a16z-portfolio",
+  "pokpok-personalized": "/pokpok",
 };
 
 const routeToCategory: Record<string, Category> = {
@@ -103,6 +117,7 @@ const routeToCategory: Record<string, Category> = {
   "/ai-branding": "ai-branding",
   "/ai-ecommerce": "ai-ecommerce",
   "/a16z-portfolio": "a16z-portfolio",
+  "/pokpok": "pokpok-personalized",
 };
 
 function CategoryBar({ active, onSelect }: { active: Category; onSelect: (c: Category) => void }) {
@@ -124,6 +139,22 @@ function CategoryBar({ active, onSelect }: { active: Category; onSelect: (c: Cat
           <span className="text-xs font-semibold text-foreground">{cat.title}</span>
         </button>
       ))}
+    </div>
+  );
+}
+
+function PokpokHeader({ description }: { description?: string }) {
+  return (
+    <div className="px-6 py-5 border-b border-cyan-500/20 bg-cyan-500/5">
+      <div className="flex items-center gap-2 mb-1">
+        <div className="w-2 h-2 rounded-full bg-cyan-500" />
+        <span className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+          Personalized for pokpok.ai
+        </span>
+      </div>
+      <p className="text-sm text-muted-foreground mt-1">
+        {description || "The House M.D. for Digital Commerce Brands"} — stories curated for what matters to pokpok.ai
+      </p>
     </div>
   );
 }
@@ -166,13 +197,21 @@ export default function Home() {
   }
 
   const doc = feedToDocument(feed, cat.title);
+  const isPersonalized = activeCategory === "pokpok-personalized";
 
   return (
     <div className="h-screen w-screen">
       <NubbleReader
         document={doc}
-        subHeader={<CategoryBar active={activeCategory} onSelect={setActiveCategory} />}
-        contentHeader={<FeedMedia audioUrl={feed.audioUrl} infographicUrl={feed.infographicUrl} />}
+        subHeader={
+          <>
+            <CategoryBar active={activeCategory} onSelect={setActiveCategory} />
+            {isPersonalized && <PokpokHeader description={feed.persona_description} />}
+          </>
+        }
+        contentHeader={
+          <FeedMedia audioUrl={feed.audioUrl} infographicUrl={feed.infographicUrl} />
+        }
       />
     </div>
   );
