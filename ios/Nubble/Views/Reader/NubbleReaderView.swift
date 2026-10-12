@@ -36,6 +36,8 @@ struct NubbleReaderView: View {
         }
         .onAppear {
             state.activeSectionId = document.sections.first?.id ?? ""
+            state.maxDepth = document.sections.map(\.maxDepth).max() ?? 3
+            state.sectionMaxDepth = Dictionary(uniqueKeysWithValues: document.sections.map { ($0.id, $0.maxDepth) })
         }
         .onKeyPress(keys: [.leftArrow, .rightArrow], phases: .down) { keyPress in
             if keyPress.modifiers.contains(.shift) {
@@ -89,7 +91,7 @@ struct NubbleReaderView: View {
                     .disabled(state.globalDepth == 0)
                     .opacity(state.globalDepth == 0 ? 0.2 : 1)
 
-                    DepthIndicator(depth: state.globalDepth, size: .md)
+                    DepthIndicator(depth: state.globalDepth, size: .md, levels: state.maxDepth + 1)
 
                     Button {
                         state.changeGlobalDepth(by: 1)
@@ -98,8 +100,8 @@ struct NubbleReaderView: View {
                             .font(.system(size: 12, weight: .medium))
                             .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.5))
                     }
-                    .disabled(state.globalDepth == 3)
-                    .opacity(state.globalDepth == 3 ? 0.2 : 1)
+                    .disabled(state.globalDepth == state.maxDepth)
+                    .opacity(state.globalDepth == state.maxDepth ? 0.2 : 1)
                 }
 
                 // Right: Depth label + reading time

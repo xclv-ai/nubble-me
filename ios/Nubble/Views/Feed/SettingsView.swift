@@ -1,13 +1,15 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var feedState: FeedState
+    @Environment(FeedState.self) private var feedState
     @State private var showTopicManager = false
-    @State private var refreshInterval: Int = 15
+    @State private var showProduct = false
     @Environment(\.colorScheme) private var colorScheme
 
-    init(feedState: FeedState = FeedState()) {
-        _feedState = State(initialValue: feedState)
+    private var version: String {
+        let v = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+        let b = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
+        return "\(v) (\(b))"
     }
 
     var body: some View {
@@ -17,113 +19,54 @@ struct SettingsView: View {
                     .ignoresSafeArea()
 
                 List {
-                    // Feed settings
                     Section {
-                        Button {
-                            showTopicManager = true
-                        } label: {
-                            HStack {
-                                Label("Manage Topics", systemImage: "tag")
-                                    .font(.custom("Satoshi-Regular", size: 14, relativeTo: .body))
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.4))
-                            }
+                        Button { showProduct = true } label: {
+                            row("My product", icon: "scope", value: feedState.product?.name ?? "Not set")
                         }
                         .foregroundStyle(NubbleColors.foreground(for: colorScheme))
+                    } header: {
+                        sectionHeader("Personalisation")
+                    } footer: {
+                        Text("Stories are ranked by how close they are to your product, and each story gets a \"My product\" level.")
+                    }
+                    .listRowBackground(NubbleColors.card(for: colorScheme))
 
-                        HStack {
-                            Label("Refresh Interval", systemImage: "arrow.clockwise")
-                                .font(.custom("Satoshi-Regular", size: 14, relativeTo: .body))
-                            Spacer()
-                            Picker("", selection: $refreshInterval) {
-                                Text("15 min").tag(15)
-                                Text("30 min").tag(30)
-                                Text("1 hour").tag(60)
-                                Text("Manual").tag(0)
-                            }
-                            .pickerStyle(.menu)
-                            .tint(NubbleColors.primary(for: colorScheme))
+                    Section {
+                        NavigationLink {
+                            SourcesView()
+                        } label: {
+                            row("Sources", icon: "antenna.radiowaves.left.and.right", value: "\(feedState.sources.filter(\.isActive).count) on")
                         }
+
+                        Button { showTopicManager = true } label: {
+                            row("Topics", icon: "tag", value: "")
+                        }
+                        .foregroundStyle(NubbleColors.foreground(for: colorScheme))
                     } header: {
                         sectionHeader("Feed")
-                    }
-                    .listRowBackground(NubbleColors.card(for: colorScheme))
-
-                    // Reading settings
-                    Section {
-                        HStack {
-                            Label("Default Depth", systemImage: "slider.horizontal.3")
-                                .font(.custom("Satoshi-Regular", size: 14, relativeTo: .body))
-                            Spacer()
-                            Picker("", selection: .constant(2)) {
-                                Text("Summary").tag(0)
-                                Text("Condensed").tag(1)
-                                Text("Standard").tag(2)
-                                Text("Expanded").tag(3)
-                            }
-                            .pickerStyle(.menu)
-                            .tint(NubbleColors.primary(for: colorScheme))
-                        }
-
-                        Toggle(isOn: .constant(true)) {
-                            Label("Haptic Feedback", systemImage: "hand.tap")
-                                .font(.custom("Satoshi-Regular", size: 14, relativeTo: .body))
-                        }
-                        .tint(NubbleColors.Light.primary)
-                    } header: {
-                        sectionHeader("Reading")
-                    }
-                    .listRowBackground(NubbleColors.card(for: colorScheme))
-
-                    // AI settings
-                    Section {
-                        HStack {
-                            Label("Depth Generation", systemImage: "brain")
-                                .font(.custom("Satoshi-Regular", size: 14, relativeTo: .body))
-                            Spacer()
-                            Text("On-Device")
-                                .font(.custom("Satoshi-Regular", size: 13, relativeTo: .body))
-                                .foregroundStyle(NubbleColors.muted(for: colorScheme))
-                        }
-
-                        HStack {
-                            Label("Cloud Fallback", systemImage: "cloud")
-                                .font(.custom("Satoshi-Regular", size: 14, relativeTo: .body))
-                            Spacer()
-                            Text("GPT-4o-mini")
-                                .font(.custom("Satoshi-Regular", size: 13, relativeTo: .body))
-                                .foregroundStyle(NubbleColors.muted(for: colorScheme))
-                        }
-                    } header: {
-                        sectionHeader("AI Processing")
                     } footer: {
-                        Text("On-device AI requires iPhone 15 Pro or newer with Apple Intelligence enabled. Older devices use the cloud fallback.")
-                            .font(.custom("Satoshi-Regular", size: 12, relativeTo: .caption))
-                            .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.6))
+                        Text("The iPhone reads these sources itself: stories from the last \(LocalFeedService.newsWindowDays) days. It refreshes in the background, and while charging it writes the levels for the stories most relevant to your product.")
                     }
                     .listRowBackground(NubbleColors.card(for: colorScheme))
 
-                    // About
                     Section {
-                        HStack {
-                            Label("Version", systemImage: "info.circle")
-                                .font(.custom("Satoshi-Regular", size: 14, relativeTo: .body))
-                            Spacer()
-                            Text("1.0.0")
+                        row("Depth writing", icon: "brain", value: "On this iPhone")
+                        if let reason = OnDeviceModel.unavailableReason {
+                            Text(reason)
                                 .font(.custom("Satoshi-Regular", size: 13, relativeTo: .body))
-                                .foregroundStyle(NubbleColors.muted(for: colorScheme))
+                                .foregroundStyle(.red)
+                        } else {
+                            row("Apple Intelligence", icon: "checkmark.seal", value: "Ready")
                         }
+                    } header: {
+                        sectionHeader("AI")
+                    } footer: {
+                        Text("Every level is written by Apple's on-device model. No paid AI service, nothing leaves the phone except reading the news pages.")
+                    }
+                    .listRowBackground(NubbleColors.card(for: colorScheme))
 
-                        HStack {
-                            Label("Feed Sources", systemImage: "antenna.radiowaves.left.and.right")
-                                .font(.custom("Satoshi-Regular", size: 14, relativeTo: .body))
-                            Spacer()
-                            Text("12 active")
-                                .font(.custom("Satoshi-Regular", size: 13, relativeTo: .body))
-                                .foregroundStyle(NubbleColors.muted(for: colorScheme))
-                        }
+                    Section {
+                        row("Version", icon: "info.circle", value: version)
                     } header: {
                         sectionHeader("About")
                     }
@@ -135,8 +78,22 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showTopicManager) {
-                TopicManagerView(topics: $feedState.topics)
+                TopicManagerView(topics: Bindable(feedState).topics)
             }
+            .sheet(isPresented: $showProduct) {
+                NavigationStack { ProductView() }
+            }
+        }
+    }
+
+    private func row(_ title: String, icon: String, value: String) -> some View {
+        HStack {
+            Label(title, systemImage: icon)
+                .font(.custom("Satoshi-Regular", size: 14, relativeTo: .body))
+            Spacer()
+            Text(value)
+                .font(.custom("Satoshi-Regular", size: 13, relativeTo: .body))
+                .foregroundStyle(NubbleColors.muted(for: colorScheme))
         }
     }
 

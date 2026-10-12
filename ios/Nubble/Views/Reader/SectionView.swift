@@ -89,7 +89,7 @@ struct SectionView: View {
                         .transition(.scale(scale: 0.8).combined(with: .opacity))
                     }
 
-                    DepthIndicator(depth: depth, size: .sm)
+                    DepthIndicator(depth: depth, size: .sm, levels: section.maxDepth + 1)
                 }
                 .opacity(isOverridden || isActive ? 1 : 0)
                 .animation(.easeOut(duration: 0.25), value: isActive)
@@ -162,7 +162,7 @@ struct SectionView: View {
 
         VStack(alignment: .leading, spacing: 12) {
             ForEach(Array(paragraphs.enumerated()), id: \.offset) { pIndex, paragraph in
-                Text(paragraph)
+                Text(Self.styled(paragraph))
                     .font(depthStyle.font)
                     .foregroundStyle(NubbleColors.foreground(for: colorScheme).opacity(depthStyle.opacity))
                     .lineSpacing(depthStyle.lineSpacing)
@@ -173,6 +173,12 @@ struct SectionView: View {
         .id(depth) // Force view recreation on depth change
         .transition(.blurReplace.combined(with: .opacity))
         .animation(Springs.gentle, value: depth)
+    }
+
+    /// Renders **BOLD** block headers (UNCOMFORTABLE TRUTH, HOW THIS HITS…) the way the web reader does.
+    static func styled(_ paragraph: String) -> AttributedString {
+        let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        return (try? AttributedString(markdown: paragraph, options: options)) ?? AttributedString(paragraph)
     }
 
     private var swipeGesture: some Gesture {

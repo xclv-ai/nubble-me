@@ -22,9 +22,12 @@ struct DepthIndicator: View {
         }
     }
 
+    /// 4 when the document has no "My product" level, 5 when it has.
+    var levels: Int = 4
+
     private var widths: [CGFloat] {
         let u = size.unit
-        return [u, u * 2.2, u * 3.5, u * 5]
+        return levels > 4 ? [u, u * 2, u * 3, u * 4, u * 5] : [u, u * 2.2, u * 3.5, u * 5]
     }
 
     private var maxWidth: CGFloat { size.unit * 5 }
@@ -42,7 +45,7 @@ struct DepthIndicator: View {
             // Active fill
             RoundedRectangle(cornerRadius: size.cornerRadius)
                 .fill(accent.opacity(0.85))
-                .frame(width: widths[depth], height: size.unit)
+                .frame(width: widths[min(depth, widths.count - 1)], height: size.unit)
                 .animation(Springs.snappy, value: depth)
         }
         .frame(width: maxWidth, height: size.unit)

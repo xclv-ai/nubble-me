@@ -37,12 +37,9 @@ struct ArticleProcessingView: View {
                     .tint(NubbleColors.foreground(for: colorScheme))
                     .frame(maxWidth: 280)
 
-                // Section counter during depth generation
-                if pipeline.stage == .generatingDepths && pipeline.totalSections > 0 {
-                    Text("\(pipeline.sectionsCompleted) / \(pipeline.totalSections) sections")
-                        .font(.custom("Satoshi-Regular", size: 13, relativeTo: .caption))
-                        .foregroundStyle(NubbleColors.muted(for: colorScheme))
-                }
+                Text("Written on your iPhone by Apple Intelligence")
+                    .font(.custom("Satoshi-Regular", size: 12, relativeTo: .caption))
+                    .foregroundStyle(NubbleColors.muted(for: colorScheme).opacity(0.6))
 
                 // Article info
                 VStack(spacing: 4) {
@@ -73,9 +70,9 @@ struct ArticleProcessingView: View {
     private var stageIcon: String {
         switch pipeline.stage {
         case .fetching: "globe"
-        case .extracting: "doc.text.magnifyingglass"
-        case .chunking: "scissors"
-        case .generatingDepths: "brain"
+        case .readingArticle: "doc.text.magnifyingglass"
+        case .brief, .expanded: "brain"
+        case .product: "scope"
         case .done: "checkmark.circle"
         }
     }
@@ -85,7 +82,13 @@ struct ArticleProcessingView: View {
         defer { feedState.processingQueue.remove(article.id) }
 
         do {
-            let document = try await pipeline.convert(article: article, feedState: feedState)
+            let document: ContentDocument
+            if let existing = article.document, let product = feedState.product {
+                // Levels 0-3 exist; only "My product" is out of date
+                document = await pipeline.refreshProductLevel(article: article, document: existing, feedState: feedState, product: product)
+            } else {
+                document = try await pipeline.convert(article: article, feedState: feedState, product: feedState.product)
+            }
             Haptics.medium()
             onComplete(document)
         } catch {

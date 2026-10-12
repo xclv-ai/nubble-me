@@ -1,18 +1,14 @@
 import SwiftUI
 
 struct NewsFeedView: View {
-    @State private var feedState = FeedState()
-    @State private var feedService = FeedService()
+    @Environment(FeedState.self) private var feedState
     @State private var selectedArticle: NewsArticle?
     @State private var processingArticle: NewsArticle?
     @State private var showSaved = false
     @State private var showTopicManager = false
-    @State private var isLoadingMore = false
-    @State private var hasMorePages = true
+    @State private var showProduct = false
     @Namespace private var namespace
     @Environment(\.colorScheme) private var colorScheme
-
-    private let pageSize = 50
 
     var body: some View {
         NavigationStack {
@@ -36,7 +32,7 @@ struct NewsFeedView: View {
                 }
             }
             .navigationDestination(item: $selectedArticle) { article in
-                if let doc = article.document {
+                if let doc = article.document, !isProductLevelStale(doc) {
                     NubbleReaderView(document: doc)
                 } else {
                     ArticleProcessingView(article: article, feedState: feedState) { document in
@@ -58,11 +54,10 @@ struct NewsFeedView: View {
                 }
             }
             .sheet(isPresented: $showTopicManager) {
-                TopicManagerView(topics: $feedState.topics)
+                TopicManagerView(topics: Bindable(feedState).topics)
             }
-            .task {
-                await feedState.loadFromDisk()
-                await loadFeed()
+            .sheet(isPresented: $showProduct) {
+                NavigationStack { ProductView() }
             }
         }
     }
@@ -119,7 +114,7 @@ struct NewsFeedView: View {
 
     private var topicChips: some View {
         TopicChipsBar(
-            selectedTopics: $feedState.selectedTopics,
+            selectedTopics: Bindable(feedState).selectedTopics,
             topics: feedState.topics
         )
         .padding(.bottom, 12)
@@ -147,45 +142,39 @@ struct NewsFeedView: View {
                         .padding(.bottom, 4)
                     }
 
-                    // Featured card (first article)
-                    if let featured = feedState.filteredArticles.first {
-                        NewsCardView(
-                            article: featured,
-                            style: .featured,
-                            onTap: { tapArticle(featured) },
-                            onSave: { feedState.toggleSaved(featured.id) }
-                        )
-                        .matchedTransitionSource(id: featured.id, in: namespace)
+                    if feedState.product == nil {
+                        productPrompt
                     }
 
-                    // Remaining articles as compact cards
-                    let remaining = Array(feedState.filteredArticles.dropFirst())
-                    ForEach(remaining) { article in
+                    if let error = feedState.error {
+                        Text(error)
+                            .font(.custom("Satoshi-Regular", size: 12, relativeTo: .caption))
+                            .foregroundStyle(.red.opacity(0.7))
+                    }
+
+                    if let product = feedState.product, !feedState.mostRelevant.isEmpty {
+                        listHeader("Most relevant to \(product.name)")
+                        ForEach(Array(feedState.mostRelevant.enumerated()), id: \.element.id) { index, article in
+                            NewsCardView(
+                                article: article,
+                                style: index == 0 ? .featured : .compact,
+                                onTap: { tapArticle(article) },
+                                onSave: { feedState.toggleSaved(article.id) }
+                            )
+                            .matchedTransitionSource(id: article.id, in: namespace)
+                        }
+                        listHeader("Latest")
+                    }
+
+                    let latest = feedState.latest
+                    ForEach(Array(latest.enumerated()), id: \.element.id) { index, article in
                         NewsCardView(
                             article: article,
-                            style: .compact,
+                            style: index == 0 && feedState.mostRelevant.isEmpty ? .featured : .compact,
                             onTap: { tapArticle(article) },
                             onSave: { feedState.toggleSaved(article.id) }
                         )
                         .matchedTransitionSource(id: article.id, in: namespace)
-                        .onAppear {
-                            // Infinite scroll: load more when near the end
-                            if article.id == remaining.last?.id {
-                                Task { await loadMoreIfNeeded() }
-                            }
-                        }
-                    }
-
-                    // Loading more indicator
-                    if isLoadingMore {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                                .controlSize(.small)
-                                .tint(NubbleColors.muted(for: colorScheme))
-                            Spacer()
-                        }
-                        .padding(.vertical, 12)
                     }
                 }
             }
@@ -193,7 +182,7 @@ struct NewsFeedView: View {
             .padding(.bottom, 96)
         }
         .refreshable {
-            await refreshFeed()
+            await feedState.refresh()
         }
     }
 
@@ -204,7 +193,7 @@ struct NewsFeedView: View {
             Spacer().frame(height: 80)
             ProgressView()
                 .tint(NubbleColors.muted(for: colorScheme))
-            Text("Loading AI news...")
+            Text("Reading your news sources…")
                 .font(.custom("Satoshi-Regular", size: 14, relativeTo: .body))
                 .foregroundStyle(NubbleColors.muted(for: colorScheme))
         }
@@ -260,79 +249,43 @@ struct NewsFeedView: View {
         selectedArticle = article
     }
 
-    private func loadFeed() async {
-        feedState.isRefreshing = true
-        hasMorePages = true
-        do {
-            let topics = try await feedService.fetchTopics()
-            feedState.topics = topics
-
-            let (articles, lastRefreshed) = try await feedService.fetchFeed(limit: pageSize, offset: 0)
-            // Merge with cached state (saved, read, documents)
-            let existingById = Dictionary(uniqueKeysWithValues: feedState.articles.map { ($0.id, $0) })
-            feedState.articles = articles.map { article in
-                var merged = article
-                if let existing = existingById[article.id] {
-                    merged.isSaved = existing.isSaved
-                    merged.isRead = existing.isRead
-                    merged.readProgress = existing.readProgress
-                    merged.document = existing.document
-                    merged.processingState = existing.processingState
-                }
-                return merged
-            }
-            feedState.lastRefreshedAt = lastRefreshed
-            hasMorePages = articles.count >= pageSize
-        } catch {
-            feedState.error = error.localizedDescription
-        }
-        feedState.isRefreshing = false
+    /// The story was written for an older product description (or before a product was set).
+    private func isProductLevelStale(_ doc: ContentDocument) -> Bool {
+        guard let product = feedState.product else { return false }
+        return doc.productStamp != product.updatedAt
     }
 
-    private func loadMoreIfNeeded() async {
-        guard !isLoadingMore, hasMorePages, !feedState.isRefreshing else { return }
-        isLoadingMore = true
-        do {
-            let offset = feedState.articles.count
-            let (newArticles, _) = try await feedService.fetchFeed(limit: pageSize, offset: offset)
-            if newArticles.isEmpty {
-                hasMorePages = false
-            } else {
-                let existingIds = Set(feedState.articles.map(\.id))
-                let unique = newArticles.filter { !existingIds.contains($0.id) }
-                feedState.articles.append(contentsOf: unique)
-                hasMorePages = newArticles.count >= pageSize
+    private var productPrompt: some View {
+        Button { showProduct = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "scope")
+                    .font(.system(size: 18))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Add your product")
+                        .font(.custom("Satoshi-Medium", size: 14, relativeTo: .body))
+                    Text("Paste its web address. Stories get ranked by relevance and each one explains how it hits your product.")
+                        .font(.custom("Satoshi-Regular", size: 12, relativeTo: .caption))
+                        .foregroundStyle(NubbleColors.muted(for: colorScheme))
+                        .multilineTextAlignment(.leading)
+                }
+                Spacer()
             }
-        } catch {
-            // Silently fail on pagination — user can still pull-to-refresh
+            .foregroundStyle(NubbleColors.foreground(for: colorScheme))
+            .padding(14)
+            .background(RoundedRectangle(cornerRadius: 12).fill(NubbleColors.primary(for: colorScheme).opacity(0.08)))
         }
-        isLoadingMore = false
+        .buttonStyle(.plain)
     }
 
-    private func refreshFeed() async {
-        feedState.isRefreshing = true
-        do {
-            try await feedService.triggerRefresh()
-            let (articles, lastRefreshed) = try await feedService.fetchFeed(limit: pageSize, offset: 0)
-            // Merge: keep processing state and saved status of existing articles
-            let existingById = Dictionary(uniqueKeysWithValues: feedState.articles.map { ($0.id, $0) })
-            feedState.articles = articles.map { article in
-                var merged = article
-                if let existing = existingById[article.id] {
-                    merged.isSaved = existing.isSaved
-                    merged.isRead = existing.isRead
-                    merged.readProgress = existing.readProgress
-                    merged.document = existing.document
-                    merged.processingState = existing.processingState
-                }
-                return merged
-            }
-            feedState.lastRefreshedAt = lastRefreshed
-            feedState.error = nil
-            hasMorePages = articles.count >= pageSize
-        } catch {
-            feedState.error = error.localizedDescription
+    private func listHeader(_ title: String) -> some View {
+        HStack {
+            Text(title)
+                .font(.custom("Satoshi-Medium", size: 11, relativeTo: .caption))
+                .foregroundStyle(NubbleColors.muted(for: colorScheme))
+                .tracking(1.5)
+                .textCase(.uppercase)
+            Spacer()
         }
-        feedState.isRefreshing = false
+        .padding(.top, 8)
     }
 }

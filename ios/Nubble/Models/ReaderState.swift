@@ -9,6 +9,7 @@ enum DepthLevel: Int, CaseIterable, Sendable {
     case condensed = 1
     case standard = 2
     case expanded = 3
+    case forProduct = 4
 
     var label: String {
         switch self {
@@ -16,6 +17,7 @@ enum DepthLevel: Int, CaseIterable, Sendable {
         case .condensed: "Condensed"
         case .standard: "Standard"
         case .expanded: "Expanded"
+        case .forProduct: "My product"
         }
     }
 }
@@ -29,13 +31,16 @@ final class ReaderState {
     var scrollProgress: Double = 0.0
     var hasSwipedOnce: Bool = false
     var boundaryFlash: BoundaryDirection? = nil
+    /// Deepest level in the open document (4 when stories carry the "My product" level).
+    var maxDepth: Int = 3
+    var sectionMaxDepth: [String: Int] = [:]
 
     func effectiveDepth(for sectionId: String) -> Int {
-        sectionOverrides[sectionId] ?? globalDepth
+        min(sectionOverrides[sectionId] ?? globalDepth, sectionMaxDepth[sectionId] ?? maxDepth)
     }
 
     func changeGlobalDepth(by delta: Int) {
-        let newDepth = max(0, min(3, globalDepth + delta))
+        let newDepth = max(0, min(maxDepth, globalDepth + delta))
         if newDepth != globalDepth {
             globalDepth = newDepth
             sectionOverrides.removeAll()
@@ -48,7 +53,7 @@ final class ReaderState {
 
     func changeSectionDepth(id: String, by delta: Int) {
         let current = effectiveDepth(for: id)
-        let newDepth = max(0, min(3, current + delta))
+        let newDepth = max(0, min(sectionMaxDepth[id] ?? maxDepth, current + delta))
         if newDepth != current {
             sectionOverrides[id] = newDepth
             Haptics.light()

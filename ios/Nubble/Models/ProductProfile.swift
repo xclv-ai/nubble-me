@@ -1,0 +1,10 @@
+import Foundation
+
+/// The user's product: the URL they gave and the description the phone wrote from that page.
+/// The description is what every "For my product" level reads, so the user can edit it.
+struct ProductProfile: Codable, Sendable, Equatable {
+    var url: URL
+    var name: String
+    var description: String
+    var updatedAt: Date
+}

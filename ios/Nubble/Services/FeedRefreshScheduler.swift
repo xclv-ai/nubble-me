@@ -1,23 +1,22 @@
 import BackgroundTasks
 import Foundation
+import UserNotifications
 
+/// iPhone background work:
+/// - refresh: reads the sources and ranks the stories (light, any time the system allows);
+/// - process: while charging, Apple Intelligence writes all levels for the stories most relevant
+///   to the product, then a notification says they're ready. On battery the system rations the
+///   on-device model for background apps, so this job asks for power.
 enum FeedRefreshScheduler {
     static let feedRefreshIdentifier = "me.nubble.feed.refresh"
     static let articleProcessIdentifier = "me.nubble.article.process"
 
     static func register() {
-        BGTaskScheduler.shared.register(
-            forTaskWithIdentifier: feedRefreshIdentifier,
-            using: nil
-        ) { task in
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: feedRefreshIdentifier, using: nil) { task in
             guard let refreshTask = task as? BGAppRefreshTask else { return }
             handleFeedRefresh(refreshTask)
         }
-
-        BGTaskScheduler.shared.register(
-            forTaskWithIdentifier: articleProcessIdentifier,
-            using: nil
-        ) { task in
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: articleProcessIdentifier, using: nil) { task in
             guard let processingTask = task as? BGProcessingTask else { return }
             handleArticleProcessing(processingTask)
         }
@@ -25,83 +24,71 @@ enum FeedRefreshScheduler {
 
     static func scheduleFeedRefresh() {
         let request = BGAppRefreshTaskRequest(identifier: feedRefreshIdentifier)
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
         try? BGTaskScheduler.shared.submit(request)
     }
 
     static func scheduleArticleProcessing() {
         let request = BGProcessingTaskRequest(identifier: articleProcessIdentifier)
         request.requiresNetworkConnectivity = true
-        request.requiresExternalPower = false
+        request.requiresExternalPower = true
         try? BGTaskScheduler.shared.submit(request)
     }
 
     // MARK: - Handlers
 
     private static func handleFeedRefresh(_ task: BGAppRefreshTask) {
-        // Schedule next refresh
+        // BGTask isn't Sendable; the system calls it from one place and we only complete it once.
+        nonisolated(unsafe) let task = task
         scheduleFeedRefresh()
-
-        let fetchTask = Task {
-            do {
-                let service = FeedService()
-                try await service.triggerRefresh()
-
-                // Fetch latest articles and persist them
-                let (articles, _) = try await service.fetchFeed()
-                await FeedPersistence.shared.saveArticles(articles)
-
-                task.setTaskCompleted(success: true)
-            } catch {
-                task.setTaskCompleted(success: false)
-            }
+        let work = Task { @MainActor in
+            let state = FeedState()
+            await state.loadFromDisk()
+            await state.refresh()
+            await FeedPersistence.shared.saveArticles(state.articles)
+            task.setTaskCompleted(success: state.error == nil)
         }
-
-        task.expirationHandler = {
-            fetchTask.cancel()
-        }
+        task.expirationHandler = { work.cancel() }
     }
 
     private static func handleArticleProcessing(_ task: BGProcessingTask) {
-        // Schedule next processing run
+        // BGTask isn't Sendable; the system calls it from one place and we only complete it once.
+        nonisolated(unsafe) let task = task
         scheduleArticleProcessing()
+        let work = Task { @MainActor in
+            let state = FeedState()
+            await state.loadFromDisk()
+            await state.refresh()
 
-        let processingTask = Task { @MainActor in
-            let persistence = FeedPersistence.shared
-            let articles = await persistence.loadArticles()
-
-            // Pre-process top 5 saved articles that don't have documents yet
-            let candidates = articles
-                .filter { $0.isSaved && $0.document == nil && $0.processingState != .failed }
-                .prefix(5)
-
-            guard !candidates.isEmpty else {
-                task.setTaskCompleted(success: true)
-                return
-            }
+            let candidates = (state.product != nil ? state.mostRelevant : state.articles.filter(\.isSaved))
+                .filter { $0.document == nil }
 
             let pipeline = NewsConversionPipeline()
-            let feedState = FeedState()
-            feedState.articles = articles
-
+            var written: [NewsArticle] = []
             for article in candidates {
-                guard !Task.isCancelled else { break }
+                if Task.isCancelled { break }
                 do {
-                    let document = try await pipeline.convert(article: article, feedState: feedState)
-                    await persistence.saveDocument(articleId: article.id, document: document)
+                    _ = try await pipeline.convert(article: article, feedState: state, product: state.product, inBackground: true)
+                    written.append(article)
                 } catch {
-                    // Skip failed articles, continue with next
-                    continue
+                    // Rationed or declined: stop now, the next charging window continues
+                    break
                 }
             }
-
-            // Persist updated article states
-            await persistence.saveArticles(feedState.articles)
+            await FeedPersistence.shared.saveArticles(state.articles)
+            if !written.isEmpty { await notifyReady(written, product: state.product) }
             task.setTaskCompleted(success: true)
         }
+        task.expirationHandler = { work.cancel() }
+    }
 
-        task.expirationHandler = {
-            processingTask.cancel()
-        }
+    @MainActor
+    private static func notifyReady(_ articles: [NewsArticle], product: ProductProfile?) async {
+        let content = UNMutableNotificationContent()
+        content.title = product.map { "\(articles.count) stories for \($0.name)" } ?? "\(articles.count) stories ready"
+        content.body = articles.prefix(3).map { "• " + $0.title }.joined(separator: "\n")
+        content.sound = .default
+        let request = UNNotificationRequest(identifier: "nubble.ready.\(Date().timeIntervalSince1970)", content: content, trigger: nil)
+        try? await UNUserNotificationCenter.current().add(request)
     }
 }

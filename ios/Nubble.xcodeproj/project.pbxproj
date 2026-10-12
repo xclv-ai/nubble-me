@@ -7,11 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		000462B2A78B824345206836 /* RSSParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B80739F59CEFE070DB71B41 /* RSSParser.swift */; };
 		0785378EEF0BB9DEECC2CAE8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C17564D9A266A7072B0B22D3 /* Assets.xcassets */; };
+		0F544ECD5966779A8150EB91 /* TopicChipsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41515E08069E81F2E4D4FC6 /* TopicChipsBar.swift */; };
 		0FFC30972F6F3114F201909C /* ReadingTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E873226478D404328183B7 /* ReadingTime.swift */; };
 		100C991B1B3E1766BF5D76E7 /* Satoshi-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = C57712F709C920A752E93A9A /* Satoshi-LightItalic.otf */; };
 		1C0458FEB8179CDAAC7D5372 /* Zodiak-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08216A5A28A93A88EBDD73DB /* Zodiak-Regular.otf */; };
 		1C271C53BB63236CF989F040 /* Zodiak-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = C02820B31992FBF367FC0A27 /* Zodiak-BoldItalic.otf */; };
+		1EA6FF9B34B0B4F4886F2480 /* DuplicateDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87990CEE42CFB2830C24839 /* DuplicateDetector.swift */; };
+		268969D963AD5FE0ACCFE86B /* NewsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67E542ADFC2C665502179D4 /* NewsCardView.swift */; };
+		26AEB92E55A2DF6D9F9F43A0 /* NewsConversionPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4026DBE5145A0630A8923FFC /* NewsConversionPipeline.swift */; };
+		2771C382AB86C6D428A33C6B /* FeedState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B09A1B0AE7AD90425D06C9 /* FeedState.swift */; };
 		2AA8C5F06DFDCF5B64AE609C /* NubbleColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4BB6809551B3A8D236686E /* NubbleColors.swift */; };
 		2E03A34384CB5A8CCD4CADB2 /* ContentDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6A1FBE561D03F44D0F84F4 /* ContentDocument.swift */; };
 		2E70A8D1E75D737E160A54E8 /* SampleContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E15F8804151EEAEB749D758 /* SampleContent.swift */; };
@@ -20,43 +26,92 @@
 		34D7A2ABBE60B58B1B1152E3 /* Zodiak-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = BA726363F300A8F68C0E0C8E /* Zodiak-LightItalic.otf */; };
 		3B3B38E40E7EFE658552A269 /* NubbleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7154753A83EFB28462FD99A /* NubbleApp.swift */; };
 		3B89AFC73E6568EACF743B77 /* Zodiak-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = F80CFFB3E70D4FD8D12B9685 /* Zodiak-Black.otf */; };
+		4045A503B9E29BBFCD3DCA53 /* SharedInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40D87F123C4B2396B75CDFE /* SharedInbox.swift */; };
 		47BD5A0B109FB9A6864C6052 /* DepthGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3C4A203835059617D97B7A /* DepthGenerator.swift */; };
+		4A41F4C4EB6D7E99C3FFB7D1 /* SavedArticlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81AA1BFC124A92ABACB0CBE /* SavedArticlesView.swift */; };
+		4C9D9195020C93EC01A98CC2 /* RelevanceRanker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3030497C46C0E715A651F190 /* RelevanceRanker.swift */; };
 		4F9BF7EC3F1AA22C0380AEA7 /* EPubParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C80A08E5015C95B8F17FD6 /* EPubParser.swift */; };
+		50D6ECB7CCB72033580501A3 /* ArticleProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DFDF8A4B33A2D5CBB707162 /* ArticleProcessingView.swift */; };
 		55A85C882FBDFFF41AC6DE68 /* Zodiak-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = E74C98BCDA1A84A474C96EC9 /* Zodiak-ThinItalic.otf */; };
 		5A057B4CEBD9CFA72E107DED /* Zodiak-ExtraboldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 142026EDDBE4D5532C6B3EB8 /* Zodiak-ExtraboldItalic.otf */; };
 		5BFF5E34899D89206E051D1C /* Satoshi-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4ABEE256B863B1B45D6405E9 /* Satoshi-Italic.otf */; };
+		5D03AF6D604D606D38F51D09 /* NewsArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82A45828218C2D3ADD0D2C9 /* NewsArticle.swift */; };
+		5DC33A1509666A13ECBE260A /* SourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516BD0D3B438D98AF337E259 /* SourcesView.swift */; };
 		639C8FC6E71179CF8EA707B1 /* ReadingProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87835B1148D75BFC1C62B5EC /* ReadingProgressBar.swift */; };
+		66A8DA84DA69C5692CDE1C95 /* FeedSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F92E21743571C4594D84DE /* FeedSource.swift */; };
+		6D10D42E3C0C6BBAD8F295CD /* TopicManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F14E3E6A994F0610552F72 /* TopicManagerView.swift */; };
 		76EDB6CB13275A497A184D87 /* Zodiak-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 95950AE25D22AD73E5660512 /* Zodiak-Italic.otf */; };
 		7A3654FB2D9958A1A0AD7E16 /* ChunkingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 813304EFE8E8488673523566 /* ChunkingEngine.swift */; };
+		80855D8F8F2DA21F64D0A7EE /* FeedRefreshScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE42CE7FA428177480F1629 /* FeedRefreshScheduler.swift */; };
 		83EF04485E266115996D9C3E /* Zodiak-Extrabold.otf in Resources */ = {isa = PBXBuildFile; fileRef = A7EBBFD790A49F6C4BC09E1E /* Zodiak-Extrabold.otf */; };
+		85290ECA0E595E7337E272B0 /* ProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0D0D6094217C68FA4E35DF /* ProductView.swift */; };
 		88C431BBDE2DF417C55A66DE /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E0DD90E078EF71A4BE9D1CE /* ImportView.swift */; };
+		892B393E59FA180341D2DEA3 /* NewsDepthWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF045E50B4E74ED3E787A6A /* NewsDepthWriter.swift */; };
 		8B28387BAC00FFEBFF82B6C8 /* Springs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADC1CC19C0AC85D26806BDC /* Springs.swift */; };
 		923921BA6D6157424C6EF5BB /* Zodiak-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = D465B464983075800687BA68 /* Zodiak-Bold.otf */; };
 		9993D4059DD5890ADB4B50CF /* Satoshi-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3026CCA56112E799A3CD303D /* Satoshi-MediumItalic.otf */; };
+		9BE2BA616F97284DFB9001B4 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095565930EAD1E1A2DA30D70 /* ShareViewController.swift */; };
 		A0467BD10CB3DB5472C8655E /* NubbleLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1588C5B0090B888FF15B22 /* NubbleLogo.swift */; };
+		A23B91474C4223E1B94E7948 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29D0D95FB5443D68F6888036 /* SettingsView.swift */; };
 		A7DB12578EC94BF6CBBF33E5 /* SwipeOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF8A10C5BB255AA9BAD6E84 /* SwipeOnboarding.swift */; };
 		A82F1E0426371A33D17BB06D /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = DEEE494003EEA3BCC989B48A /* ZIPFoundation */; };
 		B18E4B6773BD9C3CAF82C19D /* Satoshi-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 443FEA87C2BF29965EA9D3C1 /* Satoshi-Medium.otf */; };
 		B9514BF98F9507CBDC45C042 /* Satoshi-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 87709AD64461DB08A4AD66E9 /* Satoshi-Bold.otf */; };
 		BA6D43139AAB56E16E298D4B /* Zodiak-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = FD5A84476E2ABA2CEF0F4D95 /* Zodiak-Light.otf */; };
+		BAB2DF486CAE2946E8A4DCCC /* FeedPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B4AF39092E4BAFB920723 /* FeedPersistence.swift */; };
+		BBF2FC6D989CD02C73AD4302 /* ArticleExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E56BCCDFAA1E916E08D01D93 /* ArticleExtractor.swift */; };
+		C6DDE593EE581CD7BBB6DB3D /* NewsFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26126A714730915134055367 /* NewsFeedView.swift */; };
 		C89E6D9046833D53EFEE163D /* ContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1BBEE1C8F4B7FF6AF91EF3 /* ContentSection.swift */; };
 		C982C6693478715F72B0ADBE /* PDFExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D3C41E3C70D724E64B70A3 /* PDFExtractor.swift */; };
 		CAA7EED491972C896559206D /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = BEDA8351376257171DE48B0C /* SwiftSoup */; };
+		CE465FBF51D420A3AB9BD386 /* NewsTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72984C21A062E6920FD763FB /* NewsTopic.swift */; };
 		CFA362458CF60A34B69B01EB /* Zodiak-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD371F1C4546416D71EB1FA /* Zodiak-Thin.otf */; };
+		D16C8DC15AFC8A6DFD2C700C /* PageReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42F6C0ADE8A307CCD90079C /* PageReader.swift */; };
+		D1B44B8B76874EABEF3CBD6A /* LocalFeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027A81C7DF7C1C38B94FCE85 /* LocalFeedService.swift */; };
 		D1D4E5D16BBFE481F302302C /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04E26FE6EF8DFF3C3E5D05F /* Haptics.swift */; };
 		D1E7AD1132952341E726B35F /* ConversionPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07A2E061D21C18323C40575 /* ConversionPipeline.swift */; };
 		D8EAAB49EF959218CADAC762 /* ReaderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE85C30F593D0D5B249CAD0 /* ReaderState.swift */; };
 		DF461766F33E06419DCD77A0 /* SectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3E4B0C0C975EE7507ED102 /* SectionView.swift */; };
 		E77DF9096F698D3C60B4AC1A /* NubbleReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0755FE128A25592C9D838527 /* NubbleReaderView.swift */; };
 		EB4D70A023DB2779C4E8444A /* DepthIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6886937EFD690603D16BCEC6 /* DepthIndicator.swift */; };
+		EE0FD3F1511E7A30E767854F /* NubbleShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F0DE4871420FA99BD38B1007 /* ProductProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B36ADE400BD8221DA781180 /* ProductProfile.swift */; };
 		FC4BE98D84A9A7EC2738CEE2 /* BoundaryFlash.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0030AD57BA806CA81309D4 /* BoundaryFlash.swift */; };
 		FE572BCEE36767D521BF77B6 /* Satoshi-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1BA7D294D555AFF5EB497D0C /* Satoshi-Light.otf */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		1B9F24D64E472300C739842A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7D91DE030048C1BFE4CF5F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2CD600351DE454DE9EF479A8;
+			remoteInfo = NubbleShare;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9F3C747581898EFD862576A3 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				EE0FD3F1511E7A30E767854F /* NubbleShare.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		027A81C7DF7C1C38B94FCE85 /* LocalFeedService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFeedService.swift; sourceTree = "<group>"; };
 		02D3C41E3C70D724E64B70A3 /* PDFExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFExtractor.swift; sourceTree = "<group>"; };
 		0755FE128A25592C9D838527 /* NubbleReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NubbleReaderView.swift; sourceTree = "<group>"; };
 		08216A5A28A93A88EBDD73DB /* Zodiak-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Regular.otf"; sourceTree = "<group>"; };
+		089DE76CBC0816752BCE8279 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		095565930EAD1E1A2DA30D70 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		0B0D0D6094217C68FA4E35DF /* ProductView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductView.swift; sourceTree = "<group>"; };
 		0E0DD90E078EF71A4BE9D1CE /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		124D04FF20C898504D3862DD /* Satoshi-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-Regular.otf"; sourceTree = "<group>"; };
 		142026EDDBE4D5532C6B3EB8 /* Zodiak-ExtraboldItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-ExtraboldItalic.otf"; sourceTree = "<group>"; };
@@ -64,39 +119,65 @@
 		1ADC1CC19C0AC85D26806BDC /* Springs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Springs.swift; sourceTree = "<group>"; };
 		1BA7D294D555AFF5EB497D0C /* Satoshi-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-Light.otf"; sourceTree = "<group>"; };
 		21E873226478D404328183B7 /* ReadingTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingTime.swift; sourceTree = "<group>"; };
+		26126A714730915134055367 /* NewsFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsFeedView.swift; sourceTree = "<group>"; };
+		29D0D95FB5443D68F6888036 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		2BF045E50B4E74ED3E787A6A /* NewsDepthWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDepthWriter.swift; sourceTree = "<group>"; };
 		3026CCA56112E799A3CD303D /* Satoshi-MediumItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-MediumItalic.otf"; sourceTree = "<group>"; };
+		3030497C46C0E715A651F190 /* RelevanceRanker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelevanceRanker.swift; sourceTree = "<group>"; };
 		3A4BB6809551B3A8D236686E /* NubbleColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NubbleColors.swift; sourceTree = "<group>"; };
+		4026DBE5145A0630A8923FFC /* NewsConversionPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsConversionPipeline.swift; sourceTree = "<group>"; };
 		443FEA87C2BF29965EA9D3C1 /* Satoshi-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-Medium.otf"; sourceTree = "<group>"; };
 		44C80A08E5015C95B8F17FD6 /* EPubParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPubParser.swift; sourceTree = "<group>"; };
+		44F92E21743571C4594D84DE /* FeedSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedSource.swift; sourceTree = "<group>"; };
 		4ABEE256B863B1B45D6405E9 /* Satoshi-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-Italic.otf"; sourceTree = "<group>"; };
+		4B80739F59CEFE070DB71B41 /* RSSParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSParser.swift; sourceTree = "<group>"; };
 		4BD371F1C4546416D71EB1FA /* Zodiak-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Thin.otf"; sourceTree = "<group>"; };
 		4E15F8804151EEAEB749D758 /* SampleContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleContent.swift; sourceTree = "<group>"; };
+		516BD0D3B438D98AF337E259 /* SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesView.swift; sourceTree = "<group>"; };
+		52B09A1B0AE7AD90425D06C9 /* FeedState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedState.swift; sourceTree = "<group>"; };
+		63F14E3E6A994F0610552F72 /* TopicManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicManagerView.swift; sourceTree = "<group>"; };
 		6886937EFD690603D16BCEC6 /* DepthIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthIndicator.swift; sourceTree = "<group>"; };
+		69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NubbleShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		72984C21A062E6920FD763FB /* NewsTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTopic.swift; sourceTree = "<group>"; };
 		7B1588C5B0090B888FF15B22 /* NubbleLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NubbleLogo.swift; sourceTree = "<group>"; };
+		7DFDF8A4B33A2D5CBB707162 /* ArticleProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleProcessingView.swift; sourceTree = "<group>"; };
+		7FE42CE7FA428177480F1629 /* FeedRefreshScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedRefreshScheduler.swift; sourceTree = "<group>"; };
 		813304EFE8E8488673523566 /* ChunkingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkingEngine.swift; sourceTree = "<group>"; };
 		82FD2B5D011BFE504075965C /* Nubble.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Nubble.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		87709AD64461DB08A4AD66E9 /* Satoshi-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-Bold.otf"; sourceTree = "<group>"; };
 		87835B1148D75BFC1C62B5EC /* ReadingProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingProgressBar.swift; sourceTree = "<group>"; };
+		8B36ADE400BD8221DA781180 /* ProductProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductProfile.swift; sourceTree = "<group>"; };
 		95950AE25D22AD73E5660512 /* Zodiak-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Italic.otf"; sourceTree = "<group>"; };
+		9A00265742C2418D4EA50CB1 /* NubbleShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NubbleShare.entitlements; sourceTree = "<group>"; };
 		9AF8A10C5BB255AA9BAD6E84 /* SwipeOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeOnboarding.swift; sourceTree = "<group>"; };
+		A41515E08069E81F2E4D4FC6 /* TopicChipsBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicChipsBar.swift; sourceTree = "<group>"; };
+		A67E542ADFC2C665502179D4 /* NewsCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsCardView.swift; sourceTree = "<group>"; };
 		A7EBBFD790A49F6C4BC09E1E /* Zodiak-Extrabold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Extrabold.otf"; sourceTree = "<group>"; };
+		A87990CEE42CFB2830C24839 /* DuplicateDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateDetector.swift; sourceTree = "<group>"; };
 		AF6A1FBE561D03F44D0F84F4 /* ContentDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentDocument.swift; sourceTree = "<group>"; };
 		BA726363F300A8F68C0E0C8E /* Zodiak-LightItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-LightItalic.otf"; sourceTree = "<group>"; };
+		BE2B4AF39092E4BAFB920723 /* FeedPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPersistence.swift; sourceTree = "<group>"; };
 		BF3E4B0C0C975EE7507ED102 /* SectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionView.swift; sourceTree = "<group>"; };
 		C02820B31992FBF367FC0A27 /* Zodiak-BoldItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-BoldItalic.otf"; sourceTree = "<group>"; };
 		C17564D9A266A7072B0B22D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C40D87F123C4B2396B75CDFE /* SharedInbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedInbox.swift; sourceTree = "<group>"; };
 		C57712F709C920A752E93A9A /* Satoshi-LightItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-LightItalic.otf"; sourceTree = "<group>"; };
 		CF1BBEE1C8F4B7FF6AF91EF3 /* ContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentSection.swift; sourceTree = "<group>"; };
 		D465B464983075800687BA68 /* Zodiak-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Bold.otf"; sourceTree = "<group>"; };
 		D7154753A83EFB28462FD99A /* NubbleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NubbleApp.swift; sourceTree = "<group>"; };
+		D81AA1BFC124A92ABACB0CBE /* SavedArticlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedArticlesView.swift; sourceTree = "<group>"; };
 		DB3C4A203835059617D97B7A /* DepthGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthGenerator.swift; sourceTree = "<group>"; };
 		DDE85C30F593D0D5B249CAD0 /* ReaderState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderState.swift; sourceTree = "<group>"; };
 		E07A2E061D21C18323C40575 /* ConversionPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionPipeline.swift; sourceTree = "<group>"; };
+		E42F6C0ADE8A307CCD90079C /* PageReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageReader.swift; sourceTree = "<group>"; };
 		E54B6BF8D0A7A8FF7E9EF9F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		E56BCCDFAA1E916E08D01D93 /* ArticleExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractor.swift; sourceTree = "<group>"; };
 		E74C98BCDA1A84A474C96EC9 /* Zodiak-ThinItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-ThinItalic.otf"; sourceTree = "<group>"; };
+		E82A45828218C2D3ADD0D2C9 /* NewsArticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsArticle.swift; sourceTree = "<group>"; };
 		ED0030AD57BA806CA81309D4 /* BoundaryFlash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundaryFlash.swift; sourceTree = "<group>"; };
 		F04E26FE6EF8DFF3C3E5D05F /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		F80CFFB3E70D4FD8D12B9685 /* Zodiak-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Black.otf"; sourceTree = "<group>"; };
+		FD3FC122AC787174F0E1BC39 /* Nubble.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nubble.entitlements; sourceTree = "<group>"; };
 		FD5A84476E2ABA2CEF0F4D95 /* Zodiak-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Light.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -117,6 +198,7 @@
 			isa = PBXGroup;
 			children = (
 				E54B6BF8D0A7A8FF7E9EF9F7 /* Info.plist */,
+				FD3FC122AC787174F0E1BC39 /* Nubble.entitlements */,
 				D7154753A83EFB28462FD99A /* NubbleApp.swift */,
 				D178940C1EB5F4D901A70D28 /* Design */,
 				7C8E98BFE2EF4F8A349C1039 /* Models */,
@@ -132,6 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				82FD2B5D011BFE504075965C /* Nubble.app */,
+				69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -174,6 +257,11 @@
 			children = (
 				AF6A1FBE561D03F44D0F84F4 /* ContentDocument.swift */,
 				CF1BBEE1C8F4B7FF6AF91EF3 /* ContentSection.swift */,
+				44F92E21743571C4594D84DE /* FeedSource.swift */,
+				52B09A1B0AE7AD90425D06C9 /* FeedState.swift */,
+				E82A45828218C2D3ADD0D2C9 /* NewsArticle.swift */,
+				72984C21A062E6920FD763FB /* NewsTopic.swift */,
+				8B36ADE400BD8221DA781180 /* ProductProfile.swift */,
 				DDE85C30F593D0D5B249CAD0 /* ReaderState.swift */,
 			);
 			path = Models;
@@ -183,6 +271,7 @@
 			isa = PBXGroup;
 			children = (
 				1DE5E51CD99D9A18DEEB706B /* Nubble */,
+				AF0A82991069707606D71A3F /* NubbleShare */,
 				248C87F7FC54602A3DCBE7CA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -191,10 +280,21 @@
 			isa = PBXGroup;
 			children = (
 				487FBBB1CCA18D9D6E1CE5C7 /* Components */,
+				D543C1F0F61F89ECEF788BCD /* Feed */,
 				BEFD103CF63E339CB4570B34 /* Import */,
 				EDB2D575CEB8D5706A0F3128 /* Reader */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		AF0A82991069707606D71A3F /* NubbleShare */ = {
+			isa = PBXGroup;
+			children = (
+				089DE76CBC0816752BCE8279 /* Info.plist */,
+				9A00265742C2418D4EA50CB1 /* NubbleShare.entitlements */,
+				095565930EAD1E1A2DA30D70 /* ShareViewController.swift */,
+			);
+			path = NubbleShare;
 			sourceTree = "<group>";
 		};
 		BEFD103CF63E339CB4570B34 /* Import */ = {
@@ -218,13 +318,40 @@
 		D30373A04BB187F6A35922AC /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E56BCCDFAA1E916E08D01D93 /* ArticleExtractor.swift */,
 				813304EFE8E8488673523566 /* ChunkingEngine.swift */,
 				E07A2E061D21C18323C40575 /* ConversionPipeline.swift */,
 				DB3C4A203835059617D97B7A /* DepthGenerator.swift */,
+				A87990CEE42CFB2830C24839 /* DuplicateDetector.swift */,
 				44C80A08E5015C95B8F17FD6 /* EPubParser.swift */,
+				BE2B4AF39092E4BAFB920723 /* FeedPersistence.swift */,
+				7FE42CE7FA428177480F1629 /* FeedRefreshScheduler.swift */,
+				027A81C7DF7C1C38B94FCE85 /* LocalFeedService.swift */,
+				4026DBE5145A0630A8923FFC /* NewsConversionPipeline.swift */,
+				2BF045E50B4E74ED3E787A6A /* NewsDepthWriter.swift */,
+				E42F6C0ADE8A307CCD90079C /* PageReader.swift */,
 				02D3C41E3C70D724E64B70A3 /* PDFExtractor.swift */,
+				3030497C46C0E715A651F190 /* RelevanceRanker.swift */,
+				4B80739F59CEFE070DB71B41 /* RSSParser.swift */,
+				C40D87F123C4B2396B75CDFE /* SharedInbox.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		D543C1F0F61F89ECEF788BCD /* Feed */ = {
+			isa = PBXGroup;
+			children = (
+				7DFDF8A4B33A2D5CBB707162 /* ArticleProcessingView.swift */,
+				A67E542ADFC2C665502179D4 /* NewsCardView.swift */,
+				26126A714730915134055367 /* NewsFeedView.swift */,
+				0B0D0D6094217C68FA4E35DF /* ProductView.swift */,
+				D81AA1BFC124A92ABACB0CBE /* SavedArticlesView.swift */,
+				29D0D95FB5443D68F6888036 /* SettingsView.swift */,
+				516BD0D3B438D98AF337E259 /* SourcesView.swift */,
+				A41515E08069E81F2E4D4FC6 /* TopicChipsBar.swift */,
+				63F14E3E6A994F0610552F72 /* TopicManagerView.swift */,
+			);
+			path = Feed;
 			sourceTree = "<group>";
 		};
 		D616418FF811D1441FC5D86B /* Utilities */ = {
@@ -262,6 +389,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		2CD600351DE454DE9EF479A8 /* NubbleShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 140D6A5F89B39442D39E356A /* Build configuration list for PBXNativeTarget "NubbleShare" */;
+			buildPhases = (
+				9F135987F08016840B5159A0 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NubbleShare;
+			packageProductDependencies = (
+			);
+			productName = NubbleShare;
+			productReference = 69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		DE4772B509FCFFB16582F2E6 /* Nubble */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4FABC79677ABC8E199363EE2 /* Build configuration list for PBXNativeTarget "Nubble" */;
@@ -269,10 +413,12 @@
 				287947931CBB7E734EBB26D2 /* Sources */,
 				FFCBCFEFBA4245D47625F6A3 /* Resources */,
 				F5D38F410B2BF2CD67EF051A /* Frameworks */,
+				9F3C747581898EFD862576A3 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B4E820CAF16095E65864A289 /* PBXTargetDependency */,
 			);
 			name = Nubble;
 			packageProductDependencies = (
@@ -292,6 +438,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					2CD600351DE454DE9EF479A8 = {
+						DevelopmentTeam = F7TR367W75;
+						ProvisioningStyle = Automatic;
+					};
 					DE4772B509FCFFB16582F2E6 = {
 						DevelopmentTeam = F7TR367W75;
 						ProvisioningStyle = Automatic;
@@ -317,6 +467,7 @@
 			projectRoot = "";
 			targets = (
 				DE4772B509FCFFB16582F2E6 /* Nubble */,
+				2CD600351DE454DE9EF479A8 /* NubbleShare */,
 			);
 		};
 /* End PBXProject section */
@@ -355,6 +506,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBF2FC6D989CD02C73AD4302 /* ArticleExtractor.swift in Sources */,
+				50D6ECB7CCB72033580501A3 /* ArticleProcessingView.swift in Sources */,
 				FC4BE98D84A9A7EC2738CEE2 /* BoundaryFlash.swift in Sources */,
 				7A3654FB2D9958A1A0AD7E16 /* ChunkingEngine.swift in Sources */,
 				2E03A34384CB5A8CCD4CADB2 /* ContentDocument.swift in Sources */,
@@ -362,33 +515,111 @@
 				D1E7AD1132952341E726B35F /* ConversionPipeline.swift in Sources */,
 				47BD5A0B109FB9A6864C6052 /* DepthGenerator.swift in Sources */,
 				EB4D70A023DB2779C4E8444A /* DepthIndicator.swift in Sources */,
+				1EA6FF9B34B0B4F4886F2480 /* DuplicateDetector.swift in Sources */,
 				4F9BF7EC3F1AA22C0380AEA7 /* EPubParser.swift in Sources */,
+				BAB2DF486CAE2946E8A4DCCC /* FeedPersistence.swift in Sources */,
+				80855D8F8F2DA21F64D0A7EE /* FeedRefreshScheduler.swift in Sources */,
+				66A8DA84DA69C5692CDE1C95 /* FeedSource.swift in Sources */,
+				2771C382AB86C6D428A33C6B /* FeedState.swift in Sources */,
 				D1D4E5D16BBFE481F302302C /* Haptics.swift in Sources */,
 				88C431BBDE2DF417C55A66DE /* ImportView.swift in Sources */,
+				D1B44B8B76874EABEF3CBD6A /* LocalFeedService.swift in Sources */,
+				5D03AF6D604D606D38F51D09 /* NewsArticle.swift in Sources */,
+				268969D963AD5FE0ACCFE86B /* NewsCardView.swift in Sources */,
+				26AEB92E55A2DF6D9F9F43A0 /* NewsConversionPipeline.swift in Sources */,
+				892B393E59FA180341D2DEA3 /* NewsDepthWriter.swift in Sources */,
+				C6DDE593EE581CD7BBB6DB3D /* NewsFeedView.swift in Sources */,
+				CE465FBF51D420A3AB9BD386 /* NewsTopic.swift in Sources */,
 				3B3B38E40E7EFE658552A269 /* NubbleApp.swift in Sources */,
 				2AA8C5F06DFDCF5B64AE609C /* NubbleColors.swift in Sources */,
 				A0467BD10CB3DB5472C8655E /* NubbleLogo.swift in Sources */,
 				E77DF9096F698D3C60B4AC1A /* NubbleReaderView.swift in Sources */,
 				C982C6693478715F72B0ADBE /* PDFExtractor.swift in Sources */,
+				D16C8DC15AFC8A6DFD2C700C /* PageReader.swift in Sources */,
+				F0DE4871420FA99BD38B1007 /* ProductProfile.swift in Sources */,
+				85290ECA0E595E7337E272B0 /* ProductView.swift in Sources */,
+				000462B2A78B824345206836 /* RSSParser.swift in Sources */,
 				D8EAAB49EF959218CADAC762 /* ReaderState.swift in Sources */,
 				639C8FC6E71179CF8EA707B1 /* ReadingProgressBar.swift in Sources */,
 				0FFC30972F6F3114F201909C /* ReadingTime.swift in Sources */,
+				4C9D9195020C93EC01A98CC2 /* RelevanceRanker.swift in Sources */,
 				2E70A8D1E75D737E160A54E8 /* SampleContent.swift in Sources */,
+				4A41F4C4EB6D7E99C3FFB7D1 /* SavedArticlesView.swift in Sources */,
 				DF461766F33E06419DCD77A0 /* SectionView.swift in Sources */,
+				A23B91474C4223E1B94E7948 /* SettingsView.swift in Sources */,
+				4045A503B9E29BBFCD3DCA53 /* SharedInbox.swift in Sources */,
+				5DC33A1509666A13ECBE260A /* SourcesView.swift in Sources */,
 				8B28387BAC00FFEBFF82B6C8 /* Springs.swift in Sources */,
 				A7DB12578EC94BF6CBBF33E5 /* SwipeOnboarding.swift in Sources */,
+				0F544ECD5966779A8150EB91 /* TopicChipsBar.swift in Sources */,
+				6D10D42E3C0C6BBAD8F295CD /* TopicManagerView.swift in Sources */,
 				3183A6E7036351920BA20DE5 /* Typography.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F135987F08016840B5159A0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9BE2BA616F97284DFB9001B4 /* ShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		B4E820CAF16095E65864A289 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2CD600351DE454DE9EF479A8 /* NubbleShare */;
+			targetProxy = 1B9F24D64E472300C739842A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		00A2B01C6C0B2AA2CC76FB51 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NubbleShare/NubbleShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F7TR367W75;
+				INFOPLIST_FILE = NubbleShare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = me.nubble.app.share;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		08E5D7BF79F45AAC85692FB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NubbleShare/NubbleShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F7TR367W75;
+				INFOPLIST_FILE = NubbleShare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = me.nubble.app.share;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		486F48E4DF0CBF71568FAB5A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Nubble/Nubble.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F7TR367W75;
@@ -439,7 +670,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -458,7 +689,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -475,6 +706,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Nubble/Nubble.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F7TR367W75;
@@ -525,7 +757,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -538,7 +770,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -557,6 +789,15 @@
 			buildConfigurations = (
 				5B03314FE6B7A35EB25152E1 /* Debug */,
 				938DE4BE6A26E2F30FBEB248 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		140D6A5F89B39442D39E356A /* Build configuration list for PBXNativeTarget "NubbleShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00A2B01C6C0B2AA2CC76FB51 /* Debug */,
+				08E5D7BF79F45AAC85692FB9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

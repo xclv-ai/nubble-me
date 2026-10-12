@@ -4,6 +4,7 @@ import SwiftUI
 struct NubbleApp: App {
     @State private var currentDocument: ContentDocument = SampleContent.paradoxOfChoice
     @State private var showImport = false
+    @State private var feedState = FeedState()
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
@@ -34,11 +35,22 @@ struct NubbleApp: App {
                     SettingsView()
                 }
             }
+            .environment(feedState)
             .tint(NubbleColors.Light.primary)
+            .task {
+                await feedState.loadFromDisk()
+                await SharedInbox.drain(into: feedState)
+                await feedState.refresh()
+            }
             .onChange(of: scenePhase) { _, newPhase in
-                if newPhase == .background {
+                switch newPhase {
+                case .background:
                     FeedRefreshScheduler.scheduleFeedRefresh()
                     FeedRefreshScheduler.scheduleArticleProcessing()
+                case .active:
+                    Task { await SharedInbox.drain(into: feedState) }
+                default:
+                    break
                 }
             }
         }

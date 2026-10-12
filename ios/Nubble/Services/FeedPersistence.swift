@@ -7,19 +7,56 @@ actor FeedPersistence {
 
     private let fileManager = FileManager.default
 
-    private var cacheDir: URL {
-        fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("FeedCache", isDirectory: true)
-    }
-
-    private var articlesFile: URL { cacheDir.appendingPathComponent("articles.json") }
-    private var topicsFile: URL { cacheDir.appendingPathComponent("topics.json") }
-    private var preferencesFile: URL { cacheDir.appendingPathComponent("preferences.json") }
-    private var documentsDir: URL { cacheDir.appendingPathComponent("documents", isDirectory: true) }
+    private let cacheDir: URL
+    private let articlesFile: URL
+    private let topicsFile: URL
+    private let preferencesFile: URL
+    private let documentsDir: URL
+    private let sourcesFile: URL
+    private let productFile: URL
 
     private init() {
-        try? fileManager.createDirectory(at: cacheDir, withIntermediateDirectories: true)
-        try? fileManager.createDirectory(at: documentsDir, withIntermediateDirectories: true)
+        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("FeedCache", isDirectory: true)
+        cacheDir = dir
+        articlesFile = dir.appendingPathComponent("articles.json")
+        topicsFile = dir.appendingPathComponent("topics.json")
+        preferencesFile = dir.appendingPathComponent("preferences.json")
+        documentsDir = dir.appendingPathComponent("documents", isDirectory: true)
+        sourcesFile = dir.appendingPathComponent("sources.json")
+        productFile = dir.appendingPathComponent("product.json")
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        try? FileManager.default.createDirectory(at: documentsDir, withIntermediateDirectories: true)
+    }
+
+    // MARK: - Sources
+
+    func saveSources(_ sources: [FeedSource]) {
+        guard let data = try? JSONEncoder().encode(sources) else { return }
+        try? data.write(to: sourcesFile, options: .atomic)
+    }
+
+    func loadSources() -> [FeedSource] {
+        guard let data = try? Data(contentsOf: sourcesFile),
+              let sources = try? JSONDecoder().decode([FeedSource].self, from: data) else { return FeedSource.defaults }
+        return sources
+    }
+
+    // MARK: - Product
+
+    func saveProduct(_ product: ProductProfile?) {
+        guard let product else { try? fileManager.removeItem(at: productFile); return }
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        guard let data = try? encoder.encode(product) else { return }
+        try? data.write(to: productFile, options: .atomic)
+    }
+
+    func loadProduct() -> ProductProfile? {
+        guard let data = try? Data(contentsOf: productFile) else { return nil }
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try? decoder.decode(ProductProfile.self, from: data)
     }
 
     // MARK: - Codable DTOs
@@ -43,6 +80,7 @@ actor FeedPersistence {
         let processedAt: Date?
         let isPaywalled: Bool
         let hasDocument: Bool
+        var relevance: Double?
     }
 
     struct PersistedPreferences: Codable {
@@ -73,7 +111,8 @@ actor FeedPersistence {
                 lastReadAt: a.lastReadAt,
                 processedAt: a.processedAt,
                 isPaywalled: a.isPaywalled,
-                hasDocument: a.document != nil
+                hasDocument: a.document != nil,
+                relevance: a.relevance
             )
         }
         let encoder = JSONEncoder()
@@ -111,7 +150,8 @@ actor FeedPersistence {
                 lastReadAt: p.lastReadAt,
                 processedAt: p.processedAt,
                 errorMessage: nil,
-                isPaywalled: p.isPaywalled
+                isPaywalled: p.isPaywalled,
+                relevance: p.relevance
             )
         }
     }
@@ -126,9 +166,11 @@ actor FeedPersistence {
                 PersistedSection(
                     id: s.id, title: s.title,
                     summary: s.summary, condensed: s.condensed,
-                    standard: s.standard, expanded: s.expanded
+                    standard: s.standard, expanded: s.expanded,
+                    forProduct: s.forProduct
                 )
-            }
+            },
+            productStamp: document.productStamp
         )
         guard let data = try? JSONEncoder().encode(dto) else { return }
         let file = documentsDir.appendingPathComponent("\(articleId).json")
@@ -146,9 +188,11 @@ actor FeedPersistence {
                 ContentSection(
                     id: s.id, title: s.title,
                     summary: s.summary, condensed: s.condensed,
-                    standard: s.standard, expanded: s.expanded
+                    standard: s.standard, expanded: s.expanded,
+                    forProduct: s.forProduct
                 )
-            }
+            },
+            productStamp: dto.productStamp
         )
     }
 
@@ -212,6 +256,7 @@ actor FeedPersistence {
         let title: String
         let author: String
         let sections: [PersistedSection]
+        var productStamp: Date?
     }
 
     private struct PersistedSection: Codable {
@@ -221,5 +266,6 @@ actor FeedPersistence {
         let condensed: String
         let standard: String
         let expanded: String
+        var forProduct: String?
     }
 }

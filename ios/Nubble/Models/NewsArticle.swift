@@ -30,6 +30,8 @@ struct NewsArticle: Identifiable, Sendable {
     var processedAt: Date?
     var errorMessage: String?
     var isPaywalled: Bool
+    /// How close this story is to the user's product (0…1); nil until a product is set.
+    var relevance: Double? = nil
 
     var estimatedReadTime: Int {
         let words = wordCount ?? snippet.split(separator: " ").count

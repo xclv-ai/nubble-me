@@ -4,6 +4,20 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 
 ---
 
+## [iOS 1.1.0 (2) — 2026-10-12]
+
+### Fixed
+- **iOS build shipped without the news feed** — `Nubble.xcodeproj` listed only the pre-feed files, so `NewsFeedView`, `SettingsView` and background refresh never compiled. Project is now regenerated from `ios/project.yml` (`xcodegen generate`).
+- **iOS feed pointed at `http://localhost:5000`** — replaced by reading sources on the phone.
+
+### Added (iOS)
+- **News straight from sources on the iPhone** — `RSSParser` (Foundation `XMLParser`, RSS + Atom), `LocalFeedService`; 15 starting sources (AI + commerce + marketing), last 14 days, editable in Settings → Sources; add any site by address (finds its feed).
+- **All levels written on-device by Apple Intelligence** (`NewsDepthWriter`, Foundation Models, no paid API): fact sheet first (one session per part, Apple TN3193 4,096-token window), then Summary + Condensed, Expanded (WHAT'S GOING ON / WHY THIS IS A BIG DEAL / UNCOMFORTABLE TRUTH / SO WHAT), each in its own session with guided generation so every block is present.
+- **Level 4 "My product"** — HOW THIS HITS ‹PRODUCT› / MOVES TO CONSIDER / THE RISK OF SITTING THIS OUT, same format as the web pokpok.ai personalized feed; product described on-device from the URL the user gives (Settings → My product, editable).
+- **Relevance ranking** — `NaturalLanguage` sentence embeddings vs the product description; "Most relevant to ‹product›" at the top of the feed.
+- **Background** — hourly source refresh; while charging, levels for the most relevant stories are written and a notification says they're ready.
+- **Share extension** — Share → Nubble from Safari saves the page (App Group `group.me.nubble.app`).
+
 ## [Unreleased]
 
 ### Fixed
