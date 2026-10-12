@@ -12,27 +12,27 @@ enum Typography {
         switch depth {
         case 0:
             return DepthStyle(
-                font: .custom("Satoshi-Medium", size: 15.5, relativeTo: .body),
+                font: .custom("Satoshi-Medium", size: 20, relativeTo: .body),
                 opacity: 1.0,
-                lineSpacing: 15.5 * 0.8
+                lineSpacing: 20 * 0.4
             )
         case 1:
             return DepthStyle(
-                font: .custom("Satoshi-Regular", size: 14.5, relativeTo: .body),
-                opacity: 0.85,
-                lineSpacing: 14.5 * 0.75
+                font: .custom("Satoshi-Regular", size: 18.5, relativeTo: .body),
+                opacity: 0.95,
+                lineSpacing: 18.5 * 0.4
             )
         case 2:
             return DepthStyle(
-                font: .custom("Satoshi-Regular", size: 14, relativeTo: .body),
-                opacity: 0.80,
-                lineSpacing: 14 * 0.7
+                font: .custom("Satoshi-Regular", size: 17.5, relativeTo: .body),
+                opacity: 0.92,
+                lineSpacing: 17.5 * 0.4
             )
         default:
             return DepthStyle(
-                font: .custom("Satoshi-Regular", size: 13.5, relativeTo: .body),
-                opacity: 0.75,
-                lineSpacing: 13.5 * 0.65
+                font: .custom("Satoshi-Regular", size: 17, relativeTo: .body),
+                opacity: 0.9,
+                lineSpacing: 17 * 0.4
             )
         }
     }
@@ -44,6 +44,6 @@ enum Typography {
     static let uiHeadline: Font = .custom("Satoshi-Medium", size: 16, relativeTo: .headline)
 
     // Titles use Zodiak (serif)
-    static let sectionTitle: Font = .custom("Zodiak-Regular", size: 18, relativeTo: .title3)
-    static let documentTitle: Font = .custom("Zodiak-Regular", size: 21, relativeTo: .title2)
+    static let sectionTitle: Font = .custom("Zodiak-Regular", size: 24, relativeTo: .title2)
+    static let documentTitle: Font = .custom("Zodiak-Regular", size: 28, relativeTo: .title)
 }

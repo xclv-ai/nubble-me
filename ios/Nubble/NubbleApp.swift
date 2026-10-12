@@ -14,6 +14,10 @@ struct NubbleApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
+                Tab(feedState.product?.name ?? "My product", systemImage: "scope") {
+                    ProductNewsView()
+                }
+
                 Tab("Feed", systemImage: "newspaper") {
                     NewsFeedView()
                 }

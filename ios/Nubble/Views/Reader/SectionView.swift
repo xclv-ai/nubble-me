@@ -14,6 +14,10 @@ struct SectionView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var dragOffset: CGFloat = 0
     @State private var isDragging: Bool = false
+    /// The depth shown before the current change — tells the scan which way to sweep.
+    @State private var shownDepth: Int = -1
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private let tilt = MotionTilt.shared
 
     var depth: Int
     var globalDepth: Int
@@ -159,20 +163,26 @@ struct SectionView: View {
     private var contentBody: some View {
         let text = section.text(at: depth)
         let paragraphs = text.components(separatedBy: "\n\n")
+        let direction: Double = depth >= shownDepth ? 1 : -1
+        // The "My product" level scans in with the warm accent
+        let beam = depth == 4 ? Color(red: 1.0, green: 0.55, blue: 0.2) : NubbleColors.primary(for: colorScheme)
 
-        VStack(alignment: .leading, spacing: 12) {
-            ForEach(Array(paragraphs.enumerated()), id: \.offset) { pIndex, paragraph in
-                Text(Self.styled(paragraph))
-                    .font(depthStyle.font)
-                    .foregroundStyle(NubbleColors.foreground(for: colorScheme).opacity(depthStyle.opacity))
-                    .lineSpacing(depthStyle.lineSpacing)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .transition(.blurReplace.combined(with: .opacity))
+        ZStack(alignment: .topLeading) {
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(Array(paragraphs.enumerated()), id: \.offset) { _, paragraph in
+                    Text(Self.styled(paragraph))
+                        .font(depthStyle.font)
+                        .foregroundStyle(NubbleColors.foreground(for: colorScheme).opacity(depthStyle.opacity))
+                        .lineSpacing(depthStyle.lineSpacing)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
+            .id(depth) // New depth = new view, so the transition runs
+            .motionTilt(tilt, enabled: isActive && !reduceMotion)
+            .transition(.depthScan(direction: direction, beamColor: beam, reduceMotion: reduceMotion))
         }
-        .id(depth) // Force view recreation on depth change
-        .transition(.blurReplace.combined(with: .opacity))
-        .animation(Springs.gentle, value: depth)
+        .animation(.easeInOut(duration: DepthScanTransition.duration), value: depth)
+        .onChange(of: depth, initial: true) { _, new in shownDepth = new }
     }
 
     /// Renders **BOLD** block headers (UNCOMFORTABLE TRUTH, HOW THIS HITS…) the way the web reader does.

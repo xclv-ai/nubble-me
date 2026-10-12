@@ -3,6 +3,8 @@ import SwiftUI
 struct NubbleReaderView: View {
     let document: ContentDocument
     var onImportTapped: (() -> Void)? = nil
+    /// Open at this depth (the product tab opens stories on "My product").
+    var initialDepth: Int? = nil
     @State private var state = ReaderState()
     @Environment(\.colorScheme) private var colorScheme
     @State private var scrollPosition: String?
@@ -34,10 +36,14 @@ struct NubbleReaderView: View {
                 footer
             }
         }
+        .preferredColorScheme(.dark)
+        .onAppear { MotionTilt.shared.start() }
+        .onDisappear { MotionTilt.shared.stop() }
         .onAppear {
             state.activeSectionId = document.sections.first?.id ?? ""
             state.maxDepth = document.sections.map(\.maxDepth).max() ?? 3
             state.sectionMaxDepth = Dictionary(uniqueKeysWithValues: document.sections.map { ($0.id, $0.maxDepth) })
+            if let initialDepth { state.globalDepth = min(initialDepth, state.maxDepth) }
         }
         .onKeyPress(keys: [.leftArrow, .rightArrow], phases: .down) { keyPress in
             if keyPress.modifiers.contains(.shift) {

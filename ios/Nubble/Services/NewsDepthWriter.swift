@@ -208,13 +208,14 @@ final class NewsDepthWriter {
     }
 
     private func productLevel(title: String, facts: String, product: ProductProfile) async throws -> String {
+        let name = product.name
         let analyst = """
-            You are a strategic analyst writing for the founders of \(product.name). \
-            Be concrete: name their products, their customers, their competitors. \
-            Not generic advice. Clear, direct, no corporate speak.
+            You are a strategic analyst writing for the founders of \(name). Clear, direct, no corporate speak. \
+            Everything you say about \(name) — its products, customers, prices, competitors — comes only from \
+            ABOUT \(name.uppercased()). Companies and products in the news story belong to the story, never to \(name).
             """
         let context = """
-            ABOUT \(product.name.uppercased()):
+            ABOUT \(name.uppercased()):
             \(product.description)
 
             NEWS STORY: \(title)
@@ -222,16 +223,19 @@ final class NewsDepthWriter {
 
 
             """
-        let hits = try await text("how this hits", analyst, context + "How does this story hit \(product.name)? Name its products, customers, competitors. 120-200 words.")
-        let moves = try await text("moves", analyst, context + "List 2-3 specific moves \(product.name) should make because of this story, as a numbered list. Each tied to its real products and market.")
-        let risk = try await text("risk", analyst, context + "In 1-2 sentences: what do competitors gain if \(product.name) ignores this?")
+        let relevance = try await text("how relevant", analyst, context + "How relevant is this story to \(name)? Start with one word — High, Medium or Low — then one sentence why.")
+        let applies = try await text("how it applies", analyst, context + "How does this story apply to \(name)? Connect it to \(name)'s own products and customers. 3-5 sentences.")
+        let impact = try await text("impact", analyst, context + "How will this change \(name)'s market or customers in the next 6-12 months? 2-4 sentences.")
+        let moves = try await text("what to do", analyst, context + "What should \(name) do about it? 2-3 specific moves as a numbered list, each using \(name)'s real products.")
         return """
-            **HOW THIS HITS \(product.name.uppercased())** \(hits)
+            **HOW RELEVANT** \(relevance)
 
-            **MOVES TO CONSIDER**
+            **HOW IT APPLIES TO \(name.uppercased())** \(applies)
+
+            **HOW IT WILL IMPACT \(name.uppercased())** \(impact)
+
+            **WHAT TO DO**
             \(moves)
-
-            **THE RISK OF SITTING THIS OUT** \(risk)
             """
     }
 

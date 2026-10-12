@@ -19,7 +19,11 @@ final class FeedState {
         didSet {
             guard product != oldValue else { return }
             Task { await FeedPersistence.shared.saveProduct(product) }
-            rank()
+            // A changed product means new scores for every story (not when it's loaded at launch)
+            if oldValue != nil {
+                for i in articles.indices { articles[i].relevance = nil }
+            }
+            Task { await rank() }
         }
     }
     var isRefreshing: Bool = false
@@ -127,17 +131,49 @@ final class FeedState {
         let cutoff = Date(timeIntervalSinceNow: -Double(LocalFeedService.newsWindowDays) * 86400)
         articles = kept.filter { $0.isSaved || $0.publishedAt >= cutoff }
         lastRefreshedAt = now
-        rank()
+        await rank()
+        Task { await writeSignals() }
     }
 
-    /// Scores every story against the product with Apple's on-device sentence embeddings.
-    func rank() {
-        guard let product else {
-            for i in articles.indices { articles[i].relevance = nil }
-            return
+    /// Writes the levels for the High-relevance stories one by one while the app is open, so the
+    /// product tab shows each story's signal (relevance + first move) without opening it.
+    var writingSignalFor: String?
+    private var isWritingSignals = false
+    func writeSignals() async {
+        guard let product, !isWritingSignals else { return }
+        isWritingSignals = true
+        defer { isWritingSignals = false; writingSignalFor = nil }
+        while true {
+            guard self.product == product,
+                  let next = articles
+                    .filter({ ($0.relevance ?? 0) >= 1 && ($0.document == nil || $0.document?.productStamp != product.updatedAt) && $0.processingState != .failed })
+                    .sorted(by: { $0.publishedAt > $1.publishedAt })
+                    .first else { return }
+            writingSignalFor = next.id
+            let pipeline = NewsConversionPipeline()
+            if let doc = next.document {
+                _ = await pipeline.refreshProductLevel(article: next, document: doc, feedState: self, product: product)
+            } else if (try? await pipeline.convert(article: next, feedState: self, product: product, inBackground: true)) == nil {
+                // The iPhone declined or rationed the model: stop, the next refresh continues
+                return
+            }
         }
-        let scores = RelevanceRanker().score(articles, against: product)
-        for i in articles.indices { articles[i].relevance = scores[articles[i].id] }
+    }
+
+    /// Apple's on-device model scores the stories that have no score yet against the product.
+    var isRanking = false
+    func rank() async {
+        guard let product else { return }
+        while isRanking { try? await Task.sleep(for: .milliseconds(300)) }
+        let unscored = articles.filter { $0.relevance == nil }
+        guard !unscored.isEmpty else { return }
+        isRanking = true
+        defer { isRanking = false }
+        let scores = await RelevanceRanker().score(unscored, against: product)
+        guard self.product == product else { return }
+        for i in articles.indices where articles[i].relevance == nil {
+            articles[i].relevance = scores[articles[i].id]
+        }
     }
 
     private func persistTopics() {

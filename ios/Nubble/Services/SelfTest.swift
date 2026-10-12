@@ -20,6 +20,9 @@ enum SelfTest {
         var sourceErrors: [String: String] = [:]
         var stories = 0
         var topFive: [String] = []
+        var rankSeconds = 0.0
+        var scored = 0
+        var rankAnswers: [String] = []
         var storyTitle = ""
         var storyUrl = ""
         var levels: [String] = []
@@ -66,15 +69,24 @@ enum SelfTest {
             report.productDescription = brief.description
             save(report)
             feedState.product = ProductProfile(url: page.finalUrl, name: brief.name, description: brief.description, updatedAt: Date())
+            try? await Task.sleep(for: .milliseconds(200))
+            while feedState.isRanking { try? await Task.sleep(for: .milliseconds(500)) }
 
+            t = Date()
             await feedState.refresh()
+            while feedState.isRanking { try? await Task.sleep(for: .milliseconds(500)) }
+            await feedState.rank()
+            report.rankSeconds = Date().timeIntervalSince(t)
+            report.rankAnswers = RelevanceRanker.lastAnswers
+            report.scored = feedState.articles.filter { $0.relevance != nil }.count
             report.sourcesRead = feedState.sources.filter { $0.isActive && $0.lastError == nil }.count
             report.sourceErrors = Dictionary(uniqueKeysWithValues: feedState.sources.compactMap { s in s.lastError.map { (s.name, $0) } })
             report.stories = feedState.articles.count
-            report.topFive = feedState.mostRelevant.map { String(format: "%.3f  ", $0.relevance ?? 0) + $0.title + "  (" + $0.sourceName + ")" }
+            report.topFive = feedState.articles.filter { $0.relevance != nil }.sorted { ($0.relevance ?? 0) > ($1.relevance ?? 0) }.prefix(15).map { String(format: "%.3f  ", $0.relevance ?? 0) + $0.title + "  (" + $0.sourceName + ")" }
             save(report)
 
             let pinned = storyURL.flatMap { u in feedState.articles.first { $0.articleUrl.absoluteString == u } }
+            if storyURL == "none" { save(report); return }
             guard let top = pinned ?? feedState.mostRelevant.first else { report.error = "no ranked stories"; save(report); return }
             report.storyTitle = top.title
             report.storyUrl = top.articleUrl.absoluteString

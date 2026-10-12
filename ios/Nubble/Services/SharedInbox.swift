@@ -67,6 +67,6 @@ enum SharedInbox {
                 isPaywalled: false
             ), at: 0)
         }
-        feedState.rank()
+        await feedState.rank()
     }
 }

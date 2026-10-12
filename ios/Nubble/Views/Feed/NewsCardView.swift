@@ -95,7 +95,7 @@ struct NewsCardView: View {
 
             // Snippet (depth-0 preview)
             Text(article.snippet)
-                .font(.custom("Satoshi-Regular", size: 13, relativeTo: .body))
+                .font(.custom("Satoshi-Regular", size: 16, relativeTo: .body))
                 .foregroundStyle(NubbleColors.muted(for: colorScheme))
                 .lineLimit(2)
 
@@ -127,12 +127,12 @@ struct NewsCardView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(article.title)
-                    .font(.custom("Satoshi-Medium", size: 14, relativeTo: .body))
+                    .font(.custom("Satoshi-Medium", size: 18, relativeTo: .body))
                     .foregroundStyle(NubbleColors.foreground(for: colorScheme))
                     .lineLimit(2)
 
                 Text(article.snippet)
-                    .font(.custom("Satoshi-Regular", size: 12, relativeTo: .caption))
+                    .font(.custom("Satoshi-Regular", size: 15, relativeTo: .body))
                     .foregroundStyle(NubbleColors.muted(for: colorScheme))
                     .lineLimit(1)
 

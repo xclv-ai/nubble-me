@@ -51,8 +51,8 @@ enum NubbleColors {
 
     // Dark mode colors
     enum Dark {
-        static let background = hslColor(30, 10, 8)
-        static let foreground = hslColor(35, 10, 88)
+        static let background = Color.black
+        static let foreground = Color.white
         static let primary = hslColor(32, 75, 55)
         static let card = hslColor(30, 8, 11)
         static let border = hslColor(30, 5, 18)
