@@ -14,6 +14,8 @@ enum NewsConversionStage: String, Sendable {
 final class NewsConversionPipeline {
     var stage: NewsConversionStage = .fetching
     var progress: Double = 0
+    private(set) var lastFactSheet = ""
+    private(set) var lastArticleText = ""
 
     private let articleExtractor = ArticleExtractor()
 
@@ -55,7 +57,9 @@ final class NewsConversionPipeline {
 
         let section: ContentSection
         do {
+            lastArticleText = text
             let levels = try await writer.write(title: title, articleText: text, product: product)
+            lastFactSheet = writer.lastFactSheet
             section = ContentSection(
                 id: article.id + "-s1",
                 title: title,

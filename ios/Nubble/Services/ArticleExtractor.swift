@@ -47,6 +47,8 @@ struct ArticleExtractor: Sendable {
         let publishedDate = dateStr.flatMap { ISO8601DateFormatter().date(from: $0) }
 
         // 4. Remove non-content elements
+        // Hidden screen-reader text, e.g. "(opens in a new window)" after every link
+        try doc.select(".sr-only, .visually-hidden, .screen-reader-text, [hidden], [aria-hidden=true]").remove()
         try doc.select("script, style, nav, header, footer, aside, .sidebar, .nav, .footer, .header, .comments, .comment, .ad, .advertisement, .social-share, .related, .newsletter, [role=navigation], [role=banner], [role=complementary]").remove()
 
         // 5. Find main content via readability scoring

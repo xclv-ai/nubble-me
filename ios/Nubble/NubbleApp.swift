@@ -40,6 +40,12 @@ struct NubbleApp: App {
             .task {
                 await feedState.loadFromDisk()
                 await SharedInbox.drain(into: feedState)
+                #if DEBUG
+                if let url = SelfTest.productURL {
+                    await SelfTest.run(feedState: feedState, url: url)
+                    return
+                }
+                #endif
                 await feedState.refresh()
             }
             .onChange(of: scenePhase) { _, newPhase in

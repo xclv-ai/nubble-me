@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		000462B2A78B824345206836 /* RSSParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B80739F59CEFE070DB71B41 /* RSSParser.swift */; };
+		070921B7B534BFC886079066 /* SelfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2213BCDD836352437B1C81E /* SelfTest.swift */; };
 		0785378EEF0BB9DEECC2CAE8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C17564D9A266A7072B0B22D3 /* Assets.xcassets */; };
 		0F544ECD5966779A8150EB91 /* TopicChipsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41515E08069E81F2E4D4FC6 /* TopicChipsBar.swift */; };
 		0FFC30972F6F3114F201909C /* ReadingTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E873226478D404328183B7 /* ReadingTime.swift */; };
@@ -160,6 +161,7 @@
 		BF3E4B0C0C975EE7507ED102 /* SectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionView.swift; sourceTree = "<group>"; };
 		C02820B31992FBF367FC0A27 /* Zodiak-BoldItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-BoldItalic.otf"; sourceTree = "<group>"; };
 		C17564D9A266A7072B0B22D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C2213BCDD836352437B1C81E /* SelfTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfTest.swift; sourceTree = "<group>"; };
 		C40D87F123C4B2396B75CDFE /* SharedInbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedInbox.swift; sourceTree = "<group>"; };
 		C57712F709C920A752E93A9A /* Satoshi-LightItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-LightItalic.otf"; sourceTree = "<group>"; };
 		CF1BBEE1C8F4B7FF6AF91EF3 /* ContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentSection.swift; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 				02D3C41E3C70D724E64B70A3 /* PDFExtractor.swift */,
 				3030497C46C0E715A651F190 /* RelevanceRanker.swift */,
 				4B80739F59CEFE070DB71B41 /* RSSParser.swift */,
+				C2213BCDD836352437B1C81E /* SelfTest.swift */,
 				C40D87F123C4B2396B75CDFE /* SharedInbox.swift */,
 			);
 			path = Services;
@@ -546,6 +549,7 @@
 				2E70A8D1E75D737E160A54E8 /* SampleContent.swift in Sources */,
 				4A41F4C4EB6D7E99C3FFB7D1 /* SavedArticlesView.swift in Sources */,
 				DF461766F33E06419DCD77A0 /* SectionView.swift in Sources */,
+				070921B7B534BFC886079066 /* SelfTest.swift in Sources */,
 				A23B91474C4223E1B94E7948 /* SettingsView.swift in Sources */,
 				4045A503B9E29BBFCD3DCA53 /* SharedInbox.swift in Sources */,
 				5DC33A1509666A13ECBE260A /* SourcesView.swift in Sources */,

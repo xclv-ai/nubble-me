@@ -76,10 +76,8 @@ struct ProductBrief {
 
 @MainActor
 final class NewsDepthWriter {
-    /// Article text above this size is turned into a fact sheet first (~1,200 tokens).
-    static let factSheetWords = 900
-    /// Part size when reading a long article (~950 tokens per session).
-    static let chunkWords = 700
+    /// Part size when a text doesn't fit (~1,500 tokens per session, no notes carried between parts).
+    static let chunkWords = 1_000
 
     enum Step: String, Sendable {
         case readingArticle = "Reading the article…"
@@ -89,6 +87,8 @@ final class NewsDepthWriter {
     }
 
     var onStep: (Step) -> Void = { _ in }
+    /// The fact sheet the levels were written from (kept for the development self-test).
+    private(set) var lastFactSheet = ""
 
     private static let style = """
         You explain news in the style of Richard Feynman: clear, direct, provocative, no jargon \
@@ -102,6 +102,7 @@ final class NewsDepthWriter {
 
         onStep(.readingArticle)
         let facts = try await factSheet(title: title, text: articleText)
+        lastFactSheet = facts
 
         onStep(.brief)
         let brief = try await respond(
@@ -158,6 +159,7 @@ final class NewsDepthWriter {
         #if canImport(FoundationModels)
         if let reason = OnDeviceModel.unavailableReason { throw WriterError.unavailable(reason) }
         let facts = try await factSheet(title: url.host() ?? url.absoluteString, text: pageText)
+        lastFactSheet = facts
         let brief = try await respond(
             instructions: "You describe a company's product from its own website. Use only what the page states.",
             prompt: "Website: \(url.absoluteString)\n\nWhat the page says:\n\(facts)\n\nDescribe this product.",
@@ -170,25 +172,40 @@ final class NewsDepthWriter {
 
     #if canImport(FoundationModels)
 
-    /// Short texts go in as they are. Long texts are read part by part, each part in a new session,
-    /// carrying the notes so far (Apple TN3193: "Split a large task into multiple language model sessions").
+    /// The model gets the real text whenever it fits Apple's window (4,096 tokens: instructions,
+    /// text and answer together). Only text that doesn't fit is read part by part — each part in its
+    /// own fresh session (Apple TN3193) — and the parts' facts are joined.
     private func factSheet(title: String, text: String) async throws -> String {
         var current = text
-        while Self.words(current).count > Self.factSheetWords {
+        var rounds = 0
+        while !(await Self.fits(current)) {
+            rounds += 1
             let parts = Self.chunks(current, size: Self.chunkWords)
             var notes: [String] = []
             for part in parts {
-                let previous = notes.last.map { "Notes from the previous part:\n\($0)\n\n" } ?? ""
-                let session = LanguageModelSession(instructions: "You take notes on news articles. Keep every fact: who, what, numbers, dates, names, claims, quotes. Plain sentences, no commentary.")
-                let response = try await session.respond(to: "\(previous)Article: \(title)\n\nThis part:\n\(part)\n\nWrite the facts from this part.")
+                let session = LanguageModelSession(instructions: "You take notes on a text. Keep every fact: who, what, numbers, prices, dates, names, claims, quotes. Plain sentences, no commentary.")
+                let response = try await session.respond(to: "Source: \(title)\n\nText:\n\(part)\n\nWrite the facts from this text.")
                 notes.append(response.content)
             }
             let joined = notes.joined(separator: "\n")
-            // Notes that are not shorter than the text mean the model is not compressing; stop here.
-            if Self.words(joined).count >= Self.words(current).count { current = joined; break }
+            // Notes no shorter than the text: the model isn't compressing, stop here.
+            if rounds > 3 || Self.words(joined).count >= Self.words(current).count { return joined }
             current = joined
         }
         return current
+    }
+
+    /// Tokens kept free for instructions, the output schema, the product description and the answer.
+    static let reservedTokens = 1_700
+
+    /// Asks Apple's own counter whether the text fits next to everything else in one session.
+    private static func fits(_ text: String) async -> Bool {
+        let model = SystemLanguageModel.default
+        if #available(iOS 26.4, macOS 26.4, *), let count = try? await model.tokenCount(for: text) {
+            return count <= model.contextSize - reservedTokens
+        }
+        // Before iOS 26.4 there is no counter: ~1.5 tokens per English word
+        return Double(words(text).count) * 1.5 <= Double(4_096 - reservedTokens)
     }
 
     private func productLevel(title: String, facts: String, product: ProductProfile) async throws -> String {
