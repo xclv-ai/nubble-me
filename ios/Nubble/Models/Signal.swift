@@ -11,9 +11,10 @@ struct Signal: Sendable {
               let rel = Self.block("HOW RELEVANT", in: text) else { return nil }
         relevance = rel
         let moves = Self.block("WHAT TO DO", in: text) ?? ""
-        firstMove = moves.split(separator: "\n").map { $0.trimmingCharacters(in: .whitespaces) }
-            .first { !$0.isEmpty }?
-            .replacingOccurrences(of: #"^\d+[.)]\s*"#, with: "", options: .regularExpression)
+        let lines = moves.split(separator: "\n").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        // The first numbered move; the model sometimes opens with a lead-in sentence
+        firstMove = (lines.first { $0.range(of: #"^\**\s*1[.)]"#, options: .regularExpression) != nil } ?? lines.first)?
+            .replacingOccurrences(of: #"^\**\s*\d+[.)]\s*"#, with: "", options: .regularExpression)
             .replacingOccurrences(of: "**", with: "") ?? ""
     }
 
