@@ -34,50 +34,15 @@ struct StoryLevels: Sendable {
 
 #if canImport(FoundationModels)
 
-@Generable
-struct StoryBrief {
-    @Guide(description: "One sentence, max 20 words: what changed and why it matters.")
-    var summary: String
-    @Guide(description: "2-3 sentences: what's new, what it changes, who it affects.")
-    var condensed: String
-}
 
-@Generable
-struct StoryExpanded {
-    @Guide(description: "Plain English. What happened. Start with the concrete fact.")
-    var whatsGoingOn: String
-    @Guide(description: "Context. What led here. The numbers that matter. Why anyone should care.")
-    var whyThisIsABigDeal: String
-    @Guide(description: "The thing nobody wants to say. The real friction, the hidden cost.")
-    var uncomfortableTruth: String
-    @Guide(description: "One sentence. The punchline. What changes tomorrow.")
-    var soWhat: String
-}
 
-@Generable
-struct ProductImpact {
-    @Guide(description: "How this story hits the product: name its offer, customers, competitors. 120-200 words.")
-    var howThisHits: String
-    @Guide(description: "Specific actions the product team should take, each tied to its real offer and market.", .count(2...3))
-    var movesToConsider: [String]
-    @Guide(description: "1-2 sentences: what competitors gain if the product ignores this.")
-    var riskOfSittingThisOut: String
-}
-
-@Generable
-struct ProductBrief {
-    @Guide(description: "The product or company name as the page states it.")
-    var name: String
-    @Guide(description: "What it sells, to whom, how it is priced, who it competes with and what makes it different — only facts the page states. 80-150 words.")
-    var description: String
-}
 
 #endif
 
 @MainActor
 final class NewsDepthWriter {
-    /// Part size when a text doesn't fit (~1,500 tokens per session, no notes carried between parts).
-    static let chunkWords = 1_000
+    /// Tokens per part when a text doesn't fit; the rest of the 4,096 is for instructions and the notes.
+    static let partTokens = 1_200
 
     enum Step: String, Sendable {
         case readingArticle = "Reading the article…"
@@ -104,17 +69,19 @@ final class NewsDepthWriter {
         let facts = try await factSheet(title: title, text: articleText)
         lastFactSheet = facts
 
+        // Each block is its own plain-text request with Apple's content-transformation guardrails
+        // (structured @Generable answers always run under the default filter, which refused news
+        // stories); the headers are added here, so every block is always present.
+        let story = "Story: \(title)\n\nFacts:\n\(facts)\n\n"
         onStep(.brief)
-        let brief = try await respond(
-            instructions: Self.style,
-            prompt: "Story: \(title)\n\nFacts:\n\(facts)\n\nWrite the summary and the condensed version of this story.",
-            generating: StoryBrief.self)
+        let summary = try await text("summary", Self.style, story + "Write one sentence, max 20 words: what changed and why it matters.")
+        let condensed = try await text("condensed", Self.style, story + "Write 2-3 sentences: what's new, what it changes, who it affects. No filler.")
 
         onStep(.expanded)
-        let expanded = try await respond(
-            instructions: Self.style,
-            prompt: "Story: \(title)\n\nFacts:\n\(facts)\n\nWrite the expanded version of this story, 300-500 words in total across the four parts.",
-            generating: StoryExpanded.self)
+        let going = try await text("what's going on", Self.style, story + "In plain English, what happened? Start with the concrete fact. 2-4 sentences.")
+        let bigDeal = try await text("why big deal", Self.style, story + "Why is this a big deal? Context, what led here, the numbers that matter. 3-5 sentences.")
+        let truth = try await text("uncomfortable truth", Self.style, story + "What is the uncomfortable truth here: the real friction or hidden cost nobody wants to say? Only from these facts. 3-5 sentences.")
+        let soWhat = try await text("so what", Self.style, story + "So what? One sentence: the punchline, what changes tomorrow.")
 
         var forProduct: String?
         if let product {
@@ -123,16 +90,16 @@ final class NewsDepthWriter {
         }
 
         return StoryLevels(
-            summary: brief.summary,
-            condensed: brief.condensed,
+            summary: summary,
+            condensed: condensed,
             expanded: """
-                **WHAT'S GOING ON** \(expanded.whatsGoingOn)
+                **WHAT'S GOING ON** \(going)
 
-                **WHY THIS IS A BIG DEAL** \(expanded.whyThisIsABigDeal)
+                **WHY THIS IS A BIG DEAL** \(bigDeal)
 
-                **UNCOMFORTABLE TRUTH** \(expanded.uncomfortableTruth)
+                **UNCOMFORTABLE TRUTH** \(truth)
 
-                **SO WHAT** \(expanded.soWhat)
+                **SO WHAT** \(soWhat)
                 """,
             forProduct: forProduct
         )
@@ -154,17 +121,28 @@ final class NewsDepthWriter {
         #endif
     }
 
-    /// Reads the user's product page text and writes the description every "My product" level uses.
-    func describeProduct(url: URL, pageText: String) async throws -> (name: String, description: String) {
+    /// Reads the user's product page and writes the description every "My product" level uses.
+    /// The name is the page's own (site name or title); the model writes only the description.
+    /// Describing a page the user supplied is a content transformation, so it runs with Apple's
+    /// `permissiveContentTransformations` guardrails (plain-text answers only).
+    func describeProduct(url: URL, name: String, pageText: String) async throws -> (name: String, description: String) {
         #if canImport(FoundationModels)
         if let reason = OnDeviceModel.unavailableReason { throw WriterError.unavailable(reason) }
-        let facts = try await factSheet(title: url.host() ?? url.absoluteString, text: pageText)
+        let facts = try await factSheet(title: name, text: pageText)
         lastFactSheet = facts
-        let brief = try await respond(
-            instructions: "You describe a company's product from its own website. Use only what the page states.",
-            prompt: "Website: \(url.absoluteString)\n\nWhat the page says:\n\(facts)\n\nDescribe this product.",
-            generating: ProductBrief.self)
-        return (brief.name, brief.description)
+        let session = LanguageModelSession(model: Self.transformModel, instructions: "You describe a company's product from its own website. Use only what the page states.")
+        do {
+            let response = try await session.respond(to: """
+                Website of \(name) (\(url.absoluteString)):
+                \(facts)
+
+                Describe this product in 80-150 words: what it sells, to whom, how it is priced, \
+                who it competes with, and what makes it different. Keep the page's own product names and numbers.
+                """)
+            return (name, response.content.trimmingCharacters(in: .whitespacesAndNewlines))
+        } catch let error as LanguageModelSession.GenerationError {
+            throw WriterError.model(Self.describe(error))
+        }
         #else
         throw WriterError.unavailable(OnDeviceModel.unavailableReason ?? "")
         #endif
@@ -180,12 +158,18 @@ final class NewsDepthWriter {
         var rounds = 0
         while !(await Self.fits(current)) {
             rounds += 1
-            let parts = Self.chunks(current, size: Self.chunkWords)
+            let parts = Self.chunks(current, size: await Self.wordsPerPart(current))
             var notes: [String] = []
             for part in parts {
-                let session = LanguageModelSession(instructions: "You take notes on a text. Keep every fact: who, what, numbers, prices, dates, names, claims, quotes. Plain sentences, no commentary.")
-                let response = try await session.respond(to: "Source: \(title)\n\nText:\n\(part)\n\nWrite the facts from this text.")
-                notes.append(response.content)
+                let session = LanguageModelSession(model: Self.transformModel, instructions: "You take notes on a text. Keep every fact: who, what, numbers, prices, dates, names, claims, quotes. Plain sentences, no commentary.")
+                do {
+                    let response = try await session.respond(to: "Source: \(title)\n\nText:\n\(part)\n\nWrite the most important facts from this text in 10-15 sentences.")
+                    notes.append(response.content)
+                } catch let error as LanguageModelSession.GenerationError {
+                    throw WriterError.model("[notes, part \(notes.count + 1) of \(parts.count)] " + Self.describe(error))
+                } catch {
+                    throw WriterError.model("[notes, part \(notes.count + 1) of \(parts.count)] \(type(of: error)): \(error.localizedDescription)")
+                }
             }
             let joined = notes.joined(separator: "\n")
             // Notes no shorter than the text: the model isn't compressing, stop here.
@@ -193,6 +177,21 @@ final class NewsDepthWriter {
             current = joined
         }
         return current
+    }
+
+    /// Words per part, from the text's real tokens-per-word (Apple's counter on iOS 26.4+).
+    private static func wordsPerPart(_ text: String) async -> Int {
+        let wordCount = max(1, words(text).count)
+        var tokensPerWord = 1.5
+        if #available(iOS 26.4, macOS 26.4, *), let count = try? await SystemLanguageModel.default.tokenCount(for: text) {
+            tokensPerWord = max(1, Double(count) / Double(wordCount))
+        }
+        return max(200, Int(Double(partTokens) / tokensPerWord))
+    }
+
+    /// Apple's guardrails for transforming text the user supplied (notes, descriptions).
+    private static var transformModel: SystemLanguageModel {
+        SystemLanguageModel(guardrails: .permissiveContentTransformations)
     }
 
     /// Tokens kept free for instructions, the output schema, the product description and the answer.
@@ -209,39 +208,42 @@ final class NewsDepthWriter {
     }
 
     private func productLevel(title: String, facts: String, product: ProductProfile) async throws -> String {
-        let impact = try await respond(
-            instructions: """
-                You are a strategic analyst writing for the founders of \(product.name). \
-                Be concrete: name their products, their customers, their competitors. \
-                Not generic advice. Clear, direct, no corporate speak.
-                """,
-            prompt: """
-                ABOUT \(product.name.uppercased()):
-                \(product.description)
+        let analyst = """
+            You are a strategic analyst writing for the founders of \(product.name). \
+            Be concrete: name their products, their customers, their competitors. \
+            Not generic advice. Clear, direct, no corporate speak.
+            """
+        let context = """
+            ABOUT \(product.name.uppercased()):
+            \(product.description)
 
-                NEWS STORY: \(title)
-                \(facts)
+            NEWS STORY: \(title)
+            \(facts)
 
-                Explain how this story hits \(product.name), what they should do, and the risk of ignoring it.
-                """,
-            generating: ProductImpact.self)
-        let moves = impact.movesToConsider.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
+
+            """
+        let hits = try await text("how this hits", analyst, context + "How does this story hit \(product.name)? Name its products, customers, competitors. 120-200 words.")
+        let moves = try await text("moves", analyst, context + "List 2-3 specific moves \(product.name) should make because of this story, as a numbered list. Each tied to its real products and market.")
+        let risk = try await text("risk", analyst, context + "In 1-2 sentences: what do competitors gain if \(product.name) ignores this?")
         return """
-            **HOW THIS HITS \(product.name.uppercased())** \(impact.howThisHits)
+            **HOW THIS HITS \(product.name.uppercased())** \(hits)
 
             **MOVES TO CONSIDER**
             \(moves)
 
-            **THE RISK OF SITTING THIS OUT** \(impact.riskOfSittingThisOut)
+            **THE RISK OF SITTING THIS OUT** \(risk)
             """
     }
 
-    private func respond<T: Generable>(instructions: String, prompt: String, generating: T.Type) async throws -> T {
-        let session = LanguageModelSession(instructions: instructions)
+    /// One plain-text answer in a fresh session, with the content-transformation guardrails.
+    private func text(_ step: String, _ instructions: String, _ prompt: String) async throws -> String {
+        let session = LanguageModelSession(model: Self.transformModel, instructions: instructions)
         do {
-            return try await session.respond(to: prompt, generating: T.self).content
+            return try await session.respond(to: prompt).content.trimmingCharacters(in: .whitespacesAndNewlines)
         } catch let error as LanguageModelSession.GenerationError {
-            throw WriterError.model(Self.describe(error))
+            throw WriterError.model("[\(step)] " + Self.describe(error))
+        } catch {
+            throw WriterError.model("[\(step)] \(error.localizedDescription)")
         }
     }
 

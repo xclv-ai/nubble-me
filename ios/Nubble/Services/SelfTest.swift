@@ -31,6 +31,13 @@ enum SelfTest {
         var storyFactSheet = ""
     }
 
+    /// Optional `-story <url>`: write this story instead of the top-ranked one (same instance across runs).
+    static var storyURL: String? {
+        let args = ProcessInfo.processInfo.arguments
+        guard let i = args.firstIndex(of: "-story"), i + 1 < args.count else { return nil }
+        return args[i + 1]
+    }
+
     static var productURL: URL? {
         let args = ProcessInfo.processInfo.arguments
         guard let i = args.firstIndex(of: "-selftest"), i + 1 < args.count else { return nil }
@@ -52,7 +59,7 @@ enum SelfTest {
             let page = try await PageReader().text(of: url)
             report.productPageText = page.text
             let describer = NewsDepthWriter()
-            let brief = try await describer.describeProduct(url: page.finalUrl, pageText: page.text)
+            let brief = try await describer.describeProduct(url: page.finalUrl, name: page.title, pageText: page.text)
             report.productFactSheet = describer.lastFactSheet
             report.productSeconds = Date().timeIntervalSince(t)
             report.productName = brief.name
@@ -67,7 +74,8 @@ enum SelfTest {
             report.topFive = feedState.mostRelevant.map { String(format: "%.3f  ", $0.relevance ?? 0) + $0.title + "  (" + $0.sourceName + ")" }
             save(report)
 
-            guard let top = feedState.mostRelevant.first else { report.error = "no ranked stories"; save(report); return }
+            let pinned = storyURL.flatMap { u in feedState.articles.first { $0.articleUrl.absoluteString == u } }
+            guard let top = pinned ?? feedState.mostRelevant.first else { report.error = "no ranked stories"; save(report); return }
             report.storyTitle = top.title
             report.storyUrl = top.articleUrl.absoluteString
             t = Date()

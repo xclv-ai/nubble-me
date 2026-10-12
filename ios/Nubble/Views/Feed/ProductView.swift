@@ -90,7 +90,7 @@ struct ProductView: View {
         defer { isReading = false }
         do {
             let page = try await PageReader().text(of: url)
-            let brief = try await NewsDepthWriter().describeProduct(url: page.finalUrl, pageText: page.text)
+            let brief = try await NewsDepthWriter().describeProduct(url: page.finalUrl, name: page.title, pageText: page.text)
             readUrl = page.finalUrl
             name = brief.name
             description = brief.description

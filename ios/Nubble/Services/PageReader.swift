@@ -13,7 +13,8 @@ struct PageReader: Sendable {
         }
         let finalUrl = response.url ?? url
         let doc = try SwiftSoup.parse(String(decoding: data, as: UTF8.self), finalUrl.absoluteString)
-        let title = try doc.title()
+        let siteName = try doc.select("meta[property=og:site_name]").first()?.attr("content") ?? ""
+        let title = siteName.isEmpty ? try doc.title() : siteName
         let description = try doc.select("meta[name=description], meta[property=og:description]").first()?.attr("content") ?? ""
         try doc.select("script, style, noscript, svg, iframe, nav, footer").remove()
         var lines: [String] = []
