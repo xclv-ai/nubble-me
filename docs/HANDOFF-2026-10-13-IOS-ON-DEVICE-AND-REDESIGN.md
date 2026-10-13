@@ -43,6 +43,11 @@ Release archive rebuilt at `/tmp/claude-501/archive/Nubble.xcarchive` (1.2.0 (3)
 ### 20:25–20:40 — the words
 Rewrites verified on the phone: headlines now ≤7 words ("Google Play now allows private vibe-coded apps."), hero number from the distillation ($42M), Why? sheet without repeats. Still weak (on-device 3B): verdicts generic ("…is a wake-up call"), ℞ named a fake product ("V5.3.4 Version" scraped from the page ticker) → fixed by filtering product names; ranking still admits off-target stories (a security startup's raise) → "level — reason" answer, High kept only when the reason shares a word with the product description (ranker v3 re-scores all). Debug `-dump` writes the rounds' words to Documents/rounds.json.
 
+### 20:40–20:52 — the market gate
+Dump of the rounds (`phone.sh dump`) showed the top signal was an on-device LLM story (Hugging Face) — the 3B ranker calls 35/166 stories High. Fix at the deciding step: the product's **market** (two of the source topics: commerce, marketing, ai-news, ai-research, ai-releases) is decided once per profile (`ProductProfile.marketTopics`, model call + heuristic) and the rounds read it: code red → in-market → relevance → date. Result on the phone: Lowe's media network, Lowe's Black Friday, Ross stores — in market, with ℞ naming real products ("…using the Category Perception Report"). Product names cleaned (`cleanProductNames`: no release notes, not the company). Writer v3. Sample lines removed from prompts (the model copied "Pitch a holiday gift box…").
+Still true: verdicts are generic on a 3B model ("They didn't see the inevitable rise of AI-driven competitors"); relevance=High is coarse (Ross opening stores). Remedy unchanged: Apple PCC model / server step for the three daily lines.
+Loop script: `ios/scripts/phone.sh build|install|open [-flow|-flow -why|-flow -page 3|-dump]|shot <name>|dump|all`.
+
 ## Next (owner leads the design)
 1. Owner designs the screens; implement his design natively (SwiftUI + Metal), Geist bundled.
 2. Writer: lead and support as two separate requests (stop the spill/repeat); shorter leads.
