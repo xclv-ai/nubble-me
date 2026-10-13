@@ -29,6 +29,11 @@ Liked: lens / optical distortion as a direction ("direction is promising"). Type
 - Prototypes (rejected, kept for reference): `docs/redesign/proto/lens.html` (WebGL lens, Geist, real phone stories in `signals.js`), `index.html` (gradient), `art.html`; renders in `docs/redesign/`. Serve: `cd docs/redesign/proto && python3 -m http.server 8765`.
 - Fonts downloaded (Geist Sans/Mono/Pixel woff2) in `docs/redesign/proto/fonts/`.
 
+## Update 2026-10-13 evening — design APPROVED and built natively
+Owner (Fable session): target = neurodivergent AI-startup founders ("no patience · infographic not text · red alert when competitors post · clear WHAT TO DO"). Approved direction: **Dr HAOS's daily rounds** in POKPOK's own design system, Dr HAOS as the arrogant-with-receipts hero ("YES this is excellent direction"). Strategy: `docs/STRATEGY-2026-10-13-NEURODIVERGENT-FOUNDERS.md`; mockup `docs/redesign/proto/haos.html` → `docs/redesign/dr-haos-rounds-mockup.png`.
+Built natively (commit fbf3eab, v1.2.0 (3)): `ios/Nubble/Design/Pok.swift` (tokens, Notch shape, squares, tickers, mascot), `ios/Nubble/Views/Rounds/{RoundsView,RoundsFlow,DepthSheet}.swift` (Rounds · Signal/Code red · Why? with 5 depths · Discharged), watchlist (Settings) + prescriptions (`Models/Prescription.swift`), Dr HAOS lines written on-device after the levels (`NewsDepthWriter.punchLines/haosLines`, stored on `ContentSection.headline/action/verdict/rx`). Fonts bundled: Instrument Serif, JetBrains Mono; mascot `Assets.xcassets/DrHaos.imageset` (SVG).
+Installed on the owner's iPhone; not yet seen running (phone locked at every attempt 19:55–20:04). Release archive at `/tmp/claude-501/archive/Nubble.xcarchive` (Apple Development signing; export for App Store re-signs). TestFlight upload waits for the owner's word. Not built: Lock Screen widget, Reminders sync, competitor sources beyond name-matching the feed.
+
 ## Next (owner leads the design)
 1. Owner designs the screens; implement his design natively (SwiftUI + Metal), Geist bundled.
 2. Writer: lead and support as two separate requests (stop the spill/repeat); shorter leads.
