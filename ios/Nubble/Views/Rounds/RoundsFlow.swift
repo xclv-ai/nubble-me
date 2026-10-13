@@ -9,20 +9,22 @@ struct RoundsFlow: View {
 
     var body: some View {
         // Nubble's two axes: up/down = the next signal, left/right = depth
-        ScrollView(.vertical) {
-            LazyVStack(spacing: 0) {
-                ForEach(Array(articles.enumerated()), id: \.element.id) { i, a in
-                    SignalPage(articleId: a.id, index: i + 1, total: articles.count, onNext: { advance() })
-                        .containerRelativeFrame([.horizontal, .vertical]).id(i)
+        GeometryReader { geo in
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 0) {
+                    ForEach(Array(articles.enumerated()), id: \.element.id) { i, a in
+                        SignalPage(articleId: a.id, index: i + 1, total: articles.count, topInset: geo.safeAreaInsets.top, onNext: { advance() })
+                            .containerRelativeFrame([.horizontal, .vertical]).id(i)
+                    }
+                    DischargePage(topInset: geo.safeAreaInsets.top, onClose: { dismiss() }).containerRelativeFrame([.horizontal, .vertical]).id(articles.count)
                 }
-                DischargePage(onClose: { dismiss() }).containerRelativeFrame([.horizontal, .vertical]).id(articles.count)
+                .scrollTargetLayout()
             }
-            .scrollTargetLayout()
+            .scrollTargetBehavior(.paging)
+            .scrollPosition(id: Binding(get: { page }, set: { if let p = $0 { page = p } }))
+            .scrollIndicators(.hidden)
+            .ignoresSafeArea()   // each page paints its own header colour behind the status bar (topInset)
         }
-        .scrollTargetBehavior(.paging)
-        .scrollPosition(id: Binding(get: { page }, set: { if let p = $0 { page = p } }))
-        .scrollIndicators(.hidden)
-        .ignoresSafeArea()
         .preferredColorScheme(.light)
         .onChange(of: page) { _, p in if p == articles.count { feedState.dischargedOn = FeedState.today } }
         .onAppear {
@@ -42,6 +44,7 @@ struct SignalPage: View {
     let articleId: String
     let index: Int
     let total: Int
+    var topInset: CGFloat = 0
     let onNext: () -> Void
     @State private var pipeline = NewsConversionPipeline()
     @State private var writing = false
@@ -56,6 +59,7 @@ struct SignalPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            (isRed ? Pok.critical : Pok.teal).frame(height: topInset)
             Ticker(text: isRed ? " [!] Code red • competitor on your patient list • \(competitor ?? "") " : " [+] \(String(format: "%02d", index)) // \(String(format: "%02d", total)) • \(article?.sourceName ?? "") • \(Self.time(article?.publishedAt)) ",
                    bg: isRed ? Pok.critical : Pok.teal, fg: isRed ? Pok.card : Pok.grey)
             if let section, let article, !writing {
@@ -80,8 +84,7 @@ struct SignalPage: View {
                 writingView
             }
         }
-        .background((isRed ? Pok.critical : Pok.teal).ignoresSafeArea(edges: .top))
-        .background(Pok.yellow.ignoresSafeArea(edges: .bottom))
+        .background(Pok.yellow)
         .task {
             #if DEBUG
             let args = ProcessInfo.processInfo.arguments
@@ -253,10 +256,12 @@ struct HeroFact {
 /// D · Discharged.
 struct DischargePage: View {
     @Environment(FeedState.self) private var feedState
+    var topInset: CGFloat = 0
     let onClose: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
+            Pok.teal.frame(height: topInset)
             Ticker(text: " System status: operational • diagnostic complete • prescribing cure ", bg: Pok.teal, fg: Pok.grey)
             VStack(alignment: .leading, spacing: 10) {
                 PokLabelGrey(text: "Discharge")
@@ -295,8 +300,7 @@ struct DischargePage: View {
             }
             .padding(.horizontal, 24).padding(.top, 16).padding(.bottom, 12).frame(maxWidth: .infinity).background(Pok.pink)
         }
-        .background(Pok.teal.ignoresSafeArea(edges: .top))
-        .background(Pok.pink.ignoresSafeArea(edges: .bottom))
+        .background(Pok.pink)
     }
 
     private var todays: [Prescription] { feedState.prescriptions.filter { Calendar.current.isDateInToday($0.createdAt) } }
