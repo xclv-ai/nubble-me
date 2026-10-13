@@ -9,24 +9,24 @@ struct RoundsFlow: View {
     @State private var page = 0
 
     var body: some View {
-        GeometryReader { geo in
+        VStack(spacing: 0) {
+            topBar.padding(.vertical, 8).background(Haos.bg)
             ScrollView(.vertical) {
                 LazyVStack(spacing: 0) {
                     ForEach(Array(articles.enumerated()), id: \.element.id) { i, a in
-                        SignalPage(articleId: a.id, index: i + 1, total: articles.count, topInset: geo.safeAreaInsets.top, onNext: { advance() })
+                        SignalPage(articleId: a.id, index: i + 1, total: articles.count, topInset: 0, onNext: { advance() })
                             .containerRelativeFrame([.horizontal, .vertical]).id(i)
                     }
-                    DischargePage(topInset: geo.safeAreaInsets.top, onClose: { dismiss() }).containerRelativeFrame([.horizontal, .vertical]).id(articles.count)
+                    DischargePage(topInset: 0, onClose: { dismiss() }).containerRelativeFrame([.horizontal, .vertical]).id(articles.count)
                 }
                 .scrollTargetLayout()
             }
             .scrollTargetBehavior(.paging)
             .scrollPosition(id: Binding(get: { page }, set: { if let p = $0 { page = p } }))
             .scrollIndicators(.hidden)
-            .ignoresSafeArea()
-            .background(Haos.bg)
-            .overlay(alignment: .top) { topBar.padding(.top, geo.safeAreaInsets.top + 6) }
         }
+        .background(Haos.bg.ignoresSafeArea())
+        .toolbar(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
         .onChange(of: page) { _, p in if p == articles.count { feedState.dischargedOn = FeedState.today } }
         .onAppear {
@@ -44,11 +44,11 @@ struct RoundsFlow: View {
     private var topBar: some View {
         HStack(spacing: 12) {
             Button { dismiss() } label: {
-                Image(systemName: "xmark").font(.system(size: 15, weight: .semibold)).foregroundStyle(Haos.ink)
-                    .frame(width: 40, height: 40).background(Haos.ink.opacity(0.14)).clipShape(Circle())
+                HStack(spacing: 6) { Image(systemName: "chevron.left").font(.system(size: 13, weight: .semibold)); Text("Rounds").font(Haos.medium(15)) }
+                    .foregroundStyle(Haos.ink).padding(.horizontal, 12).frame(height: 36).background(Haos.ink.opacity(0.12)).clipShape(Capsule())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Close the rounds")
+            .accessibilityLabel("Back to rounds")
             HStack(spacing: 6) {
                 ForEach(0...articles.count, id: \.self) { i in
                     Capsule().fill(i == page ? Haos.yellow : Haos.ink.opacity(i < page ? 0.6 : 0.22)).frame(width: i == page ? 22 : 8, height: 5)
@@ -83,7 +83,6 @@ struct SignalPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Color.clear.frame(height: topInset + 48)
             if let section, let article, !writing {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
@@ -284,7 +283,6 @@ struct DischargePage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Color.clear.frame(height: topInset + 48)
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     Meta(text: "Discharge · \(RoundsView.dateLine)").padding(.horizontal, 24).padding(.top, 8)

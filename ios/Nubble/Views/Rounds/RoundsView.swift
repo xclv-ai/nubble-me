@@ -48,7 +48,7 @@ struct RoundsView: View {
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
-            .fullScreenCover(isPresented: $showFlow) { RoundsFlow(articles: rounds, startAt: startAt) }
+            .navigationDestination(isPresented: $showFlow) { RoundsFlow(articles: rounds, startAt: startAt) }
             .sheet(isPresented: $showProduct) { NavigationStack { ProductView() } }
             .onAppear {
                 tilt.start()
