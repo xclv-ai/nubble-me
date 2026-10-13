@@ -47,7 +47,15 @@ struct DepthSheet: View {
         .preferredColorScheme(.light)
     }
 
-    @ViewBuilder private var content: some View {
+    private var content: some View { DepthContent(section: section, depth: depth) }
+    private var blocks: [Block] { Block.parse(section.text(at: depth)) }
+}
+
+/// One depth level, rendered the POKPOK way: serif leads, mono support, the Uncomfortable Truth on pink.
+struct DepthContent: View {
+    let section: ContentSection
+    let depth: Int
+    var body: some View {
         switch depth {
         case 0, 1:
             SerifLine(text: section.text(at: depth), size: 26)
@@ -81,7 +89,10 @@ struct DepthSheet: View {
     }
 
     private var blocks: [Block] { Block.parse(section.text(at: depth)) }
+    typealias Block = DepthSheet.Block
+}
 
+extension DepthSheet {
     struct Block: Identifiable {
         let id = UUID()
         let label: String

@@ -8,13 +8,20 @@ struct RoundsFlow: View {
     @State private var page = 0
 
     var body: some View {
-        TabView(selection: $page) {
-            ForEach(Array(articles.enumerated()), id: \.element.id) { i, a in
-                SignalPage(articleId: a.id, index: i + 1, total: articles.count, onNext: { advance() }).tag(i)
+        // Nubble's two axes: up/down = the next signal, left/right = depth
+        ScrollView(.vertical) {
+            LazyVStack(spacing: 0) {
+                ForEach(Array(articles.enumerated()), id: \.element.id) { i, a in
+                    SignalPage(articleId: a.id, index: i + 1, total: articles.count, onNext: { advance() })
+                        .containerRelativeFrame([.horizontal, .vertical]).id(i)
+                }
+                DischargePage(onClose: { dismiss() }).containerRelativeFrame([.horizontal, .vertical]).id(articles.count)
             }
-            DischargePage(onClose: { dismiss() }).tag(articles.count)
+            .scrollTargetLayout()
         }
-        .tabViewStyle(.page(indexDisplayMode: .never))
+        .scrollTargetBehavior(.paging)
+        .scrollPosition(id: Binding(get: { page }, set: { if let p = $0 { page = p } }))
+        .scrollIndicators(.hidden)
         .ignoresSafeArea()
         .preferredColorScheme(.light)
         .onChange(of: page) { _, p in if p == articles.count { feedState.dischargedOn = FeedState.today } }
@@ -38,7 +45,8 @@ struct SignalPage: View {
     let onNext: () -> Void
     @State private var pipeline = NewsConversionPipeline()
     @State private var writing = false
-    @State private var showWhy = false
+    @State private var depth = 0
+    private let depthNames = ["Signal", "Condensed", "Article", "Expanded", "For you"]
 
     private var article: NewsArticle? { feedState.articles.first { $0.id == articleId } }
     private var section: ContentSection? { article?.section }
@@ -54,10 +62,19 @@ struct SignalPage: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         truth(section)
-                        evidence(section, article)
+                        depthStrip(section)
+                        if depth == 0 { evidence(section, article) } else {
+                            DepthContent(section: section, depth: depth).padding(.horizontal, 24).padding(.vertical, 20)
+                                .frame(maxWidth: .infinity, alignment: .leading).background(Pok.beige)
+                                .id(depth).transition(.opacity)
+                        }
                     }
                 }
                 .background(Pok.beige)
+                .gesture(DragGesture(minimumDistance: 30).onEnded { v in
+                    guard abs(v.translation.width) > abs(v.translation.height) * 1.5 else { return }
+                    setDepth(depth + (v.translation.width < 0 ? 1 : -1), of: section)
+                })
                 rx(section, article)
             } else {
                 writingView
@@ -67,11 +84,12 @@ struct SignalPage: View {
         .background(Pok.yellow.ignoresSafeArea(edges: .bottom))
         .task {
             #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("-why"), index == 1 { try? await Task.sleep(for: .seconds(2)); showWhy = true }
+            let args = ProcessInfo.processInfo.arguments
+            if index == 1, let i = args.firstIndex(of: "-depth"), i + 1 < args.count, let d = Int(args[i + 1]) { depth = d }
+            if args.contains("-why"), index == 1 { depth = 3 }
             #endif
             await writeIfNeeded()
         }
-        .sheet(isPresented: $showWhy) { if let section { DepthSheet(section: section, product: product) } }
     }
 
     // Pink (code red) or teal: the headline in Instrument Serif, then his line
@@ -84,6 +102,33 @@ struct SignalPage: View {
         .padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 22)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(isRed ? Pok.pink : Pok.teal)
+    }
+
+    private func setDepth(_ d: Int, of section: ContentSection) {
+        let new = max(0, min(section.maxDepth, d))
+        guard new != depth else { Haptics.warning(); return }
+        withAnimation(.easeInOut(duration: 0.2)) { depth = new }
+        Haptics.light()
+    }
+
+    /// The depth strip: 00 Signal · 01 Condensed · 02 Article · 03 Expanded · 04 For you — swipe left/right or tap
+    private func depthStrip(_ section: ContentSection) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(0...section.maxDepth, id: \.self) { d in
+                    Button { setDepth(d, of: section) } label: {
+                        Text("\(String(format: "%02d", d)) \(depthNames[d])").font(Pok.mono(10, d == depth ? .bold : .regular)).tracking(0.6).textCase(.uppercase)
+                            .padding(.horizontal, 8).padding(.vertical, 7)
+                            .background(d == depth ? Pok.teal : Pok.card).foregroundStyle(d == depth ? Pok.yellow : Pok.teal)
+                            .clipShape(Notch())
+                    }
+                    .buttonStyle(.plain)
+                }
+                PokLabelGrey(text: "← swipe for depth →").padding(.leading, 6)
+            }
+            .padding(.horizontal, 24)
+        }
+        .padding(.top, 14).background(Pok.beige)
     }
 
     // Beige: the number (if the story has one) as the hero, the square, the evidence rows, his verdict
@@ -125,7 +170,7 @@ struct SignalPage: View {
             HStack(spacing: 8) {
                 PokButton(text: "Prescribe → my list") { feedState.prescribe(a, text: line); onNext() }
                 PokButton(text: isRed ? "Skip" : "Why?", trailing: "", outline: true) {
-                    if isRed { feedState.prescribe(a, text: line, status: .skipped); onNext() } else { showWhy = true }
+                    if isRed { feedState.prescribe(a, text: line, status: .skipped); onNext() } else { setDepth(3, of: s) }
                 }
                 .frame(width: 96)
             }
