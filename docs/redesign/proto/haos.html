@@ -27,16 +27,17 @@ body { font-family:"JetBrains Mono",monospace; color:var(--teal); padding:36px 2
 .label { font:600 12px/16px "JetBrains Mono"; letter-spacing:.8px; text-transform:uppercase; }
 .label-g { font:400 10px/16px "JetBrains Mono"; letter-spacing:.08em; text-transform:uppercase; color:var(--grey); }
 .serif { font-family:"Instrument Serif"; font-weight:400; }
-.block { padding:20px 24px; }
+.block { padding:20px 24px; flex:none; }
+.block[style*="flex:1"] { flex:1 1 auto; min-height:0; }
 .teal { background:var(--teal); color:var(--card); } .pink { background:var(--pink); color:var(--teal); } .yellow { background:var(--yellow); color:var(--teal); } .beige { background:var(--beige); color:var(--teal); } .white { background:var(--card); color:var(--teal); }
-.ticker { height:22px; overflow:hidden; white-space:nowrap; font:400 10px/22px "JetBrains Mono"; letter-spacing:.06em; text-transform:uppercase; }
-.saw { height:10px; line-height:10px; font-size:10px; letter-spacing:-1px; overflow:hidden; white-space:nowrap; }
+.ticker { flex:none; height:22px; overflow:hidden; white-space:nowrap; font:400 10px/22px "JetBrains Mono"; letter-spacing:.06em; text-transform:uppercase; }
+.saw { flex:none; height:10px; line-height:10px; font-size:10px; letter-spacing:-1px; overflow:hidden; white-space:nowrap; }
 .dither { font:400 11px/14px "JetBrains Mono"; letter-spacing:1px; white-space:nowrap; overflow:hidden; opacity:.9; }
 /* the doctor */
 .doc { display:flex; gap:14px; align-items:flex-start; }
 .doc img { width:84px; height:84px; flex:none; }
 .hero-doc { display:flex; gap:16px; align-items:flex-end; } .hero-doc img { width:104px; height:104px; flex:none; }
-.noise { display:grid; grid-template-columns:repeat(33, 1fr); gap:2px; margin-top:8px; } .noise i { display:block; aspect-ratio:1; background:var(--grey); opacity:.35; } .noise i.on { background:var(--yellow); opacity:1; outline:1px solid var(--teal); } .noise i.red { background:var(--critical); opacity:1; }
+.noise { display:grid; grid-template-columns:repeat(44, 1fr); gap:2px; margin-top:8px; } .noise i { display:block; aspect-ratio:1; background:var(--grey); opacity:.35; } .noise i.on { background:var(--yellow); opacity:1; outline:1px solid var(--teal); } .noise i.red { background:var(--critical); opacity:1; }
 .say { font:400 23px/1.15 "Instrument Serif"; letter-spacing:-.01em; }
 .say i { font-style:italic; }
 .rx { display:flex; gap:14px; align-items:flex-start; }
