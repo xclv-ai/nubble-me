@@ -25,7 +25,7 @@ struct RoundsView: View {
                     .background(Pok.beige)
                     // the interrupt stays pinned above the floating tab bar; when the bar is not part of the
                     // safe area (inset under 50 pt) the footer makes room for it itself
-                    .safeAreaInset(edge: .bottom) { footer.padding(.bottom, geo.safeAreaInsets.bottom < 50 ? 56 : 0) }
+                    .safeAreaInset(edge: .bottom) { footer.padding(.bottom, geo.safeAreaInsets.bottom < 50 ? 50 : 0) }
                 }
             }
             .background(Pok.teal)
@@ -92,18 +92,18 @@ struct RoundsView: View {
         .background(Pok.beige)
     }
 
-    // Yellow: the interrupt
+    // Yellow: the interrupt — one row
     private var footer: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 6) {
             if product != nil && !rounds.isEmpty {
                 PokButton(text: feedState.isDischargedToday ? "Rounds again" : "Start rounds\(redCount > 0 ? " · 01 is bleeding" : "")") { showFlow = true }
                 HStack { Text("~90 s · then discharged"); Spacer(); Text(feedState.prescriptions.isEmpty ? "" : "\(feedState.prescriptions.filter { $0.status == .todo }.count) ℞ open") }
-                    .font(Pok.mono(10)).tracking(0.8).textCase(.uppercase).foregroundStyle(Pok.teal)
+                    .font(Pok.mono(9)).tracking(0.8).textCase(.uppercase).foregroundStyle(Pok.teal.opacity(0.7))
             } else {
                 Text(product == nil ? "No patient, no rounds." : "Dr HAOS is reading. The rounds open when three signals are in.").font(Pok.mono(11)).tracking(0.5).foregroundStyle(Pok.teal)
             }
         }
-        .padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 8)
+        .padding(.horizontal, 24).padding(.top, 10).padding(.bottom, 4)
         .frame(maxWidth: .infinity).background(Pok.yellow)
     }
 

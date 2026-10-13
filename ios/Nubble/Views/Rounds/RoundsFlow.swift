@@ -79,7 +79,7 @@ struct SignalPage: View {
                     guard abs(v.translation.width) > abs(v.translation.height) * 1.5 else { return }
                     setDepth(depth + (v.translation.width < 0 ? 1 : -1), of: section)
                 })
-                rx(section, article)
+                rx(section, article).padding(.bottom, 18).background(Pok.yellow)
             } else {
                 writingView
             }
