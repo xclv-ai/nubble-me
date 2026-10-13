@@ -169,7 +169,7 @@ struct PokButton: View {
         Button(action: action) {
             HStack { Text(text.uppercased()).font(Pok.mono(13, .bold)).tracking(0.8); Spacer(minLength: 8); Text(trailing).font(Pok.mono(13, .bold)) }
                 .foregroundStyle(outline ? Pok.teal : fg)
-                .padding(.horizontal, 16).frame(height: 42).frame(maxWidth: .infinity)
+                .padding(.horizontal, 14).frame(height: 40).frame(maxWidth: .infinity)
                 .background(outline ? Color.clear : fill)
                 .overlay(outline ? Notch().stroke(Pok.teal, lineWidth: 1) : nil)
                 .clipShape(Notch())
@@ -178,23 +178,23 @@ struct PokButton: View {
     }
 }
 
-/// The ℞ block: yellow interrupt, the prescription in Instrument Serif — compact, one screen-fifth at most.
+/// The ℞ strip: yellow interrupt, the prescription in Instrument Serif with the ℞ inline — a sixth of the screen.
 struct RxBlock<Buttons: View>: View {
     let title: String
     let rx: String
     @ViewBuilder var buttons: Buttons
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                Text("℞").font(Pok.serif(26)).foregroundStyle(Pok.teal)
-                PokLabel(text: title)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text("℞").font(Pok.serif(24)).foregroundStyle(Pok.teal)
+                SerifLine(text: rx, size: 19)
             }
-            SerifLine(text: rx, size: 20)
-            buttons.padding(.top, 2)
+            buttons
         }
-        .padding(.horizontal, 24).padding(.top, 12).padding(.bottom, 14)
+        .padding(.horizontal, 20).padding(.top, 10).padding(.bottom, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Pok.yellow)
+        .accessibilityLabel(title)
     }
 }
 
