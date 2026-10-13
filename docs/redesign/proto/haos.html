@@ -35,6 +35,8 @@ body { font-family:"JetBrains Mono",monospace; color:var(--teal); padding:36px 2
 /* the doctor */
 .doc { display:flex; gap:14px; align-items:flex-start; }
 .doc img { width:84px; height:84px; flex:none; }
+.hero-doc { display:flex; gap:16px; align-items:flex-end; } .hero-doc img { width:104px; height:104px; flex:none; }
+.noise { display:grid; grid-template-columns:repeat(33, 1fr); gap:2px; margin-top:8px; } .noise i { display:block; aspect-ratio:1; background:var(--grey); opacity:.35; } .noise i.on { background:var(--yellow); opacity:1; outline:1px solid var(--teal); } .noise i.red { background:var(--critical); opacity:1; }
 .say { font:400 23px/1.15 "Instrument Serif"; letter-spacing:-.01em; }
 .say i { font-style:italic; }
 .rx { display:flex; gap:14px; align-items:flex-start; }
@@ -65,11 +67,11 @@ h1.serif { font-size:40px; line-height:1.0; letter-spacing:-.015em; text-wrap:ba
   <div class="phone">
     <div class="status teal"><span>9:41</span><span>●●● ▮</span></div>
     <div class="ticker pink">&nbsp;[+] ROUNDS 13-10-26 &nbsp;•&nbsp; 3 SIGNALS &nbsp;•&nbsp; 1 CODE RED &nbsp;•&nbsp; 127 STORIES DISCHARGED AS NOISE &nbsp;[x]&nbsp; ROUNDS 13-10-26 &nbsp;•&nbsp; 3 SIGNALS</div>
-    <div class="block teal" style="padding-top:18px;padding-bottom:22px">
-      <div class="label-g" style="color:var(--grey);margin-bottom:12px">POKPOK.AI // DR HAOS · BRAND PERCEPTION AGENT</div>
-      <div class="doc">
+    <div class="block teal" style="padding-top:14px;padding-bottom:16px">
+      <div class="label-g" style="color:var(--grey);margin-bottom:8px">POKPOK.AI // DR HAOS · BRAND PERCEPTION AGENT</div>
+      <div class="hero-doc">
         <img src="pok/drhaos.svg" alt="Dr HAOS">
-        <div class="say">Three things moved in your market overnight. One is a <i>competitor</i>. I already read all 130 stories so you won't have to. Sit down.</div>
+        <div class="say">Three things moved in your market overnight. One is a <i>competitor</i>. I read all 130 stories so you won't have to. Sit down.</div>
       </div>
     </div>
     <div class="saw yellow" style="color:var(--teal)">▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲</div>
@@ -80,12 +82,14 @@ h1.serif { font-size:40px; line-height:1.0; letter-spacing:-.015em; text-wrap:ba
         <span class="k">Doctor</span><span class="v">DR HAOS</span>
         <span class="k">Rounds</span><span class="v">3 signals · ~90 s · then you are discharged</span>
       </div>
-      <div style="margin-top:18px" class="label">01 // THE SCAN</div>
+      <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:baseline"><span class="label">00 // THE NOISE</span><span class="label-g">130 stories · 3 matter</span></div>
+      <div class="noise" id="noise"></div>
+      <div style="margin-top:16px" class="label">01 // THE SCAN</div>
       <div class="tag red notch"><span class="n">01</span><span class="t">Jungle Scout shipped an AI listing audit</span><span class="s">Code red</span></div>
       <div class="tag notch"><span class="n">02</span><span class="t">Holiday shopping now starts on Prime Day</span><span class="s" style="background:var(--yellow)">High</span></div>
       <div class="tag notch"><span class="n">03</span><span class="t">Shoppers try clothes on inside ChatGPT</span><span class="s" style="background:var(--yellow)">High</span></div>
     </div>
-    <div class="block yellow" style="padding-top:16px;padding-bottom:40px"><div class="btn notch"><span>Start rounds · 01 is bleeding</span><span>→</span></div></div>
+    <div class="block yellow" style="padding-top:14px;padding-bottom:40px"><div class="btn notch"><span>Start rounds · 01 is bleeding</span><span>→</span></div><div style="display:flex;justify-content:space-between;margin-top:10px" class="label-g"><span style="color:var(--teal)">~90 s · then discharged</span><span style="color:var(--teal)">07:40 first code red</span></div></div>
     <div class="home" style="background:var(--teal)"></div>
   </div>
   <div class="cap"><b>A · Rounds.</b> Dr HAOS is the hero: he read the 130 stories, you get three. The patient chart (DOCTOR / PATIENT / ROUNDS), the scan list as notched specimen tags, code red in critical red. Colour rhythm: teal → yellow → beige → yellow.</div>
@@ -107,6 +111,7 @@ h1.serif { font-size:40px; line-height:1.0; letter-spacing:-.015em; text-wrap:ba
         <span class="k">Symptom</span><span class="v">"AI listing audit" — scores Amazon pages for AI shopping assistants</span>
         <span class="k">Diagnosis</span><span class="v">Same promise as X-Ray's AI-visibility read</span>
         <span class="k">What they lack</span><span class="v">No human-perception layer. No 500 reviews. No markers.</span>
+        <span class="k">Seen</span><span class="v">07:40 · junglescout.com/changelog · EXAMPLE</span>
         <span class="k">Threat</span><span class="v"><span class="sq red"></span><span class="sq red"></span><span class="sq red"></span><span class="sq red"></span><span class="sq pale"></span> 4 / 5</span>
       </div>
     </div>
@@ -129,13 +134,14 @@ h1.serif { font-size:40px; line-height:1.0; letter-spacing:-.015em; text-wrap:ba
       <h1 class="serif" style="color:var(--card)">Holiday shopping now starts on <i>Prime Day</i>.</h1>
     </div>
     <div class="block beige" style="flex:1">
-      <div class="label-g">Online spend · Prime Big Deal Days · Oct 6–7 · Adobe</div>
+      <div class="label-g">Online spend · Prime Big Deal Days · Oct 6–7</div>
       <div class="hero">$9.86<small>B</small></div>
       <div style="margin-top:14px;font:400 11px/16px 'JetBrains Mono';letter-spacing:.06em;color:var(--grey);text-transform:uppercase">The peak moved · one square = one week</div>
       <div style="margin-top:6px;line-height:0">
-        <span class="sq y"></span><span class="sq y"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq hatch"></span><span class="sq hatch"></span><span class="sq pale"></span><span class="sq pale"></span>
+        <span class="sq y"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq hatch"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span>
       </div>
-      <div style="display:flex;justify-content:space-between;margin-top:6px;font:400 10px/14px 'JetBrains Mono';letter-spacing:.06em;color:var(--grey)"><span>OCT 6–7 · NOW THE PEAK</span><span>NOV 27 · WAS</span></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font:400 10px/14px 'JetBrains Mono';letter-spacing:.06em;color:var(--grey)"><span>WK 1 · OCT 6–7 · PEAK NOW</span><span>WK 8 · NOV 27 · WAS</span></div>
+      <div class="chart" style="margin-top:14px"><span class="k">Evidence</span><span class="v">Adobe, via Digital Commerce 360 · 12 Oct</span></div>
       <div class="doc" style="margin-top:18px;align-items:center"><img src="pok/drhaos.svg" alt="" style="width:56px;height:56px"><div class="say" style="font-size:19px">Your clients still plan for November. The calendar moved without them. <i>Your selling window moved too.</i></div></div>
     </div>
     <div class="block yellow" style="padding-top:16px;padding-bottom:40px">
@@ -145,6 +151,30 @@ h1.serif { font-size:40px; line-height:1.0; letter-spacing:-.015em; text-wrap:ba
     <div class="home" style="background:var(--teal)"></div>
   </div>
   <div class="cap"><b>C · Signal.</b> The number is the hero (Instrument Serif 96px); the infographic is POKPOK's own square: one square = one week, yellow = the new peak, hatched = the old one. Dr HAOS lands the verdict in one line. "Why?" opens the depth.</div>
+</div>
+
+<!-- C2 · WHY? -->
+<div class="col">
+  <div class="phone">
+    <div class="status beige"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="ticker beige" style="color:var(--grey)">&nbsp;[-] WHY? &nbsp;•&nbsp; 02 // 03 &nbsp;•&nbsp; THE FULL DIAGNOSIS &nbsp;•&nbsp; SWIPE DOWN TO CLOSE &nbsp;[-] WHY? &nbsp;•&nbsp; 02 // 03</div>
+    <div class="block beige" style="flex:1;overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="label">02 // DIAGNOSIS · FULL</span><span class="label-g">4 blocks · 60 s</span></div>
+      <div style="margin-top:14px" class="label-g">What's going on</div>
+      <div style="font:400 20px/1.2 'Instrument Serif';margin-top:4px">Prime Big Deal Days (Oct 6–7) drove <i>$9.86B</i> online, more than last year's event.</div>
+      <div style="font:300 13px/20px 'JetBrains Mono';margin-top:6px">Adobe's data: the two-day October sale now opens the holiday season. Shoppers research deals days ahead and buy early.</div>
+      <div style="margin-top:14px" class="label-g">Why this is a big deal</div>
+      <div style="font:400 20px/1.2 'Instrument Serif';margin-top:4px">The peak moved <i>seven weeks</i> earlier.</div>
+      <div style="font:300 13px/20px 'JetBrains Mono';margin-top:6px">Ad budgets, listing fixes and launches planned for Black Friday now land after the money has moved.</div>
+      <div style="margin-top:14px;padding:12px 14px;background:var(--pink)" class="notch"><div class="label-g" style="color:var(--teal)">Uncomfortable truth</div><div style="font:400 20px/1.2 'Instrument Serif';margin-top:4px">Your clients' calendars are a year out of date — and so was your pitch.</div></div>
+      <div style="margin-top:14px" class="label-g">So what</div>
+      <div style="font:400 20px/1.2 'Instrument Serif';margin-top:4px">Sell the September check-up, not the November rescue.</div>
+      <div class="chart" style="margin-top:16px"><span class="k">Source</span><span class="v">Digital Commerce 360 · Adobe · read in full ↗</span></div>
+    </div>
+    <div class="block yellow" style="padding-top:14px;padding-bottom:40px"><div class="btn notch"><span>Back to the ℞</span><span>↓</span></div></div>
+    <div class="home" style="background:var(--teal)"></div>
+  </div>
+  <div class="cap"><b>C2 · Why?</b> The depth is still there, one swipe away: the four Expanded blocks as an evidence sheet — Instrument Serif lead, Mono support, the uncomfortable truth on pink. Not a lens, not a fold: a sheet, closed with one swipe.</div>
 </div>
 
 <!-- D · DISCHARGED -->
@@ -178,5 +208,8 @@ h1.serif { font-size:40px; line-height:1.0; letter-spacing:-.015em; text-wrap:ba
 
 </div>
 <p class="note">POKPOK design system: colour rhythm (no gradients, hard cuts), Instrument Serif (feeling) + JetBrains Mono (proof), 4px corner notch, the square as the data asset, terminal motifs, Dr HAOS mascot. $9.86B is from today's feed (Adobe via Digital Commerce 360). The Jungle Scout alert and the prescriptions are example copy in Dr HAOS's voice.</p>
+<script>
+(() => { const g = document.getElementById("noise"); if (!g) return; const on = new Set([17, 61, 88]); for (let i = 0; i < 130; i++) { const b = document.createElement("i"); if (i === 17) b.className = "red"; else if (on.has(i)) b.className = "on"; g.appendChild(b); } })();
+</script>
 </body>
 </html>
