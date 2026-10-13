@@ -40,6 +40,9 @@ Added: Lock Screen/Home widget `NubbleWidget` (next ℞ + code-red mark via App 
 Known model limits (on-device 3B): verdicts/℞ still generic on weak stories ("Invest in AI to improve vibe-coding…"); ranking lets non-pokpok stories in as High. Remedy = Apple's larger PCC model (iOS 27 + entitlement) or a server step for the 3 daily lines.
 Release archive rebuilt at `/tmp/claude-501/archive/Nubble.xcarchive` (1.2.0 (3), with NubbleShare + NubbleWidget). TestFlight upload: owner's word.
 
+### 20:25–20:40 — the words
+Rewrites verified on the phone: headlines now ≤7 words ("Google Play now allows private vibe-coded apps."), hero number from the distillation ($42M), Why? sheet without repeats. Still weak (on-device 3B): verdicts generic ("…is a wake-up call"), ℞ named a fake product ("V5.3.4 Version" scraped from the page ticker) → fixed by filtering product names; ranking still admits off-target stories (a security startup's raise) → "level — reason" answer, High kept only when the reason shares a word with the product description (ranker v3 re-scores all). Debug `-dump` writes the rounds' words to Documents/rounds.json.
+
 ## Next (owner leads the design)
 1. Owner designs the screens; implement his design natively (SwiftUI + Metal), Geist bundled.
 2. Writer: lead and support as two separate requests (stop the spill/repeat); shorter leads.
