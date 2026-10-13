@@ -12,6 +12,15 @@ Visual system = POKPOK design system, unchanged: colour rhythm (teal authority �
 Screens: A Rounds (patient chart + scan list) · B Code red (uncomfortable truth → evidence → ℞) · C Signal (hero number + square infographic + his verdict → ℞) · D Discharged (prescriptions receipt, weekly vitals in squares, Lock Screen).
 Sources read for this: `pokpok-ai/knowledge/Reference/pokpok-tone-of-voice.md`, `DR HAOS/HAOS.md`, `design-system/foundations/{color,typography,motion,mascot}`, `design-system/voice/vocabulary.md`, `marketing/…/mascot-design-spec.md`, and pokpok.ai live.
 
+## 0.1 Improvements after approval (v2.1, commit 02e12fe)
+- **00 // THE NOISE**: 130 small squares = the 130 stories read, 3 lit (one red) — the "signal from noise" in POKPOK's own square language, on the rounds screen.
+- Dr HAOS bigger as the hero on the rounds screen; his line is the first thing read.
+- Square timeline fixed to the rule "one square = one week": yellow = the week of Oct 6–7, hatched = the week of Nov 27.
+- Evidence rows carry the receipt: `SEEN 07:40 · junglescout.com/changelog`, `EVIDENCE Adobe via Digital Commerce 360 · 12 Oct`.
+- **C2 · Why?** — the depth survives as an evidence sheet (Instrument Serif lead + Mono support; the Uncomfortable Truth on pink), one swipe down to close. No lens, no fold.
+- Motion (to build, per `design-system/foundations/motion`): the scan tags pop in one after another; the hero number counts up; the squares pop in; the ℞ block slides up. Nothing else moves. Reduce Motion → fades.
+- Open: can the on-device model write Dr HAOS's lines? Being tested with a dedicated "haos verdict / haos ℞" step (`NewsDepthWriter.haosLines`, self-test `-punch -haos`).
+
 ## 1. The thesis
 Nubble stops being a news reader with depth levels and becomes **a daily 90-second brief that ends**: three signals, each a picture and one move, plus a red card whenever a watched competitor moves. The product's unit is not the article and not the summary — it is **the move**. Done-ness is the reward.
 

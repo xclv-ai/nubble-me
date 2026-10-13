@@ -112,6 +112,29 @@ final class NewsDepthWriter {
         #endif
     }
 
+    /// Dr HAOS's lines for one story — POKPOK's voice: a brilliant, impatient diagnostician with receipts.
+    /// Returns the verdict (his one line under the number) and the ℞ (one prescription, verb first).
+    func haosLines(title: String, summary: String, productLevel: String, product: ProductProfile) async throws -> (verdict: String, rx: String) {
+        #if canImport(FoundationModels)
+        let name = product.name
+        let voice = """
+            You are DR HAOS, \(name)'s brand perception agent: a brilliant, impatient diagnostician — House M.D. for brands. \
+            Clinically precise, commercially ruthless, darkly funny, a bit arrogant, and you always hold the receipts. \
+            You name what the founder did not see, make the consequence impossible to ignore, and only say what the facts prove. \
+            Plain words. No hype, no hedging, no marketing speak, no exclamation marks. Never start with the company name.
+            Examples of your lines: "Your clients still plan for November. The calendar moved without them." \
+            "Humans see the product. The crawler is blocked." "Cheaper, dumber, first. I told you they'd try."
+            """
+        let context = "STORY: \(title)\nFACTS: \(summary)\n\nWHAT IT MEANS FOR \(name.uppercased()):\n\(productLevel)\n\n"
+        let verdict = try await text("haos verdict", voice, context + "Give the founder your verdict on this story in one or two short sentences (max 22 words). Say what they did not see and what it costs them. Answer with the lines only.")
+        let rx = try await text("haos rx", voice, context + "Write the prescription: the one thing \(name) does about it today, max 12 words, starting with a verb, naming \(name)'s real product. Answer with the line only.")
+        func clean(_ s: String) -> String { s.trimmingCharacters(in: CharacterSet(charactersIn: "\"“” \n*")) }
+        return (clean(verdict), clean(rx))
+        #else
+        throw WriterError.unavailable(OnDeviceModel.unavailableReason ?? "")
+        #endif
+    }
+
     /// Two short lines for the signal card: a headline (≤7 words) and one action (≤10 words),
     /// written from the story and the "My product" level already on the phone.
     func punchLines(title: String, summary: String, productLevel: String, product: ProductProfile) async throws -> (headline: String, action: String) {

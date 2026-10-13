@@ -72,7 +72,12 @@ enum SelfTest {
                     expandedNow = all.expanded
                 }
                 let p = try await writer.punchLines(title: a.title, summary: s.summary, productLevel: levelNow, product: product)
-                report.items.append(["title": a.title, "forYou": levelNow, "expanded": expandedNow])
+                var item = ["title": a.title, "forYou": levelNow, "expanded": expandedNow]
+                if ProcessInfo.processInfo.arguments.contains("-haos") {
+                    let h = try await writer.haosLines(title: a.title, summary: s.summary, productLevel: levelNow, product: product)
+                    item["verdict"] = h.verdict; item["rx"] = h.rx
+                }
+                report.items.append(item)
                 report.items.append(["title": a.title, "source": a.sourceName, "headline": p.headline, "action": p.action, "seconds": String(format: "%.1f", Date().timeIntervalSince(t))])
             } catch {
                 report.items.append(["title": a.title, "error": error.localizedDescription])
