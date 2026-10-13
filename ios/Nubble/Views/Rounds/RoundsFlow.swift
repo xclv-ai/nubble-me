@@ -25,6 +25,7 @@ struct RoundsFlow: View {
             .scrollIndicators(.hidden)
             .ignoresSafeArea()
             .background(Haos.bg)
+            .overlay(alignment: .top) { topBar.padding(.top, geo.safeAreaInsets.top + 6) }
         }
         .preferredColorScheme(.dark)
         .onChange(of: page) { _, p in if p == articles.count { feedState.dischargedOn = FeedState.today } }
@@ -38,6 +39,26 @@ struct RoundsFlow: View {
     }
 
     private func advance() { withAnimation(.easeInOut(duration: 0.3)) { page = min(page + 1, articles.count) } }
+
+    /// Always visible: close, where you are, how many left. The way out is never more than one tap away.
+    private var topBar: some View {
+        HStack(spacing: 12) {
+            Button { dismiss() } label: {
+                Image(systemName: "xmark").font(.system(size: 15, weight: .semibold)).foregroundStyle(Haos.ink)
+                    .frame(width: 40, height: 40).background(Haos.ink.opacity(0.14)).clipShape(Circle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Close the rounds")
+            HStack(spacing: 6) {
+                ForEach(0...articles.count, id: \.self) { i in
+                    Capsule().fill(i == page ? Haos.yellow : Haos.ink.opacity(i < page ? 0.6 : 0.22)).frame(width: i == page ? 22 : 8, height: 5)
+                }
+            }
+            Spacer()
+            Meta(text: page < articles.count ? "\(page + 1) of \(articles.count) · swipe up" : "discharge", color: Haos.ink2)
+        }
+        .padding(.horizontal, 20)
+    }
 }
 
 /// One signal: the headline big, his line in pink, the depth strip, the evidence, the ℞.
@@ -62,7 +83,7 @@ struct SignalPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Color.clear.frame(height: topInset)
+            Color.clear.frame(height: topInset + 48)
             if let section, let article, !writing {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
@@ -84,6 +105,16 @@ struct SignalPage: View {
                         }
                         .padding(.horizontal, 24).padding(.top, 18)
                         .id(depth).transition(.opacity)
+                        HStack(spacing: 10) {
+                            Button { onNext() } label: {
+                                HStack(spacing: 8) { Text(index < total ? "Next signal" : "Discharge"); Image(systemName: "arrow.down") }
+                                    .font(Haos.medium(15)).foregroundStyle(Haos.ink).padding(.horizontal, 16).frame(height: 44)
+                                    .background(Haos.ink.opacity(0.12)).clipShape(Capsule())
+                            }
+                            .buttonStyle(.plain)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 24).padding(.top, 26)
                         Color.clear.frame(height: 40)
                     }
                 }
@@ -253,7 +284,7 @@ struct DischargePage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Color.clear.frame(height: topInset)
+            Color.clear.frame(height: topInset + 48)
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     Meta(text: "Discharge · \(RoundsView.dateLine)").padding(.horizontal, 24).padding(.top, 8)

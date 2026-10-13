@@ -20,8 +20,8 @@ struct RoundsView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack { Meta(text: "Dr HAOS · rounds · \(Self.dateLine)"); Spacer(); Meta(text: product == nil ? "no patient" : "\(feedState.articles.count) stories read") }
                             .padding(.horizontal, 24).padding(.top, 10)
-                        HaosStage(height: 300, mood: feedState.isDischargedToday ? .discharged : .idle)
-                            .frame(height: 300)
+                        HaosStage(height: 250, mood: feedState.isDischargedToday ? .discharged : .idle)
+                            .frame(height: 250)
                             .padding(.top, 4)
                         Voice(text: openingLine, size: 24).padding(.horizontal, 24).padding(.top, 2)
                         if product == nil {
@@ -39,12 +39,12 @@ struct RoundsView: View {
                                 Text(feedState.isRanking || feedState.isRefreshing ? "Reading…" : "Nothing moved in your market today.").font(Haos.text(17)).foregroundStyle(Haos.ink2).padding(.horizontal, 24).padding(.top, 16)
                             }
                         }
-                        Color.clear.frame(height: 130)
+                        if product != nil && !rounds.isEmpty {
+                            ActionButton(text: feedState.isDischargedToday ? "Rounds again" : "Start rounds\(redCount > 0 ? " — 01 is bleeding" : "")") { startAt = 0; showFlow = true }
+                                .padding(.horizontal, 20).padding(.top, 20)
+                        }
+                        Color.clear.frame(height: 110)   // room for the tab bar
                     }
-                }
-                if product != nil && !rounds.isEmpty {
-                    ActionButton(text: feedState.isDischargedToday ? "Rounds again" : "Start rounds\(redCount > 0 ? " — 01 is bleeding" : "")") { startAt = 0; showFlow = true }
-                        .padding(.horizontal, 20).padding(.bottom, 58)
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
