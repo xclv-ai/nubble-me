@@ -6,6 +6,8 @@ import Foundation
 /// Apple's on-device model reads each story next to the product description and answers
 /// high / medium / low for how much it matters to the product's business.
 struct RelevanceRanker: Sendable {
+    /// Bump when the ranking rule changes: every story is scored again.
+    static let version = 2
     #if DEBUG
     /// The model's raw answers from the last run (development self-test only).
     nonisolated(unsafe) static var lastAnswers: [String] = []

@@ -89,6 +89,7 @@ actor FeedPersistence {
         var lastRefreshedAt: Date?
         var watchlist: [String]? = nil
         var dischargedOn: String? = nil   // yyyy-MM-dd of the last completed rounds
+        var rankerVersion: Int? = nil
     }
 
     // MARK: - Prescriptions

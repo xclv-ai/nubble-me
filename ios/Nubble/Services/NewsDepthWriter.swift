@@ -134,14 +134,29 @@ final class NewsDepthWriter {
         if Self.hasHype(verdict) {   // the small model reaches for sludge; one rewrite, then the screen clamps it
             verdict = clean(try await text("haos verdict 2", voice, context + verdictAsk + " Your draft was: \"\(verdict)\" — it contains marketing sludge. Rewrite it colder, with a concrete consequence for \(name)."))
         }
-        let rxAsk = "Write the prescription: the one thing \(name) does about it today, max 12 words, starting with a verb, naming one of \(name)'s real products from ABOUT. Answer with the line only."
+        if Self.hasHype(verdict) { verdict = "" }   // still sludge after the rewrite: he says nothing rather than that
+        let names = product.products ?? []
+        let namesLine = names.isEmpty ? "" : " Use one of these product names: \(names.joined(separator: ", "))."
+        let rxAsk = "Write the prescription: the one thing \(name) does about it today, max 12 words, starting with a verb, naming one of \(name)'s real products.\(namesLine) Answer with the line only."
         var rx = clean(try await text("haos rx", voice, context + rxAsk))
-        if Self.hasHype(rx) || rx.split(separator: " ").count > 16 {
-            rx = clean(try await text("haos rx 2", voice, context + rxAsk + " Your draft was: \"\(rx)\" — too long or too vague. Shorter, concrete, a product name in it."))
+        func namesProduct(_ s: String) -> Bool { names.isEmpty || names.contains { s.localizedCaseInsensitiveContains($0) } }
+        if Self.hasHype(rx) || rx.split(separator: " ").count > 16 || !namesProduct(rx) {
+            rx = clean(try await text("haos rx 2", voice, context + rxAsk + " Your draft was: \"\(rx)\" — too long, too vague, or it names no product. Shorter, concrete, one product name in it."))
         }
+        if Self.hasHype(rx) || !namesProduct(rx) { rx = "" }   // no prescription beats a fake one; the screen falls back to the plain action
         return (verdict, rx)
         #else
         throw WriterError.unavailable(OnDeviceModel.unavailableReason ?? "")
+        #endif
+    }
+
+    /// The named offerings in a product description — one short list, comma separated.
+    func productNames(from description: String, name: String) async throws -> [String] {
+        #if canImport(FoundationModels)
+        let raw = try await text("product names", "You read a company's product description and list what it sells.", "ABOUT \(name.uppercased()):\n\(description)\n\nList the named products or services (their exact names as written), at most 5, comma separated. Answer with the names only.")
+        return raw.replacingOccurrences(of: "\n", with: ",").split(separator: ",").map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " .*\"")) }.filter { $0.count > 1 && $0.count < 40 }
+        #else
+        return []
         #endif
     }
 

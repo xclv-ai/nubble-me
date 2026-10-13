@@ -120,7 +120,7 @@ struct SignalPage: View {
 
     // Yellow: the prescription
     private func rx(_ s: ContentSection, _ a: NewsArticle) -> some View {
-        let line = s.rx?.isEmpty == false ? s.rx! : (s.action ?? "Read the full diagnosis.")
+        let line = s.rx?.isEmpty == false ? s.rx! : (s.action?.isEmpty == false ? s.action! : "No prescription. Read the diagnosis and decide yourself.")
         return RxBlock(title: isRed ? "Counter-move · today" : "Do this now", rx: line) {
             HStack(spacing: 8) {
                 PokButton(text: "Prescribe → my list") { feedState.prescribe(a, text: line); onNext() }

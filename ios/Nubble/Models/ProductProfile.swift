@@ -7,4 +7,6 @@ struct ProductProfile: Codable, Sendable, Equatable {
     var name: String
     var description: String
     var updatedAt: Date
+    /// The product's named offerings (e.g. "X-Ray", "Brand Alignment Truth"), read once from the description.
+    var products: [String]? = nil
 }

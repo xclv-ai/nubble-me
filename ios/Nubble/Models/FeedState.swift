@@ -37,6 +37,7 @@ final class FeedState {
     var dischargedOn: String? {
         didSet { persistPreferences(); WidgetBridge.publish(self) }
     }
+    var rankerVersion: Int = 0 { didSet { persistPreferences() } }
     var isRefreshing: Bool = false
     var lastRefreshedAt: Date? {
         didSet { persistPreferences() }
@@ -113,12 +114,19 @@ final class FeedState {
         topics = savedTopics.isEmpty ? NewsTopic.defaults : savedTopics
         sources = await persistence.loadSources()
         product = await persistence.loadProduct()
+        if let p = product, p.products == nil, OnDeviceModel.unavailableReason == nil {
+            Task { if let names = try? await NewsDepthWriter().productNames(from: p.description, name: p.name) { var q = p; q.products = names; q.updatedAt = p.updatedAt; self.product = q } }
+        }
         prescriptions = await persistence.loadPrescriptions()
         if let prefs = await persistence.loadPreferences() {
             selectedTopics = Set(prefs.selectedTopics)
             lastRefreshedAt = prefs.lastRefreshedAt
             watchlist = prefs.watchlist ?? []
             dischargedOn = prefs.dischargedOn
+            if (prefs.rankerVersion ?? 0) < RelevanceRanker.version {   // the ranking rule changed: score everything again
+                for i in articles.indices { articles[i].relevance = nil }
+                rankerVersion = RelevanceRanker.version
+            } else { rankerVersion = prefs.rankerVersion ?? 0 }
         }
     }
 
@@ -230,7 +238,8 @@ final class FeedState {
                     refreshInterval: 15,
                     lastRefreshedAt: lastRefreshedAt,
                     watchlist: watchlist,
-                    dischargedOn: dischargedOn
+                    dischargedOn: dischargedOn,
+                    rankerVersion: rankerVersion
                 )
             )
         }
