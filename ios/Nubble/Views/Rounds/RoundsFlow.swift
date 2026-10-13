@@ -18,6 +18,12 @@ struct RoundsFlow: View {
         .ignoresSafeArea()
         .preferredColorScheme(.light)
         .onChange(of: page) { _, p in if p == articles.count { feedState.dischargedOn = FeedState.today } }
+        .onAppear {
+            #if DEBUG
+            let args = ProcessInfo.processInfo.arguments
+            if let i = args.firstIndex(of: "-page"), i + 1 < args.count, let n = Int(args[i + 1]) { page = min(n, articles.count) }
+            #endif
+        }
     }
 
     private func advance() { withAnimation(.easeInOut(duration: 0.25)) { page = min(page + 1, articles.count) } }
@@ -59,7 +65,12 @@ struct SignalPage: View {
             }
         }
         .background(isRed ? Pok.pink : Pok.teal)
-        .task { await writeIfNeeded() }
+        .task {
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-why"), index == 1 { try? await Task.sleep(for: .seconds(2)); showWhy = true }
+            #endif
+            await writeIfNeeded()
+        }
         .sheet(isPresented: $showWhy) { if let section { DepthSheet(section: section, product: product) } }
     }
 

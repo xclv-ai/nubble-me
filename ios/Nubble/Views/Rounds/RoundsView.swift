@@ -19,13 +19,18 @@ struct RoundsView: View {
                         hero
                         ScanBand(text: "Scanning… \(feedState.articles.count) stories")
                         evidence
+                        footer
                     }
                 }
-                .background(Pok.beige)
-                footer
+                .background(Pok.yellow)
             }
             .background(Pok.teal)
             .toolbar(.hidden, for: .navigationBar)
+            .onAppear {
+                #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("-flow") { DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { showFlow = true } }
+                #endif
+            }
             .fullScreenCover(isPresented: $showFlow) { RoundsFlow(articles: rounds) }
             .sheet(isPresented: $showProduct) { NavigationStack { ProductView() } }
         }
@@ -93,7 +98,7 @@ struct RoundsView: View {
                 Text(product == nil ? "No patient, no rounds." : "Dr HAOS is reading. The rounds open when three signals are in.").font(Pok.mono(11)).tracking(0.5).foregroundStyle(Pok.teal)
             }
         }
-        .padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 10)
+        .padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 8)
         .frame(maxWidth: .infinity).background(Pok.yellow)
     }
 

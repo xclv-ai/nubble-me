@@ -144,7 +144,8 @@ struct NoiseGrid: View {
     let lit: Set<Int>
     let red: Set<Int>
     var body: some View {
-        let cols = Array(repeating: GridItem(.flexible(), spacing: 2), count: 44)
+        // flexible() alone has a 10 pt minimum — 44 of them are wider than the screen and push the page off its left edge
+        let cols = Array(repeating: GridItem(.flexible(minimum: 2, maximum: 24), spacing: 2), count: 44)
         LazyVGrid(columns: cols, spacing: 2) {
             ForEach(0..<max(total, 1), id: \.self) { i in
                 Rectangle().fill(red.contains(i) ? Pok.critical : lit.contains(i) ? Pok.yellow : Pok.grey.opacity(0.35)).aspectRatio(1, contentMode: .fit)
@@ -218,8 +219,15 @@ struct ScanBand: View {
     let text: String
     var body: some View {
         VStack(spacing: 0) {
-            Text(String(repeating: "▲", count: 80)).font(.system(size: 7)).foregroundStyle(Pok.teal).lineLimit(1).frame(maxWidth: .infinity).clipped()
-            Text("║ . . : : ░ ▒ ▓ ▓ \(text.uppercased()) ▓ ▓ ▒ ░ : : . . ║").font(Pok.mono(11)).tracking(1).foregroundStyle(Pok.teal).lineLimit(1).padding(.vertical, 6)
+            // the sawtooth edge, drawn — a run of ▲ is one unbreakable word and would widen the page
+            Canvas { ctx, size in
+                var p = Path(); let w: CGFloat = 6
+                var x: CGFloat = 0
+                while x < size.width { p.move(to: CGPoint(x: x, y: size.height)); p.addLine(to: CGPoint(x: x + w / 2, y: 0)); p.addLine(to: CGPoint(x: x + w, y: size.height)); p.closeSubpath(); x += w }
+                ctx.fill(p, with: .color(Pok.teal))
+            }
+            .frame(height: 6)
+            Text("║ . . : : ░ ▒ ▓ ▓ \(text.uppercased()) ▓ ▓ ▒ ░ : : . . ║").font(Pok.mono(11)).tracking(1).foregroundStyle(Pok.teal).lineLimit(1).truncationMode(.middle).padding(.vertical, 6).padding(.horizontal, 12)
         }
         .frame(maxWidth: .infinity).background(Pok.yellow)
     }
