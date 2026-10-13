@@ -67,3 +67,10 @@ Built: `Views/Rounds/HaosStage.swift` — SceneKit Dr HAOS extruded+bevelled fro
 2. Writer: lead and support as two separate requests (stop the spill/repeat); shorter leads.
 3. Prepare the Private Cloud Compute access request (needs iOS 27 on the phone).
 4. Release build without the self-test → owner's word → TestFlight.
+
+## Checkpoint 2026-10-13 23:35 Warsaw — redo, step "creative direction" done; research in
+- Owner's order stands: concept → best practices → UX plan → UI prototype in the phone's browser → only then Swift. No Swift written since 417b9c6.
+- **Creative direction v2** `docs/redo/03-CREATIVE-DIRECTION-2026-10-13.md` (v1 toy withdrawn by the owner). Source = `~/dev/pokpok-ai/marketing/pokpok-cd` (378 votes; painted 35 / linocut 30 of his 120 stars) + the `pokpok-creative` skill. His words: "all buttons physical objects, unconventionally, all connected with open wires — transparent functionality"; "a bit absurd, provocative, but meaningful". Dr HAOS = a real pink cat in a doctor's coat, played straight, first-person camera (the folder root's own programme: ROUND-LOG lines 258–272; round-14 cat-polygraph painted).
+- His picture vocabulary (references in `docs/redo/reference/cd-*`): scanner-wrong painted = the control; microphone painted = room + wire; crown linocut = the print register; filed-wrong linocut = the structure (pigeonholes); footnoted linocut = the map; footnoted painted = the pincushion. He may send more.
+- **Research in:** `01-BEST-PRACTICES-2026-10-13.md` (50 rules + 25-line per-screen checklist, HIG numbers verbatim) and `02-3D-STACK-2026-10-13.md` (RealityKit + one post-process pass: palette snap, ink edges, paper/canvas; rope cables with a yellow pulse on press; Three.js for the browser prototype) — the 3D numbers are estimates, nothing measured on the phone.
+- **Next:** on the owner's "render" — three concept key frames in the house style (Seedream; load `pokpok-creative` + `seedream` skills; style blocks verbatim from `pokpok-cd/tools/r13.py`; every prompt through `tools/prompt_lint.py`), he picks one → UX plan → browser prototype.
