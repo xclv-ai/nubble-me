@@ -50,7 +50,7 @@ struct SignalPage: View {
         VStack(spacing: 0) {
             Ticker(text: isRed ? " [!] Code red • competitor on your patient list • \(competitor ?? "") " : " [+] \(String(format: "%02d", index)) // \(String(format: "%02d", total)) • \(article?.sourceName ?? "") • \(Self.time(article?.publishedAt)) ",
                    bg: isRed ? Pok.critical : Pok.teal, fg: isRed ? Pok.card : Pok.grey)
-            if let section, let article {
+            if let section, let article, !writing {
                 ScrollView {
                     VStack(spacing: 0) {
                         truth(section)
@@ -148,7 +148,7 @@ struct SignalPage: View {
     }
 
     private func writeIfNeeded() async {
-        guard let article, article.document == nil || article.document?.productStamp != feedState.product?.updatedAt, !writing else { return }
+        guard let article, article.document == nil || article.document?.productStamp != feedState.product?.updatedAt || (article.document?.writerVersion ?? 0) < NewsDepthWriter.version, !writing else { return }
         writing = true; defer { writing = false }
         if let doc = article.document, let product = feedState.product {
             _ = await pipeline.refreshProductLevel(article: article, document: doc, feedState: feedState, product: product)

@@ -24,6 +24,8 @@ struct RelevanceRanker: Sendable {
             ABOUT \(product.name.uppercased()):
             \(product.description)
 
+            high = a founder of \(product.name) must act on it this week (it changes what their customers buy, how they sell, or what a competitor offers). \
+            medium = worth knowing, no action. low = not their business.
             Answer with one word: high, medium or low.
             """
         // One story per request: the small model judges single items far better than lists

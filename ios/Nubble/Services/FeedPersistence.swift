@@ -186,7 +186,8 @@ actor FeedPersistence {
                     forProduct: s.forProduct, headline: s.headline, action: s.action, verdict: s.verdict, rx: s.rx
                 )
             },
-            productStamp: document.productStamp
+            productStamp: document.productStamp,
+            writerVersion: document.writerVersion
         )
         guard let data = try? JSONEncoder().encode(dto) else { return }
         let file = documentsDir.appendingPathComponent("\(articleId).json")
@@ -208,7 +209,8 @@ actor FeedPersistence {
                     forProduct: s.forProduct, headline: s.headline, action: s.action, verdict: s.verdict, rx: s.rx
                 )
             },
-            productStamp: dto.productStamp
+            productStamp: dto.productStamp,
+            writerVersion: dto.writerVersion ?? 0
         )
     }
 
@@ -273,6 +275,7 @@ actor FeedPersistence {
         let author: String
         let sections: [PersistedSection]
         var productStamp: Date?
+        var writerVersion: Int?
     }
 
     private struct PersistedSection: Codable {

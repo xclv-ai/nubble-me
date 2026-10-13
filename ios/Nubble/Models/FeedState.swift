@@ -186,7 +186,7 @@ final class FeedState {
         defer { isWritingSignals = false; writingSignalFor = nil }
         while true {
             guard self.product == product else { return }
-            let needs: (NewsArticle) -> Bool = { ($0.document == nil || $0.document?.productStamp != product.updatedAt) && $0.processingState != .failed }
+            let needs: (NewsArticle) -> Bool = { ($0.document == nil || $0.document?.productStamp != product.updatedAt || ($0.document?.writerVersion ?? 0) < NewsDepthWriter.version) && $0.processingState != .failed }
             guard let next = rounds.first(where: needs)
                 ?? articles.filter({ ($0.relevance ?? 0) >= 1 && needs($0) }).sorted(by: { $0.publishedAt > $1.publishedAt }).first else { return }
             writingSignalFor = next.id

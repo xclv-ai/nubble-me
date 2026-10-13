@@ -93,7 +93,8 @@ final class NewsConversionPipeline {
             title: title,
             author: author,
             sections: [section],
-            productStamp: product?.updatedAt
+            productStamp: product?.updatedAt,
+            writerVersion: NewsDepthWriter.version
         )
         feedState.setDocument(article.id, document: document)
         return document
@@ -110,6 +111,7 @@ final class NewsConversionPipeline {
         do {
             s.forProduct = try await writer.writeProductLevel(title: section.title, articleText: section.standard, product: product)
             updated.productStamp = product.updatedAt
+            updated.writerVersion = NewsDepthWriter.version
             await Self.fillHaos(&s, title: section.title, level: s.forProduct ?? "", product: product, writer: writer)
         } catch {
             s.forProduct = "**ON-DEVICE AI** \(error.localizedDescription)"

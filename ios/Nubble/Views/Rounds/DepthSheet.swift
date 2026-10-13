@@ -113,6 +113,8 @@ struct DepthSheet: View {
                     support = String(support.dropFirst(leadKey.count)).trimmingCharacters(in: CharacterSet(charactersIn: ". ")).trimmingCharacters(in: .whitespaces)
                     if let f = support.first { support = f.uppercased() + support.dropFirst() }
                 }
+                var seen = Set<String>()
+                support = support.components(separatedBy: ". ").filter { seen.insert($0.lowercased().trimmingCharacters(in: CharacterSet(charactersIn: ". "))).inserted }.joined(separator: ". ")
                 out.append(Block(label: label, lead: lead, text: support, bullets: []))
             }
             return out.isEmpty ? [Block(label: "", lead: "", text: text.replacingOccurrences(of: "**", with: ""), bullets: [])] : out

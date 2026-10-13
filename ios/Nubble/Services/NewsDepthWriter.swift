@@ -41,6 +41,8 @@ struct StoryLevels: Sendable {
 
 @MainActor
 final class NewsDepthWriter {
+    /// Bump when the prompts change: stories written by an older writer are written again.
+    static let version = 2
     /// Tokens per part when a text doesn't fit; the rest of the 4,096 is for instructions and the notes.
     static let partTokens = 1_200
 
@@ -126,14 +128,25 @@ final class NewsDepthWriter {
             "Humans see the product. The crawler is blocked." "Cheaper, dumber, first. I told you they'd try."
             """
         let context = "STORY: \(title)\nFACTS: \(summary)\n\nWHAT IT MEANS FOR \(name.uppercased()):\n\(productLevel)\n\n"
-        let verdict = try await text("haos verdict", voice, context + "Give the founder your verdict on this story in one or two short sentences (max 22 words). Say what they did not see and what it costs them. Answer with the lines only.")
-        let rx = try await text("haos rx", voice, context + "Write the prescription: the one thing \(name) does about it today, max 12 words, starting with a verb, naming \(name)'s real product. Answer with the line only.")
         func clean(_ s: String) -> String { s.trimmingCharacters(in: CharacterSet(charactersIn: "\"“” \n*")) }
-        return (clean(verdict), clean(rx))
+        let verdictAsk = "Give the founder your verdict on this story in one or two short sentences (max 22 words). Say what they did not see and what it costs them. No praise of the news. Answer with the lines only."
+        var verdict = clean(try await text("haos verdict", voice, context + verdictAsk))
+        if Self.hasHype(verdict) {   // the small model reaches for sludge; one rewrite, then the screen clamps it
+            verdict = clean(try await text("haos verdict 2", voice, context + verdictAsk + " Your draft was: \"\(verdict)\" — it contains marketing sludge. Rewrite it colder, with a concrete consequence for \(name)."))
+        }
+        let rxAsk = "Write the prescription: the one thing \(name) does about it today, max 12 words, starting with a verb, naming one of \(name)'s real products from ABOUT. Answer with the line only."
+        var rx = clean(try await text("haos rx", voice, context + rxAsk))
+        if Self.hasHype(rx) || rx.split(separator: " ").count > 16 {
+            rx = clean(try await text("haos rx 2", voice, context + rxAsk + " Your draft was: \"\(rx)\" — too long or too vague. Shorter, concrete, a product name in it."))
+        }
+        return (verdict, rx)
         #else
         throw WriterError.unavailable(OnDeviceModel.unavailableReason ?? "")
         #endif
     }
+
+    static let hypeWords = ["game-changer", "game changer", "revolution", "exciting", "leverage", "unlock", "empower", "seamless", "cutting-edge", "next-level", "transformative", "synergy", "holistic", "best-in-class", "robust", "innovative"]
+    static func hasHype(_ s: String) -> Bool { let l = s.lowercased(); return hypeWords.contains { l.contains($0) } }
 
     /// Two short lines for the signal card: a headline (≤7 words) and one action (≤10 words),
     /// written from the story and the "My product" level already on the phone.
