@@ -82,6 +82,8 @@
 	<false/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>Dr HAOS puts each prescription you accept on a "Dr HAOS ℞" list in Reminders.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Satoshi-Light.otf</string>

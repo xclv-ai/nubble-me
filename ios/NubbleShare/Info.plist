@@ -35,5 +35,7 @@
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).ShareViewController</string>
 	</dict>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>Dr HAOS puts each prescription you accept on a "Dr HAOS ℞" list in Reminders.</string>
 </dict>
 </plist>

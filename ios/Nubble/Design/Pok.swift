@@ -59,6 +59,7 @@ struct SerifLine: View {
     var color: Color = Pok.teal
     var body: some View {
         Text(Self.attributed(text, size: size)).foregroundStyle(color).lineSpacing(size * 0.08)
+            .fixedSize(horizontal: false, vertical: true)   // never truncated: a headline is read whole or not at all
     }
     static func attributed(_ text: String, size: CGFloat) -> AttributedString {
         var out = AttributedString()

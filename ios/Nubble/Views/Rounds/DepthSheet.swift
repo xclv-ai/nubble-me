@@ -40,7 +40,7 @@ struct DepthSheet: View {
                     withAnimation(.easeInOut(duration: 0.2)) { depth = max(0, min(section.maxDepth, depth + (v.translation.width < 0 ? 1 : -1))) }
                 }
             })
-            PokButton(text: "Back to the ℞", trailing: "↓") { dismiss() }
+            PokButton(text: "Back to the prescription", trailing: "↓") { dismiss() }
                 .padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 28).background(Pok.yellow)
         }
         .background(Pok.beige)
@@ -106,7 +106,14 @@ struct DepthSheet: View {
                 if body.hasPrefix("**"), let end = body.dropFirst(2).range(of: "**") {
                     lead = String(body.dropFirst(2)[..<end.lowerBound]); rest = String(body[end.upperBound...])
                 }
-                out.append(Block(label: label, lead: lead, text: rest.replacingOccurrences(of: "**", with: "").trimmingCharacters(in: .whitespacesAndNewlines), bullets: []))
+                var support = rest.replacingOccurrences(of: "**", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+                // the model often repeats the lead as the first support sentence — say it once
+                let leadKey = lead.lowercased().trimmingCharacters(in: CharacterSet(charactersIn: ". "))
+                if !leadKey.isEmpty, support.lowercased().hasPrefix(leadKey) {
+                    support = String(support.dropFirst(leadKey.count)).trimmingCharacters(in: CharacterSet(charactersIn: ". ")).trimmingCharacters(in: .whitespaces)
+                    if let f = support.first { support = f.uppercased() + support.dropFirst() }
+                }
+                out.append(Block(label: label, lead: lead, text: support, bullets: []))
             }
             return out.isEmpty ? [Block(label: "", lead: "", text: text.replacingOccurrences(of: "**", with: ""), bullets: [])] : out
         }

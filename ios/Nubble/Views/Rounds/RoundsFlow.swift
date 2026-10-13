@@ -48,7 +48,6 @@ struct SignalPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Color.clear.frame(height: 54).background(isRed ? Pok.critical : Pok.teal)
             Ticker(text: isRed ? " [!] Code red • competitor on your patient list • \(competitor ?? "") " : " [+] \(String(format: "%02d", index)) // \(String(format: "%02d", total)) • \(article?.sourceName ?? "") • \(Self.time(article?.publishedAt)) ",
                    bg: isRed ? Pok.critical : Pok.teal, fg: isRed ? Pok.card : Pok.grey)
             if let section, let article {
@@ -64,7 +63,8 @@ struct SignalPage: View {
                 writingView
             }
         }
-        .background(isRed ? Pok.pink : Pok.teal)
+        .background((isRed ? Pok.critical : Pok.teal).ignoresSafeArea(edges: .top))
+        .background(Pok.yellow.ignoresSafeArea(edges: .bottom))
         .task {
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("-why"), index == 1 { try? await Task.sleep(for: .seconds(2)); showWhy = true }
@@ -211,17 +211,20 @@ struct DischargePage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Color.clear.frame(height: 54).background(Pok.teal)
             Ticker(text: " System status: operational • diagnostic complete • prescribing cure ", bg: Pok.teal, fg: Pok.grey)
             VStack(alignment: .leading, spacing: 10) {
                 PokLabelGrey(text: "Discharge")
-                SerifLine(text: "Discharged. Nothing else is wrong with you today. *Sadly.*", size: 38, color: Pok.card)
+                SerifLine(text: "Discharged. Nothing else is wrong with you today. *Sadly.*", size: 34, color: Pok.card)
                 DoctorSays(line: "\(todays.count) prescriptions. Don't come back until *tomorrow*.", size: 19, color: Pok.card).padding(.top, 6)
             }
             .padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 22).frame(maxWidth: .infinity, alignment: .leading).background(Pok.teal)
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    PokLabel(text: "℞ // Your prescriptions")
+                    PokLabel(text: "Rx // Your prescriptions")
+                    if todays.isEmpty {
+                        SerifLine(text: "Nothing prescribed. You skipped everything — *brave.*", size: 20).padding(.vertical, 12)
+                        DottedRule()
+                    }
                     ForEach(todays) { p in
                         HStack(alignment: .top, spacing: 12) {
                             Button { toggle(p) } label: { Square(fill: p.status == .done ? .solid(Pok.teal) : p.isCodeRed ? .solid(Pok.critical) : p.status == .todo ? .solid(Pok.yellow) : .pale, size: 14).padding(.top, 3) }.buttonStyle(.plain)
@@ -244,8 +247,10 @@ struct DischargePage: View {
                 ChartRow(key: "Watchlist", value: feedState.watchlist.isEmpty ? "no competitors watched yet — Settings → Watchlist" : "\(feedState.watchlist.count) competitors watched", valueColor: feedState.watchlist.isEmpty ? Pok.critical : Pok.teal)
                 PokButton(text: "Close the chart", trailing: "↓") { onClose() }
             }
-            .padding(.horizontal, 24).padding(.top, 16).padding(.bottom, 40).frame(maxWidth: .infinity).background(Pok.pink)
+            .padding(.horizontal, 24).padding(.top, 16).padding(.bottom, 12).frame(maxWidth: .infinity).background(Pok.pink)
         }
+        .background(Pok.teal.ignoresSafeArea(edges: .top))
+        .background(Pok.pink.ignoresSafeArea(edges: .bottom))
     }
 
     private var todays: [Prescription] { feedState.prescriptions.filter { Calendar.current.isDateInToday($0.createdAt) } }
