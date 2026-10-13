@@ -87,6 +87,22 @@ actor FeedPersistence {
         var selectedTopics: [String]
         var refreshInterval: Int
         var lastRefreshedAt: Date?
+        var watchlist: [String]? = nil
+        var dischargedOn: String? = nil   // yyyy-MM-dd of the last completed rounds
+    }
+
+    // MARK: - Prescriptions
+
+    func savePrescriptions(_ list: [Prescription]) {
+        let encoder = JSONEncoder(); encoder.dateEncodingStrategy = .iso8601
+        guard let data = try? encoder.encode(list) else { return }
+        try? data.write(to: cacheDir.appendingPathComponent("prescriptions.json"), options: .atomic)
+    }
+
+    func loadPrescriptions() -> [Prescription] {
+        guard let data = try? Data(contentsOf: cacheDir.appendingPathComponent("prescriptions.json")) else { return [] }
+        let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
+        return (try? decoder.decode([Prescription].self, from: data)) ?? []
     }
 
     // MARK: - Articles
@@ -167,7 +183,7 @@ actor FeedPersistence {
                     id: s.id, title: s.title,
                     summary: s.summary, condensed: s.condensed,
                     standard: s.standard, expanded: s.expanded,
-                    forProduct: s.forProduct
+                    forProduct: s.forProduct, headline: s.headline, action: s.action, verdict: s.verdict, rx: s.rx
                 )
             },
             productStamp: document.productStamp
@@ -189,7 +205,7 @@ actor FeedPersistence {
                     id: s.id, title: s.title,
                     summary: s.summary, condensed: s.condensed,
                     standard: s.standard, expanded: s.expanded,
-                    forProduct: s.forProduct
+                    forProduct: s.forProduct, headline: s.headline, action: s.action, verdict: s.verdict, rx: s.rx
                 )
             },
             productStamp: dto.productStamp
@@ -267,5 +283,9 @@ actor FeedPersistence {
         let standard: String
         let expanded: String
         var forProduct: String?
+        var headline: String?
+        var action: String?
+        var verdict: String?
+        var rx: String?
     }
 }

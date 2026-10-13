@@ -24,6 +24,11 @@ struct SettingsView: View {
                             row("My product", icon: "scope", value: feedState.product?.name ?? "Not set")
                         }
                         .foregroundStyle(NubbleColors.foreground(for: colorScheme))
+                        NavigationLink {
+                            WatchlistView()
+                        } label: {
+                            row("Watchlist · competitors", icon: "exclamationmark.triangle", value: feedState.watchlist.isEmpty ? "none" : "\(feedState.watchlist.count)")
+                        }
                     } header: {
                         sectionHeader("Personalisation")
                     } footer: {
@@ -103,5 +108,30 @@ struct SettingsView: View {
             .foregroundStyle(NubbleColors.muted(for: colorScheme))
             .tracking(1.5)
             .textCase(.uppercase)
+    }
+}
+
+
+/// The patient list: competitors. A story naming one becomes a code red.
+struct WatchlistView: View {
+    @Environment(FeedState.self) private var feedState
+    @State private var name = ""
+    var body: some View {
+        @Bindable var feedState = feedState
+        List {
+            Section {
+                HStack {
+                    TextField("Competitor name, e.g. Jungle Scout", text: $name).autocorrectionDisabled()
+                    Button("Add") { let n = name.trimmingCharacters(in: .whitespaces); if !n.isEmpty { feedState.watchlist.append(n); name = "" } }
+                        .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            } footer: { Text("Any story that names one of them is pinned first in the rounds as a code red.") }
+            Section {
+                ForEach(feedState.watchlist, id: \.self) { Text($0) }
+                    .onDelete { feedState.watchlist.remove(atOffsets: $0) }
+            } header: { Text("\(feedState.watchlist.count) watched") }
+        }
+        .navigationTitle("Watchlist")
+        .toolbar { EditButton() }
     }
 }

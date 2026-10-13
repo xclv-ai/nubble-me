@@ -26,6 +26,17 @@ final class FeedState {
             Task { await rank() }
         }
     }
+    /// Competitors on the patient list: a story naming one is a code red.
+    var watchlist: [String] = [] {
+        didSet { persistPreferences() }
+    }
+    var prescriptions: [Prescription] = [] {
+        didSet { Task { [prescriptions] in await FeedPersistence.shared.savePrescriptions(prescriptions) } }
+    }
+    /// yyyy-MM-dd of the last day the rounds were completed.
+    var dischargedOn: String? {
+        didSet { persistPreferences() }
+    }
     var isRefreshing: Bool = false
     var lastRefreshedAt: Date? {
         didSet { persistPreferences() }
@@ -59,6 +70,30 @@ final class FeedState {
     }
 
     static let relevantCount = 5
+    static let roundsCount = 3
+
+    static var today: String { let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; return f.string(from: Date()) }
+
+    func codeRedName(for article: NewsArticle) -> String? {
+        let hay = (article.title + " " + article.snippet).lowercased()
+        return watchlist.first { !$0.isEmpty && hay.contains($0.lowercased()) }
+    }
+
+    /// Today's rounds: code reds first, then the stories closest to the product. Three.
+    var rounds: [NewsArticle] {
+        let fresh = articles.filter { $0.publishedAt >= Date(timeIntervalSinceNow: -3 * 86400) }
+        let reds = fresh.filter { codeRedName(for: $0) != nil }.sorted { $0.publishedAt > $1.publishedAt }
+        let rest = fresh.filter { codeRedName(for: $0) == nil && $0.relevance != nil }
+            .sorted { ($0.relevance ?? 0, $0.publishedAt) > ($1.relevance ?? 0, $1.publishedAt) }
+        return Array((reds + rest).prefix(Self.roundsCount))
+    }
+
+    var isDischargedToday: Bool { dischargedOn == Self.today }
+
+    func prescribe(_ article: NewsArticle, text: String, status: Prescription.Status = .todo) {
+        prescriptions.removeAll { $0.articleId == article.id }
+        prescriptions.insert(Prescription(id: UUID().uuidString, articleId: article.id, text: text, createdAt: Date(), status: status, isCodeRed: codeRedName(for: article) != nil), at: 0)
+    }
 
     var unreadCount: Int {
         articles.filter { !$0.isRead }.count
@@ -76,9 +111,12 @@ final class FeedState {
         topics = savedTopics.isEmpty ? NewsTopic.defaults : savedTopics
         sources = await persistence.loadSources()
         product = await persistence.loadProduct()
+        prescriptions = await persistence.loadPrescriptions()
         if let prefs = await persistence.loadPreferences() {
             selectedTopics = Set(prefs.selectedTopics)
             lastRefreshedAt = prefs.lastRefreshedAt
+            watchlist = prefs.watchlist ?? []
+            dischargedOn = prefs.dischargedOn
         }
     }
 
@@ -144,11 +182,10 @@ final class FeedState {
         isWritingSignals = true
         defer { isWritingSignals = false; writingSignalFor = nil }
         while true {
-            guard self.product == product,
-                  let next = articles
-                    .filter({ ($0.relevance ?? 0) >= 1 && ($0.document == nil || $0.document?.productStamp != product.updatedAt) && $0.processingState != .failed })
-                    .sorted(by: { $0.publishedAt > $1.publishedAt })
-                    .first else { return }
+            guard self.product == product else { return }
+            let needs: (NewsArticle) -> Bool = { ($0.document == nil || $0.document?.productStamp != product.updatedAt) && $0.processingState != .failed }
+            guard let next = rounds.first(where: needs)
+                ?? articles.filter({ ($0.relevance ?? 0) >= 1 && needs($0) }).sorted(by: { $0.publishedAt > $1.publishedAt }).first else { return }
             writingSignalFor = next.id
             let pipeline = NewsConversionPipeline()
             if let doc = next.document {
@@ -188,7 +225,9 @@ final class FeedState {
                 .init(
                     selectedTopics: Array(selectedTopics),
                     refreshInterval: 15,
-                    lastRefreshedAt: lastRefreshedAt
+                    lastRefreshedAt: lastRefreshedAt,
+                    watchlist: watchlist,
+                    dischargedOn: dischargedOn
                 )
             )
         }

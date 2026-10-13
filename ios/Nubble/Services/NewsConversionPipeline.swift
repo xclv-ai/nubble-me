@@ -55,7 +55,7 @@ final class NewsConversionPipeline {
             }
         }
 
-        let section: ContentSection
+        var section: ContentSection
         do {
             lastArticleText = text
             let levels = try await writer.write(title: title, articleText: text, product: product)
@@ -69,6 +69,10 @@ final class NewsConversionPipeline {
                 expanded: levels.expanded,
                 forProduct: levels.forProduct ?? Self.noProductText
             )
+            if let product, let level = levels.forProduct {
+                stage = .product
+                await Self.fillHaos(&section, title: title, level: level, product: product, writer: writer)
+            }
         } catch {
             if inBackground { feedState.updateProcessingState(article.id, state: .pending); throw error }
             // Show the reason on every AI level; Standard still carries the article itself.
@@ -106,6 +110,7 @@ final class NewsConversionPipeline {
         do {
             s.forProduct = try await writer.writeProductLevel(title: section.title, articleText: section.standard, product: product)
             updated.productStamp = product.updatedAt
+            await Self.fillHaos(&s, title: section.title, level: s.forProduct ?? "", product: product, writer: writer)
         } catch {
             s.forProduct = "**ON-DEVICE AI** \(error.localizedDescription)"
         }
@@ -114,6 +119,16 @@ final class NewsConversionPipeline {
         stage = .done
         feedState.setDocument(article.id, document: updated)
         return updated
+    }
+
+    /// Dr HAOS's four lines; a failure leaves the line empty rather than stopping the story.
+    static func fillHaos(_ section: inout ContentSection, title: String, level: String, product: ProductProfile, writer: NewsDepthWriter) async {
+        if let p = try? await writer.punchLines(title: title, summary: section.summary, productLevel: level, product: product) {
+            section.headline = p.headline; section.action = p.action
+        }
+        if let h = try? await writer.haosLines(title: title, summary: section.summary, productLevel: level, product: product) {
+            section.verdict = h.verdict; section.rx = h.rx
+        }
     }
 
     static let noProductText = "**MY PRODUCT** Add your product's web address in Settings → My product, and this level will explain how each story hits your product."

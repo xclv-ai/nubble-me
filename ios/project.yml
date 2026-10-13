@@ -57,6 +57,12 @@ targets:
           - Satoshi-Bold.otf
           - Zodiak-Regular.otf
           - Zodiak-Bold.otf
+          - InstrumentSerif-Regular.ttf
+          - InstrumentSerif-Italic.ttf
+          - JetBrainsMono-Light.ttf
+          - JetBrainsMono-Regular.ttf
+          - JetBrainsMono-Medium.ttf
+          - JetBrainsMono-Bold.ttf
         LSSupportsOpeningDocumentsInPlace: true
         ITSAppUsesNonExemptEncryption: false
         UIBackgroundModes:
