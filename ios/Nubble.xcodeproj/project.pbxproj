@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		000462B2A78B824345206836 /* RSSParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B80739F59CEFE070DB71B41 /* RSSParser.swift */; };
 		00C5D9D73788ABFE663271D5 /* JetBrainsMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 934BEC0CC6835A0C52F39F67 /* JetBrainsMono-Regular.ttf */; };
+		0551E55D735E95CC776A1D82 /* JetBrainsMono-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 00537FD225257355158AF7DE /* JetBrainsMono-Medium.ttf */; };
 		070921B7B534BFC886079066 /* SelfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2213BCDD836352437B1C81E /* SelfTest.swift */; };
 		0785378EEF0BB9DEECC2CAE8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C17564D9A266A7072B0B22D3 /* Assets.xcassets */; };
 		0F544ECD5966779A8150EB91 /* TopicChipsBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41515E08069E81F2E4D4FC6 /* TopicChipsBar.swift */; };
@@ -17,28 +18,38 @@
 		1C0458FEB8179CDAAC7D5372 /* Zodiak-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08216A5A28A93A88EBDD73DB /* Zodiak-Regular.otf */; };
 		1C271C53BB63236CF989F040 /* Zodiak-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = C02820B31992FBF367FC0A27 /* Zodiak-BoldItalic.otf */; };
 		1EA6FF9B34B0B4F4886F2480 /* DuplicateDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87990CEE42CFB2830C24839 /* DuplicateDetector.swift */; };
+		265CADB61629D3E33CE1F02A /* Zodiak-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08216A5A28A93A88EBDD73DB /* Zodiak-Regular.otf */; };
 		268969D963AD5FE0ACCFE86B /* NewsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67E542ADFC2C665502179D4 /* NewsCardView.swift */; };
 		26AEB92E55A2DF6D9F9F43A0 /* NewsConversionPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4026DBE5145A0630A8923FFC /* NewsConversionPipeline.swift */; };
 		2771C382AB86C6D428A33C6B /* FeedState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B09A1B0AE7AD90425D06C9 /* FeedState.swift */; };
 		2AA8C5F06DFDCF5B64AE609C /* NubbleColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4BB6809551B3A8D236686E /* NubbleColors.swift */; };
+		2B9C3F8DD45BD9D678F25446 /* WidgetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA2BBDD8097D16307EC6C175 /* WidgetBridge.swift */; };
 		2E03A34384CB5A8CCD4CADB2 /* ContentDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6A1FBE561D03F44D0F84F4 /* ContentDocument.swift */; };
 		2E70A8D1E75D737E160A54E8 /* SampleContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E15F8804151EEAEB749D758 /* SampleContent.swift */; };
 		2E7D66B8BDA2EB276D53A3A2 /* Satoshi-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 124D04FF20C898504D3862DD /* Satoshi-Regular.otf */; };
+		2ECF57688EEDF993F2FDEA72 /* NubbleWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDEC92B698C0A0A7778CD59 /* NubbleWidget.swift */; };
 		3183A6E7036351920BA20DE5 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1996051221793889914DF1E3 /* Typography.swift */; };
+		3289F38C36F568AAD8C99336 /* Satoshi-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1BA7D294D555AFF5EB497D0C /* Satoshi-Light.otf */; };
 		34D7A2ABBE60B58B1B1152E3 /* Zodiak-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = BA726363F300A8F68C0E0C8E /* Zodiak-LightItalic.otf */; };
+		3A405889872F1315EA3F891E /* JetBrainsMono-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3213C5AEA3BC3608D2199040 /* JetBrainsMono-Bold.ttf */; };
 		3B3B38E40E7EFE658552A269 /* NubbleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7154753A83EFB28462FD99A /* NubbleApp.swift */; };
 		3B89AFC73E6568EACF743B77 /* Zodiak-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = F80CFFB3E70D4FD8D12B9685 /* Zodiak-Black.otf */; };
 		4045A503B9E29BBFCD3DCA53 /* SharedInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40D87F123C4B2396B75CDFE /* SharedInbox.swift */; };
+		417CDDED6E35B654A95E5BF8 /* NubbleWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 91B050C65F6B276663D02AE8 /* NubbleWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		47BD5A0B109FB9A6864C6052 /* DepthGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3C4A203835059617D97B7A /* DepthGenerator.swift */; };
 		4A3627C59A6B4D2406A9CB23 /* Prescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59EAF5F1852A00C810E3B09 /* Prescription.swift */; };
 		4A41F4C4EB6D7E99C3FFB7D1 /* SavedArticlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81AA1BFC124A92ABACB0CBE /* SavedArticlesView.swift */; };
 		4C9D9195020C93EC01A98CC2 /* RelevanceRanker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3030497C46C0E715A651F190 /* RelevanceRanker.swift */; };
 		4F9BF7EC3F1AA22C0380AEA7 /* EPubParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C80A08E5015C95B8F17FD6 /* EPubParser.swift */; };
 		50D6ECB7CCB72033580501A3 /* ArticleProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DFDF8A4B33A2D5CBB707162 /* ArticleProcessingView.swift */; };
+		51729F9095B864318D183974 /* Satoshi-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4ABEE256B863B1B45D6405E9 /* Satoshi-Italic.otf */; };
+		534581064146739E5E668565 /* Zodiak-ExtraboldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 142026EDDBE4D5532C6B3EB8 /* Zodiak-ExtraboldItalic.otf */; };
 		5591A2B07AA11874FF1E1ADA /* JetBrainsMono-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC727025A66EB9D19071A75E /* JetBrainsMono-Light.ttf */; };
+		55A7DB44C5FEA757EA13CCE7 /* Satoshi-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 87709AD64461DB08A4AD66E9 /* Satoshi-Bold.otf */; };
 		55A85C882FBDFFF41AC6DE68 /* Zodiak-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = E74C98BCDA1A84A474C96EC9 /* Zodiak-ThinItalic.otf */; };
 		5A057B4CEBD9CFA72E107DED /* Zodiak-ExtraboldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 142026EDDBE4D5532C6B3EB8 /* Zodiak-ExtraboldItalic.otf */; };
 		5BFF5E34899D89206E051D1C /* Satoshi-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4ABEE256B863B1B45D6405E9 /* Satoshi-Italic.otf */; };
+		5CFFB2E0201C1E30F15CD1DA /* RemindersBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F196EB4DB9DA422610F759 /* RemindersBridge.swift */; };
 		5D03AF6D604D606D38F51D09 /* NewsArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82A45828218C2D3ADD0D2C9 /* NewsArticle.swift */; };
 		5DC33A1509666A13ECBE260A /* SourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516BD0D3B438D98AF337E259 /* SourcesView.swift */; };
 		6256B725B1E1D2C3632FCEBE /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF620687F9CCBF2D92597237 /* Signal.swift */; };
@@ -49,15 +60,19 @@
 		76EDB6CB13275A497A184D87 /* Zodiak-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 95950AE25D22AD73E5660512 /* Zodiak-Italic.otf */; };
 		77FBB1DB0E45554057B3193E /* DepthScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4C946F8E045F7104C904A9 /* DepthScan.swift */; };
 		7A3654FB2D9958A1A0AD7E16 /* ChunkingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 813304EFE8E8488673523566 /* ChunkingEngine.swift */; };
+		7A68618FE88DAB224BD979EC /* Satoshi-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 443FEA87C2BF29965EA9D3C1 /* Satoshi-Medium.otf */; };
+		7C100D7CBA60E33DF6A36944 /* Satoshi-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 124D04FF20C898504D3862DD /* Satoshi-Regular.otf */; };
 		7CA906338ABD3F51357B5F3B /* InstrumentSerif-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC5986BB1ABB3EEBEA8918FB /* InstrumentSerif-Regular.ttf */; };
 		80855D8F8F2DA21F64D0A7EE /* FeedRefreshScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE42CE7FA428177480F1629 /* FeedRefreshScheduler.swift */; };
 		83EF04485E266115996D9C3E /* Zodiak-Extrabold.otf in Resources */ = {isa = PBXBuildFile; fileRef = A7EBBFD790A49F6C4BC09E1E /* Zodiak-Extrabold.otf */; };
 		85290ECA0E595E7337E272B0 /* ProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0D0D6094217C68FA4E35DF /* ProductView.swift */; };
+		865587E96D06587DBAE6D9F7 /* InstrumentSerif-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 34C640D0D9095A88A7BC394E /* InstrumentSerif-Italic.ttf */; };
 		88C431BBDE2DF417C55A66DE /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E0DD90E078EF71A4BE9D1CE /* ImportView.swift */; };
 		892B393E59FA180341D2DEA3 /* NewsDepthWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF045E50B4E74ED3E787A6A /* NewsDepthWriter.swift */; };
 		8B28387BAC00FFEBFF82B6C8 /* Springs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADC1CC19C0AC85D26806BDC /* Springs.swift */; };
 		8FADAFE9BDC5900B43D3FED5 /* ProductNewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52AA22EACA5084A182AF681 /* ProductNewsView.swift */; };
 		923921BA6D6157424C6EF5BB /* Zodiak-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = D465B464983075800687BA68 /* Zodiak-Bold.otf */; };
+		94062D7D10F9C848163E8D4B /* JetBrainsMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 934BEC0CC6835A0C52F39F67 /* JetBrainsMono-Regular.ttf */; };
 		9674EEFFB80CC3C58DDEC142 /* JetBrainsMono-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 00537FD225257355158AF7DE /* JetBrainsMono-Medium.ttf */; };
 		9993D4059DD5890ADB4B50CF /* Satoshi-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3026CCA56112E799A3CD303D /* Satoshi-MediumItalic.otf */; };
 		9BE2BA616F97284DFB9001B4 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095565930EAD1E1A2DA30D70 /* ShareViewController.swift */; };
@@ -68,12 +83,16 @@
 		A3FD372F9D0B614D05DB1D0B /* InstrumentSerif-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 34C640D0D9095A88A7BC394E /* InstrumentSerif-Italic.ttf */; };
 		A7DB12578EC94BF6CBBF33E5 /* SwipeOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF8A10C5BB255AA9BAD6E84 /* SwipeOnboarding.swift */; };
 		A82F1E0426371A33D17BB06D /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = DEEE494003EEA3BCC989B48A /* ZIPFoundation */; };
+		AB448823F392462A6BCAC975 /* JetBrainsMono-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC727025A66EB9D19071A75E /* JetBrainsMono-Light.ttf */; };
+		AF68B6D5296F2FBE9E0FEFB7 /* Satoshi-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = C57712F709C920A752E93A9A /* Satoshi-LightItalic.otf */; };
 		B18E4B6773BD9C3CAF82C19D /* Satoshi-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 443FEA87C2BF29965EA9D3C1 /* Satoshi-Medium.otf */; };
 		B9514BF98F9507CBDC45C042 /* Satoshi-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 87709AD64461DB08A4AD66E9 /* Satoshi-Bold.otf */; };
 		BA6D43139AAB56E16E298D4B /* Zodiak-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = FD5A84476E2ABA2CEF0F4D95 /* Zodiak-Light.otf */; };
 		BAB2DF486CAE2946E8A4DCCC /* FeedPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B4AF39092E4BAFB920723 /* FeedPersistence.swift */; };
+		BB84527F32C1678187C77731 /* InstrumentSerif-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC5986BB1ABB3EEBEA8918FB /* InstrumentSerif-Regular.ttf */; };
 		BBF2FC6D989CD02C73AD4302 /* ArticleExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E56BCCDFAA1E916E08D01D93 /* ArticleExtractor.swift */; };
 		C2519ED66C9AD59D3381FD71 /* RoundsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2230B3D9E618B331BDB67FD /* RoundsView.swift */; };
+		C277C55A9ECECA991EE29A9C /* Zodiak-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = E74C98BCDA1A84A474C96EC9 /* Zodiak-ThinItalic.otf */; };
 		C6DDE593EE581CD7BBB6DB3D /* NewsFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26126A714730915134055367 /* NewsFeedView.swift */; };
 		C846F5BE75EF14104B0CB838 /* DepthSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C497F25F1467576A8156DA9A /* DepthSheet.swift */; };
 		C89E6D9046833D53EFEE163D /* ContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1BBEE1C8F4B7FF6AF91EF3 /* ContentSection.swift */; };
@@ -81,22 +100,39 @@
 		CAA7EED491972C896559206D /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = BEDA8351376257171DE48B0C /* SwiftSoup */; };
 		CE465FBF51D420A3AB9BD386 /* NewsTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72984C21A062E6920FD763FB /* NewsTopic.swift */; };
 		CFA362458CF60A34B69B01EB /* Zodiak-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD371F1C4546416D71EB1FA /* Zodiak-Thin.otf */; };
+		D095DB0A1CE2D828BC65F9A1 /* Zodiak-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = D465B464983075800687BA68 /* Zodiak-Bold.otf */; };
+		D11F511482AB6770B9B12EE5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5300017F680FC09D0CDCBC6C /* Assets.xcassets */; };
+		D16C1EEE1A5E5B72B7A9C934 /* Zodiak-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 95950AE25D22AD73E5660512 /* Zodiak-Italic.otf */; };
 		D16C8DC15AFC8A6DFD2C700C /* PageReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42F6C0ADE8A307CCD90079C /* PageReader.swift */; };
 		D1B44B8B76874EABEF3CBD6A /* LocalFeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027A81C7DF7C1C38B94FCE85 /* LocalFeedService.swift */; };
 		D1D4E5D16BBFE481F302302C /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04E26FE6EF8DFF3C3E5D05F /* Haptics.swift */; };
 		D1E7AD1132952341E726B35F /* ConversionPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07A2E061D21C18323C40575 /* ConversionPipeline.swift */; };
 		D8EAAB49EF959218CADAC762 /* ReaderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE85C30F593D0D5B249CAD0 /* ReaderState.swift */; };
+		DBC0B21E8845E78C39C1285B /* Zodiak-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = BA726363F300A8F68C0E0C8E /* Zodiak-LightItalic.otf */; };
 		DF461766F33E06419DCD77A0 /* SectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3E4B0C0C975EE7507ED102 /* SectionView.swift */; };
 		E762841951E5C59BD89A659D /* JetBrainsMono-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3213C5AEA3BC3608D2199040 /* JetBrainsMono-Bold.ttf */; };
 		E77DF9096F698D3C60B4AC1A /* NubbleReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0755FE128A25592C9D838527 /* NubbleReaderView.swift */; };
 		EB4D70A023DB2779C4E8444A /* DepthIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6886937EFD690603D16BCEC6 /* DepthIndicator.swift */; };
 		EE0FD3F1511E7A30E767854F /* NubbleShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EE2ABE357AC546CA1A6452F1 /* Satoshi-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3026CCA56112E799A3CD303D /* Satoshi-MediumItalic.otf */; };
 		F0DE4871420FA99BD38B1007 /* ProductProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B36ADE400BD8221DA781180 /* ProductProfile.swift */; };
+		F671824E32938A60AEB9BE59 /* Zodiak-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = FD5A84476E2ABA2CEF0F4D95 /* Zodiak-Light.otf */; };
+		FA6BE86B973A3CA5739D09F6 /* Zodiak-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD371F1C4546416D71EB1FA /* Zodiak-Thin.otf */; };
 		FC4BE98D84A9A7EC2738CEE2 /* BoundaryFlash.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0030AD57BA806CA81309D4 /* BoundaryFlash.swift */; };
 		FE572BCEE36767D521BF77B6 /* Satoshi-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1BA7D294D555AFF5EB497D0C /* Satoshi-Light.otf */; };
+		FED3708F4EA686028B42A640 /* Zodiak-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = F80CFFB3E70D4FD8D12B9685 /* Zodiak-Black.otf */; };
+		FF8267BD95FC4AE848B9A663 /* Zodiak-Extrabold.otf in Resources */ = {isa = PBXBuildFile; fileRef = A7EBBFD790A49F6C4BC09E1E /* Zodiak-Extrabold.otf */; };
+		FFB15FC0B62753AA7573796A /* Zodiak-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = C02820B31992FBF367FC0A27 /* Zodiak-BoldItalic.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1753BD261C08502D9141BFB9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7D91DE030048C1BFE4CF5F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44B7B265A75CDEE1B6AD1293;
+			remoteInfo = NubbleWidget;
+		};
 		1B9F24D64E472300C739842A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B7D91DE030048C1BFE4CF5F5 /* Project object */;
@@ -114,6 +150,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				EE0FD3F1511E7A30E767854F /* NubbleShare.appex in Embed Foundation Extensions */,
+				417CDDED6E35B654A95E5BF8 /* NubbleWidget.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -136,6 +173,7 @@
 		1ADC1CC19C0AC85D26806BDC /* Springs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Springs.swift; sourceTree = "<group>"; };
 		1BA7D294D555AFF5EB497D0C /* Satoshi-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-Light.otf"; sourceTree = "<group>"; };
 		21E873226478D404328183B7 /* ReadingTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingTime.swift; sourceTree = "<group>"; };
+		2417FC6C35C7D5F4CC58CF74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		26126A714730915134055367 /* NewsFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsFeedView.swift; sourceTree = "<group>"; };
 		29D0D95FB5443D68F6888036 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2BF045E50B4E74ED3E787A6A /* NewsDepthWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDepthWriter.swift; sourceTree = "<group>"; };
@@ -144,6 +182,7 @@
 		3213C5AEA3BC3608D2199040 /* JetBrainsMono-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsMono-Bold.ttf"; sourceTree = "<group>"; };
 		34C640D0D9095A88A7BC394E /* InstrumentSerif-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InstrumentSerif-Italic.ttf"; sourceTree = "<group>"; };
 		359D962DAD2E3FD370D5D20A /* MotionTilt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTilt.swift; sourceTree = "<group>"; };
+		35F196EB4DB9DA422610F759 /* RemindersBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersBridge.swift; sourceTree = "<group>"; };
 		3A4BB6809551B3A8D236686E /* NubbleColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NubbleColors.swift; sourceTree = "<group>"; };
 		4026DBE5145A0630A8923FFC /* NewsConversionPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsConversionPipeline.swift; sourceTree = "<group>"; };
 		443FEA87C2BF29965EA9D3C1 /* Satoshi-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-Medium.otf"; sourceTree = "<group>"; };
@@ -156,6 +195,8 @@
 		4F0760A9EC4AC11596E08C9B /* Pok.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pok.swift; sourceTree = "<group>"; };
 		516BD0D3B438D98AF337E259 /* SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesView.swift; sourceTree = "<group>"; };
 		52B09A1B0AE7AD90425D06C9 /* FeedState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedState.swift; sourceTree = "<group>"; };
+		5300017F680FC09D0CDCBC6C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5CDEC92B698C0A0A7778CD59 /* NubbleWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NubbleWidget.swift; sourceTree = "<group>"; };
 		63F14E3E6A994F0610552F72 /* TopicManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicManagerView.swift; sourceTree = "<group>"; };
 		6886937EFD690603D16BCEC6 /* DepthIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthIndicator.swift; sourceTree = "<group>"; };
 		69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NubbleShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -168,6 +209,7 @@
 		87709AD64461DB08A4AD66E9 /* Satoshi-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-Bold.otf"; sourceTree = "<group>"; };
 		87835B1148D75BFC1C62B5EC /* ReadingProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingProgressBar.swift; sourceTree = "<group>"; };
 		8B36ADE400BD8221DA781180 /* ProductProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductProfile.swift; sourceTree = "<group>"; };
+		91B050C65F6B276663D02AE8 /* NubbleWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NubbleWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		934BEC0CC6835A0C52F39F67 /* JetBrainsMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsMono-Regular.ttf"; sourceTree = "<group>"; };
 		95950AE25D22AD73E5660512 /* Zodiak-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Italic.otf"; sourceTree = "<group>"; };
 		9A00265742C2418D4EA50CB1 /* NubbleShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NubbleShare.entitlements; sourceTree = "<group>"; };
@@ -197,6 +239,7 @@
 		D465B464983075800687BA68 /* Zodiak-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Bold.otf"; sourceTree = "<group>"; };
 		D7154753A83EFB28462FD99A /* NubbleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NubbleApp.swift; sourceTree = "<group>"; };
 		D81AA1BFC124A92ABACB0CBE /* SavedArticlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedArticlesView.swift; sourceTree = "<group>"; };
+		DA2BBDD8097D16307EC6C175 /* WidgetBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetBridge.swift; sourceTree = "<group>"; };
 		DB3C4A203835059617D97B7A /* DepthGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthGenerator.swift; sourceTree = "<group>"; };
 		DDE85C30F593D0D5B249CAD0 /* ReaderState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderState.swift; sourceTree = "<group>"; };
 		E07A2E061D21C18323C40575 /* ConversionPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionPipeline.swift; sourceTree = "<group>"; };
@@ -206,6 +249,7 @@
 		E56BCCDFAA1E916E08D01D93 /* ArticleExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleExtractor.swift; sourceTree = "<group>"; };
 		E74C98BCDA1A84A474C96EC9 /* Zodiak-ThinItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-ThinItalic.otf"; sourceTree = "<group>"; };
 		E82A45828218C2D3ADD0D2C9 /* NewsArticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsArticle.swift; sourceTree = "<group>"; };
+		EA46333ECFFA15AD5087C0C6 /* NubbleWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NubbleWidget.entitlements; sourceTree = "<group>"; };
 		ED0030AD57BA806CA81309D4 /* BoundaryFlash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundaryFlash.swift; sourceTree = "<group>"; };
 		F04E26FE6EF8DFF3C3E5D05F /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		F80CFFB3E70D4FD8D12B9685 /* Zodiak-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Black.otf"; sourceTree = "<group>"; };
@@ -247,6 +291,7 @@
 			children = (
 				82FD2B5D011BFE504075965C /* Nubble.app */,
 				69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */,
+				91B050C65F6B276663D02AE8 /* NubbleWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -282,6 +327,17 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		435BFD2750C973A9600FD4CE /* NubbleWidget */ = {
+			isa = PBXGroup;
+			children = (
+				5300017F680FC09D0CDCBC6C /* Assets.xcassets */,
+				2417FC6C35C7D5F4CC58CF74 /* Info.plist */,
+				EA46333ECFFA15AD5087C0C6 /* NubbleWidget.entitlements */,
+				5CDEC92B698C0A0A7778CD59 /* NubbleWidget.swift */,
+			);
+			path = NubbleWidget;
+			sourceTree = "<group>";
+		};
 		487FBBB1CCA18D9D6E1CE5C7 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -312,6 +368,7 @@
 			children = (
 				1DE5E51CD99D9A18DEEB706B /* Nubble */,
 				AF0A82991069707606D71A3F /* NubbleShare */,
+				435BFD2750C973A9600FD4CE /* NubbleWidget */,
 				248C87F7FC54602A3DCBE7CA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -384,9 +441,11 @@
 				E42F6C0ADE8A307CCD90079C /* PageReader.swift */,
 				02D3C41E3C70D724E64B70A3 /* PDFExtractor.swift */,
 				3030497C46C0E715A651F190 /* RelevanceRanker.swift */,
+				35F196EB4DB9DA422610F759 /* RemindersBridge.swift */,
 				4B80739F59CEFE070DB71B41 /* RSSParser.swift */,
 				C2213BCDD836352437B1C81E /* SelfTest.swift */,
 				C40D87F123C4B2396B75CDFE /* SharedInbox.swift */,
+				DA2BBDD8097D16307EC6C175 /* WidgetBridge.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -462,6 +521,24 @@
 			productReference = 69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		44B7B265A75CDEE1B6AD1293 /* NubbleWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F9EDC161CADF9A6CC995BA22 /* Build configuration list for PBXNativeTarget "NubbleWidget" */;
+			buildPhases = (
+				53DFD2BBAFC5AB2101B805BC /* Sources */,
+				C10756829A9C5C0EAFDD3EF6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NubbleWidget;
+			packageProductDependencies = (
+			);
+			productName = NubbleWidget;
+			productReference = 91B050C65F6B276663D02AE8 /* NubbleWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		DE4772B509FCFFB16582F2E6 /* Nubble */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4FABC79677ABC8E199363EE2 /* Build configuration list for PBXNativeTarget "Nubble" */;
@@ -475,6 +552,7 @@
 			);
 			dependencies = (
 				B4E820CAF16095E65864A289 /* PBXTargetDependency */,
+				46F97319C70C3E4C230F4ACA /* PBXTargetDependency */,
 			);
 			name = Nubble;
 			packageProductDependencies = (
@@ -495,6 +573,10 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					2CD600351DE454DE9EF479A8 = {
+						DevelopmentTeam = F7TR367W75;
+						ProvisioningStyle = Automatic;
+					};
+					44B7B265A75CDEE1B6AD1293 = {
 						DevelopmentTeam = F7TR367W75;
 						ProvisioningStyle = Automatic;
 					};
@@ -524,11 +606,44 @@
 			targets = (
 				DE4772B509FCFFB16582F2E6 /* Nubble */,
 				2CD600351DE454DE9EF479A8 /* NubbleShare */,
+				44B7B265A75CDEE1B6AD1293 /* NubbleWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C10756829A9C5C0EAFDD3EF6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D11F511482AB6770B9B12EE5 /* Assets.xcassets in Resources */,
+				865587E96D06587DBAE6D9F7 /* InstrumentSerif-Italic.ttf in Resources */,
+				BB84527F32C1678187C77731 /* InstrumentSerif-Regular.ttf in Resources */,
+				3A405889872F1315EA3F891E /* JetBrainsMono-Bold.ttf in Resources */,
+				AB448823F392462A6BCAC975 /* JetBrainsMono-Light.ttf in Resources */,
+				0551E55D735E95CC776A1D82 /* JetBrainsMono-Medium.ttf in Resources */,
+				94062D7D10F9C848163E8D4B /* JetBrainsMono-Regular.ttf in Resources */,
+				55A7DB44C5FEA757EA13CCE7 /* Satoshi-Bold.otf in Resources */,
+				51729F9095B864318D183974 /* Satoshi-Italic.otf in Resources */,
+				3289F38C36F568AAD8C99336 /* Satoshi-Light.otf in Resources */,
+				AF68B6D5296F2FBE9E0FEFB7 /* Satoshi-LightItalic.otf in Resources */,
+				7A68618FE88DAB224BD979EC /* Satoshi-Medium.otf in Resources */,
+				EE2ABE357AC546CA1A6452F1 /* Satoshi-MediumItalic.otf in Resources */,
+				7C100D7CBA60E33DF6A36944 /* Satoshi-Regular.otf in Resources */,
+				FED3708F4EA686028B42A640 /* Zodiak-Black.otf in Resources */,
+				D095DB0A1CE2D828BC65F9A1 /* Zodiak-Bold.otf in Resources */,
+				FFB15FC0B62753AA7573796A /* Zodiak-BoldItalic.otf in Resources */,
+				FF8267BD95FC4AE848B9A663 /* Zodiak-Extrabold.otf in Resources */,
+				534581064146739E5E668565 /* Zodiak-ExtraboldItalic.otf in Resources */,
+				D16C1EEE1A5E5B72B7A9C934 /* Zodiak-Italic.otf in Resources */,
+				F671824E32938A60AEB9BE59 /* Zodiak-Light.otf in Resources */,
+				DBC0B21E8845E78C39C1285B /* Zodiak-LightItalic.otf in Resources */,
+				265CADB61629D3E33CE1F02A /* Zodiak-Regular.otf in Resources */,
+				FA6BE86B973A3CA5739D09F6 /* Zodiak-Thin.otf in Resources */,
+				C277C55A9ECECA991EE29A9C /* Zodiak-ThinItalic.otf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FFCBCFEFBA4245D47625F6A3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -611,6 +726,7 @@
 				639C8FC6E71179CF8EA707B1 /* ReadingProgressBar.swift in Sources */,
 				0FFC30972F6F3114F201909C /* ReadingTime.swift in Sources */,
 				4C9D9195020C93EC01A98CC2 /* RelevanceRanker.swift in Sources */,
+				5CFFB2E0201C1E30F15CD1DA /* RemindersBridge.swift in Sources */,
 				9D70DE2A4961888AE4501093 /* RoundsFlow.swift in Sources */,
 				C2519ED66C9AD59D3381FD71 /* RoundsView.swift in Sources */,
 				2E70A8D1E75D737E160A54E8 /* SampleContent.swift in Sources */,
@@ -626,6 +742,15 @@
 				0F544ECD5966779A8150EB91 /* TopicChipsBar.swift in Sources */,
 				6D10D42E3C0C6BBAD8F295CD /* TopicManagerView.swift in Sources */,
 				3183A6E7036351920BA20DE5 /* Typography.swift in Sources */,
+				2B9C3F8DD45BD9D678F25446 /* WidgetBridge.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		53DFD2BBAFC5AB2101B805BC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2ECF57688EEDF993F2FDEA72 /* NubbleWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -640,6 +765,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		46F97319C70C3E4C230F4ACA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44B7B265A75CDEE1B6AD1293 /* NubbleWidget */;
+			targetProxy = 1753BD261C08502D9141BFB9 /* PBXContainerItemProxy */;
+		};
 		B4E820CAF16095E65864A289 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2CD600351DE454DE9EF479A8 /* NubbleShare */;
@@ -680,6 +810,44 @@
 					"@executable_path/../../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.nubble.app.share;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		39F9FB9C02818E4B20C81515 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NubbleWidget/NubbleWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F7TR367W75;
+				INFOPLIST_FILE = NubbleWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = me.nubble.app.widget;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		40DCAC7044F3C88A658719E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NubbleWidget/NubbleWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F7TR367W75;
+				INFOPLIST_FILE = NubbleWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = me.nubble.app.widget;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -879,6 +1047,15 @@
 			buildConfigurations = (
 				486F48E4DF0CBF71568FAB5A /* Debug */,
 				87A2E47FB8533904ADB33E88 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F9EDC161CADF9A6CC995BA22 /* Build configuration list for PBXNativeTarget "NubbleWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				39F9FB9C02818E4B20C81515 /* Debug */,
+				40DCAC7044F3C88A658719E9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

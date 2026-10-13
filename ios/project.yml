@@ -30,6 +30,7 @@ targets:
       - package: SwiftSoup
       - package: ZIPFoundation
       - target: NubbleShare
+      - target: NubbleWidget
     entitlements:
       path: Nubble/Nubble.entitlements
       properties:
@@ -67,6 +68,7 @@ targets:
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleDisplayName: Nubble
+        NSRemindersFullAccessUsageDescription: Dr HAOS puts each prescription you accept on a "Dr HAOS ℞" list in Reminders.
         ITSAppUsesNonExemptEncryption: false
         UIBackgroundModes:
           - fetch
@@ -119,6 +121,7 @@ targets:
       path: NubbleShare/Info.plist
       properties:
         CFBundleDisplayName: Nubble
+        NSRemindersFullAccessUsageDescription: Dr HAOS puts each prescription you accept on a "Dr HAOS ℞" list in Reminders.
         NSExtension:
           NSExtensionPointIdentifier: com.apple.share-services
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
@@ -128,6 +131,34 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: me.nubble.app.share
+        DEVELOPMENT_TEAM: F7TR367W75
+        CODE_SIGN_STYLE: Automatic
+        SWIFT_STRICT_CONCURRENCY: complete
+
+  NubbleWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: NubbleWidget
+      - path: Nubble/Resources/Fonts
+        buildPhase: resources
+    entitlements:
+      path: NubbleWidget/NubbleWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.me.nubble.app
+    info:
+      path: NubbleWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Dr HAOS
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        UIAppFonts:
+          - InstrumentSerif-Regular.ttf
+          - JetBrainsMono-Bold.ttf
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: me.nubble.app.widget
         DEVELOPMENT_TEAM: F7TR367W75
         CODE_SIGN_STYLE: Automatic
         SWIFT_STRICT_CONCURRENCY: complete
