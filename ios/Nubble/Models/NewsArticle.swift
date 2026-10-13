@@ -61,3 +61,7 @@ struct CloudLines: Codable, Sendable, Equatable {
     var model: String
     var at: Date
 }
+
+extension NewsArticle {
+    var section: ContentSection? { document?.sections.first }
+}

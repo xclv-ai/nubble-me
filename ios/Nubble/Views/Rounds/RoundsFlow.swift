@@ -1,14 +1,14 @@
 import SwiftUI
 
-/// The rounds: one signal per page, then discharge.
+/// The rounds: up/down = the next signal, left/right = depth; then discharge.
 struct RoundsFlow: View {
     @Environment(FeedState.self) private var feedState
     @Environment(\.dismiss) private var dismiss
     let articles: [NewsArticle]
+    var startAt: Int = 0
     @State private var page = 0
 
     var body: some View {
-        // Nubble's two axes: up/down = the next signal, left/right = depth
         GeometryReader { geo in
             ScrollView(.vertical) {
                 LazyVStack(spacing: 0) {
@@ -23,11 +23,13 @@ struct RoundsFlow: View {
             .scrollTargetBehavior(.paging)
             .scrollPosition(id: Binding(get: { page }, set: { if let p = $0 { page = p } }))
             .scrollIndicators(.hidden)
-            .ignoresSafeArea()   // each page paints its own header colour behind the status bar (topInset)
+            .ignoresSafeArea()
+            .background(Haos.bg)
         }
-        .preferredColorScheme(.light)
+        .preferredColorScheme(.dark)
         .onChange(of: page) { _, p in if p == articles.count { feedState.dischargedOn = FeedState.today } }
         .onAppear {
+            page = min(startAt, articles.count)
             #if DEBUG
             let args = ProcessInfo.processInfo.arguments
             if let i = args.firstIndex(of: "-page"), i + 1 < args.count, let n = Int(args[i + 1]) { page = min(n, articles.count) }
@@ -35,10 +37,10 @@ struct RoundsFlow: View {
         }
     }
 
-    private func advance() { withAnimation(.easeInOut(duration: 0.25)) { page = min(page + 1, articles.count) } }
+    private func advance() { withAnimation(.easeInOut(duration: 0.3)) { page = min(page + 1, articles.count) } }
 }
 
-/// B/C · One signal: the truth, the evidence, the ℞. Red when a competitor on the watchlist is in it.
+/// One signal: the headline big, his line in pink, the depth strip, the evidence, the ℞.
 struct SignalPage: View {
     @Environment(FeedState.self) private var feedState
     let articleId: String
@@ -49,7 +51,8 @@ struct SignalPage: View {
     @State private var pipeline = NewsConversionPipeline()
     @State private var writing = false
     @State private var depth = 0
-    private let depthNames = ["Signal", "Condensed", "Article", "Expanded", "For you"]
+    @State private var prescribed = false
+    private let tilt = MotionTilt.shared
 
     private var article: NewsArticle? { feedState.articles.first { $0.id == articleId } }
     private var section: ContentSection? { article?.section }
@@ -59,32 +62,41 @@ struct SignalPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            (isRed ? Pok.critical : Pok.teal).frame(height: topInset)
-            Ticker(text: isRed ? " [!] Code red • competitor on your patient list • \(competitor ?? "") " : " [+] \(String(format: "%02d", index)) // \(String(format: "%02d", total)) • \(article?.sourceName ?? "") • \(Self.time(article?.publishedAt)) ",
-                   bg: isRed ? Pok.critical : Pok.teal, fg: isRed ? Pok.card : Pok.grey)
+            Color.clear.frame(height: topInset)
             if let section, let article, !writing {
                 ScrollView {
-                    VStack(spacing: 0) {
-                        truth(section)
-                        depthStrip(section)
-                        if depth == 0 { evidence(section, article) } else {
-                            DepthContent(section: section, depth: depth).padding(.horizontal, 24).padding(.vertical, 20)
-                                .frame(maxWidth: .infinity, alignment: .leading).background(Pok.beige)
-                                .id(depth).transition(.opacity)
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack { Meta(text: "\(String(format: "%02d", index)) / \(String(format: "%02d", total)) · \(article.sourceName) · \(Self.time(article.publishedAt))", color: isRed ? Haos.ink.opacity(0.8) : Haos.ink3); Spacer(); if isRed { Meta(text: "■ code red · \(competitor ?? "")", color: Haos.ink) } }
+                            .padding(.horizontal, 24).padding(.top, 8)
+                        Text(article.cloud?.headline ?? section.headline ?? section.title)
+                            .font(Haos.display(42)).foregroundStyle(Haos.ink).lineSpacing(-2).fixedSize(horizontal: false, vertical: true)
+                            .padding(.horizontal, 24).padding(.top, 14)
+                        if let v = article.cloud?.verdict ?? section.verdict, !v.isEmpty {
+                            HStack(alignment: .top, spacing: 12) {
+                                Image("DrHaos").resizable().scaledToFit().frame(width: 40, height: 40).padding(.top, 2)
+                                Voice(text: Self.short(v), size: 22, color: isRed ? Haos.ink : Haos.pink)
+                            }
+                            .padding(.horizontal, 24).padding(.top, 18)
                         }
+                        DepthStrip(max: section.maxDepth, depth: $depth) { setDepth($0, of: section) }.padding(.top, 22)
+                        Group {
+                            if depth == 0 { evidence(section, article) } else { DepthContent(section: section, depth: depth) }
+                        }
+                        .padding(.horizontal, 24).padding(.top, 18)
+                        .id(depth).transition(.opacity)
+                        Color.clear.frame(height: 24)
                     }
                 }
-                .background(Pok.beige)
                 .gesture(DragGesture(minimumDistance: 30).onEnded { v in
                     guard abs(v.translation.width) > abs(v.translation.height) * 1.5 else { return }
                     setDepth(depth + (v.translation.width < 0 ? 1 : -1), of: section)
                 })
-                rx(section, article).padding(.bottom, 10).background(Pok.yellow)
+                rx(section, article)
             } else {
                 writingView
             }
         }
-        .background(Pok.yellow)
+        .background(isRed ? Haos.red : Haos.bg)
         .task {
             #if DEBUG
             let args = ProcessInfo.processInfo.arguments
@@ -95,18 +107,6 @@ struct SignalPage: View {
         }
     }
 
-    // Pink (code red) or teal: the headline in Instrument Serif, then his line
-    private func truth(_ s: ContentSection) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            PokLabelGrey(text: "\(String(format: "%02d", index)) // \(String(format: "%02d", total)) · \(isRed ? "Uncomfortable truth" : "Diagnosis")", color: isRed ? Pok.teal.opacity(0.6) : Pok.grey)
-            SerifLine(text: article?.cloud?.headline ?? s.headline ?? s.title, size: 38, color: isRed ? Pok.teal : Pok.card)
-            if let v = article?.cloud?.verdict ?? s.verdict, !v.isEmpty, isRed { DoctorSays(line: Self.short(v), size: 19, color: Pok.teal).padding(.top, 6) }
-        }
-        .padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 22)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(isRed ? Pok.pink : Pok.teal)
-    }
-
     private func setDepth(_ d: Int, of section: ContentSection) {
         let new = max(0, min(section.maxDepth, d))
         guard new != depth else { Haptics.warning(); return }
@@ -114,85 +114,80 @@ struct SignalPage: View {
         Haptics.light()
     }
 
-    /// The depth strip: 00 Signal · 01 Condensed · 02 Article · 03 Expanded · 04 For you — swipe left/right or tap
-    private func depthStrip(_ section: ContentSection) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
-                ForEach(0...section.maxDepth, id: \.self) { d in
-                    Button { setDepth(d, of: section) } label: {
-                        Text("\(String(format: "%02d", d)) \(depthNames[d])").font(Pok.mono(10, d == depth ? .bold : .regular)).tracking(0.6).textCase(.uppercase)
-                            .padding(.horizontal, 8).padding(.vertical, 7)
-                            .background(d == depth ? Pok.teal : Pok.card).foregroundStyle(d == depth ? Pok.yellow : Pok.teal)
-                            .clipShape(Notch())
-                    }
-                    .buttonStyle(.plain)
-                }
-                PokLabelGrey(text: "← swipe for depth →").padding(.leading, 6)
-            }
-            .padding(.horizontal, 24)
-        }
-        .padding(.top, 14).background(Pok.beige)
-    }
-
-    // Beige: the number (if the story has one) as the hero, the square, the evidence rows, his verdict
+    // The evidence, quiet and small: what changed, the number if there is one, the receipt
     private func evidence(_ s: ContentSection, _ a: NewsArticle) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if isRed {
-                PokLabel(text: "02 // The evidence").padding(.bottom, 10)
-                VStack(spacing: 8) {
-                    ChartRow(key: "Symptom", value: s.summary)
-                    ChartRow(key: "Diagnosis", value: Self.lead(of: s.forProduct, block: "WHAT IT MEANS") ?? s.condensed)
-                    ChartRow(key: "Seen", value: "\(Self.time(a.publishedAt)) · \(a.articleUrl.host() ?? a.sourceName)")
-                }
-                HStack(spacing: 12) { PokLabelGrey(text: "Threat").frame(width: 92, alignment: .leading); SquareMeter(count: 5, on: (a.relevance ?? 0) >= 1 ? 4 : 3, color: Pok.critical); Text("\((a.relevance ?? 0) >= 1 ? 4 : 3) / 5").font(Pok.mono(12)) }.padding(.top, 10)
-            } else if let fact = HeroFact.find(in: s.summary + " " + s.condensed) {
-                PokLabelGrey(text: fact.label)
+        VStack(alignment: .leading, spacing: 10) {
+            if let fact = HeroFact.find(in: s.summary + " " + s.condensed) {
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
-                    Text(fact.number).font(Pok.serif(88)).foregroundStyle(Pok.teal)
-                    Text(fact.unit).font(Pok.serif(40)).foregroundStyle(Pok.teal)
+                    Text(fact.number).font(Haos.voiceRoman(72)).foregroundStyle(Haos.ink)
+                    Text(fact.unit).font(Haos.voiceRoman(34)).foregroundStyle(Haos.ink2)
                 }
                 .minimumScaleFactor(0.6).lineLimit(1)
-                PokLabelGrey(text: "Evidence · \(a.sourceName) · \(Self.date(a.publishedAt))").padding(.top, 4)
-                DottedRule()
+                Text(fact.label).font(Haos.text(15)).foregroundStyle(Haos.ink2)
             } else {
-                PokLabelGrey(text: "What changed")
-                SerifLine(text: s.summary, size: 24).padding(.top, 6)
-                PokLabelGrey(text: "Evidence · \(a.sourceName) · \(Self.date(a.publishedAt))").padding(.top, 10)
-                DottedRule()
+                Meta(text: "What changed")
+                Text(s.summary).font(Haos.text(18)).foregroundStyle(Haos.ink2).lineSpacing(4).fixedSize(horizontal: false, vertical: true)
             }
-            if !isRed, let v = a.cloud?.verdict ?? s.verdict, !v.isEmpty { DoctorSays(line: Self.short(v), size: 19).padding(.top, 18) }
+            if isRed {
+                VStack(alignment: .leading, spacing: 8) {
+                    Meta(text: "Diagnosis", color: Haos.ink.opacity(0.7))
+                    Text(Self.lead(of: s.forProduct, block: "WHAT IT MEANS") ?? s.condensed).font(Haos.text(17)).foregroundStyle(Haos.ink).lineSpacing(3)
+                    HStack(spacing: 10) { Meta(text: "Threat", color: Haos.ink.opacity(0.7)); SquareMeter(count: 5, on: (a.relevance ?? 0) >= 1 ? 4 : 3, color: Haos.ink, size: 12) }
+                }
+                .padding(.top, 8)
+            }
+            Meta(text: "Receipt · \(a.sourceName) · \(Self.date(a.publishedAt)) ↗").padding(.top, 6)
         }
-        .padding(.horizontal, 24).padding(.top, 20).padding(.bottom, 24)
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // Yellow: the prescription
+    // The ℞ plate: yellow material, the prescription, prescribe / why
     private func rx(_ s: ContentSection, _ a: NewsArticle) -> some View {
         let line = a.cloud?.rx.isEmpty == false ? a.cloud!.rx : s.rx?.isEmpty == false ? s.rx! : (s.action?.isEmpty == false ? s.action! : "No prescription. Read the diagnosis and decide yourself.")
-        return RxBlock(title: isRed ? "Counter-move · today" : "Do this now", rx: line) {
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                Text("℞").font(Haos.voiceRoman(26)).foregroundStyle(Haos.bg)
+                Text(line).font(Haos.medium(18)).foregroundStyle(Haos.bg).lineSpacing(1).fixedSize(horizontal: false, vertical: true)
+            }
             HStack(spacing: 8) {
-                PokButton(text: "Prescribe → my list") { feedState.prescribe(a, text: line); onNext() }
-                PokButton(text: isRed ? "Skip" : "Why?", trailing: "", outline: true) {
-                    if isRed { feedState.prescribe(a, text: line, status: .skipped); onNext() } else { setDepth(3, of: s) }
+                Button {
+                    feedState.prescribe(a, text: line); withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) { prescribed = true }
+                    Haptics.medium(); DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { onNext() }
+                } label: {
+                    HStack { Text(prescribed ? "Prescribed" : "Prescribe"); Spacer(); Text(prescribed ? "✓" : "→") }
+                        .font(Haos.medium(16)).foregroundStyle(Haos.yellow).padding(.horizontal, 16).frame(height: 46).frame(maxWidth: .infinity)
+                        .background(Haos.bg).clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
-                .frame(width: 96)
+                .buttonStyle(.plain)
+                Button {
+                    if isRed { feedState.prescribe(a, text: line, status: .skipped); onNext() } else { setDepth(3, of: s) }
+                } label: {
+                    Text(isRed ? "Skip" : "Why?").font(Haos.medium(16)).foregroundStyle(Haos.bg).frame(width: 92, height: 46)
+                        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Haos.bg, lineWidth: 1.5))
+                }
+                .buttonStyle(.plain)
             }
         }
+        .padding(.horizontal, 20).padding(.top, 14).padding(.bottom, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Haos.yellow)
+        .clipShape(Notch(size: 6))
+        .shadow(color: .black.opacity(0.35), radius: 16, x: CGFloat(-tilt.roll) * 2.5, y: -6 + CGFloat(tilt.pitch) * 1.5)
+        .rotation3DEffect(.degrees(tilt.pitch * 0.5), axis: (x: 1, y: 0, z: 0), perspective: 0.5)
+        .scaleEffect(prescribed ? 0.97 : 1)
+        .padding(.horizontal, 12).padding(.bottom, 24)
     }
 
     private var writingView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 18) {
             Spacer()
-            Image("DrHaos").resizable().scaledToFit().frame(width: 104, height: 104)
-            SerifLine(text: writing ? "Reading it properly. *Thirty seconds.*" : (article?.errorMessage.map { "I couldn't read this one: \($0)" } ?? "Waiting for the article."), size: 22, color: Pok.card)
-                .multilineTextAlignment(.center)
-            Text(pipeline.stage.rawValue.uppercased()).font(Pok.mono(10)).tracking(0.8).foregroundStyle(Pok.grey)
+            HaosStage(height: 240, mood: .reading).frame(height: 240)
+            Voice(text: writing ? "Reading it properly. *Thirty seconds.*" : (article?.errorMessage.map { "I couldn't read this one: \($0)" } ?? "Waiting for the article."), size: 24)
+                .multilineTextAlignment(.center).padding(.horizontal, 32)
+            Meta(text: pipeline.stage.rawValue)
             Spacer()
-            PokButton(text: "Skip for now", fill: Pok.yellow, fg: Pok.teal) { onNext() }.padding(.horizontal, 24).padding(.bottom, 40)
+            ActionButton(text: "Skip for now", quiet: true) { onNext() }.padding(.horizontal, 20).padding(.bottom, 40)
         }
-        .padding(.horizontal, 24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Pok.teal)
     }
 
     private func writeIfNeeded() async {
@@ -217,7 +212,6 @@ struct SignalPage: View {
         if !s.hasSuffix(".") && !s.hasSuffix("?") && !s.hasSuffix("!") { s += "." }
         return s
     }
-
     static func lead(of text: String?, block: String) -> String? {
         guard let text, let r = text.range(of: "**\(block)") else { return nil }
         let rest = text[r.upperBound...]
@@ -230,21 +224,19 @@ struct SignalPage: View {
     static func date(_ d: Date?) -> String { guard let d else { return "" }; let f = DateFormatter(); f.dateFormat = "d MMM"; return f.string(from: d) }
 }
 
-/// The number in the story, if it has one: "$9.86" + "B", with the words around it as the label.
+/// The number in the story, if it has one: "$9.86" + "B", with the sentence around it as the label.
 struct HeroFact {
     let number: String
     let unit: String
     let label: String
 
     static func find(in text: String) -> HeroFact? {
-        // money, a percentage, or a number with a magnitude word — a bare year is not a fact worth a hero
         let pattern = #"([$€£]\s?\d[\d.,]*|\d[\d.,]*\s?%|\d[\d.,]*(?=\s?(billion|million|trillion|bn)\b))\s?(billion|million|trillion|bn|B|M)?"#
         guard let re = try? NSRegularExpression(pattern: pattern), let m = re.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)), let r = Range(m.range, in: text) else { return nil }
         var number = String(text[Range(m.range(at: 1), in: text)!]).replacingOccurrences(of: " ", with: "")
         var unit = m.range(at: 3).location != NSNotFound ? String(text[Range(m.range(at: 3), in: text)!]) : ""
         unit = ["billion": "B", "million": "M", "trillion": "T", "bn": "B", "m": "M", "k": "K"][unit.lowercased()] ?? unit.uppercased()
         if number.hasSuffix("%") { unit = "%"; number.removeLast() }
-        // the sentence that holds the number, whole, as the label
         let before = text[..<r.lowerBound].split(separator: ".", omittingEmptySubsequences: false).last.map { String($0) } ?? ""
         let after = text[r.upperBound...].split(separator: ".", omittingEmptySubsequences: false).first.map { String($0) } ?? ""
         var label = (before + String(text[r]) + after).replacingOccurrences(of: "\n", with: " ").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -261,46 +253,38 @@ struct DischargePage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Pok.teal.frame(height: topInset)
-            Ticker(text: " System status: operational • diagnostic complete • prescribing cure ", bg: Pok.teal, fg: Pok.grey)
-            VStack(alignment: .leading, spacing: 10) {
-                PokLabelGrey(text: "Discharge")
-                SerifLine(text: "Discharged. Nothing else is wrong with you today. *Sadly.*", size: 34, color: Pok.card)
-                DoctorSays(line: "\(todays.count) prescriptions. Don't come back until *tomorrow*.", size: 19, color: Pok.card).padding(.top, 6)
-            }
-            .padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 22).frame(maxWidth: .infinity, alignment: .leading).background(Pok.teal)
+            Color.clear.frame(height: topInset)
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    PokLabel(text: "Rx // Your prescriptions")
+                    Meta(text: "Discharge · \(RoundsView.dateLine)").padding(.horizontal, 24).padding(.top, 8)
+                    Text("Discharged.").font(Haos.display(42)).foregroundStyle(Haos.ink).padding(.horizontal, 24).padding(.top, 14)
+                    HaosStage(height: 220, mood: .discharged).frame(height: 220).padding(.top, 4)
+                    Voice(text: "Nothing else is wrong with you today. *Sadly.* \(todays.filter { $0.status != .skipped }.count) prescriptions. Don't come back until *tomorrow*.", size: 24).padding(.horizontal, 24)
+                    Meta(text: "℞ · your prescriptions").padding(.horizontal, 24).padding(.top, 28)
                     if todays.isEmpty {
-                        SerifLine(text: "Nothing prescribed. You skipped everything — *brave.*", size: 20).padding(.vertical, 12)
-                        DottedRule()
+                        Voice(text: "Nothing prescribed. You skipped everything — *brave*.", size: 20, color: Haos.ink2).padding(.horizontal, 24).padding(.top, 10)
                     }
                     ForEach(todays) { p in
                         HStack(alignment: .top, spacing: 12) {
-                            Button { toggle(p) } label: { Square(fill: p.status == .done ? .solid(Pok.teal) : p.isCodeRed ? .solid(Pok.critical) : p.status == .todo ? .solid(Pok.yellow) : .pale, size: 14).padding(.top, 3) }.buttonStyle(.plain)
-                            Text(p.text).font(Pok.mono(13)).foregroundStyle(p.status == .skipped ? Pok.grey : Pok.teal).strikethrough(p.status == .done).frame(maxWidth: .infinity, alignment: .leading)
-                            PokLabelGrey(text: p.status == .skipped ? "skipped" : p.status == .done ? "done" : "today")
+                            Button { toggle(p) } label: { Square(fill: p.status == .done ? .solid(Haos.ink) : p.isCodeRed ? .solid(Haos.red) : p.status == .todo ? .solid(Haos.yellow) : .pale, size: 14).padding(.top, 4) }.buttonStyle(.plain)
+                            Text(p.text).font(Haos.text(17)).foregroundStyle(p.status == .skipped ? Haos.ink3 : Haos.ink).strikethrough(p.status == .done).frame(maxWidth: .infinity, alignment: .leading)
+                            Meta(text: p.status == .skipped ? "skipped" : p.status == .done ? "done" : "today")
                         }
-                        .padding(.vertical, 10)
-                        DottedRule()
+                        .padding(.horizontal, 24).padding(.vertical, 12)
+                        Rectangle().fill(Haos.line).frame(height: 1).padding(.horizontal, 24)
                     }
-                    PokLabelGrey(text: "Vitals · this week").padding(.top, 18)
                     let week = feedState.prescriptions.filter { $0.createdAt > Date(timeIntervalSinceNow: -7 * 86400) && $0.status != .skipped }
                     let done = week.filter { $0.status == .done }.count
-                    SquareMeter(count: max(week.count, 1), on: done).padding(.top, 6)
-                    PokLabelGrey(text: "\(done) of \(week.count) prescriptions done · healthy condition \(week.isEmpty ? 0 : done * 100 / week.count)%").padding(.top, 6)
+                    HStack(spacing: 12) { Meta(text: "Vitals · this week"); SquareMeter(count: max(week.count, 1), on: done, color: Haos.ink, size: 12); Meta(text: "\(done) of \(week.count) done") }
+                        .padding(.horizontal, 24).padding(.top, 22)
+                    Meta(text: feedState.watchlist.isEmpty ? "No competitors watched — Settings → Watchlist" : "\(feedState.watchlist.count) competitors watched", color: feedState.watchlist.isEmpty ? Haos.pink : Haos.ink3)
+                        .padding(.horizontal, 24).padding(.top, 10)
+                    Color.clear.frame(height: 110)
                 }
-                .padding(.horizontal, 24).padding(.vertical, 20).frame(maxWidth: .infinity, alignment: .leading)
             }
-            .background(Pok.beige)
-            VStack(spacing: 8) {
-                ChartRow(key: "Watchlist", value: feedState.watchlist.isEmpty ? "no competitors watched yet — Settings → Watchlist" : "\(feedState.watchlist.count) competitors watched", valueColor: feedState.watchlist.isEmpty ? Pok.critical : Pok.teal)
-                PokButton(text: "Close the chart", trailing: "↓") { onClose() }
-            }
-            .padding(.horizontal, 24).padding(.top, 16).padding(.bottom, 12).frame(maxWidth: .infinity).background(Pok.pink)
         }
-        .background(Pok.pink)
+        .background(Haos.bg)
+        .overlay(alignment: .bottom) { ActionButton(text: "Close the chart", trailing: "↓", quiet: true) { onClose() }.padding(.horizontal, 20).padding(.bottom, 36) }
     }
 
     private var todays: [Prescription] { feedState.prescriptions.filter { Calendar.current.isDateInToday($0.createdAt) } }

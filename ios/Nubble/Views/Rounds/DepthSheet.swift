@@ -51,43 +51,41 @@ struct DepthSheet: View {
     private var blocks: [Block] { Block.parse(section.text(at: depth)) }
 }
 
-/// One depth level, rendered the POKPOK way: serif leads, mono support, the Uncomfortable Truth on pink.
+/// One depth level in Dr HAOS's style: Geist leads, quiet support, his labels in pink; the Uncomfortable Truth marked.
 struct DepthContent: View {
     let section: ContentSection
     let depth: Int
     var body: some View {
         switch depth {
         case 0, 1:
-            SerifLine(text: section.text(at: depth), size: 26)
+            Text(section.text(at: depth)).font(Haos.text(19)).foregroundStyle(Haos.ink).lineSpacing(5).fixedSize(horizontal: false, vertical: true)
         case 2:
             VStack(alignment: .leading, spacing: 12) {
                 ForEach(Array(section.standard.components(separatedBy: "\n\n").enumerated()), id: \.offset) { _, p in
-                    Text(p).font(Pok.mono(13, .light)).foregroundStyle(Pok.teal).lineSpacing(5)
+                    Text(p).font(Haos.text(16)).foregroundStyle(Haos.ink2).lineSpacing(5)
                 }
             }
         default:
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 22) {
                 ForEach(blocks) { b in
                     let hot = b.label.localizedCaseInsensitiveContains("uncomfortable")
                     VStack(alignment: .leading, spacing: 6) {
-                        PokLabelGrey(text: b.label, color: hot ? Pok.teal : Pok.grey)
-                        if !b.lead.isEmpty { SerifLine(text: b.lead, size: 21) }
+                        Meta(text: b.label, color: hot ? Haos.pink : Haos.ink3)
+                        if !b.lead.isEmpty { Text(b.lead).font(Haos.display(22)).foregroundStyle(hot ? Haos.pink : Haos.ink).lineSpacing(-1).fixedSize(horizontal: false, vertical: true) }
                         if b.bullets.isEmpty {
-                            if !b.text.isEmpty { Text(b.text).font(Pok.mono(13, .light)).foregroundStyle(Pok.teal).lineSpacing(5) }
+                            if !b.text.isEmpty { Text(b.text).font(Haos.text(16)).foregroundStyle(Haos.ink2).lineSpacing(4).fixedSize(horizontal: false, vertical: true) }
                         } else {
                             ForEach(Array(b.bullets.enumerated()), id: \.offset) { _, line in
-                                HStack(alignment: .top, spacing: 8) { Text("→").font(Pok.mono(13, .bold)); Text(line).font(Pok.mono(13)) }.foregroundStyle(Pok.teal)
+                                HStack(alignment: .top, spacing: 10) { Text("→").font(Haos.medium(16)).foregroundStyle(Haos.yellow); Text(line).font(Haos.text(17)).foregroundStyle(Haos.ink) }
                             }
                         }
                     }
-                    .padding(hot ? 14 : 0)
-                    .background(hot ? Pok.pink : Color.clear)
-                    .clipShape(Notch())
+                    .padding(.leading, hot ? 14 : 0)
+                    .overlay(alignment: .leading) { if hot { Rectangle().fill(Haos.pink).frame(width: 3) } }
                 }
             }
         }
     }
-
     private var blocks: [Block] { Block.parse(section.text(at: depth)) }
     typealias Block = DepthSheet.Block
 }

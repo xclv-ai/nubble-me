@@ -36,6 +36,7 @@
 		3B89AFC73E6568EACF743B77 /* Zodiak-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = F80CFFB3E70D4FD8D12B9685 /* Zodiak-Black.otf */; };
 		4045A503B9E29BBFCD3DCA53 /* SharedInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40D87F123C4B2396B75CDFE /* SharedInbox.swift */; };
 		417CDDED6E35B654A95E5BF8 /* NubbleWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 91B050C65F6B276663D02AE8 /* NubbleWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		45027B626E07DEA9911B7404 /* Haos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BFEA5D585B28021CB07B1EC /* Haos.swift */; };
 		47BD5A0B109FB9A6864C6052 /* DepthGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3C4A203835059617D97B7A /* DepthGenerator.swift */; };
 		4A3627C59A6B4D2406A9CB23 /* Prescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59EAF5F1852A00C810E3B09 /* Prescription.swift */; };
 		4A41F4C4EB6D7E99C3FFB7D1 /* SavedArticlesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81AA1BFC124A92ABACB0CBE /* SavedArticlesView.swift */; };
@@ -85,11 +86,14 @@
 		A7DB12578EC94BF6CBBF33E5 /* SwipeOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF8A10C5BB255AA9BAD6E84 /* SwipeOnboarding.swift */; };
 		A82F1E0426371A33D17BB06D /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = DEEE494003EEA3BCC989B48A /* ZIPFoundation */; };
 		AB448823F392462A6BCAC975 /* JetBrainsMono-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC727025A66EB9D19071A75E /* JetBrainsMono-Light.ttf */; };
+		AC6EBF6823FCD58D958BA321 /* Geist-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B15F7D21C5629B49159B1071 /* Geist-Variable.ttf */; };
 		AF68B6D5296F2FBE9E0FEFB7 /* Satoshi-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = C57712F709C920A752E93A9A /* Satoshi-LightItalic.otf */; };
 		B18E4B6773BD9C3CAF82C19D /* Satoshi-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 443FEA87C2BF29965EA9D3C1 /* Satoshi-Medium.otf */; };
+		B8565F06CA7D96416F618CF2 /* Geist-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B15F7D21C5629B49159B1071 /* Geist-Variable.ttf */; };
 		B9514BF98F9507CBDC45C042 /* Satoshi-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 87709AD64461DB08A4AD66E9 /* Satoshi-Bold.otf */; };
 		BA6D43139AAB56E16E298D4B /* Zodiak-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = FD5A84476E2ABA2CEF0F4D95 /* Zodiak-Light.otf */; };
 		BAB2DF486CAE2946E8A4DCCC /* FeedPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2B4AF39092E4BAFB920723 /* FeedPersistence.swift */; };
+		BB01A298D4C6037C5A1598BE /* HaosStage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ECBBB2A97197A9499F17F1 /* HaosStage.swift */; };
 		BB84527F32C1678187C77731 /* InstrumentSerif-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC5986BB1ABB3EEBEA8918FB /* InstrumentSerif-Regular.ttf */; };
 		BBF2FC6D989CD02C73AD4302 /* ArticleExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E56BCCDFAA1E916E08D01D93 /* ArticleExtractor.swift */; };
 		C2519ED66C9AD59D3381FD71 /* RoundsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2230B3D9E618B331BDB67FD /* RoundsView.swift */; };
@@ -180,6 +184,7 @@
 		296010BA3ACAF95E3C0737E9 /* HaosCloud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HaosCloud.swift; sourceTree = "<group>"; };
 		29D0D95FB5443D68F6888036 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2BF045E50B4E74ED3E787A6A /* NewsDepthWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDepthWriter.swift; sourceTree = "<group>"; };
+		2BFEA5D585B28021CB07B1EC /* Haos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haos.swift; sourceTree = "<group>"; };
 		3026CCA56112E799A3CD303D /* Satoshi-MediumItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-MediumItalic.otf"; sourceTree = "<group>"; };
 		3030497C46C0E715A651F190 /* RelevanceRanker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelevanceRanker.swift; sourceTree = "<group>"; };
 		3213C5AEA3BC3608D2199040 /* JetBrainsMono-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsMono-Bold.ttf"; sourceTree = "<group>"; };
@@ -225,6 +230,7 @@
 		A7EBBFD790A49F6C4BC09E1E /* Zodiak-Extrabold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Extrabold.otf"; sourceTree = "<group>"; };
 		A87990CEE42CFB2830C24839 /* DuplicateDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateDetector.swift; sourceTree = "<group>"; };
 		AF6A1FBE561D03F44D0F84F4 /* ContentDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentDocument.swift; sourceTree = "<group>"; };
+		B15F7D21C5629B49159B1071 /* Geist-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Geist-Variable.ttf"; sourceTree = "<group>"; };
 		B2230B3D9E618B331BDB67FD /* RoundsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundsView.swift; sourceTree = "<group>"; };
 		BA726363F300A8F68C0E0C8E /* Zodiak-LightItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-LightItalic.otf"; sourceTree = "<group>"; };
 		BB4C946F8E045F7104C904A9 /* DepthScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthScan.swift; sourceTree = "<group>"; };
@@ -243,6 +249,7 @@
 		D465B464983075800687BA68 /* Zodiak-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Bold.otf"; sourceTree = "<group>"; };
 		D7154753A83EFB28462FD99A /* NubbleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NubbleApp.swift; sourceTree = "<group>"; };
 		D81AA1BFC124A92ABACB0CBE /* SavedArticlesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedArticlesView.swift; sourceTree = "<group>"; };
+		D8ECBBB2A97197A9499F17F1 /* HaosStage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HaosStage.swift; sourceTree = "<group>"; };
 		DA2BBDD8097D16307EC6C175 /* WidgetBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetBridge.swift; sourceTree = "<group>"; };
 		DB3C4A203835059617D97B7A /* DepthGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthGenerator.swift; sourceTree = "<group>"; };
 		DDE85C30F593D0D5B249CAD0 /* ReaderState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderState.swift; sourceTree = "<group>"; };
@@ -304,6 +311,7 @@
 		26396DCADE20CEE189C1BB30 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				B15F7D21C5629B49159B1071 /* Geist-Variable.ttf */,
 				34C640D0D9095A88A7BC394E /* InstrumentSerif-Italic.ttf */,
 				BC5986BB1ABB3EEBEA8918FB /* InstrumentSerif-Regular.ttf */,
 				3213C5AEA3BC3608D2199040 /* JetBrainsMono-Bold.ttf */,
@@ -412,6 +420,7 @@
 			isa = PBXGroup;
 			children = (
 				C497F25F1467576A8156DA9A /* DepthSheet.swift */,
+				D8ECBBB2A97197A9499F17F1 /* HaosStage.swift */,
 				E3AC07B298BA6C00A6CE0EAD /* RoundsFlow.swift */,
 				B2230B3D9E618B331BDB67FD /* RoundsView.swift */,
 			);
@@ -421,6 +430,7 @@
 		D178940C1EB5F4D901A70D28 /* Design */ = {
 			isa = PBXGroup;
 			children = (
+				2BFEA5D585B28021CB07B1EC /* Haos.swift */,
 				3A4BB6809551B3A8D236686E /* NubbleColors.swift */,
 				4F0760A9EC4AC11596E08C9B /* Pok.swift */,
 				1ADC1CC19C0AC85D26806BDC /* Springs.swift */,
@@ -631,6 +641,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D11F511482AB6770B9B12EE5 /* Assets.xcassets in Resources */,
+				B8565F06CA7D96416F618CF2 /* Geist-Variable.ttf in Resources */,
 				865587E96D06587DBAE6D9F7 /* InstrumentSerif-Italic.ttf in Resources */,
 				BB84527F32C1678187C77731 /* InstrumentSerif-Regular.ttf in Resources */,
 				3A405889872F1315EA3F891E /* JetBrainsMono-Bold.ttf in Resources */,
@@ -663,6 +674,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0785378EEF0BB9DEECC2CAE8 /* Assets.xcassets in Resources */,
+				AC6EBF6823FCD58D958BA321 /* Geist-Variable.ttf in Resources */,
 				A3FD372F9D0B614D05DB1D0B /* InstrumentSerif-Italic.ttf in Resources */,
 				7CA906338ABD3F51357B5F3B /* InstrumentSerif-Regular.ttf in Resources */,
 				E762841951E5C59BD89A659D /* JetBrainsMono-Bold.ttf in Resources */,
@@ -714,7 +726,9 @@
 				80855D8F8F2DA21F64D0A7EE /* FeedRefreshScheduler.swift in Sources */,
 				66A8DA84DA69C5692CDE1C95 /* FeedSource.swift in Sources */,
 				2771C382AB86C6D428A33C6B /* FeedState.swift in Sources */,
+				45027B626E07DEA9911B7404 /* Haos.swift in Sources */,
 				FAD729CBDC27DCB615982DA7 /* HaosCloud.swift in Sources */,
+				BB01A298D4C6037C5A1598BE /* HaosStage.swift in Sources */,
 				D1D4E5D16BBFE481F302302C /* Haptics.swift in Sources */,
 				88C431BBDE2DF417C55A66DE /* ImportView.swift in Sources */,
 				D1B44B8B76874EABEF3CBD6A /* LocalFeedService.swift in Sources */,

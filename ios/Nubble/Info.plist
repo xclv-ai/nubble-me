@@ -98,6 +98,7 @@
 		<string>JetBrainsMono-Regular.ttf</string>
 		<string>JetBrainsMono-Medium.ttf</string>
 		<string>JetBrainsMono-Bold.ttf</string>
+		<string>Geist-Variable.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

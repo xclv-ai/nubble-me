@@ -119,7 +119,7 @@ struct Square: View {
         Group {
             switch fill {
             case .solid(let c): Rectangle().fill(c)
-            case .pale: Rectangle().stroke(Pok.grey, lineWidth: 1)
+            case .pale: Rectangle().stroke(Pok.grey.opacity(0.8), lineWidth: 1)
             case .hatched: Rectangle().fill(Pok.teal).mask(Hatch())
             }
         }
