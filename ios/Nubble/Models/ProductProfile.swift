@@ -9,4 +9,6 @@ struct ProductProfile: Codable, Sendable, Equatable {
     var updatedAt: Date
     /// The product's named offerings (e.g. "X-Ray", "Brand Alignment Truth"), read once from the description.
     var products: [String]? = nil
+    /// The product's market among the source topics (commerce, marketing, ai-news, ai-research, ai-releases), decided once.
+    var marketTopics: [String]? = nil
 }

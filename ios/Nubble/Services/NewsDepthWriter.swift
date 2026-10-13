@@ -42,7 +42,7 @@ struct StoryLevels: Sendable {
 @MainActor
 final class NewsDepthWriter {
     /// Bump when the prompts change: stories written by an older writer are written again.
-    static let version = 2
+    static let version = 3
     /// Tokens per part when a text doesn't fit; the rest of the 4,096 is for instructions and the notes.
     static let partTokens = 1_200
 
@@ -163,6 +163,33 @@ final class NewsDepthWriter {
         #endif
     }
 
+    /// Which of the feed's topics are this product's market — one answer, stored on the profile.
+    func marketTopics(from description: String, name: String) async throws -> [String] {
+        #if canImport(FoundationModels)
+        let topics = ["commerce", "marketing", "ai-news", "ai-research", "ai-releases"]
+        let raw = try await text("market", "You decide which news topics a company's customers follow.",
+            "ABOUT \(name.uppercased()):\n\(description)\n\nTopics: \(topics.joined(separator: ", ")).\nWhich two topics are \(name)'s market — the ones its customers and competitors live in? Answer with the topic names only, comma separated.")
+        let picked = topics.filter { raw.lowercased().contains($0) }
+        return picked.isEmpty ? Self.marketHeuristic(description) : Array(picked.prefix(2))
+        #else
+        return Self.marketHeuristic(description)
+        #endif
+    }
+    static func marketHeuristic(_ d: String) -> [String] {
+        let l = d.lowercased()
+        var out: [String] = []
+        if ["commerce", "retail", "amazon", "shop", "brand", "product page", "listing"].contains(where: l.contains) { out.append("commerce") }
+        if ["marketing", "brand", "campaign", "positioning", "audience"].contains(where: l.contains) { out.append("marketing") }
+        if out.isEmpty { out = ["ai-news"] }
+        return out
+    }
+
+    /// A stored product-name list that passes today's rule (no release notes, not the company itself).
+    static func cleanProductNames(_ names: [String], company: String) -> [String] {
+        names.filter { n in n.caseInsensitiveCompare(company) != .orderedSame
+            && n.range(of: #"\d\.\d|version|update|launch|campaign"#, options: [.regularExpression, .caseInsensitive]) == nil }
+    }
+
     static let hypeWords = ["wake-up call", "wake up call", "game-changer", "game changer", "revolution", "exciting", "leverage", "unlock", "empower", "seamless", "cutting-edge", "next-level", "transformative", "synergy", "holistic", "best-in-class", "robust", "innovative"]
     static func hasHype(_ s: String) -> Bool { let l = s.lowercased(); return hypeWords.contains { l.contains($0) } }
 
@@ -176,8 +203,8 @@ final class NewsDepthWriter {
             Short, concrete, no hype words, no company name at the start.
             """
         let context = "STORY: \(title)\nSUMMARY: \(summary)\n\nWHAT IT MEANS FOR \(name.uppercased()):\n\(productLevel)\n\n"
-        let headline = try await text("headline", instructions, context + "Write the signal as a headline of at most 7 words — what changed in the market. Example for a coffee roaster: \"Supermarkets cut specialty coffee shelf space\". Answer with the headline only.")
-        let action = try await text("action", instructions, context + "Write the one thing \(name) should do, at most 10 words, starting with a verb. Example for a coffee roaster: \"Pitch a holiday gift box to office managers\". Answer with the action only.")
+        let headline = try await text("headline", instructions, context + "Write the signal as a headline of at most 7 words — what changed in the market. Answer with the headline only.")
+        let action = try await text("action", instructions, context + "Write the one thing \(name) should do, at most 10 words, starting with a verb. Answer with the action only.")
         func clean(_ s: String) -> String { s.trimmingCharacters(in: CharacterSet(charactersIn: "\"“” \n*")) }
         return (clean(headline), clean(action))
         #else

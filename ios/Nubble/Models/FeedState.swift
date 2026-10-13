@@ -84,8 +84,14 @@ final class FeedState {
     var rounds: [NewsArticle] {
         let fresh = articles.filter { $0.publishedAt >= Date(timeIntervalSinceNow: -3 * 86400) }
         let reds = fresh.filter { codeRedName(for: $0) != nil }.sorted { $0.publishedAt > $1.publishedAt }
-        let rest = fresh.filter { codeRedName(for: $0) == nil && $0.relevance != nil }
-            .sorted { ($0.relevance ?? 0, $0.publishedAt) > ($1.relevance ?? 0, $1.publishedAt) }
+        let market = Set(product?.marketTopics ?? [])
+        let inMarket: (NewsArticle) -> Bool = { market.isEmpty || !market.isDisjoint(with: $0.topics) }
+        let rest = fresh.filter { codeRedName(for: $0) == nil && ($0.relevance ?? 0) >= 0.5 }
+            .sorted { a, b in
+                if inMarket(a) != inMarket(b) { return inMarket(a) }
+                if a.relevance != b.relevance { return (a.relevance ?? 0) > (b.relevance ?? 0) }
+                return a.publishedAt > b.publishedAt
+            }
         return Array((reds + rest).prefix(Self.roundsCount))
     }
 
@@ -114,8 +120,17 @@ final class FeedState {
         topics = savedTopics.isEmpty ? NewsTopic.defaults : savedTopics
         sources = await persistence.loadSources()
         product = await persistence.loadProduct()
-        if let p = product, p.products == nil, OnDeviceModel.unavailableReason == nil {
-            Task { if let names = try? await NewsDepthWriter().productNames(from: p.description, name: p.name) { var q = p; q.products = names; q.updatedAt = p.updatedAt; self.product = q } }
+        if var p = product {
+            if let names = p.products { p.products = NewsDepthWriter.cleanProductNames(names, company: p.name); if p.products != product?.products { product = p } }
+            if (p.products ?? []).isEmpty || p.marketTopics == nil, OnDeviceModel.unavailableReason == nil {
+                Task {
+                    let w = NewsDepthWriter(); var q = p
+                    if (q.products ?? []).isEmpty, let names = try? await w.productNames(from: q.description, name: q.name) { q.products = NewsDepthWriter.cleanProductNames(names, company: q.name) }
+                    if q.marketTopics == nil { q.marketTopics = (try? await w.marketTopics(from: q.description, name: q.name)) ?? NewsDepthWriter.marketHeuristic(q.description) }
+                    q.updatedAt = p.updatedAt
+                    self.product = q
+                }
+            }
         }
         prescriptions = await persistence.loadPrescriptions()
         if let prefs = await persistence.loadPreferences() {
