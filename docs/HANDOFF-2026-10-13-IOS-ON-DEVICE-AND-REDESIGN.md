@@ -55,6 +55,10 @@ Why the on-device lines stay weak: the step that writes them is Apple's ~3B on-d
 Owner: "A now, I don't want to spend money… cost-efficient" → option 1 (Vercel AI Gateway, key from `.env`, owner's device only) → "1.". Free tier blocks frontier models (GPT-6 Luna, Claude, DeepSeek…); allowed and tested on the real stories: gpt-5.4-nano ($0.0008/3 stories, 3 s, strict relevance, ℞ names products) ← chosen; minimax-m2.7, qwen3.6-27b, seed-2.1-turbo slower/pricier. Built: `HaosCloud.swift` (one call after ranking, ≤12 candidates, ≤4 calls/day, JSON lines), `NewsArticle.cloud`, rounds prefer the frontier judgement, screens prefer cloud lines, dump shows them. First live run 21:38: 12 judged, rounds = luxury-consumer shift / brands reinvest in stores / Lowe's media network, verdicts in voice ("When reviews and positioning diverge, you fund price hikes with backlash."), ℞ with products. Also: Nubble's two axes restored on signal pages (up/down = next signal, left/right = depth strip 00–04).
 Secrets: `ios/scripts/secrets.sh` writes `ios/Nubble/Generated/Secrets.swift` from `~/dev/pokpok-ai/.env` (gitignored; a clean clone must run it before building).
 
+### 21:40 — "yellow banner took too much space" → ℞ strip
+℞ block cut from ~30% of the screen to ~16%: glyph inline with the prescription (Instrument Serif 19), no label row, 40 pt buttons; Rounds footer one row. Verified on the phone (y-signal4). Commit 1f5ba58. The owner is using the app live (captures showed his own prescriptions and the discharge page).
+Open: TestFlight — key stripped (testers get on-device lines) or key with a $5 gateway cap: his call.
+
 ## Next (owner leads the design)
 1. Owner designs the screens; implement his design natively (SwiftUI + Metal), Geist bundled.
 2. Writer: lead and support as two separate requests (stop the spill/repeat); shorter leads.
