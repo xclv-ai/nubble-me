@@ -1,71 +1,124 @@
-# Creative direction — "The toy that judges you" (2026-10-13)
+# Creative direction v2 — "Painted machines, open wires" (2026-10-13, 22:50 Warsaw)
 
-The owner: "check our POKPOK visual style, you should have examples generated with BytePlus and my preferences… find creative direction." · "I want all visuals in that style so the app will look like a game, but with the sarcasm of Rick and Morty in Dr HAOS style — a bit roasting."
+**v1 of this file (commit 5a97ee2, "the toy that judges you") is withdrawn.** It was built from the mascot folder;
+the owner: *"no FIND STYLE CREATIVE DIRECTION! it is not DR HAOS it is other folder"* · *"it is not flat design at all
+it is material and colors of pokpok and specific creative metaphors"*. The direction lives in
+`~/dev/pokpok-ai/marketing/pokpok-cd` (378 owner votes over 1,785 renders) and the `pokpok-creative` skill.
 
-## 1. The evidence: what the owner already chose (March 2026)
-Folder `pokpok-ai/marketing/marketing materials/branding/mascot-concepts/` (Seedream/BytePlus renders, 2026-03-28; the only mascot work since is the 2D SVG for the web agent, Oct 2026).
+## 1. The owner's words tonight
+- *"i want all visuals in that style so app will look like game but with sarcasm of rick and morty in DR HAOS style a bit roasting"*
+- *"check this style: round-13__W-crown__linocut.png"* · *"linocut"* · *"or like this: round-13__W-microphone__painted.png"*
+- *"yes i like round-13__W-scanner-wrong__painted.png — so all buttons in app could be like physical objects
+  unconventionally, all connected with open wires. i need like transparent functionality"*
+- *"i need a bit absurd provocative but meaningful"*
 
-| Round | What it is | Verdict then |
+## 2. The three pictures he pointed at, and what each gives the app
+
+| Picture (favourites/) | The prompt that made it (tools/r13.py, verbatim) | What the app takes from it |
 |---|---|---|
-| `3d-mascot/` (17 renders: black-muzzle, dark-metallic, deep-ears, fixed-muzzle, from-flat, solid-muzzle) | **A matte-black bevelled block with ear wedges, yellow kite eyes, a pink bevelled nose — a physical toy photographed on a white table in soft studio light with a real contact shadow.** Turnaround sheets (front, three-quarter, side, back) exist. | The round the owner kept iterating (muzzle fixes, ear depth, metal vs matte). **This is the style.** |
-| `style-explorations/` ceramic (teal glossy), embroidered patch, neon sign, paper cut-out | One-offs | Explored, not continued |
-| `geometric-v2/`, `geometric-polish/`, `clean-0x`, `0x-v4` | 2D icon system (bar + eyes + nose), expressions sheet | The flat identity for the web; not the app's hero |
+| `round-13__W-scanner-wrong__painted.png` | *"{bottle} lying face down on the glass of a photocopier with the yellow scan bar mid-sweep beneath it, and the sheet sliding out of the tray shows the printed shape of a completely different object"* | **The machine.** A pink painted photocopier, yellow glass, a tray that prints. The product goes in, a verdict comes out — and the machine can be wrong. This is the app's control: a physical instrument, not a button. |
+| `round-13__W-microphone__painted.png` | *"{bottle} standing alone in front of a large yellow studio microphone in a dark padded recording booth, one pink acoustic panel behind, mid-sentence"* | **The room and the wire.** A padded teal booth (floor + wall), one pink panel, one yellow light, and a yellow cable that runs visibly from the mic to the wall socket. Every connection in the app is a cable you can follow. |
+| `round-13__W-crown__linocut.png` | *"{bottle} standing alone wearing an enormous elaborate pink crown far too large for it, tilting and about to slide off, one yellow light above"* | **The print register.** Flat opaque ink on paper tooth, three colours, gouge chatter on every edge. The sheets the machines print, the ℞, the tags and stamps are linocut. The joke is in the situation (the crown is too big), never in the object. |
 
-Reference renders copied to `docs/redo/reference/` (01 hero object, 02 turnaround, 03 whiskers+notch variant, 04 metallic variant, 05 ceramic not kept, 06 2D expressions).
+The two style blocks, verbatim from `tools/r13.py` (keep word for word in any render):
+- **painted** — *"Static 16:9 image in the style of a realist oil painting - hand-painted with rich tonal modelling, soft gradients, deep painted shadows with colour in them, visible brushwork. Fully modelled by brush, never flat. Painted, not photographed and not rendered."*
+- **linocut** — *"Static 16:9 linocut print. Bold carved shapes with the nicked chatter of a gouge along every edge, flat opaque ink on visible paper tooth, tiny gaps where the block did not take. Printed by hand, never photographed, never rendered."*
 
-What the spec says the character IS (`mascot-design-spec.md`, `mascot-creative-brief.md`): the POKPOK scanning bar given a face; half-lidded asymmetric eyes carry 90% of the emotion ("arrogant"); expression states Default/Scanning/Judging/Side-eye/Dead/Sleeping/Impressed ("rare — the cat is hard to impress"); "not cute, not friendly, not a cartoon cat — competent and slightly intimidating"; animation spec: blink 150/100 ms every 4–8 s, ear twitch 200 ms 5°, chin raise 400 ms 3°, side-eye 300 ms, slow blink = approval (rare), cursor/eye tracking ≤15%; X-RAY blend: "the mascot IS the diagnostic tool."
+His favourites by style (`tools/favs.py`, 120 stars): painted 35 · linocut 30 · riso 18 · chalk 13 · moulded 2.
 
-What POKPOK's visual language is (`design-system/`, live pokpok.ai): colour as section (teal authority · beige evidence · pink confrontation · yellow interrupt), hard cuts, 0 px radius, the 4 px corner notch (hundreds on the live site), `image-rendering: pixelated` logo, dither/ASCII "retro grit" ("the truth doesn't need to be polished; it needs to be raw"), Instrument Serif for feeling + JetBrains Mono for proof, "the square is the asset" for data, motion only to show a number arriving.
+## 3. The direction in one sentence
+**Nubble is Dr HAOS's consulting room, painted the way POKPOK paints: every control is a physical machine (pink and
+teal painted plastic, one yellow light, real shadow), every connection is an open yellow cable you can follow with your
+eye, and nothing happens behind a panel — the feed runs into the scanner, the scanner's tray prints the signal, the ℞
+comes out of a stamp, and the machine is allowed to be wrong, which is where the roast lives.**
 
-## 2. The direction
-**One sentence:** Dr HAOS is a **real object** — the matte-black bevelled toy from the March renders — sitting in a lit **diorama** of POKPOK materials; every screen is a shot of that world, every signal is a physical prop he pushes toward you, and he narrates with Rick-and-Morty sarcasm aimed at *you*.
+"Transparent functionality" (his words) = the wiring IS the information architecture. You do not read a menu; you see
+which socket the cable goes into.
 
-**Why this is the game feel the owner asked for:** games sell a *world*, not a layout. The world here is a tabletop (beige, the evidence ground), a wall (teal, authority), props in pink (confrontation) and yellow (the one action), all with the notch as their chamfer. The phone's tilt moves the camera around the diorama, so light and shadows move the way they do on a real desk. Nothing is a card; everything is a thing.
+## 4. Rules carried over from the measured direction (receipts: `pokpok-cd/STATUS.md`, `pokpok-creative/SKILL.md`)
+1. **Scenes, not objects.** Every starred picture is 2–3 things in a relationship. A lone button on a flat field is the rejected kind.
+2. **A world, not a void.** A floor and a back wall; dust and debris pooled at the base of things; a corner. The phone screen is a room.
+3. **Made by a hand.** Painted or printed; visible brushwork or paper tooth. "Moulded / CGI-clean" is DEAD (6% of votes). No gloss, no gradients-as-design, no glass.
+4. **Allegory with a "before".** Something already happened and you arrive after: the sheet already printed the wrong object. The world carries the joke.
+5. **Colour law.** Teal field (`#0A3B44` family) for every object's own body; **one** soft pink human thing (a panel, a pad, a tag, the machine's shell); **yellow is the light** and the live wire. Near-black everywhere else. Real-world materials restated as teal at the object. The words "metal / steel / chrome" never appear in a prompt (renders steel).
+6. **The machine must fail or misread.** "A machine doing its job correctly" is inert (anti-patterns 14, worked example "the self-checkout"). Dr HAOS's instruments misprint, over-measure, over-tag — that is the Rick-and-Morty register: the roast is in what the machine did to *your* product.
+7. **Deadpan, as a caption.** Two flat sentences under the picture; the sarcasm never lives in the image. In the app, Dr HAOS's line is the caption under the machine.
+8. **Not the mascot.** STATUS.md: *"Not the mascot. The cat is a separate programme."* The flat SVG cat does not sit on top of a painted world. How Dr HAOS is present is the one open decision (§7).
 
-### 2.1 The hero: Dr HAOS, the toy
-- Geometry: exactly the March object — bar body with chamfered edges (the notch at scale), two ear wedges, two kite eyes with heavy lids (one more closed), the pink nose block with the heart base, optional whisker slits (the `3d-mascot_4` variant). Low-poly: ~2–4k triangles, flat-shaded facets, no fur, no mouth.
-- Material: matte black with a fine soft-touch grain (roughness ≈ 0.6, slight sheen on bevels), nose in matte pink, eyes in a glossy yellow with a tiny specular — exactly the render.
-- Light: one soft key from upper-left, cool fill from the right, a pink rim from behind (the March renders show the pink bounce under the chin), contact shadow on the table, ambient from an off-white studio.
-- Life (from the spec, extended): breathing (2.2 s), blink 150/100 ms every 4–8 s, ear twitch 200 ms, chin raise 3° when a signal is opened, side-eye toward whatever the user taps, slow blink = approval (only when a prescription is accepted), "scanning" = eyes narrow and a light sweeps the bar while he reads; "dead" X-eyes on an error; sleeping when discharged. The eyes track the finger ≤15%. A tap on him = a dismissive 0.3 s head shake + rigid haptic.
-- He has **no body**. He sits. The arrogance is in the lids and the stillness.
+## 5. The vocabulary of machines (first list — the concept step chooses, the owner picks)
+Each is a real object he would recognise in one word, in his painted/linocut register, with a cable.
 
-### 2.2 The world: a diorama in POKPOK materials
-- **Table** = beige matte board (evidence ground). **Wall** = teal, matte, with a faint dither grain in the far corners (retro grit, barely). **Props** = pink (a signal he's unhappy about), beige (a plain signal), **red** (a competitor), yellow (the one prescription — a stamped tag).
-- Every prop is a chamfered block (the notch is the bevel). Signals are **plates** laid on the table with the headline printed on them; the ℞ is a **yellow tag** that slides out from under his chin when he's decided; the "discharged" state is him turning away and the lights dimming.
-- Camera: ¾ view, 34° FOV, slightly above table height; the **gyroscope orbits the camera ±12°** around the diorama (never the objects), so the key light stays put and every shadow slides — the thing the owner asked for.
-- Text is printed on props *and* laid over the shot in the UI layer — the big headline (Geist 40+) lives in the UI layer so it is always readable; small print on props is decoration.
+| What the app does today | The machine | The wire | The failure that makes it funny |
+|---|---|---|---|
+| Sources (15 RSS feeds, editable) | A row of wall sockets; each source is a yellow cable plugged into a pink junction box | Unplug = remove; plug = add. The cable is the source. | One socket sparks (a dead feed, 13 of 15 worked tonight) |
+| Reading + ranking (~50 s on the phone) | The photocopier: stories lie on the glass, the yellow bar sweeps | From the junction box into the copier | The sweep is real work time, shown, not a spinner |
+| A signal (00–03) | A printed sheet sliding out of the tray (linocut, paper tooth) | — | The copier prints "a completely different object" — the headline is what the world printed about *you* |
+| Code red (a competitor) | The sheet comes out pink; a beacon wired to the copier turns | A short cable from copier to beacon | The beacon is already turning when you arrive |
+| Depth 00–04 | A stack of sheets under the tray, or a dial on the copier's side | — | Deeper = more sheets, same machine |
+| His verdict (the voice) | The padded booth and the yellow mic | Mic cable to the socket | He's mid-sentence when you walk in |
+| ℞ Prescribe | A rubber-stamp machine; press = stamp + rigid haptic | Copier → stamp | The stamp is slightly off the sheet |
+| Skip | The shredder (round-12 `S-conveyor-shred__painted` is in his favourites) | Copier → shredder | It keeps a strip |
+| Watchlist (competitors) | The lineup chart on the wall (`print-100__PR-hm-lineup__riso`) | — | Everyone looks the same |
+| Discharge | The yellow light goes off; one cable left unplugged on the floor | — | "Nothing else is wrong with you today. Sadly." |
 
-### 2.3 The voice: Rick-and-Morty sarcasm, Dr HAOS style, roasting the founder
-From the POKPOK voice canon plus the owner's ask. Rules for every line he says:
-1. He talks **to you**, second person, and the joke is at your expense, never at the news.
-2. The roast must carry a **receipt** (a number, a competitor, a date) or it's sludge.
-3. One beat of contempt, then the useful part. 22 words max. No exclamation marks. No "lol".
-4. He never flatters. "Impressed" is a slow blink and one dry line ("Fine. That one was worth your morning.").
-5. He is bored by routine and alive for a competitor: code red gets a different register (sharper, faster, shorter).
+Two or three machines per screen, never more: "reduce to one object, or one object repeated" (skill §method 4).
 
-Examples (model lines, not output):
-- Opening: "Three things moved while you were sleeping. One of them is a *competitor*. I read all 170 so you'd only have to pretend to."
-- Signal: "Luxury demand cooled and you planned a price rise. Bold. Your reviews said this in July; nobody read them. I did."
-- Code red: "Jungle Scout shipped your product. Cheaper, dumber, *first*. Receipts below. Try not to panic in the elevator."
-- ℞ accepted (slow blink): "Noted. It'll still be your fault, but now it's a smaller one."
-- Skip: "Skipped. I'll remember that. I remember everything."
-- Discharge: "Nothing else is wrong with you today. *Sadly.* Go build something. Come back tomorrow; I don't sleep."
+**The three tests every machine passes — his words: "a bit absurd, provocative, but meaningful"** (they are the skill's own
+tests, anti-patterns 6 and 14, worked example "the self-checkout"):
+1. **Absurd** — would this object normally be here? If yes, kill it. A photocopier reading the news is absurd; a news list is not.
+2. **Provocative** — what does it accuse? The copier prints a *different object* than the one on its glass: that is what the
+   market did to your product this morning. A machine that merely works accuses nobody.
+3. **Meaningful** — name the real function in one word without being told: scanner = reading, tray = the signal, stamp = ℞,
+   shredder = skip, socket = a source. If a person needs the caption to know what the machine does, it is decoration.
+Example that passes all three: *the yellow scan bar sweeps for exactly as long as the phone's model is reading (50 s tonight);
+the sheet that comes out names a competitor you never mentioned.* Example that fails: a pink button labelled "Refresh".
 
-### 2.4 Type and colour in the UI layer
-- Headline: Geist SemiBold 40–44 pt (the first prototype's contrast); body Geist 17–19; meta JetBrains Mono 11 uppercase; **his lines in Instrument Serif italic** (the only serif) in pink on teal or white on red.
-- Three sizes per screen, max. One yellow element per screen (the action). Red only for competitors.
-- Colours exactly POKPOK's: teal #0A3B44 · beige #E8E0D1 · pink #FFC4D6 · yellow #F5F900 · off-white #FDFDFC · critical red; the mascot's black is #0E0E0E matte (the March render), not teal.
+## 6. Motion and 3D — "a painting that moves"
+The owner's standing asks (gyroscope moves the shadows; engaging like a game; ultra quality) stay. The world is built
+as real 3D so the key light stays put and shadows slide with tilt — but it is RENDERED painted/linocut: flat opaque
+colour bands, hard shadow shapes with colour in them, ink edges with gouge chatter, paper tooth or brushwork over
+everything, one yellow light. Cables are physics ropes: they swing with tilt and tug a beat before a tray prints
+(anticipation). The 3D-stack research (`02-3D-STACK-…`) is re-pointed at this question.
 
-### 2.5 What this is NOT
-Not a card list with a 3D face on top (what was built tonight). Not a cartoon. Not neon, not ceramic (explored and dropped). Not gradients, not glass. Not "cute": the humour is dry and the object is slightly intimidating.
+## 7. How Dr HAOS is present — answered by the folder's root (owner: "/marketing/pokpok-cd", 23:05)
+The folder root holds the owner's FIRST references (1 Aug 2026, `generations/Screenshot 2026-08-01 at 13.20.*.png`, the three
+`jimeng_*.mp4` clips) and the round log's verdict on them (`ROUND-LOG.md` lines 258–272):
 
-## 3. How we'll know it's right (test, in the owner's hands)
-- Open the app: within 2 s you see the toy on its table, lit, breathing; tilt the phone and the shadow moves. If a screenshot of it could be mistaken for a product photo of a desk toy, it's right.
-- Three signals, one yellow tag each, under 90 s; a visible exit on every screen; the tab bar always there.
-- Read five of his lines aloud: each has a receipt and a roast; none could be from a generic assistant.
+> *"Goose in a suit walking through a clinic waiting room, yellow chairs, teal speckled floor, first-person POV with the
+> viewer's own knees in shot · Shark on a video call · Whale beached on the driveway. One world: **real animals, played
+> completely straight, in mundane institutional settings. Teal, yellow, pink. Locked camera, film grade, deadpan.** …
+> the animal-in-an-institution register is the stronger idea."*
 
-## 4. Next (in order, no Swift yet)
-1. Best practices (01) and the 3D stack (02) — running.
-2. **Model the toy** as a real asset (USDZ/GLB): Blender or a generative-3D pass from the March renders + cleanup; bake AO; export at ~3k tris. Reference: `docs/redo/reference/01-hero-object.jpeg`, `02-turnaround.jpeg`.
-3. **Playable diorama in the phone's browser** (Three.js): toy + table + wall + lights + gyroscope orbit + one signal plate + the ℞ tag + his lines in the UI layer. The owner tests it live.
-4. UX plan on top of the diorama (flows, exits, states), then native.
+And the house already painted the cat: `generations/round-14/A-cat-polygraph__painted.png` — *"one pink cat sits upright on the
+table with thin pink sensor wires taped to its chest running to a small polygraph machine whose needle is scratching a violent
+jagged line on a rolling yellow chart"* — a pink cat, wired to a machine, under one yellow lamp, deadpan. That is Dr HAOS's
+register in the house style, and it is the owner's "open wires" picture a month early.
+
+**So: A, not B.** Dr HAOS is a **real pink cat, played completely straight**, in a doctor's coat, in a mundane consulting room
+(teal walls, yellow chairs, one lamp) — the same programme as the goose in the suit and the bear at "BRAND CONSULTANT ROOM 12B".
+The camera is the house camera: **first person, locked, the user's own knees or hands in shot** — you are the patient; he
+leans over you the way the doctor in the clips does (`reference/cd-14-ref-clip-doctor-leans-over-you.jpg`), with a magnifier,
+a stethoscope, a lamp. Your product lies on the table between you. The gyroscope is your head moving on the table: the lamp's
+shadow and his face shift with it. Nobody reacts; the sarcasm is the caption.
+- Not the SVG mascot (flat), not the bevelled toy (moulded is dead), not "cute": a real cat with half-lidded eyes, fur painted
+  by brush, in the painted block verbatim; the goose sheet (`generations/goose/SHEET-GOOSE-10-STYLES.jpeg`) shows the painted
+  register (B) holds for an animal character where moulded/resin/cel do not.
+- The machines of §5 are the instruments on his desk, wired with the same open yellow and pink cables as the polygraph.
+- References copied to `reference/cd-10…cd-14` and `cd-20…cd-22`.
+
+## 8. Type and colour in the UI layer (unchanged from v1)
+Geist SemiBold 40–44 pt headlines over Geist 17–19 body (the first prototype's contrast); JetBrains Mono 11 for receipts; **his
+lines in Instrument Serif italic**, pink on teal. Three sizes per screen, one yellow element (the live wire / the action), red
+only for competitors. Text sits in the UI layer; small print on the machines is decoration.
+
+## 9. How we'll know it is right
+- A screenshot with the text covered could pass as the 121st star in `favourites/`.
+- Every control is a thing with a cable; you can say in one word what each machine is.
+- Cover the caption: the picture still says what the machine did to your product.
+- Tilt the phone: the shadow under the copier moves, the cables swing.
+
+## 10. Next (no Swift)
+1. Three concept variants, each with ONE key frame rendered in the house style (Seedream, the two style blocks verbatim,
+   through `tools/prompt_lint.py`) — the owner picks.
+2. UX plan on the chosen variant (flows, exits, states, the cable map).
+3. Playable prototype in the phone's browser; the owner tests.
