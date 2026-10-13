@@ -227,7 +227,7 @@ struct ScanBand: View {
                 ctx.fill(p, with: .color(Pok.teal))
             }
             .frame(height: 6)
-            Text("║ . . : : ░ ▒ ▓ ▓ \(text.uppercased()) ▓ ▓ ▒ ░ : : . . ║").font(Pok.mono(11)).tracking(1).foregroundStyle(Pok.teal).lineLimit(1).truncationMode(.middle).padding(.vertical, 6).padding(.horizontal, 12)
+            Text("░ ▒ ▓ \(text.uppercased()) ▓ ▒ ░").font(Pok.mono(11)).tracking(1).foregroundStyle(Pok.teal).lineLimit(1).truncationMode(.middle).padding(.vertical, 6).padding(.horizontal, 12)
         }
         .frame(maxWidth: .infinity).background(Pok.yellow)
     }

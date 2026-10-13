@@ -79,7 +79,7 @@ struct SignalPage: View {
         VStack(alignment: .leading, spacing: 10) {
             PokLabelGrey(text: "\(String(format: "%02d", index)) // \(String(format: "%02d", total)) · \(isRed ? "Uncomfortable truth" : "Diagnosis")", color: isRed ? Pok.teal.opacity(0.6) : Pok.grey)
             SerifLine(text: s.headline ?? s.title, size: 38, color: isRed ? Pok.teal : Pok.card)
-            if let v = s.verdict, !v.isEmpty, isRed { DoctorSays(line: v, size: 19, color: Pok.teal).padding(.top, 6) }
+            if let v = s.verdict, !v.isEmpty, isRed { DoctorSays(line: Self.short(v), size: 19, color: Pok.teal).padding(.top, 6) }
         }
         .padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 22)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -97,7 +97,7 @@ struct SignalPage: View {
                     ChartRow(key: "Seen", value: "\(Self.time(a.publishedAt)) · \(a.articleUrl.host() ?? a.sourceName)")
                 }
                 HStack(spacing: 12) { PokLabelGrey(text: "Threat").frame(width: 92, alignment: .leading); SquareMeter(count: 5, on: (a.relevance ?? 0) >= 1 ? 4 : 3, color: Pok.critical); Text("\((a.relevance ?? 0) >= 1 ? 4 : 3) / 5").font(Pok.mono(12)) }.padding(.top, 10)
-            } else if let fact = HeroFact.find(in: s.summary + " " + s.standard) {
+            } else if let fact = HeroFact.find(in: s.summary + " " + s.condensed) {
                 PokLabelGrey(text: fact.label)
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Text(fact.number).font(Pok.serif(88)).foregroundStyle(Pok.teal)
@@ -112,7 +112,7 @@ struct SignalPage: View {
                 PokLabelGrey(text: "Evidence · \(a.sourceName) · \(Self.date(a.publishedAt))").padding(.top, 10)
                 DottedRule()
             }
-            if !isRed, let v = s.verdict, !v.isEmpty { DoctorSays(line: v, size: 19).padding(.top, 18) }
+            if !isRed, let v = s.verdict, !v.isEmpty { DoctorSays(line: Self.short(v), size: 19).padding(.top, 18) }
         }
         .padding(.horizontal, 24).padding(.top, 20).padding(.bottom, 24)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -157,6 +157,19 @@ struct SignalPage: View {
         }
     }
 
+    /// At most two sentences and 26 words — the model does not keep to the limit, the screen does.
+    static func short(_ text: String) -> String {
+        var out: [String] = []; var words = 0
+        for sentence in text.replacingOccurrences(of: "\n", with: " ").components(separatedBy: ". ") {
+            let w = sentence.split(separator: " ").count
+            if out.count == 2 || words + w > 26 && !out.isEmpty { break }
+            out.append(sentence.trimmingCharacters(in: .whitespaces)); words += w
+        }
+        var s = out.joined(separator: ". ")
+        if !s.hasSuffix(".") && !s.hasSuffix("?") && !s.hasSuffix("!") { s += "." }
+        return s
+    }
+
     static func lead(of text: String?, block: String) -> String? {
         guard let text, let r = text.range(of: "**\(block)") else { return nil }
         let rest = text[r.upperBound...]
@@ -176,10 +189,11 @@ struct HeroFact {
     let label: String
 
     static func find(in text: String) -> HeroFact? {
-        let pattern = #"([$€£]\s?\d[\d.,]*|\d[\d.,]*\s?%|\d[\d,]{3,})\s?(billion|million|trillion|bn|m|k|B|M|K)?"#
+        // money, a percentage, or a number with a magnitude word — a bare year is not a fact worth a hero
+        let pattern = #"([$€£]\s?\d[\d.,]*|\d[\d.,]*\s?%|\d[\d.,]*(?=\s?(billion|million|trillion|bn)\b))\s?(billion|million|trillion|bn|B|M)?"#
         guard let re = try? NSRegularExpression(pattern: pattern), let m = re.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)), let r = Range(m.range, in: text) else { return nil }
         var number = String(text[Range(m.range(at: 1), in: text)!]).replacingOccurrences(of: " ", with: "")
-        var unit = m.range(at: 2).location != NSNotFound ? String(text[Range(m.range(at: 2), in: text)!]) : ""
+        var unit = m.range(at: 3).location != NSNotFound ? String(text[Range(m.range(at: 3), in: text)!]) : ""
         unit = ["billion": "B", "million": "M", "trillion": "T", "bn": "B", "m": "M", "k": "K"][unit.lowercased()] ?? unit.uppercased()
         if number.hasSuffix("%") { unit = "%"; number.removeLast() }
         // the sentence around it, trimmed to a label

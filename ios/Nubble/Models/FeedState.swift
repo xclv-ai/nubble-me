@@ -31,11 +31,11 @@ final class FeedState {
         didSet { persistPreferences() }
     }
     var prescriptions: [Prescription] = [] {
-        didSet { Task { [prescriptions] in await FeedPersistence.shared.savePrescriptions(prescriptions) } }
+        didSet { Task { [prescriptions] in await FeedPersistence.shared.savePrescriptions(prescriptions) }; WidgetBridge.publish(self) }
     }
     /// yyyy-MM-dd of the last day the rounds were completed.
     var dischargedOn: String? {
-        didSet { persistPreferences() }
+        didSet { persistPreferences(); WidgetBridge.publish(self) }
     }
     var isRefreshing: Bool = false
     var lastRefreshedAt: Date? {
@@ -91,8 +91,10 @@ final class FeedState {
     var isDischargedToday: Bool { dischargedOn == Self.today }
 
     func prescribe(_ article: NewsArticle, text: String, status: Prescription.Status = .todo) {
+        let red = codeRedName(for: article) != nil
         prescriptions.removeAll { $0.articleId == article.id }
-        prescriptions.insert(Prescription(id: UUID().uuidString, articleId: article.id, text: text, createdAt: Date(), status: status, isCodeRed: codeRedName(for: article) != nil), at: 0)
+        prescriptions.insert(Prescription(id: UUID().uuidString, articleId: article.id, text: text, createdAt: Date(), status: status, isCodeRed: red), at: 0)
+        if status == .todo { Task { await RemindersBridge.add(text, codeRed: red) } }
     }
 
     var unreadCount: Int {
@@ -170,6 +172,7 @@ final class FeedState {
         articles = kept.filter { $0.isSaved || $0.publishedAt >= cutoff }
         lastRefreshedAt = now
         await rank()
+        WidgetBridge.publish(self)
         Task { await writeSignals() }
     }
 

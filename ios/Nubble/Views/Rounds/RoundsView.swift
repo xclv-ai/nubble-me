@@ -14,15 +14,19 @@ struct RoundsView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 Ticker(text: " [+] Rounds \(Self.dateLine) • \(rounds.count) signals • \(redCount) code red • \(max(0, feedState.articles.count - rounds.count)) stories discharged as noise ")
-                ScrollView {
-                    VStack(spacing: 0) {
-                        hero
-                        ScanBand(text: "Scanning… \(feedState.articles.count) stories")
-                        evidence
-                        footer
+                GeometryReader { geo in
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            hero
+                            ScanBand(text: "Scanning… \(feedState.articles.count) stories")
+                            evidence
+                        }
                     }
+                    .background(Pok.beige)
+                    // the interrupt stays pinned above the floating tab bar; when the bar is not part of the
+                    // safe area (inset under 50 pt) the footer makes room for it itself
+                    .safeAreaInset(edge: .bottom) { footer.padding(.bottom, geo.safeAreaInsets.bottom < 50 ? 56 : 0) }
                 }
-                .background(Pok.yellow)
             }
             .background(Pok.teal)
             .toolbar(.hidden, for: .navigationBar)
@@ -85,6 +89,7 @@ struct RoundsView: View {
         }
         .padding(.horizontal, 24).padding(.top, 20).padding(.bottom, 24)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Pok.beige)
     }
 
     // Yellow: the interrupt

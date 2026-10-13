@@ -12,8 +12,8 @@ struct DepthSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             Ticker(text: " [-] Why? • the full diagnosis • swipe down to close ", bg: Pok.beige, fg: Pok.grey)
-            // the depth strip: notched tabs
-            HStack(spacing: 6) {
+            // the depth strip: notched tabs (scrolls — five don't fit one row)
+            ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 6) {
                 ForEach(0...section.maxDepth, id: \.self) { d in
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) { depth = d }
@@ -25,8 +25,8 @@ struct DepthSheet: View {
                     }
                     .buttonStyle(.plain)
                 }
-            }
-            .padding(.horizontal, 16).padding(.vertical, 12).frame(maxWidth: .infinity, alignment: .leading).background(Pok.beige)
+            }.padding(.horizontal, 16) }
+            .padding(.vertical, 12).frame(maxWidth: .infinity, alignment: .leading).background(Pok.beige)
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack { PokLabel(text: "\(String(format: "%02d", depth)) // \(names[depth])"); Spacer(); PokLabelGrey(text: depth == 2 ? "the source text" : "\(blocks.count) blocks") }
