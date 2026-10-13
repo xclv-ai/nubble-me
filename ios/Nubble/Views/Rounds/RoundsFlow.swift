@@ -99,8 +99,8 @@ struct SignalPage: View {
     private func truth(_ s: ContentSection) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             PokLabelGrey(text: "\(String(format: "%02d", index)) // \(String(format: "%02d", total)) · \(isRed ? "Uncomfortable truth" : "Diagnosis")", color: isRed ? Pok.teal.opacity(0.6) : Pok.grey)
-            SerifLine(text: s.headline ?? s.title, size: 38, color: isRed ? Pok.teal : Pok.card)
-            if let v = s.verdict, !v.isEmpty, isRed { DoctorSays(line: Self.short(v), size: 19, color: Pok.teal).padding(.top, 6) }
+            SerifLine(text: article?.cloud?.headline ?? s.headline ?? s.title, size: 38, color: isRed ? Pok.teal : Pok.card)
+            if let v = article?.cloud?.verdict ?? s.verdict, !v.isEmpty, isRed { DoctorSays(line: Self.short(v), size: 19, color: Pok.teal).padding(.top, 6) }
         }
         .padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 22)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -160,7 +160,7 @@ struct SignalPage: View {
                 PokLabelGrey(text: "Evidence · \(a.sourceName) · \(Self.date(a.publishedAt))").padding(.top, 10)
                 DottedRule()
             }
-            if !isRed, let v = s.verdict, !v.isEmpty { DoctorSays(line: Self.short(v), size: 19).padding(.top, 18) }
+            if !isRed, let v = a.cloud?.verdict ?? s.verdict, !v.isEmpty { DoctorSays(line: Self.short(v), size: 19).padding(.top, 18) }
         }
         .padding(.horizontal, 24).padding(.top, 20).padding(.bottom, 24)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -168,7 +168,7 @@ struct SignalPage: View {
 
     // Yellow: the prescription
     private func rx(_ s: ContentSection, _ a: NewsArticle) -> some View {
-        let line = s.rx?.isEmpty == false ? s.rx! : (s.action?.isEmpty == false ? s.action! : "No prescription. Read the diagnosis and decide yourself.")
+        let line = a.cloud?.rx.isEmpty == false ? a.cloud!.rx : s.rx?.isEmpty == false ? s.rx! : (s.action?.isEmpty == false ? s.action! : "No prescription. Read the diagnosis and decide yourself.")
         return RxBlock(title: isRed ? "Counter-move · today" : "Do this now", rx: line) {
             HStack(spacing: 8) {
                 PokButton(text: "Prescribe → my list") { feedState.prescribe(a, text: line); onNext() }

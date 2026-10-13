@@ -21,6 +21,16 @@ Sources read for this: `pokpok-ai/knowledge/Reference/pokpok-tone-of-voice.md`, 
 - Motion (to build, per `design-system/foundations/motion`): the scan tags pop in one after another; the hero number counts up; the squares pop in; the ℞ block slides up. Nothing else moves. Reduce Motion → fades.
 - Open: can the on-device model write Dr HAOS's lines? Being tested with a dedicated "haos verdict / haos ℞" step (`NewsDepthWriter.haosLines`, self-test `-punch -haos`).
 
+## 0.2 The words — hybrid, decided 2026-10-13 21:00 ("A now, cost-efficient")
+On-device 3B cannot carry Dr HAOS's voice or judge relevance (receipts in the handoff). Test on the phone's three stories through the Vercel AI Gateway (free tier; frontier models blocked, these allowed):
+| model | seconds | cost / 3 stories | relevance | voice | ℞ names a product |
+|---|---|---|---|---|---|
+| openai/gpt-5.4-nano | 3 | $0.0008 | strict, right | good | 3/3 |
+| minimax/minimax-m2.7 | 17 | $0.0016 | strict | best one-liners | 1/3 |
+| alibaba/qwen3.6-27b | 42 | $0.011 | ok | ok | 3/3 |
+| bytedance/seed-2.1-turbo | 97 | $0.021 | mixed | weaker | 3/3 |
+Chosen: **gpt-5.4-nano** — one call after ranking on ≤12 candidates (code reds + in-market High/Medium), ≤4 calls/day, ≈ $0.003/day. Returns relevance + headline + verdict + ℞ per story (`HaosCloud.swift`, stored as `NewsArticle.cloud`); the rounds take the frontier judgement first; the on-device writer keeps doing the five levels; offline → on-device lines. Key: `ios/scripts/secrets.sh` → `Nubble/Generated/Secrets.swift` (gitignored), the owner's device only.
+
 ## 1. The thesis
 Nubble stops being a news reader with depth levels and becomes **a daily 90-second brief that ends**: three signals, each a picture and one move, plus a red card whenever a watched competitor moves. The product's unit is not the article and not the summary — it is **the move**. Done-ness is the reward.
 

@@ -38,6 +38,9 @@ final class FeedState {
         didSet { persistPreferences(); WidgetBridge.publish(self) }
     }
     var rankerVersion: Int = 0 { didSet { persistPreferences() } }
+    var cloudDay: String? = nil
+    var cloudCalls: Int = 0
+    var cloudError: String? = nil
     var isRefreshing: Bool = false
     var lastRefreshedAt: Date? {
         didSet { persistPreferences() }
@@ -86,10 +89,12 @@ final class FeedState {
         let reds = fresh.filter { codeRedName(for: $0) != nil }.sorted { $0.publishedAt > $1.publishedAt }
         let market = Set(product?.marketTopics ?? [])
         let inMarket: (NewsArticle) -> Bool = { market.isEmpty || !market.isDisjoint(with: $0.topics) }
-        let rest = fresh.filter { codeRedName(for: $0) == nil && ($0.relevance ?? 0) >= 0.5 }
+        let score: (NewsArticle) -> Double = { $0.cloud?.relevance ?? $0.relevance ?? 0 }
+        let rest = fresh.filter { codeRedName(for: $0) == nil && score($0) >= 0.5 }
             .sorted { a, b in
+                if (a.cloud != nil) != (b.cloud != nil) { return a.cloud != nil }   // judged by the frontier model first
                 if inMarket(a) != inMarket(b) { return inMarket(a) }
-                if a.relevance != b.relevance { return (a.relevance ?? 0) > (b.relevance ?? 0) }
+                if score(a) != score(b) { return score(a) > score(b) }
                 return a.publishedAt > b.publishedAt
             }
         return Array((reds + rest).prefix(Self.roundsCount))
@@ -138,6 +143,7 @@ final class FeedState {
             lastRefreshedAt = prefs.lastRefreshedAt
             watchlist = prefs.watchlist ?? []
             dischargedOn = prefs.dischargedOn
+            cloudDay = prefs.cloudDay; cloudCalls = prefs.cloudCalls ?? 0
             if (prefs.rankerVersion ?? 0) < RelevanceRanker.version {   // the ranking rule changed: score everything again
                 for i in articles.indices { articles[i].relevance = nil }
                 rankerVersion = RelevanceRanker.version
@@ -195,6 +201,7 @@ final class FeedState {
         articles = kept.filter { $0.isSaved || $0.publishedAt >= cutoff }
         lastRefreshedAt = now
         await rank()
+        await cloudLines()
         WidgetBridge.publish(self)
         Task { await writeSignals() }
     }
@@ -222,6 +229,31 @@ final class FeedState {
             }
         }
     }
+
+    /// One frontier call a day (capped) on the candidates: code reds + in-market High/Medium, newest first.
+    func cloudLines(force: Bool = false) async {
+        guard let product, HaosCloud.available else { return }
+        if cloudDay != Self.today { cloudDay = Self.today; cloudCalls = 0 }
+        guard force || cloudCalls < HaosCloud.maxCallsPerDay else { return }
+        let market = Set(product.marketTopics ?? [])
+        let fresh = articles.filter { $0.publishedAt >= Date(timeIntervalSinceNow: -3 * 86400) && $0.cloud == nil }
+        let reds = fresh.filter { codeRedName(for: $0) != nil }
+        let rest = fresh.filter { codeRedName(for: $0) == nil && ($0.relevance ?? 0) >= 0.5 && (market.isEmpty || !market.isDisjoint(with: $0.topics)) }
+            .sorted { ($0.relevance ?? 0, $0.publishedAt) > ($1.relevance ?? 0, $1.publishedAt) }
+        let candidates = Array((reds + rest).prefix(HaosCloud.maxCandidates))
+        guard !candidates.isEmpty else { return }
+        cloudCalls += 1
+        do {
+            let lines = try await HaosCloud.lines(for: candidates, product: product, voice: Self.voice)
+            for (id, l) in lines { if let i = articles.firstIndex(where: { $0.id == id }) { articles[i].cloud = l } }
+            cloudError = nil
+        } catch {
+            cloudError = error.localizedDescription
+        }
+    }
+
+    /// The POKPOK voice, in one paragraph, for the cloud call.
+    static let voice = "Voice: a brilliant, impatient diagnostician exposing expensive bullshit with evidence, black humour and zero respect for corporate theatre — House M.D., not McKinsey. Diagnosis before explanation: symptom → diagnosis → evidence → hard choice → cure. Brutal but never empty: every accusation holds a receipt (a score, a missing signal, a contradiction, a competitor pattern, a specific waste). Clinical words with dry human observations. On the founder's side, against wasted money. A line sounds right when it names something the client did not see, makes the consequence impossible to ignore, and can prove it."
 
     /// Apple's on-device model scores the stories that have no score yet against the product.
     var isRanking = false
@@ -254,7 +286,9 @@ final class FeedState {
                     lastRefreshedAt: lastRefreshedAt,
                     watchlist: watchlist,
                     dischargedOn: dischargedOn,
-                    rankerVersion: rankerVersion
+                    rankerVersion: rankerVersion,
+                    cloudDay: cloudDay,
+                    cloudCalls: cloudCalls
                 )
             )
         }

@@ -57,9 +57,11 @@ enum SelfTest {
             let s = a.section
             return ["title": a.title, "source": a.sourceName, "relevance": String(a.relevance ?? -1), "codeRed": feedState.codeRedName(for: a) ?? "",
                     "headline": s?.headline ?? "", "action": s?.action ?? "", "verdict": s?.verdict ?? "", "rx": s?.rx ?? "", "writerVersion": String(a.document?.writerVersion ?? 0),
+                    "cloudRelevance": String(a.cloud?.relevance ?? -1), "cloudHeadline": a.cloud?.headline ?? "", "cloudVerdict": a.cloud?.verdict ?? "", "cloudRx": a.cloud?.rx ?? "",
                     "summary": s?.summary ?? "", "forYou": s?.forProduct ?? ""]
         }
         let out: [String: Any] = ["products": feedState.product?.products ?? [], "rankerVersion": feedState.rankerVersion, "stories": feedState.articles.count,
+                                  "cloudError": feedState.cloudError ?? "", "cloudCalls": feedState.cloudCalls, "cloudJudged": feedState.articles.filter { $0.cloud != nil }.count,
                                   "high": feedState.articles.filter { ($0.relevance ?? 0) >= 1 }.count, "rounds": rounds]
         let file = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("rounds.json")
         try? JSONSerialization.data(withJSONObject: out, options: [.prettyPrinted]).write(to: file, options: .atomic)

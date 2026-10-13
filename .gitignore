@@ -9,3 +9,6 @@ vite.config.ts.*
 server/data/feed/launchd-*.log
 server/data/feed/nightly-*.log
 .claude/worktrees/
+
+# generated secrets (ios/scripts/secrets.sh)
+ios/Nubble/Generated/

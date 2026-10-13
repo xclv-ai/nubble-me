@@ -81,6 +81,7 @@ actor FeedPersistence {
         let isPaywalled: Bool
         let hasDocument: Bool
         var relevance: Double?
+        var cloud: CloudLines?
     }
 
     struct PersistedPreferences: Codable {
@@ -90,6 +91,8 @@ actor FeedPersistence {
         var watchlist: [String]? = nil
         var dischargedOn: String? = nil   // yyyy-MM-dd of the last completed rounds
         var rankerVersion: Int? = nil
+        var cloudDay: String? = nil      // yyyy-MM-dd of the last cloud call
+        var cloudCalls: Int? = nil       // calls made that day (cap)
     }
 
     // MARK: - Prescriptions
@@ -129,7 +132,8 @@ actor FeedPersistence {
                 processedAt: a.processedAt,
                 isPaywalled: a.isPaywalled,
                 hasDocument: a.document != nil,
-                relevance: a.relevance
+                relevance: a.relevance,
+                cloud: a.cloud
             )
         }
         let encoder = JSONEncoder()
@@ -168,7 +172,8 @@ actor FeedPersistence {
                 processedAt: p.processedAt,
                 errorMessage: nil,
                 isPaywalled: p.isPaywalled,
-                relevance: p.relevance
+                relevance: p.relevance,
+                cloud: p.cloud
             )
         }
     }

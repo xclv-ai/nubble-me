@@ -56,6 +56,7 @@
 		639C8FC6E71179CF8EA707B1 /* ReadingProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87835B1148D75BFC1C62B5EC /* ReadingProgressBar.swift */; };
 		64CD617D077AAEB88E9F8242 /* Pok.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0760A9EC4AC11596E08C9B /* Pok.swift */; };
 		66A8DA84DA69C5692CDE1C95 /* FeedSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F92E21743571C4594D84DE /* FeedSource.swift */; };
+		694D1F5F6E3AED5D296BD64E /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D156B7D1B664B27311B6451 /* Secrets.swift */; };
 		6D10D42E3C0C6BBAD8F295CD /* TopicManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F14E3E6A994F0610552F72 /* TopicManagerView.swift */; };
 		76EDB6CB13275A497A184D87 /* Zodiak-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 95950AE25D22AD73E5660512 /* Zodiak-Italic.otf */; };
 		77FBB1DB0E45554057B3193E /* DepthScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4C946F8E045F7104C904A9 /* DepthScan.swift */; };
@@ -118,6 +119,7 @@
 		F0DE4871420FA99BD38B1007 /* ProductProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B36ADE400BD8221DA781180 /* ProductProfile.swift */; };
 		F671824E32938A60AEB9BE59 /* Zodiak-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = FD5A84476E2ABA2CEF0F4D95 /* Zodiak-Light.otf */; };
 		FA6BE86B973A3CA5739D09F6 /* Zodiak-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD371F1C4546416D71EB1FA /* Zodiak-Thin.otf */; };
+		FAD729CBDC27DCB615982DA7 /* HaosCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296010BA3ACAF95E3C0737E9 /* HaosCloud.swift */; };
 		FC4BE98D84A9A7EC2738CEE2 /* BoundaryFlash.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0030AD57BA806CA81309D4 /* BoundaryFlash.swift */; };
 		FE572BCEE36767D521BF77B6 /* Satoshi-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1BA7D294D555AFF5EB497D0C /* Satoshi-Light.otf */; };
 		FED3708F4EA686028B42A640 /* Zodiak-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = F80CFFB3E70D4FD8D12B9685 /* Zodiak-Black.otf */; };
@@ -175,6 +177,7 @@
 		21E873226478D404328183B7 /* ReadingTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingTime.swift; sourceTree = "<group>"; };
 		2417FC6C35C7D5F4CC58CF74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		26126A714730915134055367 /* NewsFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsFeedView.swift; sourceTree = "<group>"; };
+		296010BA3ACAF95E3C0737E9 /* HaosCloud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HaosCloud.swift; sourceTree = "<group>"; };
 		29D0D95FB5443D68F6888036 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2BF045E50B4E74ED3E787A6A /* NewsDepthWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDepthWriter.swift; sourceTree = "<group>"; };
 		3026CCA56112E799A3CD303D /* Satoshi-MediumItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-MediumItalic.otf"; sourceTree = "<group>"; };
@@ -214,6 +217,7 @@
 		95950AE25D22AD73E5660512 /* Zodiak-Italic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Zodiak-Italic.otf"; sourceTree = "<group>"; };
 		9A00265742C2418D4EA50CB1 /* NubbleShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NubbleShare.entitlements; sourceTree = "<group>"; };
 		9AF8A10C5BB255AA9BAD6E84 /* SwipeOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeOnboarding.swift; sourceTree = "<group>"; };
+		9D156B7D1B664B27311B6451 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		A41515E08069E81F2E4D4FC6 /* TopicChipsBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicChipsBar.swift; sourceTree = "<group>"; };
 		A52AA22EACA5084A182AF681 /* ProductNewsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductNewsView.swift; sourceTree = "<group>"; };
 		A59EAF5F1852A00C810E3B09 /* Prescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prescription.swift; sourceTree = "<group>"; };
@@ -277,6 +281,7 @@
 				FD3FC122AC787174F0E1BC39 /* Nubble.entitlements */,
 				D7154753A83EFB28462FD99A /* NubbleApp.swift */,
 				D178940C1EB5F4D901A70D28 /* Design */,
+				D41D7106668ACE0C67949583 /* Generated */,
 				7C8E98BFE2EF4F8A349C1039 /* Models */,
 				E4906A274ECD36D6C67A0A64 /* Resources */,
 				D30373A04BB187F6A35922AC /* Services */,
@@ -435,6 +440,7 @@
 				44C80A08E5015C95B8F17FD6 /* EPubParser.swift */,
 				BE2B4AF39092E4BAFB920723 /* FeedPersistence.swift */,
 				7FE42CE7FA428177480F1629 /* FeedRefreshScheduler.swift */,
+				296010BA3ACAF95E3C0737E9 /* HaosCloud.swift */,
 				027A81C7DF7C1C38B94FCE85 /* LocalFeedService.swift */,
 				4026DBE5145A0630A8923FFC /* NewsConversionPipeline.swift */,
 				2BF045E50B4E74ED3E787A6A /* NewsDepthWriter.swift */,
@@ -448,6 +454,14 @@
 				DA2BBDD8097D16307EC6C175 /* WidgetBridge.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		D41D7106668ACE0C67949583 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				9D156B7D1B664B27311B6451 /* Secrets.swift */,
+			);
+			path = Generated;
 			sourceTree = "<group>";
 		};
 		D543C1F0F61F89ECEF788BCD /* Feed */ = {
@@ -700,6 +714,7 @@
 				80855D8F8F2DA21F64D0A7EE /* FeedRefreshScheduler.swift in Sources */,
 				66A8DA84DA69C5692CDE1C95 /* FeedSource.swift in Sources */,
 				2771C382AB86C6D428A33C6B /* FeedState.swift in Sources */,
+				FAD729CBDC27DCB615982DA7 /* HaosCloud.swift in Sources */,
 				D1D4E5D16BBFE481F302302C /* Haptics.swift in Sources */,
 				88C431BBDE2DF417C55A66DE /* ImportView.swift in Sources */,
 				D1B44B8B76874EABEF3CBD6A /* LocalFeedService.swift in Sources */,
@@ -731,6 +746,7 @@
 				C2519ED66C9AD59D3381FD71 /* RoundsView.swift in Sources */,
 				2E70A8D1E75D737E160A54E8 /* SampleContent.swift in Sources */,
 				4A41F4C4EB6D7E99C3FFB7D1 /* SavedArticlesView.swift in Sources */,
+				694D1F5F6E3AED5D296BD64E /* Secrets.swift in Sources */,
 				DF461766F33E06419DCD77A0 /* SectionView.swift in Sources */,
 				070921B7B534BFC886079066 /* SelfTest.swift in Sources */,
 				A23B91474C4223E1B94E7948 /* SettingsView.swift in Sources */,

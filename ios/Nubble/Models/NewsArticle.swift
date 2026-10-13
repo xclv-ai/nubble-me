@@ -32,6 +32,8 @@ struct NewsArticle: Identifiable, Sendable {
     var isPaywalled: Bool
     /// How close this story is to the user's product (0…1); nil until a product is set.
     var relevance: Double? = nil
+    /// Dr HAOS's lines from the frontier model (gpt-5.4-nano via the gateway); nil when offline.
+    var cloud: CloudLines? = nil
 
     var estimatedReadTime: Int {
         let words = wordCount ?? snippet.split(separator: " ").count
@@ -49,4 +51,13 @@ extension NewsArticle: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
+}
+
+struct CloudLines: Codable, Sendable, Equatable {
+    var relevance: Double     // 1 high · 0.5 medium · 0 low, the frontier model's judgement
+    var headline: String
+    var verdict: String
+    var rx: String
+    var model: String
+    var at: Date
 }

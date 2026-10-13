@@ -69,7 +69,7 @@ struct RoundsView: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(spacing: 8) {
                 ChartRow(key: "Patient", value: product?.name ?? "— not set")
-                ChartRow(key: "Doctor", value: "DR HAOS")
+                ChartRow(key: "Doctor", value: "DR HAOS" + (rounds.contains { $0.cloud != nil } ? " · gpt-5.4-nano" : " · on-device"))
                 ChartRow(key: "Rounds", value: product == nil ? "waiting for the patient" : "\(rounds.count) signals · ~90 s · then you are discharged")
             }
             if product == nil {
@@ -82,7 +82,7 @@ struct RoundsView: View {
                 NoiseGrid(total: feedState.articles.count, lit: lit, red: red).padding(.top, 8)
                 PokLabel(text: "01 // The scan").padding(.top, 18)
                 ForEach(Array(rounds.enumerated()), id: \.element.id) { i, a in
-                    ScanTag(index: i + 1, text: a.section?.headline ?? a.title, codeRed: feedState.codeRedName(for: a) != nil, high: (a.relevance ?? 0) >= 1)
+                    ScanTag(index: i + 1, text: a.cloud?.headline ?? a.section?.headline ?? a.title, codeRed: feedState.codeRedName(for: a) != nil, high: (a.cloud?.relevance ?? a.relevance ?? 0) >= 1)
                         .padding(.top, 8)
                 }
             }
