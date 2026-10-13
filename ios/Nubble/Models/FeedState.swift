@@ -28,7 +28,7 @@ final class FeedState {
     }
     /// Competitors on the patient list: a story naming one is a code red.
     var watchlist: [String] = [] {
-        didSet { persistPreferences() }
+        didSet { persistPreferences(); if watchlist != oldValue { Task { await cloudLines(force: true) } } }
     }
     var prescriptions: [Prescription] = [] {
         didSet { Task { [prescriptions] in await FeedPersistence.shared.savePrescriptions(prescriptions) }; WidgetBridge.publish(self) }
@@ -79,8 +79,9 @@ final class FeedState {
     static var today: String { let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; return f.string(from: Date()) }
 
     func codeRedName(for article: NewsArticle) -> String? {
-        let hay = (article.title + " " + article.snippet).lowercased()
-        return watchlist.first { !$0.isEmpty && hay.contains($0.lowercased()) }
+        // whole words only: "Peec" must not match "speech"
+        let hay = " " + (article.title + " " + article.snippet).lowercased().replacingOccurrences(of: #"[^a-z0-9]+"#, with: " ", options: .regularExpression) + " "
+        return watchlist.first { !$0.isEmpty && hay.contains(" " + $0.lowercased().replacingOccurrences(of: #"[^a-z0-9]+"#, with: " ", options: .regularExpression) + " ") }
     }
 
     /// Today's rounds: code reds first, then the stories closest to the product. Three.

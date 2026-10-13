@@ -62,7 +62,7 @@ struct HaosStage: UIViewRepresentable {
             m.diffuse.contents = color
             m.roughness.contents = Self.grain(base: roughness)
             m.normal.contents = Self.grainNormal
-            m.normal.intensity = 0.35
+            m.normal.intensity = 0.18
             m.metalness.contents = metal
             g.materials = [m]
             let n = SCNNode(geometry: g)
@@ -116,7 +116,7 @@ struct HaosStage: UIViewRepresentable {
 
             // the plate he stands on: POKPOK beige, receives the shadow
             let plate = SCNNode(geometry: SCNBox(width: 3.2, height: 0.08, length: 2.2, chamferRadius: 0.03))
-            let pm = SCNMaterial(); pm.lightingModel = .physicallyBased; pm.diffuse.contents = beige; pm.roughness.contents = Self.grain(base: 0.8); pm.normal.contents = Self.grainNormal; pm.normal.intensity = 0.25
+            let pm = SCNMaterial(); pm.lightingModel = .physicallyBased; pm.diffuse.contents = beige; pm.roughness.contents = Self.grain(base: 0.85); pm.normal.contents = Self.grainNormal; pm.normal.intensity = 0.06
             plate.geometry?.materials = [pm]
             plate.position = SCNVector3(0, -0.95, -0.1)
             plate.castsShadow = false

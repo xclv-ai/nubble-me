@@ -33,7 +33,7 @@ enum HaosCloud {
 
             For each story write a JSON object with keys story (its number), relevance, headline, verdict, rx:
             - relevance: high / medium / low for \(product.name)'s business — strict: high only if a founder must act this week;
-            - headline: ≤7 words, what changed in the market (not the company name first);
+            - headline: ≤7 words, what changed in the market — never mention \(product.name) in it;
             - verdict: one or two sentences (≤24 words): what the founder did not see, and what it costs;
             - rx: the one move \(product.name) makes today, ≤12 words, verb first, naming one of its products.
             Answer with a JSON array only.

@@ -66,7 +66,7 @@ struct SignalPage: View {
             if let section, let article, !writing {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
-                        HStack { Meta(text: "\(String(format: "%02d", index)) / \(String(format: "%02d", total)) · \(article.sourceName) · \(Self.time(article.publishedAt))", color: isRed ? Haos.ink.opacity(0.8) : Haos.ink3); Spacer(); if isRed { Meta(text: "■ code red · \(competitor ?? "")", color: Haos.ink) } }
+                        HStack { Meta(text: "\(String(format: "%02d", index))/\(String(format: "%02d", total)) · \(article.sourceName)", color: isRed ? Haos.ink.opacity(0.8) : Haos.ink3); Spacer(); Meta(text: isRed ? "■ code red · \(competitor ?? "")" : Self.time(article.publishedAt), color: isRed ? Haos.ink : Haos.ink3) }
                             .padding(.horizontal, 24).padding(.top, 8)
                         Text(article.cloud?.headline ?? section.headline ?? section.title)
                             .font(Haos.display(42)).foregroundStyle(Haos.ink).lineSpacing(-2).fixedSize(horizontal: false, vertical: true)
@@ -84,7 +84,7 @@ struct SignalPage: View {
                         }
                         .padding(.horizontal, 24).padding(.top, 18)
                         .id(depth).transition(.opacity)
-                        Color.clear.frame(height: 24)
+                        Color.clear.frame(height: 40)
                     }
                 }
                 .gesture(DragGesture(minimumDistance: 30).onEnded { v in
