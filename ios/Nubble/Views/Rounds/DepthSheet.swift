@@ -115,6 +115,7 @@ struct DepthSheet: View {
                 }
                 var seen = Set<String>()
                 support = support.components(separatedBy: ". ").filter { seen.insert($0.lowercased().trimmingCharacters(in: CharacterSet(charactersIn: ". "))).inserted }.joined(separator: ". ")
+                if let last = support.last, !".!?".contains(last) { support += "." }
                 out.append(Block(label: label, lead: lead, text: support, bullets: []))
             }
             return out.isEmpty ? [Block(label: "", lead: "", text: text.replacingOccurrences(of: "**", with: ""), bullets: [])] : out
