@@ -154,13 +154,16 @@ final class NewsDepthWriter {
     func productNames(from description: String, name: String) async throws -> [String] {
         #if canImport(FoundationModels)
         let raw = try await text("product names", "You read a company's product description and list what it sells.", "ABOUT \(name.uppercased()):\n\(description)\n\nList the named products or services (their exact names as written), at most 5, comma separated. Answer with the names only.")
-        return raw.replacingOccurrences(of: "\n", with: ",").split(separator: ",").map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " .*\"")) }.filter { $0.count > 1 && $0.count < 40 }
+        return raw.replacingOccurrences(of: "\n", with: ",").split(separator: ",").map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " .*\"")) }
+            .filter { n in n.count > 2 && n.count < 40 && n.split(separator: " ").count <= 4
+                && n.range(of: #"\d\.\d|version|update|launch|campaign"#, options: [.regularExpression, .caseInsensitive]) == nil   // "V5.3.4 Version" is a release note, not a product
+                && description.localizedCaseInsensitiveContains(n) }
         #else
         return []
         #endif
     }
 
-    static let hypeWords = ["game-changer", "game changer", "revolution", "exciting", "leverage", "unlock", "empower", "seamless", "cutting-edge", "next-level", "transformative", "synergy", "holistic", "best-in-class", "robust", "innovative"]
+    static let hypeWords = ["wake-up call", "wake up call", "game-changer", "game changer", "revolution", "exciting", "leverage", "unlock", "empower", "seamless", "cutting-edge", "next-level", "transformative", "synergy", "holistic", "best-in-class", "robust", "innovative"]
     static func hasHype(_ s: String) -> Bool { let l = s.lowercased(); return hypeWords.contains { l.contains($0) } }
 
     /// Two short lines for the signal card: a headline (≤7 words) and one action (≤10 words),

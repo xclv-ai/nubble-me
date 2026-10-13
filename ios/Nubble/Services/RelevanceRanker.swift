@@ -7,7 +7,7 @@ import Foundation
 /// high / medium / low for how much it matters to the product's business.
 struct RelevanceRanker: Sendable {
     /// Bump when the ranking rule changes: every story is scored again.
-    static let version = 2
+    static let version = 3
     #if DEBUG
     /// The model's raw answers from the last run (development self-test only).
     nonisolated(unsafe) static var lastAnswers: [String] = []
@@ -28,8 +28,10 @@ struct RelevanceRanker: Sendable {
 
             high = a founder of \(product.name) must act on it this week (it changes what their customers buy, how they sell, or what a competitor offers). \
             medium = worth knowing, no action. low = not their business.
-            Answer with one word: high, medium or low.
+            Answer in the form `level — reason`, where reason names the \(product.name) customer, product or competitor it touches, in at most 12 words.
             """
+        // words of the product's own world; a "high" whose reason shares none of them is a guess, not a signal
+        let world = Set(product.description.lowercased().split(whereSeparator: { !$0.isLetter }).map(String.init).filter { $0.count >= 5 })
         // One story per request: the small model judges single items far better than lists
         for article in articles {
             let session = LanguageModelSession(model: model, instructions: instructions)
@@ -38,9 +40,12 @@ struct RelevanceRanker: Sendable {
             #if DEBUG
             Self.lastAnswers.append(answer.prefix(40) + " | " + article.title)
             #endif
-            if answer.contains("high") { scores[article.id] = 1.0 }
-            else if answer.contains("medium") { scores[article.id] = 0.5 }
-            else if answer.contains("low") { scores[article.id] = 0.0 }
+            let level = answer.split(separator: "—").first.map(String.init) ?? answer
+            let reason = answer.split(separator: "—").dropFirst().joined(separator: "—")
+            let grounded = !reason.lowercased().split(whereSeparator: { !$0.isLetter }).map(String.init).filter { world.contains($0) }.isEmpty
+            if level.contains("high") { scores[article.id] = grounded ? 1.0 : 0.5 }
+            else if level.contains("medium") { scores[article.id] = 0.5 }
+            else if level.contains("low") { scores[article.id] = 0.0 }
         }
         return scores
         #else

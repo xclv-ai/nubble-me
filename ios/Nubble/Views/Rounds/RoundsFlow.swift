@@ -196,10 +196,11 @@ struct HeroFact {
         var unit = m.range(at: 3).location != NSNotFound ? String(text[Range(m.range(at: 3), in: text)!]) : ""
         unit = ["billion": "B", "million": "M", "trillion": "T", "bn": "B", "m": "M", "k": "K"][unit.lowercased()] ?? unit.uppercased()
         if number.hasSuffix("%") { unit = "%"; number.removeLast() }
-        // the sentence around it, trimmed to a label
-        let sentence = text[..<r.lowerBound].split(separator: ".").last.map { String($0) } ?? ""
-        var label = (sentence + " " + String(text[r.upperBound...].split(separator: ".").first ?? "")).trimmingCharacters(in: .whitespacesAndNewlines)
-        if label.count > 70 { label = String(label.prefix(68)) + "…" }
+        // the sentence that holds the number, whole, as the label
+        let before = text[..<r.lowerBound].split(separator: ".", omittingEmptySubsequences: false).last.map { String($0) } ?? ""
+        let after = text[r.upperBound...].split(separator: ".", omittingEmptySubsequences: false).first.map { String($0) } ?? ""
+        var label = (before + String(text[r]) + after).replacingOccurrences(of: "\n", with: " ").trimmingCharacters(in: .whitespacesAndNewlines)
+        if label.count > 90 { label = String(label.prefix(88)) + "…" }
         return HeroFact(number: number, unit: unit, label: label.isEmpty ? "The number" : label)
     }
 }
