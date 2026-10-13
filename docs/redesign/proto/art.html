@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nubble Art Directions</title>
+<style>
+@font-face { font-family: "Geist"; src: url(fonts/Geist-Variable.woff2) format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "GeistMono"; src: url(fonts/GeistMono-Variable.woff2) format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Pixel"; src: url(fonts/GeistPixel-Square.woff2) format("woff2"); }
+@font-face { font-family: "PixelGrid"; src: url(fonts/GeistPixel-Grid.woff2) format("woff2"); }
+* { box-sizing: border-box; margin: 0; }
+html, body { background: #111; }
+body { display: flex; gap: 48px; justify-content: center; align-items: flex-start; padding: 40px; font-family: "Geist", sans-serif; -webkit-font-smoothing: antialiased; }
+.col { display: flex; flex-direction: column; gap: 14px; align-items: center; }
+.cap { color: #9a9a9a; font: 500 14px/1.3 "Geist"; text-align: center; max-width: 393px; }
+.cap b { color: #fff; font-weight: 600; }
+.phone { position: relative; width: 393px; height: 852px; border-radius: 54px; overflow: hidden; box-shadow: 0 0 0 2px #2a2a2a, 0 30px 90px rgba(0,0,0,.6); }
+.status { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; justify-content: space-between; align-items: center; padding: 0 32px; font: 600 17px/1 system-ui; z-index: 5; }
+
+/* ---------------- A · Signal from noise ---------------- */
+#A { background: #0b0b0c; color: #f1efe9; }
+#A canvas { position: absolute; left: 0; top: 0; }
+#A .meta { position: absolute; left: 26px; right: 26px; top: 74px; display: flex; justify-content: space-between; font: 500 12px/1 "GeistMono"; letter-spacing: .08em; color: rgba(241,239,233,.55); z-index: 3; }
+#A .meta .sig { color: var(--ink); }
+#A .below { position: absolute; left: 26px; right: 26px; top: 452px; z-index: 3; }
+#A .src { font: 500 12px/1.4 "GeistMono"; letter-spacing: .06em; color: rgba(241,239,233,.5); text-transform: uppercase; margin-bottom: 14px; }
+#A .sum { font: 400 21px/1.4 "Geist"; letter-spacing: -.012em; color: #f1efe9; }
+#A .do { position: absolute; left: 26px; right: 26px; bottom: 98px; z-index: 3; border-top: 1px solid rgba(241,239,233,.18); padding-top: 18px; display: grid; grid-template-columns: 28px 1fr; gap: 6px 10px; }
+#A .do .k { grid-column: 1 / -1; font: 500 11px/1 "GeistMono"; letter-spacing: .12em; color: var(--ink); }
+#A .do .arrow { font: 700 22px/1.2 "Geist"; color: var(--ink); }
+#A .do .t { font: 600 21px/1.25 "Geist"; letter-spacing: -.015em; }
+#A .depth { position: absolute; left: 26px; right: 26px; bottom: 40px; display: flex; gap: 6px; z-index: 3; }
+#A .depth span { flex: 1; height: 3px; background: rgba(241,239,233,.18); }
+#A .depth span.on { background: var(--ink); }
+#A .fade { opacity: 0; transition: opacity .6s ease .9s; }
+#A.ready .fade { opacity: 1; }
+
+/* ---------------- B · Every signal is a poster ---------------- */
+#B { background: var(--paper); color: #0d0d0d; }
+#B .grid { position: absolute; inset: 0; background-image: linear-gradient(90deg, rgba(0,0,0,.07) 1px, transparent 1px), linear-gradient(rgba(0,0,0,.07) 1px, transparent 1px); background-size: 49.125px 49.125px; }
+#B .block { position: absolute; background: var(--cat); transition: all .6s cubic-bezier(.2,.8,.2,1); }
+#B .num { position: absolute; font: 400 220px/0.8 "Pixel"; color: #0d0d0d; }
+#B .num small { font: 400 30px/1 "Pixel"; vertical-align: top; }
+#B .vert { position: absolute; transform: rotate(-90deg); transform-origin: left top; font: 600 12px/1 "GeistMono"; letter-spacing: .2em; text-transform: uppercase; white-space: nowrap; }
+#B .head { position: absolute; left: 24px; right: 24px; font-family: "Geist"; letter-spacing: -.05em; line-height: .92; }
+#B .head span { display: inline; }
+#B .act { position: absolute; left: 24px; right: 24px; bottom: 96px; display: flex; gap: 14px; align-items: flex-start; border-top: 3px solid #0d0d0d; padding-top: 14px; }
+#B .act .k { font: 400 13px/1.1 "Pixel"; width: 64px; flex: none; }
+#B .act .t { font: 600 22px/1.2 "Geist"; letter-spacing: -.02em; }
+#B .foot { position: absolute; left: 24px; right: 24px; bottom: 40px; display: flex; justify-content: space-between; font: 500 12px/1 "GeistMono"; letter-spacing: .06em; }
+.nav { display: flex; gap: 8px; }
+.nav button { font: 600 13px/1 "Geist"; padding: 9px 14px; border-radius: 999px; border: 1px solid #444; background: #1b1b1b; color: #ddd; cursor: pointer; }
+</style>
+<script src="signals.js"></script>
+</head>
+<body>
+
+<div class="col">
+  <div class="phone" id="A">
+    <div class="status"><span>9:41</span><span>●●● ▮</span></div>
+    <canvas id="cv" width="393" height="852"></canvas>
+    <div class="meta"><span>NUBBLE / POKPOK.AI</span><span class="sig" id="aCount">SIGNAL 01/05</span></div>
+    <div class="below fade"><div class="src" id="aSrc"></div><div class="sum" id="aSum"></div></div>
+    <div class="do fade"><div class="k">DO THIS</div><div class="arrow">→</div><div class="t" id="aDo"></div></div>
+    <div class="depth"><span class="on"></span><span></span><span></span><span></span></div>
+  </div>
+  <div class="cap"><b>A · Signal from noise.</b> The headline is engraved by the same lines that make the noise — the signal is pulled out of the news flood. Tilt shifts the lines (moiré); nothing moves at rest.</div>
+  <div class="nav"><button onclick="aNext(-1)">← prev</button><button onclick="aNext(1)">next signal →</button></div>
+</div>
+
+<div class="col">
+  <div class="phone" id="B"><div class="status"><span>9:41</span><span>●●● ▮</span></div><div class="grid"></div><div id="poster"></div></div>
+  <div class="cap"><b>B · Every signal is a poster.</b> Each story composes itself from its data on one strict grid: relevance = the pixel numeral, category = the colour block, importance = the weight of each word.</div>
+  <div class="nav"><button onclick="bNext(-1)">← prev</button><button onclick="bNext(1)">next signal →</button></div>
+</div>
+
+<script>
+const S = window.SIGNALS;
+const INK = ["#ff4d17", "#c8ff00", "#00e0ff", "#ff2bd6", "#ffd400"];
+const CAT = { "Modern Retail": "#ff4d17", "Retail Dive": "#1d4dff", "Marketing Dive": "#ffd400", "TechCrunch AI": "#00b37a" };
+const PAPER = ["#efeae0", "#e9edf0", "#f2efe6", "#ecefe8", "#f0ece8"];
+
+/* ===== A: line engraving ===== */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+const W = 393, H = 852, DPR = 2; cv.width = W * DPR; cv.height = H * DPR; cv.style.width = W + "px"; cv.style.height = H + "px"; ctx.scale(DPR, DPR);
+const off = document.createElement("canvas"); off.width = W; off.height = H; const oc = off.getContext("2d", { willReadFrequently: true });
+let mask, ai = 0, t0 = 0, tilt = 0;
+const GAP = 4.2, TOP = 110, BOTTOM = 430;   // the engraved band where the headline lives
+
+function wrap(text, size, maxW) {
+  oc.font = `800 ${size}px Geist`; const words = text.split(" "); const lines = []; let cur = "";
+  for (const w of words) { const t = cur ? cur + " " + w : w; if (oc.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t; }
+  if (cur) lines.push(cur); return lines;
+}
+function buildMask(text) {
+  oc.clearRect(0, 0, W, H); oc.fillStyle = "#fff";
+  let size = 66, lines; do { lines = wrap(text.toUpperCase(), size, W - 52); size -= 2; } while (lines.length * size * 0.92 > BOTTOM - TOP - 10 && size > 34);
+  size += 2; oc.font = `800 ${size}px Geist`; oc.textBaseline = "top";
+  lines.forEach((l, k) => oc.fillText(l, 26, TOP + 8 + k * size * 0.92));
+  const d = oc.getImageData(0, 0, W, H).data; mask = new Float32Array(W * H);
+  for (let p = 0; p < W * H; p++) mask[p] = d[p * 4 + 3] / 255;
+}
+function drawA(now) {
+  const e = Math.min(1, (now - t0) / 1100), ease = 1 - Math.pow(1 - e, 4);   // noise → signal
+  ctx.clearRect(0, 0, W, H);
+  const ink = getComputedStyle(document.getElementById("A")).getPropertyValue("--ink");
+  for (let y = 60; y < H; y += GAP) {
+    const inBand = y > TOP - 8 && y < BOTTOM;
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += 2) {
+      const m = inBand ? mask[(Math.round(y) | 0) * W + x] || 0 : 0;
+      const noise = (1 - ease) * (Math.sin(x * 0.09 + y * 0.31 + now * 0.004) * 3 + Math.sin(x * 0.023 - y * 0.07) * 6);
+      const wave = Math.sin(x * 0.045 + y * 0.012 + tilt) * 0.6;          // moiré only follows tilt
+      const yy = y + noise + wave;
+      x === 0 ? ctx.moveTo(x, yy) : ctx.lineTo(x, yy);
+    }
+    ctx.strokeStyle = "rgba(241,239,233,0.16)"; ctx.lineWidth = 0.7; ctx.stroke();
+    if (inBand) {   // the engraved strokes: thick where the letters are
+      for (let x = 0; x < W; x += 2) {
+        const m = mask[(Math.round(y) | 0) * W + x] || 0; if (m < 0.35) continue;
+        const noise = (1 - ease) * (Math.sin(x * 0.09 + y * 0.31 + now * 0.004) * 3 + Math.sin(x * 0.023 - y * 0.07) * 6);
+        const wave = Math.sin(x * 0.045 + y * 0.012 + tilt) * 0.6;
+        ctx.fillStyle = "#f1efe9"; ctx.globalAlpha = ease * 0.85 + 0.15;
+        const th = 0.6 + m * (GAP - 1.1) * ease;
+        ctx.fillRect(x, y + noise + wave - th / 2, 2.05, th);
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+  // the one signal-colour mark: a short rule at the left of the headline
+  ctx.fillStyle = ink; ctx.fillRect(0, TOP + 6, 8 * ease, (BOTTOM - TOP) * 0.55);
+  if (e < 1) requestAnimationFrame(drawA); else document.getElementById("A").classList.add("ready");
+}
+function paintA() {
+  const s = S[ai]; const A = document.getElementById("A"); A.classList.remove("ready");
+  A.style.setProperty("--ink", INK[ai % INK.length]);
+  document.getElementById("aCount").textContent = `SIGNAL ${String(ai + 1).padStart(2, "0")}/${String(S.length).padStart(2, "0")}`;
+  document.getElementById("aSrc").textContent = `${s.source} — ${s.title}`;
+  document.getElementById("aSum").textContent = s.summary;
+  document.getElementById("aDo").textContent = s.action;
+  buildMask(s.headline); t0 = performance.now(); requestAnimationFrame(drawA);
+}
+function aNext(d) { ai = (ai + d + S.length) % S.length; paintA(); }
+document.getElementById("A").addEventListener("pointermove", e => { if (!e.buttons) return; tilt = (e.offsetX - W / 2) / 40; t0 = performance.now() - 1100; requestAnimationFrame(drawA); });
+
+/* ===== B: generative poster ===== */
+let bi = 0;
+function paintB() {
+  const s = S[bi], P = document.getElementById("B"), cat = CAT[s.source] || "#ff4d17";
+  P.style.setProperty("--cat", cat); P.style.setProperty("--paper", PAPER[bi % PAPER.length]);
+  const g = 49.125;   // 8 columns
+  const rel = s.strength >= 5 ? 92 : 64;
+  const words = s.headline.split(" ");
+  // importance: longest content words get the heavy weight; short glue words stay light
+  const ranked = [...words].sort((a, b) => b.replace(/\W/g, "").length - a.replace(/\W/g, "").length);
+  const heavy = new Set(ranked.slice(0, Math.ceil(words.length / 3)));
+  const head = words.map(w => `<span style="font-weight:${heavy.has(w) ? 800 : 300}">${w}</span>`).join(" ");
+  const size = words.length > 6 ? 46 : 56;
+  const layouts = [
+    { block: `left:${g * 5}px;top:${g * 2}px;width:${g * 3}px;height:${g * 5}px`, num: `right:22px;top:${g * 2 + 18}px`, head: `top:${g * 8}px`, vert: `left:${g * 0.5}px;top:${g * 7.6}px` },
+    { block: `left:0;top:${g * 1.5}px;width:${g * 4}px;height:${g * 4}px`, num: `left:${g * 4.3}px;top:${g * 2.4}px`, head: `top:${g * 7}px`, vert: `left:${g * 7.4}px;top:${g * 13}px` },
+    { block: `left:${g * 2}px;top:${g * 1.5}px;width:${g * 6}px;height:${g * 2}px`, num: `left:22px;top:${g * 4.2}px`, head: `top:${g * 9}px`, vert: `left:${g * 7.5}px;top:${g * 8.6}px` },
+  ];
+  const L = layouts[bi % layouts.length];
+  document.getElementById("poster").innerHTML = `
+    <div class="block" style="${L.block}"></div>
+    <div class="num" style="${L.num}">${rel}<small>%</small></div>
+    <div class="vert" style="${L.vert}">${s.source} · ${new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}</div>
+    <div class="head" style="${L.head};font-size:${size}px">${head}</div>
+    <div class="act"><div class="k">DO<br>THIS</div><div class="t">${s.action}</div></div>
+    <div class="foot"><span>NUBBLE × POKPOK.AI</span><span>${String(bi + 1).padStart(2, "0")} / ${String(S.length).padStart(2, "0")}</span></div>`;
+}
+function bNext(d) { bi = (bi + d + S.length) % S.length; paintB(); }
+document.fonts.ready.then(() => { paintA(); paintB(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nubble Lens</title>
+<style>
+@font-face { font-family: "Geist"; src: url(fonts/Geist-Variable.woff2) format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "GeistMono"; src: url(fonts/GeistMono-Variable.woff2) format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Pixel"; src: url(fonts/GeistPixel-Square.woff2) format("woff2"); }
+* { box-sizing: border-box; margin: 0; }
+html, body { background: #0e0e0e; }
+body { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 36px; font-family: "Geist"; color: #eee; -webkit-font-smoothing: antialiased; }
+.phone { position: relative; width: 393px; height: 852px; border-radius: 54px; overflow: hidden; background: #050505; box-shadow: 0 0 0 2px #2a2a2a, 0 30px 90px rgba(0,0,0,.6); }
+canvas#gl { position: absolute; inset: 0; width: 393px; height: 852px; }
+.status { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; justify-content: space-between; align-items: center; padding: 0 32px; font: 600 17px/1 system-ui; z-index: 5; }
+.meta { position: absolute; top: 70px; left: 24px; right: 24px; display: flex; justify-content: space-between; font: 500 12px/1 "GeistMono"; letter-spacing: .08em; color: rgba(255,255,255,.6); z-index: 5; }
+.meta b { color: #fff; font-weight: 600; }
+.illo { position: absolute; left: 24px; right: 24px; top: 508px; height: 150px; z-index: 5; border: 1px dashed rgba(255,255,255,.22); border-radius: 22px; display: grid; place-content: center; text-align: center; gap: 6px; transition: opacity .3s; background: rgba(0,0,0,.55); }
+.illo span { font: 500 11px/1 "GeistMono"; letter-spacing: .14em; color: rgba(255,255,255,.55); } .illo small { font: 400 12px/1 "Geist"; color: rgba(255,255,255,.35); }
+.shade { position: absolute; left: 0; right: 0; bottom: 0; height: 330px; z-index: 4; background: linear-gradient(180deg, transparent, rgba(5,5,5,.92) 38%, #050505 70%); pointer-events: none; }
+.do { position: absolute; left: 24px; right: 24px; bottom: 96px; z-index: 5; transition: opacity .3s; }
+.do .k { font: 500 11px/1 "GeistMono"; letter-spacing: .14em; color: rgba(255,255,255,.55); margin-bottom: 10px; }
+.do .t { font: 650 26px/1.15 "Geist"; letter-spacing: -.03em; }
+.depth { position: absolute; left: 24px; right: 24px; bottom: 38px; display: flex; justify-content: space-between; z-index: 5; }
+.depth button { border: 0; background: none; cursor: pointer; font: 500 12px/1 "GeistMono"; letter-spacing: .08em; color: rgba(255,255,255,.4); padding: 6px 0; }
+.depth button.on { color: #fff; }
+.depth button.on::before { content: "● "; }
+.nav { display: flex; gap: 8px; } .nav button { font: 600 13px/1 "Geist"; padding: 9px 14px; border-radius: 999px; border: 1px solid #444; background: #1b1b1b; color: #ddd; cursor: pointer; }
+.cap { max-width: 520px; text-align: center; color: #9a9a9a; font: 500 14px/1.4 "Geist"; }
+</style>
+<script src="signals.js"></script>
+</head>
+<body>
+<div class="phone" id="ph">
+  <canvas id="gl" width="786" height="1704"></canvas>
+  <div class="status"><span>9:41</span><span>●●● ▮</span></div>
+  <div class="meta"><span>NUBBLE · <b>POKPOK.AI</b></span><span id="count">01 / 05</span></div>
+  <div class="illo" id="illo"><span>ILLUSTRATION · ARROW 2</span><small>placeholder — generated per story later</small></div>
+  <div class="shade"></div>
+  <div class="do"><div class="k" id="dok">DO THIS</div><div class="t" id="dot"></div></div>
+  <div class="depth" id="depth"></div>
+</div>
+<div class="nav"><button onclick="next(-1)">← signal</button><button onclick="deeper(-1)">− depth</button><button onclick="deeper(1)">+ depth</button><button onclick="next(1)">signal →</button></div>
+<div class="cap">Your product is the lens. The news flood stays out of focus; through the lens the signal is sharp and magnified, with real optics at the rim. Depth = lens power (a focus pull). Drag inside the phone = tilt.</div>
+
+<script>
+const S = window.SIGNALS, DEPTHS = ["SIGNAL", "BRIEF", "DEEP", "FOR YOU"];
+const W = 393, H = 852, R = 2;
+let si = 0, depth = 0, pull = 0, pullT = 0, tilt = [0, 0];
+// Going deeper opens the lens: a strong small circle → a wide window
+const SHAPES = [
+  { x: W / 2, y: 312, hw: 172, hh: 172, rr: 172 },   // SIGNAL
+  { x: W / 2, y: 322, hw: 180, hh: 200, rr: 110 },   // BRIEF
+  { x: W / 2, y: 392, hw: 183, hh: 282, rr: 46 },    // DEEP
+  { x: W / 2, y: 392, hw: 183, hh: 282, rr: 46 },    // FOR YOU
+];
+let LENS = { ...SHAPES[0] };
+let target = 0;
+
+// ---- two text layers drawn to canvases: the news flood (world) and the signal (seen through the lens)
+function layer() { const c = document.createElement("canvas"); c.width = W * R; c.height = H * R; const x = c.getContext("2d"); x.scale(R, R); return [c, x]; }
+const [worldC, wx] = layer(), [focusC, fx] = layer();
+
+function wrap(ctx, text, maxW) { const out = []; let cur = ""; for (const w of text.split(/\s+/)) { const t = cur ? cur + " " + w : w; if (ctx.measureText(t).width > maxW && cur) { out.push(cur); cur = w; } else cur = t; } if (cur) out.push(cur); return out; }
+
+function drawWorld() {
+  wx.fillStyle = "#050505"; wx.fillRect(0, 0, W, H);
+  wx.font = "400 13px GeistMono"; wx.fillStyle = "rgba(235,235,235,.34)"; wx.textBaseline = "top";
+  // the news flood: every story's title and text, wrapped edge to edge
+  const flood = S.map(s => `${s.source.toUpperCase()} — ${s.title}. ${s.summary} ${s.expanded.map(b => b[1]).join(" ")}`).join("  ///  ");
+  let y = 58; const lines = wrap(wx, flood, W - 28);
+  for (const l of lines) { wx.fillText(l, 14, y); y += 17; if (y > H) break; }
+}
+function roundRect(ctx, L) { const x = L.x - L.hw, y = L.y - L.hh, w = L.hw * 2, h = L.hh * 2, r = Math.min(L.rr, L.hw, L.hh);
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function drawFocus() {
+  const s = S[si], L = SHAPES[depth]; fx.clearRect(0, 0, W, H);
+  fx.fillStyle = depth === 3 ? "#120802" : "#000"; roundRect(fx, L); fx.fill();
+  fx.textBaseline = "top";
+  const set = (w, sz, fam = "Geist") => { fx.font = `${w} ${sz}px ${fam}`; fx.letterSpacing = sz > 30 ? "-1.4px" : (fam === "Geist" ? "-0.2px" : "1.5px"); };
+  if (depth <= 1) {
+    const pad = depth === 0 ? 46 : 34, maxW = L.hw * 2 - pad * 2;
+    const text = depth === 0 ? s.headline : s.summary, size = depth === 0 ? 38 : 24, weight = depth === 0 ? 750 : 520;
+    set(weight, size); const lines = wrap(fx, text, maxW), lh = size * (size > 30 ? 1.02 : 1.3);
+    const top = L.y - (lines.length * lh) / 2 + 10;
+    set(500, 11, "GeistMono"); fx.fillStyle = "rgba(255,255,255,.55)";
+    const label = `${s.source.toUpperCase()} · ${DEPTHS[depth]}`; fx.fillText(label, L.x - fx.measureText(label).width / 2, top - 34);
+    set(weight, size); fx.fillStyle = "#fff"; lines.forEach((l, k) => fx.fillText(l, L.x - fx.measureText(l).width / 2, top + k * lh));
+    return;
+  }
+  // DEEP / FOR YOU: scannable blocks — small label, bold lead (the point), quieter support, verb-first bullets
+  const blocks = depth === 2 ? s.expanded : s.forYou, left = L.x - L.hw + 26, maxW = L.hw * 2 - 52;
+  const accentC = depth === 3 ? "#ff9a4d" : "#8fd3ff";
+  let y = L.y - L.hh + 28; const bottom = L.y + L.hh - 24;
+  set(500, 11, "GeistMono"); fx.fillStyle = "rgba(255,255,255,.45)"; fx.fillText(`${s.source.toUpperCase()} · ${DEPTHS[depth]}`, left, y); y += 30;
+  const FACT = /(\$?€?\d[\d.,]*\s?(%|percent|million|billion|bn|m)?|\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s?\d{0,2})/g;
+  const drawRich = (line, x, y0, color) => { let cx = x; const parts = line.split(FACT).filter(v => v !== undefined && v !== "");
+    let last = 0; const re = new RegExp(FACT.source, "g"); let m; const segs = [];
+    while ((m = re.exec(line))) { if (m[0].trim() === "") { re.lastIndex++; continue; } segs.push([line.slice(last, m.index), false]); segs.push([m[0], true]); last = m.index + m[0].length; }
+    segs.push([line.slice(last), false]);
+    for (const [t, hot] of segs) { if (!t) continue; fx.fillStyle = hot ? accentC : color; fx.fillText(t, cx, y0); cx += fx.measureText(t).width; } };
+  const para = (text, weight, size, lh, color, x = left, w = maxW) => { set(weight, size);
+    for (const l of wrap(fx, text, w)) { if (y > bottom - lh) return false; drawRich(l, x, y, color); y += lh; } return true; };
+  for (const bl of blocks) {
+    if (y > bottom - 60) break;
+    set(500, 11, "GeistMono"); fx.fillStyle = accentC; fx.fillText(bl.label.toUpperCase(), left, y); y += 19;
+    if (bl.bullets) {
+      for (const it of bl.bullets) { set(700, 18); fx.fillStyle = accentC; fx.fillText("→", left, y);
+        if (!para(it, 560, 18, 24, "#fff", left + 24, maxW - 24)) break; y += 6; }
+    } else {
+      if (bl.lead && !para(bl.lead, 640, 21, 26, "#fff")) break;
+      y += 4;
+      if (bl.text && !para(bl.text, 420, 16.5, 23, "rgba(255,255,255,.66)")) break;
+    }
+    y += 22;
+  }
+}
+
+// ---- WebGL: compose world + lens with real optics
+const gl = document.getElementById("gl").getContext("webgl", { premultipliedAlpha: false });
+const vs = `attribute vec2 p; varying vec2 uv; void main(){ uv = (p + 1.0) * 0.5; uv.y = 1.0 - uv.y; gl_Position = vec4(p, 0, 1); }`;
+const fs = `precision highp float; varying vec2 uv;
+uniform sampler2D world, focus; uniform vec2 res, lens, half_, tilt; uniform float rr, pull;
+vec3 blurWorld(vec2 u){ vec3 c = vec3(0.0); float k = 0.0;
+  for (int i=-2;i<=2;i++) for (int j=-2;j<=2;j++){ vec2 o = vec2(float(i),float(j)) * 1.6 / res; c += texture2D(world, u + o).rgb; k += 1.0; } return c / k; }
+float sdBox(vec2 p, vec2 b, float r){ vec2 q = abs(p) - b + r; return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r; }
+void main(){
+  vec2 px = uv * res; vec2 p = px - lens; vec2 shift = tilt / res;
+  float r = min(rr, min(half_.x, half_.y));
+  float sd = sdBox(p, half_, r);
+  if (sd > 0.0) {
+    vec3 c = blurWorld(uv + shift * 0.4);
+    c *= mix(0.35, 1.0, smoothstep(0.0, 34.0, sd));          // shadow around the glass
+    gl_FragColor = vec4(c, 1.0); return; }
+  // surface normal from the distance field; distortion lives in a band along the edge
+  vec2 e = vec2(1.0, 0.0);
+  vec2 n = normalize(vec2(sdBox(p + e.xy, half_, r) - sdBox(p - e.xy, half_, r), sdBox(p + e.yx, half_, r) - sdBox(p - e.yx, half_, r)) + 1e-5);
+  float band = 46.0;
+  float edge = pow(1.0 - clamp(-sd / band, 0.0, 1.0), 2.2);
+  float k = (10.0 + pull * 60.0) * edge;                         // pixels pulled toward the centre at the rim
+  vec2 base = px - n * k;
+  float ca = (1.6 + pull * 8.0) * edge;                          // colour fringe
+  vec4 fR = texture2D(focus, (base + n * ca) / res), fG = texture2D(focus, base / res), fB = texture2D(focus, (base - n * ca) / res);
+  vec3 world = blurWorld(px / res + shift - n * edge * 0.03) * 0.22;
+  vec3 col = mix(world, vec3(fR.r, fG.g, fB.b), max(max(fR.a, fG.a), fB.a));
+  col *= 1.0 - pull * 0.35;                                       // focus pull dims briefly
+  // whole-lens defocus during the pull
+  if (pull > 0.01) { vec3 b = vec3(0.0); for (int i=-2;i<=2;i++) for (int j=-2;j<=2;j++){ vec2 o = vec2(float(i),float(j)) * pull * 2.2; b += texture2D(focus, (base + o) / res).rgb; } col = mix(col, b / 25.0, pull * 0.8); }
+  float rim = smoothstep(-3.0, 0.0, sd);
+  vec2 hl = normalize(vec2(-0.6, -0.8) + tilt * 0.01);
+  float spec = pow(max(dot(n, hl), 0.0), 10.0) * edge;
+  col += vec3(0.85) * rim * 0.5 + vec3(1.0) * spec * 0.4;
+  gl_FragColor = vec4(col, 1.0);
+}`;
+function sh(t, s) { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(o); return o; }
+const prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(prog); gl.useProgram(prog);
+const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+function tex(unit, canvas) { const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); return t; }
+const tW = tex(0, worldC), tF = tex(1, focusC);
+function upload(unit, t, c) { gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c); }
+const U = n => gl.getUniformLocation(prog, n);
+gl.uniform1i(U("world"), 0); gl.uniform1i(U("focus"), 1);
+gl.viewport(0, 0, W * R, H * R);
+
+function render() {
+  gl.uniform2f(U("res"), W, H); gl.uniform2f(U("lens"), LENS.x, LENS.y); gl.uniform2f(U("half_"), LENS.hw, LENS.hh); gl.uniform1f(U("rr"), LENS.rr);
+  gl.uniform1f(U("pull"), pull); gl.uniform2f(U("tilt"), tilt[0], tilt[1]);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+// focus pull: 0 → 1 → 0 over ~520 ms; the content swaps at the blurriest moment
+let pulling = null;
+function focusPull(swap, toShape) {
+  const start = performance.now(), from = { ...LENS }; let swapped = false; const id = Symbol(); pulling = id;
+  (function step(now) { if (pulling !== id) return;
+    const t = Math.min(1, (now - start) / 560); pull = Math.sin(t * Math.PI);
+    const e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    for (const k of ["x", "y", "hw", "hh", "rr"]) LENS[k] = from[k] + (toShape[k] - from[k]) * e;
+    if (!swapped && t > 0.5) { swap(); drawFocus(); upload(1, tF, focusC); swapped = true; }
+    render(); if (t < 1) requestAnimationFrame(step); else { pull = 0; render(); } })(start);
+}
+function ui(d = target) {
+  const s = S[si];
+  document.getElementById("count").textContent = `${String(si + 1).padStart(2, "0")} / ${String(S.length).padStart(2, "0")}`;
+  document.getElementById("dot").textContent = s.action;
+  document.querySelector(".do").style.opacity = d >= 2 ? 0 : 1;
+  document.getElementById("illo").style.opacity = d === 0 ? 1 : 0;
+  document.getElementById("depth").innerHTML = DEPTHS.map((dd, k) => `<button class="${k === d ? "on" : ""}" onclick="setDepth(${k})">${dd}</button>`).join("");
+}
+function setDepth(d) { if (d === target) return; target = d; ui(d); focusPull(() => { depth = d; }, SHAPES[d]); }
+function deeper(n) { setDepth(Math.max(0, Math.min(3, target + n))); }
+function next(n) { target = 0; const n2 = (si + n + S.length) % S.length; focusPull(() => { si = n2; depth = 0; ui(0); }, SHAPES[0]); }
+// drag = tilt (on the phone: the gyroscope); the world shifts under the glass
+const ph = document.getElementById("ph");
+ph.addEventListener("pointermove", e => { if (!e.buttons) return; tilt = [(e.offsetX - W / 2) * 0.12, (e.offsetY - H / 2) * 0.08]; render(); });
+ph.addEventListener("pointerup", () => { const from = [...tilt], st = performance.now();
+  (function back(now) { const t = Math.min(1, (now - st) / 450), e = 1 - Math.pow(1 - t, 3); tilt = [from[0] * (1 - e), from[1] * (1 - e)]; render(); if (t < 1) requestAnimationFrame(back); })(st); });
+document.addEventListener("keydown", e => { if (e.key === "ArrowRight") deeper(1); if (e.key === "ArrowLeft") deeper(-1); if (e.key === "ArrowDown") next(1); if (e.key === "ArrowUp") next(-1); });
+document.fonts.ready.then(() => { drawWorld(); drawFocus(); upload(0, tW, worldC); upload(1, tF, focusC); ui(); render(); });
+</script>
+</body>
+</html>

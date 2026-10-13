@@ -18,6 +18,9 @@ struct DepthScanRenderer: TextRenderer, Animatable {
         set { progress = newValue }
     }
 
+    /// Share of the transition the old text uses to fold away before the scan starts.
+    static let handover = 0.35
+
     /// How far below/above the beam a line takes to come fully into focus, in points.
     private let focusDistance: CGFloat = 48
 
@@ -28,6 +31,8 @@ struct DepthScanRenderer: TextRenderer, Animatable {
         let bottom = last.typographicBounds.rect.maxY
         let height = max(1, bottom - top)
         let travel = height + focusDistance * 2
+        // The new text waits until the old one has folded away (first ~35% of the transition)
+        let progress = max(0, (self.progress - Self.handover) / (1 - Self.handover))
         // Beam position along the sweep
         let beam = direction > 0
             ? top - focusDistance + travel * progress
@@ -82,19 +87,31 @@ struct DepthScanTransition: Transition {
     static let duration: Double = 0.55
 
     func body(content: Content, phase: TransitionPhase) -> some View {
-        switch phase {
-        case .willAppear, .identity:
+        // Same modifiers in every phase, so SwiftUI can animate each value between phases
+        content
+            .textRenderer(DepthScanRenderer(progress: phase == .willAppear ? 0 : 1, direction: direction, beamColor: beamColor))
             // Unfolds from the hinge at the top, like a foldable screen opening
-            content
-                .textRenderer(DepthScanRenderer(progress: phase.isIdentity ? 1 : 0, direction: direction, beamColor: beamColor))
-                .rotation3DEffect(.degrees(phase.isIdentity ? 0 : -direction * 55), axis: (x: 1, y: 0, z: 0), anchor: .top, perspective: 0.5)
-        case .didDisappear:
-            // Folds away on the same hinge, dimming to grey
-            content
-                .rotation3DEffect(.degrees(direction * 70), axis: (x: 1, y: 0, z: 0), anchor: .top, perspective: 0.5)
-                .brightness(-0.35)
-                .opacity(0)
-        }
+            .rotation3DEffect(.degrees(phase == .willAppear ? -direction * 55 : 0), axis: (x: 1, y: 0, z: 0), anchor: .top, perspective: 0.5)
+            // Folds away on the same hinge when leaving
+            .modifier(FoldAway(progress: phase == .didDisappear ? 1 : 0, direction: direction))
+    }
+}
+
+/// The old level folds away on the top hinge and is gone by ~40% of the transition,
+/// so it never overlaps the new text being scanned in.
+struct FoldAway: ViewModifier, Animatable {
+    var progress: Double
+    var direction: Double
+    nonisolated var animatableData: Double {
+        get { progress }
+        set { progress = newValue }
+    }
+    func body(content: Content) -> some View {
+        let fold = min(1, progress / 0.4)
+        content
+            .rotation3DEffect(.degrees(direction * 70 * fold), axis: (x: 1, y: 0, z: 0), anchor: .top, perspective: 0.5)
+            .brightness(-0.35 * fold)
+            .opacity(1 - fold)
     }
 }
 

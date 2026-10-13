@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nubble Signals</title>
+<style>
+@font-face { font-family: "Geist"; src: url(fonts/Geist-Variable.woff2) format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "GeistMono"; src: url(fonts/GeistMono-Variable.woff2) format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Pixel"; src: url(fonts/GeistPixel-Square.woff2) format("woff2"); }
+@font-face { font-family: "PixelGrid"; src: url(fonts/GeistPixel-Grid.woff2) format("woff2"); }
+
+:root {
+  --bg: #050507;
+  --ink: #ffffff;
+  --ink2: rgba(255,255,255,.72);
+  --ink3: rgba(255,255,255,.48);
+  --h1: #ff7a2e; --h2: #ff2e88; --h3: #7a5cff;   /* the signal's colour world, set per signal */
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; background: #0d0d10; }
+body { display: grid; place-items: center; font-family: "Geist", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+/* ---------- the phone ---------- */
+.phone { position: relative; width: 393px; height: 852px; border-radius: 54px; overflow: hidden; background: var(--bg);
+  box-shadow: 0 0 0 2px #2a2a30, 0 40px 120px rgba(0,0,0,.6); perspective: 1100px; }
+
+/* living light: three soft blobs drifting, coloured by the signal */
+.aurora { position: absolute; inset: -20%; filter: blur(70px) saturate(140%); opacity: .9; transition: opacity .6s; }
+.aurora i { position: absolute; width: 60%; height: 45%; border-radius: 50%; mix-blend-mode: screen; transition: background 1.2s ease; }
+.aurora i:nth-child(1) { background: var(--h1); left: 5%;  top: 8%;  }
+.aurora i:nth-child(2) { background: var(--h2); right: 0;  top: 30%; }
+.aurora i:nth-child(3) { background: var(--h3); left: 20%; bottom: 0; }
+@keyframes drift1 { to { transform: translate(18%, 22%) scale(1.15); } }
+@keyframes drift2 { to { transform: translate(-25%, -10%) scale(.9); } }
+@keyframes drift3 { to { transform: translate(15%, -28%) scale(1.2); } }
+/* darkening so text always reads: light at the top, deep black where the text sits */
+.scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,5,7,.05) 0%, rgba(5,5,7,.55) 38%, rgba(5,5,7,.88) 62%, #050507 100%); }
+/* grain + dot grid, the "material" */
+.grain { position: absolute; inset: 0; opacity: .14; mix-blend-mode: overlay; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.dots { position: absolute; inset: 0; opacity: .22; pointer-events: none;
+  background-image: radial-gradient(rgba(255,255,255,.55) 1px, transparent 1.2px); background-size: 22px 22px;
+  mask-image: linear-gradient(180deg, #000 0%, transparent 45%); }
+/* spotlight that follows the finger / tilt */
+.spot { position: absolute; width: 420px; height: 420px; border-radius: 50%; pointer-events: none; left: var(--sx, 50%); top: var(--sy, 20%);
+  transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(255,255,255,.12), transparent 60%); transition: left .25s, top .25s; }
+
+/* ---------- top bar ---------- */
+.status { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; justify-content: space-between; align-items: center; padding: 0 32px; font: 600 17px/1 system-ui; z-index: 5; }
+.top { position: absolute; top: 62px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 5; }
+.pill { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; font: 700 13px/1 "Geist"; letter-spacing: .02em;
+  background: rgba(255,255,255,.08); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25), inset 0 0 0 1px rgba(255,255,255,.10); }
+/* border beam: a light running around the pill edge */
+.beam::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
+  background: conic-gradient(from var(--a), transparent 0 70%, var(--h1) 80%, #fff 85%, transparent 92%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: spin 3.5s linear infinite; }
+@property --a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes spin { to { --a: 360deg; } }
+.live { width: 7px; height: 7px; border-radius: 50%; background: #3dff9a; box-shadow: 0 0 10px #3dff9a;  }
+@keyframes pulse { 50% { opacity: .35; } }
+
+/* ---------- the signal ---------- */
+.stage { position: absolute; left: 0; right: 0; top: 118px; bottom: 178px; padding: 0 24px; transform-style: preserve-3d; overflow-y: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(180deg, #000 85%, transparent); mask-image: linear-gradient(180deg, #000 85%, transparent); }
+.layer { padding-bottom: 60px; }
+.layer { position: absolute; left: 24px; right: 24px; top: 0; transform-origin: 50% 0%; backface-visibility: hidden; }
+.num { position: absolute; right: -6px; top: -26px; font: 400 150px/1 "Pixel"; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.22); pointer-events: none; }
+.kicker { display: flex; align-items: center; gap: 10px; font: 400 13px/1 "Pixel"; letter-spacing: .06em; text-transform: uppercase; color: var(--ink2); margin-bottom: 18px; }
+.meter { display: inline-flex; gap: 3px; }
+.meter b { width: 14px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.2); }
+.meter b.on { background: linear-gradient(90deg, var(--h1), var(--h2)); box-shadow: 0 0 8px var(--h1); }
+
+.headline { font-family: "Geist"; font-weight: 640; font-size: 48px; line-height: 1.0; letter-spacing: -.045em; text-wrap: balance; }
+.headline .w { display: inline-block; opacity: 0; filter: blur(12px); transform: translateY(18px); animation: wordin .7s cubic-bezier(.2,.8,.2,1) forwards; }
+@keyframes wordin { to { opacity: 1; filter: blur(0); transform: none; } }
+/* one shimmering accent phrase */
+.hot .w { background: linear-gradient(100deg, var(--h1) 0%, #fff 40%, var(--h2) 60%, var(--h1) 100%); background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: wordin .7s cubic-bezier(.2,.8,.2,1) forwards, shine 1.6s ease-out .4s 1 forwards; }
+@keyframes shine { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+.serif { font-family: "Geist"; font-style: italic; font-weight: 500; letter-spacing: -.01em; }
+
+.body { margin-top: 22px; font: 450 18px/1.45 "Geist"; color: var(--ink2); max-width: 32ch; }
+.body .w { display: inline; opacity: 0; animation: fadein .5s ease forwards; }
+@keyframes fadein { to { opacity: 1; } }
+.blocks { display: grid; gap: 18px; margin-top: 4px; }
+.block.w { opacity: 0; filter: blur(8px); transform: translateY(10px); animation: wordin .45s cubic-bezier(.2,.8,.2,1) forwards; }
+.block h4 { font: 400 12px/1 "Pixel"; letter-spacing: .08em; text-transform: uppercase; color: var(--h1); margin-bottom: 8px; }
+.block p { font: 420 19px/1.48 "Geist"; color: var(--ink); letter-spacing: -.01em; }
+
+/* ---------- the action ---------- */
+.act { position: absolute; left: 16px; right: 16px; bottom: 96px; z-index: 6; display: flex; align-items: center; gap: 14px; padding: 18px 20px; border-radius: 28px;
+  background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.04)); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 0 0 1px rgba(255,255,255,.12), 0 20px 50px rgba(0,0,0,.45); }
+.act .go { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font: 700 20px/1 system-ui; color: #111;
+  background: linear-gradient(135deg, var(--h1), var(--h2)); box-shadow: 0 0 24px var(--h1); }
+.act .lbl { font: 400 11px/1 "Pixel"; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 5px; }
+.act .txt { font: 600 19px/1.25 "Geist"; letter-spacing: -.015em; }
+
+/* ---------- depth rail ---------- */
+.rail { position: absolute; left: 0; right: 0; bottom: 34px; display: flex; justify-content: center; gap: 6px; z-index: 6; }
+.rail button { border: 0; cursor: pointer; padding: 9px 12px; border-radius: 999px; font: 400 13px/1 "Pixel"; letter-spacing: .04em; color: var(--ink3); background: transparent; transition: all .35s; }
+.rail button.on { color: #111; background: #fff; box-shadow: 0 0 20px rgba(255,255,255,.35); }
+
+/* ---------- the fold: old depth folds back on a hinge with a crease light, new depth unfolds ---------- */
+.fold-out { animation: leave .16s ease-in forwards; }
+.fold-in  { animation: none; }
+@keyframes leave { to { opacity: 0; transform: translateY(-14px); } }
+@keyframes foldout { to { transform: rotateX(78deg) translateZ(-40px); opacity: 0; filter: brightness(.4) blur(1px); } }
+@keyframes foldin { from { transform: rotateX(-62deg) translateY(30px); opacity: 0; filter: brightness(1.8); } 60% { filter: brightness(1.15); } to { transform: none; opacity: 1; filter: none; } }
+.crease { position: absolute; left: 0; right: 0; height: 2px; top: 118px; z-index: 4; opacity: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--h1), #fff, var(--h2), transparent); box-shadow: 0 0 24px var(--h1), 0 0 60px var(--h2); }
+.crease.go { animation: crease .8s ease-out; }
+@keyframes crease { 0% { opacity: 0; transform: scaleX(.2); } 25% { opacity: 1; transform: scaleX(1); } 100% { opacity: 0; transform: translateY(260px) scaleX(1); } }
+
+/* ---------- next-signal swipe ---------- */
+.swap-out { animation: swapout .35s ease-in forwards; }
+@keyframes swapout { to { transform: translateY(-60px) scale(.94); opacity: 0; filter: blur(8px); } }
+
+.hint { position: absolute; bottom: 8px; width: 100%; text-align: center; font: 600 11px/1 "Geist"; color: var(--ink3); z-index: 6; }
+.home { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: #fff; z-index: 7; }
+</style>
+<script src="signals.js"></script>
+</head>
+<body>
+<div class="phone" id="phone">
+  <div class="aurora"><i></i><i></i><i></i></div>
+  <div class="dots"></div>
+  <div class="scrim"></div>
+  <div class="spot" id="spot"></div>
+  <div class="grain"></div>
+
+  <div class="status"><span>9:41</span><span>●●● ▮</span></div>
+  <div class="top">
+    <span class="pill"><span class="live"></span>pokpok.ai</span>
+    <span class="pill" id="count" style="font: 400 18px/1 PixelGrid">1 / 5</span>
+  </div>
+
+  <div class="crease" id="crease"></div>
+  <div class="stage" id="stage"></div>
+
+  <div class="act" id="act">
+    <div class="go">→</div>
+    <div><div class="lbl">Do this</div><div class="txt" id="actTxt"></div></div>
+  </div>
+  <div class="rail" id="rail"></div>
+  <div class="home"></div>
+</div>
+
+<script>
+// Real stories from the iPhone (Apple's on-device model). headline/action are filled from the phone's short lines when present.
+const SIGNALS = window.SIGNALS || [];
+const DEPTHS = ["Signal", "Brief", "Deep", "For you"];
+const HUES = [["#ff7a2e","#ff2e88","#7a5cff"], ["#7a5cff","#22d3ee","#ff2e88"], ["#a3ff3d","#22d3ee","#7a5cff"], ["#ffcf3d","#ff7a2e","#ff2e88"], ["#22d3ee","#7a5cff","#3dff9a"]];
+let i = 0, depth = 0, busy = false;
+const stage = document.getElementById("stage");
+
+function words(text, cls, step, delay = 0) {
+  return text.split(/(\s+)/).map((w, k) => /\s+/.test(w) ? w : `<span class="${cls}" style="animation-delay:${delay + k * step}ms">${w}</span>`).join("");
+}
+function accent(h, s) {
+  // the phrase after the first ~45% of words shimmers — the "what changed" part
+  const ws = h.split(" "); const a = Math.max(1, Math.floor(ws.length * .45));
+  return words(ws.slice(0, a).join(" "), "w", 55) + " " + `<span class="hot">${words(ws.slice(a).join(" "), "w", 55, a * 55)}</span>`;
+}
+function layerHTML(s, d) {
+  const meter = `<span class="meter">${[0,1,2,3,4].map(k => `<b class="${k < s.strength ? "on" : ""}"></b>`).join("")}</span>`;
+  const kicker = `<div class="kicker">${meter}<span>${s.source}</span><span>·</span><span>${DEPTHS[d]}</span></div>`;
+  if (d === 0) return `<div class="num">${String(i + 1).padStart(2, "0")}</div>` + kicker + `<h1 class="headline">${accent(s.headline)}</h1><p class="body">${words(s.title, "w", 18, 500)}</p>`;
+  if (d === 1) return kicker + `<h1 class="headline" style="font-size:38px">${words(s.summary, "w", 35)}</h1>`;
+  const list = d === 2 ? s.expanded : s.forYou;
+  return kicker + `<div class="blocks">${list.map(([h, p], k) => `<div class="block w" style="animation-delay:${k * 90}ms"><h4>${h}</h4><p>${p}</p></div>`).join("")}</div>`;
+}
+function paint(animate) {
+  const s = SIGNALS[i]; const [a, b, c] = HUES[i % HUES.length];
+  const root = document.documentElement.style; root.setProperty("--h1", a); root.setProperty("--h2", b); root.setProperty("--h3", c);
+  document.getElementById("count").textContent = `${i + 1} / ${SIGNALS.length}`;
+  document.getElementById("actTxt").textContent = s.action;
+  document.getElementById("rail").innerHTML = DEPTHS.map((n, k) => `<button class="${k === depth ? "on" : ""}" onclick="go(${k})">${n}</button>`).join("");
+  const el = document.createElement("div"); el.className = "layer" + (animate ? " fold-in" : ""); el.innerHTML = layerHTML(s, depth);
+  stage.appendChild(el); return el;
+}
+function go(d) {
+  if (busy || d === depth) return; busy = true;
+  const old = stage.lastElementChild; old.classList.add("fold-out");
+  depth = d;
+  setTimeout(() => { old.remove(); stage.scrollTop = 0; paint(true); busy = false; }, 170);
+}
+function next(dir = 1) {
+  if (busy) return; busy = true;
+  const old = stage.lastElementChild; old.classList.add("swap-out");
+  setTimeout(() => { old.remove(); i = (i + dir + SIGNALS.length) % SIGNALS.length; depth = 0; paint(false); busy = false; }, 330);
+}
+// gestures: horizontal swipe = depth, vertical swipe = next signal; keys for the recording
+let sx, sy; const ph = document.getElementById("phone");
+ph.addEventListener("pointerdown", e => { sx = e.clientX; sy = e.clientY; });
+ph.addEventListener("pointerup", e => { const dx = e.clientX - sx, dy = e.clientY - sy;
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) go(Math.max(0, Math.min(3, depth + (dx < 0 ? 1 : -1))));
+  else if (Math.abs(dy) > 50) next(dy < 0 ? 1 : -1); });
+document.addEventListener("keydown", e => { if (e.key === "ArrowRight") go(Math.min(3, depth + 1)); if (e.key === "ArrowLeft") go(Math.max(0, depth - 1)); if (e.key === "ArrowDown") next(1); if (e.key === "ArrowUp") next(-1); });
+// spotlight follows the pointer (on the phone: the gyroscope)
+ph.addEventListener("pointermove", e => { if (!e.buttons) return; const r = ph.getBoundingClientRect(); ph.style.setProperty("--sx", (e.clientX - r.left) + "px"); ph.style.setProperty("--sy", (e.clientY - r.top) + "px"); });
+window.addEventListener("deviceorientation", e => { if (e.gamma == null) return; ph.style.setProperty("--sx", (50 + e.gamma) + "%"); ph.style.setProperty("--sy", (20 + (e.beta - 45) / 2) + "%"); });
+document.fonts.ready.then(() => paint(false));
+</script>
+</body>
+</html>

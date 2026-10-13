@@ -47,6 +47,41 @@ enum SelfTest {
         return URL(string: args[i + 1])
     }
 
+    /// `-punch`: write headline + action for every story that already has a "My product" level.
+    static var punchOnly: Bool { ProcessInfo.processInfo.arguments.contains("-punch") }
+
+    struct PunchReport: Codable { var items: [[String: String]] = []; var error: String? }
+
+    @MainActor
+    static func runPunch(feedState: FeedState) async {
+        var report = PunchReport()
+        let file = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("punch.json")
+        func save() { try? JSONEncoder().encode(report).write(to: file, options: .atomic) }
+        guard let product = feedState.product else { report.error = "no product"; save(); return }
+        let writer = NewsDepthWriter()
+        for a in feedState.articles {
+            guard let s = a.document?.sections.first, let level = s.forProduct, level.contains("HOW RELEVANT") else { continue }
+            let t = Date()
+            do {
+                // Rewrite the "My product" level with the current instructions, then the two short lines
+                var levelNow = level
+                var expandedNow = s.expanded
+                if ProcessInfo.processInfo.arguments.contains("-rewrite") {
+                    let all = try await writer.write(title: a.title, articleText: s.standard, product: product)
+                    levelNow = all.forProduct ?? level
+                    expandedNow = all.expanded
+                }
+                let p = try await writer.punchLines(title: a.title, summary: s.summary, productLevel: levelNow, product: product)
+                report.items.append(["title": a.title, "forYou": levelNow, "expanded": expandedNow])
+                report.items.append(["title": a.title, "source": a.sourceName, "headline": p.headline, "action": p.action, "seconds": String(format: "%.1f", Date().timeIntervalSince(t))])
+            } catch {
+                report.items.append(["title": a.title, "error": error.localizedDescription])
+            }
+            save()
+        }
+        report.items.append(["done": "1"]); save()
+    }
+
     @MainActor
     static func run(feedState: FeedState, url: URL) async {
         var report = Report()

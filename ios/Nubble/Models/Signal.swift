@@ -13,8 +13,8 @@ struct Signal: Sendable {
         let moves = Self.block("WHAT TO DO", in: text) ?? ""
         let lines = moves.split(separator: "\n").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
         // The first numbered move; the model sometimes opens with a lead-in sentence
-        firstMove = (lines.first { $0.range(of: #"^\**\s*1[.)]"#, options: .regularExpression) != nil } ?? lines.first)?
-            .replacingOccurrences(of: #"^\**\s*\d+[.)]\s*"#, with: "", options: .regularExpression)
+        firstMove = (lines.first { $0.range(of: #"^\**\s*(1[.)]|[-•])"#, options: .regularExpression) != nil } ?? lines.first)?
+            .replacingOccurrences(of: #"^\**\s*(\d+[.)]|[-•])\s*"#, with: "", options: .regularExpression)
             .replacingOccurrences(of: "**", with: "") ?? ""
     }
 

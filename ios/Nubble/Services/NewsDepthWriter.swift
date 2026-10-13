@@ -78,10 +78,10 @@ final class NewsDepthWriter {
         let condensed = try await text("condensed", Self.style, story + "Write 2-3 sentences: what's new, what it changes, who it affects. No filler.")
 
         onStep(.expanded)
-        let going = try await text("what's going on", Self.style, story + "In plain English, what happened? Start with the concrete fact. 2-4 sentences.")
-        let bigDeal = try await text("why big deal", Self.style, story + "Why is this a big deal? Context, what led here, the numbers that matter. 3-5 sentences.")
-        let truth = try await text("uncomfortable truth", Self.style, story + "What is the uncomfortable truth here: the real friction or hidden cost nobody wants to say? Only from these facts. 3-5 sentences.")
-        let soWhat = try await text("so what", Self.style, story + "So what? One sentence: the punchline, what changes tomorrow.")
+        let going = try await block("what's going on", Self.style, story, "What happened? The concrete fact, in plain English.")
+        let bigDeal = try await block("why big deal", Self.style, story, "Why is this a big deal? The context and the numbers that matter.")
+        let truth = try await block("uncomfortable truth", Self.style, story, "What is the uncomfortable truth here: the real friction or hidden cost nobody wants to say? Only from these facts.")
+        let soWhat = try await block("so what", Self.style, story, "So what? The punchline: what changes tomorrow.")
 
         var forProduct: String?
         if let product {
@@ -93,16 +93,39 @@ final class NewsDepthWriter {
             summary: summary,
             condensed: condensed,
             expanded: """
-                **WHAT'S GOING ON** \(going)
+                **WHAT'S GOING ON**
+                \(going)
 
-                **WHY THIS IS A BIG DEAL** \(bigDeal)
+                **WHY THIS IS A BIG DEAL**
+                \(bigDeal)
 
-                **UNCOMFORTABLE TRUTH** \(truth)
+                **UNCOMFORTABLE TRUTH**
+                \(truth)
 
-                **SO WHAT** \(soWhat)
+                **SO WHAT**
+                \(soWhat)
                 """,
             forProduct: forProduct
         )
+        #else
+        throw WriterError.unavailable(OnDeviceModel.unavailableReason ?? "")
+        #endif
+    }
+
+    /// Two short lines for the signal card: a headline (≤7 words) and one action (≤10 words),
+    /// written from the story and the "My product" level already on the phone.
+    func punchLines(title: String, summary: String, productLevel: String, product: ProductProfile) async throws -> (headline: String, action: String) {
+        #if canImport(FoundationModels)
+        let name = product.name
+        let instructions = """
+            You write punchy signal cards for the founders of \(name), like a sharp newsletter editor. \
+            Short, concrete, no hype words, no company name at the start.
+            """
+        let context = "STORY: \(title)\nSUMMARY: \(summary)\n\nWHAT IT MEANS FOR \(name.uppercased()):\n\(productLevel)\n\n"
+        let headline = try await text("headline", instructions, context + "Write the signal as a headline of at most 7 words — what changed in the market. Example for a coffee roaster: \"Supermarkets cut specialty coffee shelf space\". Answer with the headline only.")
+        let action = try await text("action", instructions, context + "Write the one thing \(name) should do, at most 10 words, starting with a verb. Example for a coffee roaster: \"Pitch a holiday gift box to office managers\". Answer with the action only.")
+        func clean(_ s: String) -> String { s.trimmingCharacters(in: CharacterSet(charactersIn: "\"“” \n*")) }
+        return (clean(headline), clean(action))
         #else
         throw WriterError.unavailable(OnDeviceModel.unavailableReason ?? "")
         #endif
@@ -223,20 +246,46 @@ final class NewsDepthWriter {
 
 
             """
-        let relevance = try await text("how relevant", analyst, context + "How relevant is this story to \(name)? Start with one word — High, Medium or Low — then one sentence why.")
-        let applies = try await text("how it applies", analyst, context + "How does this story apply to \(name)? Connect it to \(name)'s own products and customers. 3-5 sentences.")
-        let impact = try await text("impact", analyst, context + "How will this change \(name)'s market or customers in the next 6-12 months? 2-4 sentences.")
-        let moves = try await text("what to do", analyst, context + "What should \(name) do about it? 2-3 specific moves as a numbered list, each using \(name)'s real products.")
+        let relevance = try await block("how relevant", analyst, context, "How relevant is this story to \(name)? Start the lead with High, Medium or Low.")
+        let applies = try await block("what it means", analyst, context, "What does this story mean for \(name)'s own products and customers?")
+        let impact = try await block("impact", analyst, context, "How will this change \(name)'s market or customers in the next 6-12 months?")
+        let moves = try await text("what to do", analyst, context + "What should \(name) do about it? Exactly 3 moves, one per line, each starting with \"- \" and a verb, each at most 10 words, using \(name)'s real products.")
         return """
-            **HOW RELEVANT** \(relevance)
+            **HOW RELEVANT**
+            \(relevance)
 
-            **HOW IT APPLIES TO \(name.uppercased())** \(applies)
+            **WHAT IT MEANS FOR \(name.uppercased())**
+            \(applies)
 
-            **HOW IT WILL IMPACT \(name.uppercased())** \(impact)
+            **IMPACT**
+            \(impact)
 
             **WHAT TO DO**
             \(moves)
             """
+    }
+
+    /// One block in the scannable shape: a bold lead (the point, ≤8 words) + ≤2 short sentences.
+    /// Returned as "**Lead.** Support." so every reader shows the point first.
+    private func block(_ step: String, _ instructions: String, _ context: String, _ question: String) async throws -> String {
+        let raw = try await text(step, instructions, context + question + """
+
+            Answer in exactly this form:
+            LEAD: <the point, at most 8 words>
+            TEXT: <one or two short sentences that support it, at most 35 words>
+            """)
+        var lead = "", body = ""
+        for line in raw.split(separator: "\n") {
+            let l = line.trimmingCharacters(in: .whitespaces)
+            if l.uppercased().hasPrefix("LEAD:") { lead = String(l.dropFirst(5)) }
+            else if l.uppercased().hasPrefix("TEXT:") { body = String(l.dropFirst(5)) }
+            else if !lead.isEmpty { body += " " + l }
+        }
+        func clean(_ s: String) -> String { s.replacingOccurrences(of: "**", with: "").trimmingCharacters(in: CharacterSet(charactersIn: " \"“”")) }
+        lead = clean(lead); body = clean(body)
+        if lead.isEmpty { return clean(raw) }                       // the model ignored the form: keep its answer as is
+        let point = lead.hasSuffix(".") || lead.hasSuffix("?") || lead.hasSuffix("!") ? lead : lead + "."
+        return "**\(point)** \(body)"
     }
 
     /// One plain-text answer in a fresh session, with the content-transformation guardrails.
