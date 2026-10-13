@@ -48,6 +48,23 @@ enum SelfTest {
     }
 
     /// `-punch`: write headline + action for every story that already has a "My product" level.
+    /// `-dump`: write today's rounds (headline, verdict, ℞, relevance, products) to Documents/rounds.json — the words, without screenshots.
+    static var dumpOnly: Bool { ProcessInfo.processInfo.arguments.contains("-dump") }
+
+    @MainActor
+    static func dump(feedState: FeedState) {
+        let rounds = feedState.rounds.map { a -> [String: String] in
+            let s = a.section
+            return ["title": a.title, "source": a.sourceName, "relevance": String(a.relevance ?? -1), "codeRed": feedState.codeRedName(for: a) ?? "",
+                    "headline": s?.headline ?? "", "action": s?.action ?? "", "verdict": s?.verdict ?? "", "rx": s?.rx ?? "", "writerVersion": String(a.document?.writerVersion ?? 0),
+                    "summary": s?.summary ?? "", "forYou": s?.forProduct ?? ""]
+        }
+        let out: [String: Any] = ["products": feedState.product?.products ?? [], "rankerVersion": feedState.rankerVersion, "stories": feedState.articles.count,
+                                  "high": feedState.articles.filter { ($0.relevance ?? 0) >= 1 }.count, "rounds": rounds]
+        let file = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("rounds.json")
+        try? JSONSerialization.data(withJSONObject: out, options: [.prettyPrinted]).write(to: file, options: .atomic)
+    }
+
     static var punchOnly: Bool { ProcessInfo.processInfo.arguments.contains("-punch") }
 
     struct PunchReport: Codable { var items: [[String: String]] = []; var error: String? }

@@ -46,6 +46,7 @@ struct NubbleApp: App {
                 await SharedInbox.drain(into: feedState)
                 #if DEBUG
                 if SelfTest.punchOnly { await SelfTest.runPunch(feedState: feedState); return }
+                if SelfTest.dumpOnly { SelfTest.dump(feedState: feedState); return }
                 if let url = SelfTest.productURL {
                     await SelfTest.run(feedState: feedState, url: url)
                     return
