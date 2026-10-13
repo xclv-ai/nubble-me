@@ -4,6 +4,20 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 
 ---
 
+## [iOS 1.2.0 (3) — 2026-10-13] — Dr HAOS's rounds
+
+### Added
+- **Rounds tab** — Dr HAOS's daily rounds for the founder's product in POKPOK's design system (Instrument Serif + JetBrains Mono, colour rhythm, 4 px notch, squares, tickers, the cat): patient chart, the noise grid (one square per story), the scan list, three signals then discharge.
+- **Signal pages** — headline in Instrument Serif, the story's number as the hero (money / % / magnitude words only), Dr HAOS's verdict, the ℞ in yellow with "Prescribe → my list" (also a Reminder in the "Dr HAOS ℞" list) and "Why?".
+- **Code red** — any story naming a competitor from Settings → Watchlist is pinned first, red, with Symptom / Diagnosis / Seen / Threat.
+- **Why? sheet** — the five depth levels (Summary · Condensed · Article · Expanded · For you) as an evidence sheet; Uncomfortable Truth on pink.
+- **Discharged** — today's prescriptions (tap a square = done), weekly vitals, watchlist.
+- **Widget** (Lock Screen rectangular/inline, Home small) — next ℞ and a red mark when a competitor moved.
+- Dr HAOS's lines written on-device after the levels (headline, action, verdict, ℞), with one cold rewrite when the model reaches for hype; ranking "High = the founder must act this week"; writer version forces rewrites after prompt changes.
+
+### Fixed
+- Page pushed off the left edge (grid minimum widths), footer under the tab bar, truncated headlines, double top inset.
+
 ## [iOS 1.1.0 (2) — 2026-10-12]
 
 ### Fixed
