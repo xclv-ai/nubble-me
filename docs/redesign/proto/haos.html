@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dr HAOS Rounds</title>
+<style>
+@font-face { font-family:"Instrument Serif"; src:url(fonts/InstrumentSerif-Regular.ttf) format("truetype"); font-weight:400; }
+@font-face { font-family:"Instrument Serif"; src:url(fonts/InstrumentSerif-Italic.ttf) format("truetype"); font-weight:400; font-style:italic; }
+@font-face { font-family:"JetBrains Mono"; src:url(fonts/JetBrainsMono-Light.woff2) format("woff2"); font-weight:300; }
+@font-face { font-family:"JetBrains Mono"; src:url(fonts/JetBrainsMono-Regular.woff2) format("woff2"); font-weight:400; }
+@font-face { font-family:"JetBrains Mono"; src:url(fonts/JetBrainsMono-Medium.woff2) format("woff2"); font-weight:500; }
+@font-face { font-family:"JetBrains Mono"; src:url(fonts/JetBrainsMono-Bold.woff2) format("woff2"); font-weight:700; }
+:root { --yellow:#F5F900; --beige:#E8E0D1; --grey:#8EA0A3; --teal:#0A3B44; --pink:#FFC4D6; --card:#FDFDFC; --warm:#FAF9F7; --critical:#E7000A; --red:#FF4B33; --green:#11C83B; --notch:4px; }
+* { box-sizing:border-box; margin:0; }
+html,body { background:#1a1a1a; }
+body { font-family:"JetBrains Mono",monospace; color:var(--teal); padding:36px 24px; -webkit-font-smoothing:antialiased; }
+.row { display:flex; gap:30px; justify-content:center; align-items:flex-start; flex-wrap:wrap; }
+.col { display:flex; flex-direction:column; gap:12px; width:393px; }
+.cap { color:#9a9a9a; font:400 12.5px/1.5 "JetBrains Mono"; } .cap b { color:#fff; font-weight:500; }
+.phone { position:relative; width:393px; height:852px; overflow:hidden; background:var(--beige); border-radius:54px; box-shadow:0 0 0 2px #2a2a2a, 0 30px 90px rgba(0,0,0,.6); display:flex; flex-direction:column; }
+.status { height:54px; display:flex; justify-content:space-between; align-items:center; padding:0 32px; font:600 17px/1 system-ui; flex:none; }
+.home { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; z-index:5; }
+/* notch DNA: 4px chamfer, corner colour = parent bg via clip-path */
+.notch { clip-path:polygon(var(--notch) 0, calc(100% - var(--notch)) 0, 100% var(--notch), 100% calc(100% - var(--notch)), calc(100% - var(--notch)) 100%, var(--notch) 100%, 0 calc(100% - var(--notch)), 0 var(--notch)); }
+.mono { font-family:"JetBrains Mono"; }
+.label { font:600 12px/16px "JetBrains Mono"; letter-spacing:.8px; text-transform:uppercase; }
+.label-g { font:400 10px/16px "JetBrains Mono"; letter-spacing:.08em; text-transform:uppercase; color:var(--grey); }
+.serif { font-family:"Instrument Serif"; font-weight:400; }
+.block { padding:20px 24px; }
+.teal { background:var(--teal); color:var(--card); } .pink { background:var(--pink); color:var(--teal); } .yellow { background:var(--yellow); color:var(--teal); } .beige { background:var(--beige); color:var(--teal); } .white { background:var(--card); color:var(--teal); }
+.ticker { height:22px; overflow:hidden; white-space:nowrap; font:400 10px/22px "JetBrains Mono"; letter-spacing:.06em; text-transform:uppercase; }
+.saw { height:10px; line-height:10px; font-size:10px; letter-spacing:-1px; overflow:hidden; white-space:nowrap; }
+.dither { font:400 11px/14px "JetBrains Mono"; letter-spacing:1px; white-space:nowrap; overflow:hidden; opacity:.9; }
+/* the doctor */
+.doc { display:flex; gap:14px; align-items:flex-start; }
+.doc img { width:84px; height:84px; flex:none; }
+.say { font:400 23px/1.15 "Instrument Serif"; letter-spacing:-.01em; }
+.say i { font-style:italic; }
+.rx { display:flex; gap:14px; align-items:flex-start; }
+.rx .r { font:400 44px/1 "Instrument Serif"; flex:none; width:44px; }
+.btn { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; background:var(--teal); color:var(--yellow); font:600 13px/16px "JetBrains Mono"; letter-spacing:.8px; text-transform:uppercase; }
+.btn.y { background:var(--yellow); color:var(--teal); }
+.chart { display:grid; grid-template-columns:92px 1fr; gap:6px 12px; font:400 12px/18px "JetBrains Mono"; }
+.chart .k { color:var(--grey); text-transform:uppercase; letter-spacing:.06em; font-size:11px; } .chart .v { border-bottom:1px dotted var(--grey); padding-bottom:2px; }
+.tag { display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--card); margin-top:8px; }
+.tag .n { font:400 22px/1 "Instrument Serif"; width:30px; }
+.tag .t { font:400 13px/18px "JetBrains Mono"; flex:1; }
+.tag .s { font:600 10px/14px "JetBrains Mono"; letter-spacing:.08em; text-transform:uppercase; padding:3px 6px; }
+.tag.red { background:var(--critical); color:#fff; } .tag.red .s { background:#fff; color:var(--critical); }
+.sq { display:inline-block; width:14px; height:14px; margin:0 3px 3px 0; background:var(--teal); vertical-align:top; }
+.sq.y { background:var(--yellow); } .sq.pale { background:transparent; border:1px solid var(--grey); } .sq.red { background:var(--critical); } .sq.hatch { background:repeating-linear-gradient(45deg, var(--teal) 0 2px, transparent 2px 5px); }
+h1.serif { font-size:40px; line-height:1.0; letter-spacing:-.015em; text-wrap:balance; }
+.hero { font:400 96px/.9 "Instrument Serif"; letter-spacing:-.03em; } .hero small { font-size:40px; }
+.list { font:400 13px/20px "JetBrains Mono"; }
+.list div { display:grid; grid-template-columns:22px 1fr 44px; gap:10px; padding:10px 0; border-bottom:1px dotted var(--grey); align-items:start; }
+.note { margin:30px auto 0; max-width:960px; color:#777; font:400 12px/1.5 "JetBrains Mono"; text-align:center; }
+</style>
+</head>
+<body>
+<div class="row">
+
+<!-- A · ROUNDS -->
+<div class="col">
+  <div class="phone">
+    <div class="status teal"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="ticker pink">&nbsp;[+] ROUNDS 13-10-26 &nbsp;•&nbsp; 3 SIGNALS &nbsp;•&nbsp; 1 CODE RED &nbsp;•&nbsp; 127 STORIES DISCHARGED AS NOISE &nbsp;[x]&nbsp; ROUNDS 13-10-26 &nbsp;•&nbsp; 3 SIGNALS</div>
+    <div class="block teal" style="padding-top:18px;padding-bottom:22px">
+      <div class="label-g" style="color:var(--grey);margin-bottom:12px">POKPOK.AI // DR HAOS · BRAND PERCEPTION AGENT</div>
+      <div class="doc">
+        <img src="pok/drhaos.svg" alt="Dr HAOS">
+        <div class="say">Three things moved in your market overnight. One is a <i>competitor</i>. I already read all 130 stories so you won't have to. Sit down.</div>
+      </div>
+    </div>
+    <div class="saw yellow" style="color:var(--teal)">▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲</div>
+    <div class="yellow dither" style="padding:6px 24px 8px">║ . . : : ░ ▒ ▓ ▓ SCANNING… 130 STORIES ▓ ▓ ▒ ░ : : . . ║</div>
+    <div class="block beige" style="flex:1">
+      <div class="chart">
+        <span class="k">Patient</span><span class="v">POKPOK.AI — pre-seed, Warsaw</span>
+        <span class="k">Doctor</span><span class="v">DR HAOS</span>
+        <span class="k">Rounds</span><span class="v">3 signals · ~90 s · then you are discharged</span>
+      </div>
+      <div style="margin-top:18px" class="label">01 // THE SCAN</div>
+      <div class="tag red notch"><span class="n">01</span><span class="t">Jungle Scout shipped an AI listing audit</span><span class="s">Code red</span></div>
+      <div class="tag notch"><span class="n">02</span><span class="t">Holiday shopping now starts on Prime Day</span><span class="s" style="background:var(--yellow)">High</span></div>
+      <div class="tag notch"><span class="n">03</span><span class="t">Shoppers try clothes on inside ChatGPT</span><span class="s" style="background:var(--yellow)">High</span></div>
+    </div>
+    <div class="block yellow" style="padding-top:16px;padding-bottom:40px"><div class="btn notch"><span>Start rounds · 01 is bleeding</span><span>→</span></div></div>
+    <div class="home" style="background:var(--teal)"></div>
+  </div>
+  <div class="cap"><b>A · Rounds.</b> Dr HAOS is the hero: he read the 130 stories, you get three. The patient chart (DOCTOR / PATIENT / ROUNDS), the scan list as notched specimen tags, code red in critical red. Colour rhythm: teal → yellow → beige → yellow.</div>
+</div>
+
+<!-- B · CODE RED -->
+<div class="col">
+  <div class="phone">
+    <div class="status" style="background:var(--critical);color:#fff"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="ticker" style="background:var(--critical);color:#fff">&nbsp;[!] CODE RED &nbsp;•&nbsp; COMPETITOR ON YOUR PATIENT LIST &nbsp;•&nbsp; 07:40 &nbsp;•&nbsp; EXAMPLE &nbsp;[!] CODE RED &nbsp;•&nbsp; COMPETITOR</div>
+    <div class="block pink" style="padding-bottom:24px">
+      <div class="label-g" style="margin-bottom:10px">01 // 03 · UNCOMFORTABLE TRUTH</div>
+      <h1 class="serif">Jungle Scout just shipped <i>your</i> product.</h1>
+      <div class="doc" style="margin-top:16px;align-items:center"><img src="pok/drhaos.svg" alt="" style="width:56px;height:56px"><div class="say" style="font-size:19px">Cheaper, dumber, first. I told you in March they'd try. <i>Receipts below.</i></div></div>
+    </div>
+    <div class="block beige" style="flex:1">
+      <div class="label" style="margin-bottom:10px">02 // THE EVIDENCE</div>
+      <div class="chart">
+        <span class="k">Symptom</span><span class="v">"AI listing audit" — scores Amazon pages for AI shopping assistants</span>
+        <span class="k">Diagnosis</span><span class="v">Same promise as X-Ray's AI-visibility read</span>
+        <span class="k">What they lack</span><span class="v">No human-perception layer. No 500 reviews. No markers.</span>
+        <span class="k">Threat</span><span class="v"><span class="sq red"></span><span class="sq red"></span><span class="sq red"></span><span class="sq red"></span><span class="sq pale"></span> 4 / 5</span>
+      </div>
+    </div>
+    <div class="block yellow" style="padding-top:16px;padding-bottom:40px">
+      <div class="rx"><div class="r">℞</div><div><div class="label" style="margin-bottom:6px">Do this now</div><div style="font:400 22px/1.1 'Instrument Serif'">Publish X-Ray <i>versus</i> Jungle Scout. One page, side by side, today.</div></div></div>
+      <div style="display:flex;gap:8px;margin-top:14px"><div class="btn notch" style="flex:1"><span>Prescribe → my list</span><span>→</span></div><div class="btn notch" style="background:transparent;color:var(--teal);border:1px solid var(--teal);width:92px;justify-content:center">Skip</div></div>
+    </div>
+    <div class="home" style="background:var(--teal)"></div>
+  </div>
+  <div class="cap"><b>B · Code red.</b> Pink = confrontation: the truth in Instrument Serif with one italic word. Beige = evidence: Symptom → Diagnosis → What they lack → Threat (squares). Yellow = the prescription. Red appears only for competitors.</div>
+</div>
+
+<!-- C · SIGNAL -->
+<div class="col">
+  <div class="phone">
+    <div class="status teal"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="ticker teal" style="color:var(--grey)">&nbsp;[+] 02 // 03 &nbsp;•&nbsp; DIGITAL COMMERCE 360 &nbsp;•&nbsp; ADOBE DATA &nbsp;•&nbsp; ~60 S LEFT &nbsp;[+] 02 // 03 &nbsp;•&nbsp; DIGITAL COMMERCE 360</div>
+    <div class="block teal" style="padding-bottom:22px">
+      <div class="label-g" style="color:var(--grey);margin-bottom:10px">02 // 03 · DIAGNOSIS</div>
+      <h1 class="serif" style="color:var(--card)">Holiday shopping now starts on <i>Prime Day</i>.</h1>
+    </div>
+    <div class="block beige" style="flex:1">
+      <div class="label-g">Online spend · Prime Big Deal Days · Oct 6–7 · Adobe</div>
+      <div class="hero">$9.86<small>B</small></div>
+      <div style="margin-top:14px;font:400 11px/16px 'JetBrains Mono';letter-spacing:.06em;color:var(--grey);text-transform:uppercase">The peak moved · one square = one week</div>
+      <div style="margin-top:6px;line-height:0">
+        <span class="sq y"></span><span class="sq y"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq hatch"></span><span class="sq hatch"></span><span class="sq pale"></span><span class="sq pale"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font:400 10px/14px 'JetBrains Mono';letter-spacing:.06em;color:var(--grey)"><span>OCT 6–7 · NOW THE PEAK</span><span>NOV 27 · WAS</span></div>
+      <div class="doc" style="margin-top:18px;align-items:center"><img src="pok/drhaos.svg" alt="" style="width:56px;height:56px"><div class="say" style="font-size:19px">Your clients still plan for November. The calendar moved without them. <i>Your selling window moved too.</i></div></div>
+    </div>
+    <div class="block yellow" style="padding-top:16px;padding-bottom:40px">
+      <div class="rx"><div class="r">℞</div><div><div class="label" style="margin-bottom:6px">Do this now</div><div style="font:400 22px/1.1 'Instrument Serif'">Move the holiday listing check to <i>early September</i>.</div></div></div>
+      <div style="display:flex;gap:8px;margin-top:14px"><div class="btn notch" style="flex:1"><span>Prescribe → my list</span><span>→</span></div><div class="btn notch" style="background:transparent;color:var(--teal);border:1px solid var(--teal);width:92px;justify-content:center">Why?</div></div>
+    </div>
+    <div class="home" style="background:var(--teal)"></div>
+  </div>
+  <div class="cap"><b>C · Signal.</b> The number is the hero (Instrument Serif 96px); the infographic is POKPOK's own square: one square = one week, yellow = the new peak, hatched = the old one. Dr HAOS lands the verdict in one line. "Why?" opens the depth.</div>
+</div>
+
+<!-- D · DISCHARGED -->
+<div class="col">
+  <div class="phone">
+    <div class="status teal"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="ticker teal" style="color:var(--grey)">&nbsp;SYSTEM STATUS: OPERATIONAL &nbsp;•&nbsp; DIAGNOSTIC COMPLETE &nbsp;•&nbsp; PRESCRIBING CURE &nbsp;•&nbsp; SYSTEM STATUS: OPERATIONAL &nbsp;•&nbsp; DIAGNOSTIC COMPLETE</div>
+    <div class="block teal" style="padding-bottom:22px">
+      <div class="label-g" style="color:var(--grey);margin-bottom:10px">03 // 03 · DISCHARGE</div>
+      <h1 class="serif" style="color:var(--card)">Discharged. Nothing else is wrong with you today. <i>Sadly.</i></h1>
+      <div class="doc" style="margin-top:16px;align-items:center"><img src="pok/drhaos.svg" alt="" style="width:56px;height:56px"><div class="say" style="font-size:19px;color:var(--card)">1 min 20 s. Two prescriptions. Don't come back until tomorrow.</div></div>
+    </div>
+    <div class="block beige" style="flex:1">
+      <div class="label" style="margin-bottom:8px">℞ // YOUR PRESCRIPTIONS</div>
+      <div class="list">
+        <div><span class="sq red" style="margin-top:3px"></span><span>Publish X-Ray vs Jungle Scout, one page, side by side</span><span class="label-g">today</span></div>
+        <div><span class="sq y" style="margin-top:3px"></span><span>Move the holiday listing check to early September</span><span class="label-g">today</span></div>
+        <div><span class="sq pale" style="margin-top:3px"></span><span style="color:var(--grey)">Run X-Ray on 3 apparel clients' best pages</span><span class="label-g">tmrw</span></div>
+      </div>
+      <div style="margin-top:18px" class="label-g">Vitals · this week</div>
+      <div style="margin-top:6px;line-height:0"><span class="sq"></span><span class="sq"></span><span class="sq"></span><span class="sq"></span><span class="sq"></span><span class="sq"></span><span class="sq"></span><span class="sq pale"></span><span class="sq pale"></span><span class="sq pale"></span></div>
+      <div style="margin-top:6px;font:400 10px/14px 'JetBrains Mono';letter-spacing:.06em;color:var(--grey)">7 OF 10 PRESCRIPTIONS DONE · HEALTHY CONDITION 70%</div>
+    </div>
+    <div class="block pink" style="padding-top:16px;padding-bottom:40px">
+      <div class="chart"><span class="k">Lock screen</span><span class="v">Next: Publish X-Ray vs Jungle Scout</span><span class="k">Watchlist</span><span class="v" style="color:var(--critical)">■ 1 code red · 7 competitors watched</span></div>
+    </div>
+    <div class="home" style="background:var(--teal)"></div>
+  </div>
+  <div class="cap"><b>D · Discharged.</b> A real stop, in his voice. The prescriptions as a receipt; the week's vitals as squares (7 of 10 done = healthy 70%). Pink footer = the Lock Screen widget and the watchlist.</div>
+</div>
+
+</div>
+<p class="note">POKPOK design system: colour rhythm (no gradients, hard cuts), Instrument Serif (feeling) + JetBrains Mono (proof), 4px corner notch, the square as the data asset, terminal motifs, Dr HAOS mascot. $9.86B is from today's feed (Adobe via Digital Commerce 360). The Jungle Scout alert and the prescriptions are example copy in Dr HAOS's voice.</p>
+</body>
+</html>

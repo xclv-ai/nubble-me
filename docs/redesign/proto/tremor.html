@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nubble Tremor</title>
+<style>
+@font-face { font-family: "Geist"; src: url(fonts/Geist-Variable.woff2) format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "GeistMono"; src: url(fonts/GeistMono-Variable.woff2) format("woff2"); font-weight: 100 900; }
+:root { --bg:#070708; --ink:#F4F2EC; --ink2:rgba(244,242,236,.6); --ink3:rgba(244,242,236,.32); --line:rgba(244,242,236,.14); --red:#FF3B2F; }
+* { box-sizing:border-box; margin:0; }
+html,body { background:#121214; }
+body { font-family:"Geist",system-ui,sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; padding:36px 24px; }
+.row { display:flex; gap:30px; justify-content:center; align-items:flex-start; flex-wrap:wrap; }
+.col { display:flex; flex-direction:column; gap:12px; width:393px; }
+.cap { color:#9a9a9a; font:500 13px/1.45 "Geist"; } .cap b { color:#fff; font-weight:650; }
+.phone { position:relative; width:393px; height:852px; border-radius:54px; overflow:hidden; background:var(--bg); box-shadow:0 0 0 2px #2a2a2c, 0 30px 90px rgba(0,0,0,.6); }
+.phone svg { position:absolute; left:0; top:0; overflow:visible; }
+.status { position:absolute; top:0; left:0; right:0; height:54px; display:flex; justify-content:space-between; align-items:center; padding:0 32px; font:600 17px/1 system-ui; z-index:3; }
+.mono { font-family:"GeistMono"; font-weight:500; letter-spacing:.08em; }
+.top { position:absolute; top:66px; left:26px; right:26px; display:flex; justify-content:space-between; font:500 12px/1 "GeistMono"; letter-spacing:.08em; color:var(--ink2); z-index:3; }
+.top b { color:var(--ink); font-weight:500; }
+.abs { position:absolute; z-index:3; }
+h1 { font:620 38px/1.02 "Geist"; letter-spacing:-.04em; text-wrap:balance; }
+.lbl { font:500 11px/1 "GeistMono"; letter-spacing:.12em; color:var(--ink3); text-transform:uppercase; }
+.meaning { font:450 18.5px/1.32 "Geist"; letter-spacing:-.01em; color:var(--ink2); } .meaning b { color:var(--ink); font-weight:620; }
+/* the move: a plotter-drawn box, not a pill */
+.move { position:absolute; left:26px; right:26px; bottom:44px; z-index:3; }
+.move .k { font:500 11px/1 "GeistMono"; letter-spacing:.14em; color:var(--ink2); margin-bottom:10px; display:flex; justify-content:space-between; }
+.move .box { position:relative; padding:18px 18px 18px 22px; border:1.5px solid var(--ink); border-radius:4px; font:620 20px/1.2 "Geist"; letter-spacing:-.025em; background:var(--bg); }
+.move .box:before { content:""; position:absolute; left:-1.5px; top:-1.5px; bottom:-1.5px; width:6px; background:var(--ink); border-radius:4px 0 0 4px; }
+.move .box.red { border-color:var(--red); } .move .box.red:before { background:var(--red); }
+.move .box .go { position:absolute; right:16px; top:50%; transform:translateY(-50%); font:300 26px/1 "Geist"; }
+.move .box span { display:block; padding-right:36px; }
+.move .alt { display:flex; justify-content:space-between; margin-top:12px; font:500 11px/1 "GeistMono"; letter-spacing:.1em; color:var(--ink3); }
+.home { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:#fff; z-index:4; }
+/* trace drawing */
+.draw { stroke-dasharray:4000; stroke-dashoffset:4000; animation:draw 1.4s cubic-bezier(.3,0,.2,1) forwards; }
+@keyframes draw { to { stroke-dashoffset:0; } }
+.note { margin:30px auto 0; max-width:960px; color:#777; font:500 12px/1.5 "Geist"; text-align:center; }
+</style>
+</head>
+<body>
+<div class="row">
+
+<!-- A · TODAY: the day's trace -->
+<div class="col">
+  <div class="phone" id="A">
+    <div class="status"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="top"><span>TUE 13 OCT · <b>POKPOK.AI</b></span><span>3 SIGNALS · 90 S</span></div>
+    <svg width="393" height="852" viewBox="0 0 393 852" id="svgA"></svg>
+    <div class="move"><div class="k"><span>→ START THE BRIEF</span><span>1 OF 3 IS RED</span></div><div class="box"><span>Read the three spikes. Decide three moves.</span><i class="go">→</i></div></div>
+    <div class="home"></div>
+  </div>
+  <div class="cap"><b>A · Today.</b> The day is a seismograph. Flat line = nothing for you. Each spike is a signal, height = how much it matters, red = a competitor on your watchlist. One glance tells you how shaky the day is.</div>
+</div>
+
+<!-- B · The red spike -->
+<div class="col">
+  <div class="phone" id="B">
+    <div class="status"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="top"><span>1 OF 3 · <b style="color:var(--red)">COMPETITOR</b> · EXAMPLE</span><span>07:40</span></div>
+    <svg width="393" height="852" viewBox="0 0 393 852" id="svgB"></svg>
+    <div class="abs" style="left:26px;right:26px;top:238px"><h1>Jungle Scout shipped an AI listing audit.</h1></div>
+    <div class="abs" style="left:26px;right:26px;top:404px;display:grid;gap:0">
+      <div style="display:grid;grid-template-columns:92px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line)"><span class="lbl" style="padding-top:4px">What</span><span style="font:520 17px/1.25 Geist;letter-spacing:-.01em">Scores Amazon listings for AI shopping assistants</span></div>
+      <div style="display:grid;grid-template-columns:92px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line)"><span class="lbl" style="padding-top:4px">Overlap</span><span style="font:520 17px/1.25 Geist;letter-spacing:-.01em;color:var(--red)">X-Ray's core promise</span></div>
+      <div style="display:grid;grid-template-columns:92px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><span class="lbl" style="padding-top:4px">They miss</span><span style="font:520 17px/1.25 Geist;letter-spacing:-.01em">The human read. Reviews.</span></div>
+    </div>
+    <div class="move"><div class="k"><span>→ COUNTER-MOVE · TODAY</span><span>THREAT 4/5</span></div><div class="box red"><span>Publish X-Ray vs Jungle Scout, side by side, one page</span><i class="go">→</i></div><div class="alt"><span>LATER · TOMORROW</span><span>SKIP</span></div></div>
+    <div class="home"></div>
+  </div>
+  <div class="cap"><b>B · Red spike.</b> The spike you tapped becomes the header: its height is the threat. Three facts in plotter rules. The counter-move is a drawn box, not a pill — red only here.</div>
+</div>
+
+<!-- C · Signal with a tremor infographic -->
+<div class="col">
+  <div class="phone" id="C">
+    <div class="status"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="top"><span>2 OF 3 · <b>SIGNAL</b></span><span>09:10 · ~60 S LEFT</span></div>
+    <svg width="393" height="852" viewBox="0 0 393 852" id="svgC"></svg>
+    <div class="abs" style="left:26px;right:26px;top:238px"><h1>Holiday shopping now starts on Prime Day.</h1></div>
+    <div class="abs" style="left:26px;top:388px"><div class="lbl">Online spend · Oct 6–7 · Adobe</div><div style="font:560 64px/1 Geist;letter-spacing:-.05em;margin-top:8px">$9.86<span style="font-size:28px;color:var(--ink2);letter-spacing:-.02em">B</span></div></div>
+    <div class="abs meaning" style="left:26px;right:26px;top:606px"><b>For pokpok:</b> brands fix listings in September now. Your selling window moved with them.</div>
+    <div class="move"><div class="k"><span>→ MOVE · TODAY</span><span>WHY? · 20 S</span></div><div class="box"><span>Move the holiday listing-check campaign to early September</span><i class="go">→</i></div><div class="alt"><span>LATER · TOMORROW</span><span>SKIP</span></div></div>
+    <div class="home"></div>
+  </div>
+  <div class="cap"><b>C · The infographic speaks the same language.</b> Shopping as tremors across the calendar: the peak used to shake in late November, now it shakes on Oct 6–7. Drawn on the phone from the story's own numbers.</div>
+</div>
+
+<!-- D · Flat -->
+<div class="col">
+  <div class="phone" id="D">
+    <div class="status"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="top"><span>TUE 13 OCT · <b>POKPOK.AI</b></span><span>1 MIN 20 S</span></div>
+    <svg width="393" height="852" viewBox="0 0 393 852" id="svgD"></svg>
+    <div class="abs" style="left:26px;right:26px;top:238px"><h1>Flat. Nothing else will shake you today.</h1></div>
+    <div class="abs" style="left:26px;right:26px;top:400px">
+      <div class="lbl" style="margin-bottom:14px">Your moves · on the list</div>
+      <div style="display:grid;grid-template-columns:22px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line);font:540 17px/1.3 Geist;letter-spacing:-.01em"><span style="color:var(--red)">■</span><span>Publish X-Ray vs Jungle Scout, side by side</span></div>
+      <div style="display:grid;grid-template-columns:22px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line);font:540 17px/1.3 Geist;letter-spacing:-.01em"><span>■</span><span>Run X-Ray on 3 apparel clients' best pages</span></div>
+      <div style="display:grid;grid-template-columns:22px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font:540 17px/1.3 Geist;letter-spacing:-.01em;color:var(--ink3)"><span>□</span><span>Holiday campaign to September — tomorrow</span></div>
+    </div>
+    <div class="move"><div class="k"><span>LOCK SCREEN · NEXT</span><span style="color:var(--red)">■ 1 ALERT</span></div><div class="box" style="border-color:var(--line);font-weight:540"><span>Publish X-Ray vs Jungle Scout</span><i class="go" style="color:var(--ink3)">→</i></div></div>
+    <div class="home"></div>
+  </div>
+  <div class="cap"><b>D · Flat.</b> The trace goes flat: a real stop. Three moves on the list, the time it took, and the Lock Screen shows the next move with zero taps.</div>
+</div>
+
+</div>
+<p class="note">Numbers on screen C are from today's feed on the iPhone (Adobe via Digital Commerce 360). The competitor alert and every move are example copy. Typeface: Geist.</p>
+
+<script>
+// deterministic noise so every render is identical
+function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+const NS = "http://www.w3.org/2000/svg";
+const el = (n, a, parent) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); parent.appendChild(e); return e; };
+const INK = "#F4F2EC", RED = "#FF3B2F", INK3 = "rgba(244,242,236,.32)", INK2 = "rgba(244,242,236,.6)";
+
+// a vertical seismic trace: baseline x, from y0 to y1, noise amplitude, spikes [{y, amp, color, width}]
+function vtrace(svg, x, y0, y1, noise, spikes, seed, cls = "draw") {
+  const r = rng(seed); let d = `M ${x} ${y0}`;
+  for (let y = y0 + 2; y <= y1; y += 2) {
+    let dx = (r() - .5) * noise * 2;
+    for (const s of spikes) { const dy = y - s.y, w = s.width || 14; if (Math.abs(dy) < w) { const t = 1 - Math.abs(dy) / w; dx += s.amp * Math.pow(t, 1.6) * (dy < 0 ? 1 : 0.85) * (Math.sin(dy * 0.9) * 0.25 + 0.75); } }
+    d += ` L ${(x + dx).toFixed(1)} ${y}`;
+  }
+  return el("path", { d, fill: "none", stroke: INK, "stroke-width": 1.2, "stroke-linejoin": "round", class: cls }, svg);
+}
+// a horizontal trace (time → x), spikes [{x, amp, color}]
+function htrace(svg, y, x0, x1, noise, spikes, seed, stroke = INK, width = 1.2, cls = "draw") {
+  const r = rng(seed); let d = `M ${x0} ${y}`;
+  for (let x = x0 + 2; x <= x1; x += 2) {
+    let dy = (r() - .5) * noise * 2;
+    for (const s of spikes) { const dx = x - s.x, w = s.width || 10; if (Math.abs(dx) < w) { const t = 1 - Math.abs(dx) / w; dy -= s.amp * Math.pow(t, 1.4) * (Math.sin(dx * 1.1) * 0.3 + 0.7); } }
+    d += ` L ${x} ${(y + dy).toFixed(1)}`;
+  }
+  return el("path", { d, fill: "none", stroke, "stroke-width": width, "stroke-linejoin": "round", class: cls }, svg);
+}
+function text(svg, x, y, t, a = {}) { const e = el("text", Object.assign({ x, y, fill: INK3, "font-family": "GeistMono", "font-size": 11, "letter-spacing": "1.2" }, a), svg); e.textContent = t; return e; }
+function dots(svg) { for (let y = 120; y < 760; y += 24) for (let x = 26; x < 380; x += 24) el("circle", { cx: x, cy: y, r: .7, fill: "rgba(244,242,236,.14)" }, svg); }
+
+// ---- A: the day
+(() => { const s = document.getElementById("svgA"); dots(s);
+  const x = 78, y0 = 118, y1 = 690;
+  // hour ticks
+  const hours = ["06", "07", "08", "09", "10"]; hours.forEach((h, i) => { const y = y0 + i * 136; text(s, 26, y + 4, h); el("line", { x1: 60, y1: y, x2: 66, y2: y, stroke: INK3 }, s); });
+  // dim noise everywhere; spikes
+  const spikes = [{ y: 345, amp: 230, color: RED, width: 16 }, { y: 545, amp: 170, width: 14 }, { y: 600, amp: 120, width: 12 }];
+  vtrace(s, x, y0, y1, 2.2, spikes, 7);
+  // red spike overdrawn
+  const red = vtrace(s, x, 320, 372, 0, [{ y: 345, amp: 230, width: 16 }], 7, "draw"); red.setAttribute("stroke", RED); red.setAttribute("stroke-width", 1.8);
+  // labels at spike tips
+  text(s, 110, 318, "07:40 · COMPETITOR · THREAT 4/5", { fill: RED });
+  text(s, 110, 334, "Jungle Scout shipped an AI listing audit", { fill: INK, "font-family": "Geist", "font-size": 15, "font-weight": 600, "letter-spacing": "-0.2" });
+  text(s, 110, 518, "09:10 · HIGH");
+  text(s, 110, 534, "Holiday shopping now starts on Prime Day", { fill: INK, "font-family": "Geist", "font-size": 15, "font-weight": 600, "letter-spacing": "-0.2" });
+  text(s, 110, 578, "09:30 · HIGH");
+  text(s, 110, 594, "Shoppers try clothes on inside ChatGPT", { fill: INK, "font-family": "Geist", "font-size": 15, "font-weight": 600, "letter-spacing": "-0.2" });
+  // now marker
+  el("line", { x1: 26, y1: 662, x2: 367, y2: 662, stroke: INK3, "stroke-dasharray": "2 4" }, s); text(s, 26, 680, "NOW · 09:41 · 127 OTHER STORIES STAYED FLAT", { fill: INK2 });
+})();
+
+// ---- B: red spike header
+(() => { const s = document.getElementById("svgB"); dots(s);
+  htrace(s, 190, 26, 367, 1.6, [], 3, INK3, 1);
+  const p = htrace(s, 190, 26, 367, 1.6, [{ x: 86, amp: 96, width: 14 }], 3, RED, 2);
+  text(s, 26, 112, "THREAT", { fill: INK2 }); text(s, 26, 130, "4 / 5", { fill: RED, "font-family": "Geist", "font-size": 26, "font-weight": 600, "letter-spacing": "-0.8" });
+  text(s, 300, 112, "WATCHLIST", { fill: INK2 }); text(s, 300, 130, "7 CO.", { fill: INK, "font-family": "Geist", "font-size": 26, "font-weight": 600, "letter-spacing": "-0.8" });
+})();
+
+// ---- C: tremor calendar + number
+(() => { const s = document.getElementById("svgC"); dots(s);
+  htrace(s, 190, 26, 367, 1.2, [{ x: 120, amp: 70, width: 12 }], 11, INK, 1.6);
+  text(s, 26, 112, "SIGNAL", { fill: INK2 }); text(s, 26, 130, "HIGH", { fill: INK, "font-family": "Geist", "font-size": 26, "font-weight": 600, "letter-spacing": "-0.8" });
+  text(s, 300, 112, "SOURCE", { fill: INK2 }); text(s, 300, 130, "DC360", { fill: INK, "font-family": "Geist", "font-size": 26, "font-weight": 600, "letter-spacing": "-0.8" });
+  // the infographic: the calendar as a tremor line
+  const y = 548, x0 = 26, x1 = 367;
+  el("line", { x1: x0, y1: y + 14, x2: x1, y2: y + 14, stroke: INK3 }, s);
+  ["OCT", "NOV", "DEC"].forEach((m, i) => text(s, x0 + i * 120, y + 32, m, { fill: INK2 }));
+  // last year's peak (dim, Black Friday) and this year's (Prime Day Oct 6-7)
+  htrace(s, y, x0, x1, .8, [{ x: 258, amp: 26, width: 10 }], 5, INK3, 1, "");
+  htrace(s, y, x0, x1, .8, [{ x: 46, amp: 72, width: 12 }], 9, INK, 1.8);
+  text(s, 40, y - 80, "OCT 6–7", { fill: INK, "font-family": "Geist", "font-size": 13, "font-weight": 600, "letter-spacing": "-0.2" });
+  text(s, 40, y - 66, "PRIME DAY · NOW THE PEAK", { fill: INK2 });
+  text(s, 214, y - 34, "NOV 27 · BLACK FRIDAY", { fill: INK3 }); text(s, 214, y - 20, "was the peak", { fill: INK3, "font-family": "Geist", "font-size": 12, "letter-spacing": "0" });
+  // shift arrow
+  el("path", { d: "M 250 468 L 62 468", stroke: INK2, "stroke-width": 1, fill: "none", "marker-end": "url(#ar)" }, s);
+  const defs = el("defs", {}, s); const mk = el("marker", { id: "ar", markerWidth: 8, markerHeight: 8, refX: 6, refY: 4, orient: "auto" }, defs); el("path", { d: "M0,0 L8,4 L0,8 z", fill: INK2 }, mk);
+  text(s, 100, 462, "7 WEEKS EARLIER", { fill: INK2 });
+})();
+
+// ---- D: flat
+(() => { const s = document.getElementById("svgD"); dots(s);
+  htrace(s, 190, 26, 367, .6, [], 21, INK, 1.4);
+  text(s, 26, 112, "TODAY", { fill: INK2 }); text(s, 26, 130, "3 / 3", { fill: INK, "font-family": "Geist", "font-size": 26, "font-weight": 600, "letter-spacing": "-0.8" });
+  text(s, 300, 112, "MOVES", { fill: INK2 }); text(s, 300, 130, "2", { fill: INK, "font-family": "Geist", "font-size": 26, "font-weight": 600, "letter-spacing": "-0.8" });
+})();
+</script>
+</body>
+</html>
