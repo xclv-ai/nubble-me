@@ -74,3 +74,10 @@ Built: `Views/Rounds/HaosStage.swift` — SceneKit Dr HAOS extruded+bevelled fro
 - His picture vocabulary (references in `docs/redo/reference/cd-*`): scanner-wrong painted = the control; microphone painted = room + wire; crown linocut = the print register; filed-wrong linocut = the structure (pigeonholes); footnoted linocut = the map; footnoted painted = the pincushion. He may send more.
 - **Research in:** `01-BEST-PRACTICES-2026-10-13.md` (50 rules + 25-line per-screen checklist, HIG numbers verbatim) and `02-3D-STACK-2026-10-13.md` (RealityKit + one post-process pass: palette snap, ink edges, paper/canvas; rope cables with a yellow pulse on press; Three.js for the browser prototype) — the 3D numbers are estimates, nothing measured on the phone.
 - **Next:** on the owner's "render" — three concept key frames in the house style (Seedream; load `pokpok-creative` + `seedream` skills; style blocks verbatim from `pokpok-cd/tools/r13.py`; every prompt through `tools/prompt_lint.py`), he picks one → UX plan → browser prototype.
+
+## Checkpoint 2026-10-14 22:05 Warsaw — first element the owner approved
+- Owner: "yes much better!" on the 3D Luce-style instruments: pressure gauge (centre) + deadline stopwatch (top-right) + flat time/date readout. Page `docs/redesign/proto/gauge3d.html` (copy in `ios/ProtoBundle/`), on the iPhone via the debug viewer `-proto gauge3d.html`.
+- Skill `.claude/skills/nubble/` holds the concept, consumer profile + ranked founder needs, 22 failures, open questions, benchmarks, and the "what worked" recipe.
+- Composition with roles: `docs/redesign/proto/composition-roles.png`; measured text layout: `textmock-all.html`; Luce v2 flat layout: `luce2.html`.
+- Next (owner's word needed): build the remaining home elements in the same 3D quality, one at a time, each compared with his Luce photo — the code-red capsule, the signal keys, the paddle switches, the range rotary — then assemble the full home screen at the measured layout.
+- Numbers still illustrative: pressure 74 (no scoring yet), Profound/Peec figures as reported by 2026 comparison articles.

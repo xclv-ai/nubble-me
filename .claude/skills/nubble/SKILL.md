@@ -35,3 +35,10 @@ Seedream / Arrow 2 / Firecrawl / ScrapingBee / any model run: one line (what, ho
 - iOS: `ios/` (xcodegen `project.yml`, loop `ios/scripts/phone.sh`, device iPhone 15 Pro `00008130-000603680CDB803A`). Gateway key: `ios/scripts/secrets.sh` → gitignored `Secrets.swift`, owner's device only.
 - Mockups: `docs/redesign/proto/` (current: `desk.html`, served by `python3 -m http.server 8771 --bind 0.0.0.0`, phone opens `http://<mac-ip>:8771/desk.html`).
 - Research: `docs/redo/01` best practices, `02` 3D stack, `03` creative direction. Handoff: `docs/HANDOFF-2026-10-13-IOS-ON-DEVICE-AND-REDESIGN.md`.
+
+## What worked (owner: "yes much better!", 2026-10-14 22:05 Warsaw)
+- **Copy a reference the owner gave, element by element, and compare side by side before showing.** The Luce instrument cluster (his photos in `docs/redesign/proto/ref-luce/`) → `docs/redesign/proto/gauge3d.html`.
+- **Real 3D in Three.js 0.169:** Poly Haven studio HDRI (CC0) for reflections; turned bezel profile built as separate lathe segments (crisp chamfers, matte graphite); dial printed on a canvas texture; needle as a bevelled extrusion with a soft shadow; glass = reflection-only layer (additive, no transmission — transmission broke under tilt); diagonal glare = large masked sheet that slides.
+- **Seen straight on:** long-lens camera far away (fov ≈ 11°); tilt turns the reflected studio + slides the glare + shifts the key light; the panel and gauges turn together (max ≈ 2°).
+- **Interaction:** tap = needle falls to 0 from wherever it is, then sweeps to the score with the number counting and haptic clicks every 10.
+- **On the phone in one step:** the debug in-app viewer `-proto <file>` loads pages bundled in `ios/ProtoBundle/` (custom scheme, no LAN/HTTPS); tilt fed from native CoreMotion (`window.__tilt`), haptics via `window.webkit.messageHandlers.haptic`. Loop: edit both copies (docs + ProtoBundle) → `scripts/phone.sh build && install` → `devicectl … launch … -- -proto gauge3d.html` → `phone.sh shot`.
