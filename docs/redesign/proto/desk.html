@@ -53,26 +53,32 @@ svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;o
 .sockcap{z-index:2;position:absolute;left:14px;bottom:calc(3% + 26px);font:500 12px Mono;opacity:.6;letter-spacing:.06em}
 .hint{font:500 13px Mono;color:var(--yel);letter-spacing:.06em;text-align:center;padding-top:10px}
 /* sheet screen */
-.back{font:600 17px Geist;color:var(--ink);background:none;border:1.5px solid rgba(253,253,252,.4);border-radius:24px;padding:11px 18px;min-height:44px}
-.top{display:flex;justify-content:space-between;align-items:center}
-.sheet{flex:1;margin-top:14px;background:var(--beige);color:var(--teal);padding:20px 18px;position:relative;overflow:auto;box-shadow:0 18px 40px rgba(0,0,0,.45);animation:print .6s cubic-bezier(.2,.8,.2,1)}
-.sheet.red{border-top:8px solid var(--red)}
-@keyframes print{from{transform:translateY(-60%);clip-path:inset(60% 0 0 0)}to{transform:none;clip-path:inset(0)}}
-.sheet small{font:500 13px Mono;letter-spacing:.07em;text-transform:uppercase;opacity:.7}
-.sheet h1{font:600 42px/1.0 Geist;letter-spacing:-.01em;margin:10px 0 12px}
-.sheet .his{font:italic 25px/1.15 Serif;color:#b0305a}
-.dial{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0 10px}
-.dial button{flex:1;font:600 13px Mono;min-height:48px;padding:6px 0;border:1.5px solid var(--teal);background:none;color:var(--teal);letter-spacing:.04em}
-.dial button.on{background:var(--teal);color:var(--beige)}
-.lvl p{font:400 19px/1.4 Geist;margin-bottom:10px}
-.lvl p.gist{font:500 26px/1.22 Geist}
-.lvl b{display:block;font:500 13px Mono;letter-spacing:.07em;margin-top:8px;opacity:.75}
-.machines{display:flex;gap:10px;margin-top:12px}
-.stamp,.shred{flex:1;height:82px;border:0;font:600 21px Geist;position:relative}
-.stamp{background:var(--yel);color:var(--teal)}
-.shred{background:#0d3d46;color:var(--ink)}
-.stamp small,.shred small{display:block;font:500 12px Mono;opacity:.75;margin-top:3px}
-.inked{position:absolute;right:16px;top:70px;transform:rotate(-9deg);border:3px solid #b0305a;color:#b0305a;font:600 14px Mono;padding:6px 10px;opacity:0;transition:opacity .2s}
+.back{font:600 26px/1 Geist;color:var(--ink);background:none;border:1.5px solid rgba(253,253,252,.4);border-radius:22px;width:44px;height:44px;flex:0 0 44px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.head{margin-top:16px}
+.head small{font:500 13px Mono;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.head small.red{color:var(--red);opacity:1}
+.head h1{font:600 34px/1.06 Geist;letter-spacing:-.01em;margin-top:8px}
+.track{flex:1;min-height:0;margin:10px -18px 0;padding:0 18px;display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.track::-webkit-scrollbar{display:none}
+.page{flex:0 0 94%;scroll-snap-align:start;scroll-margin-left:18px;background:var(--beige);color:var(--teal);overflow-y:auto;padding:18px 18px 28px;position:relative}
+.page h1{font:600 32px/1.06 Geist;letter-spacing:-.01em;margin:6px 0 14px}
+.page h2{font:600 19px/1.25 Geist;margin:2px 0 6px;opacity:.85}
+.page:last-child{margin-right:18px}
+.page.red{border-top:6px solid var(--red)}
+.page .lab{font:500 13px Mono;letter-spacing:.06em;text-transform:uppercase;opacity:.6;margin-bottom:12px}
+.page p{font:400 19px/1.5 Geist;margin-bottom:14px}
+.page p.gist{font-weight:500}
+.page b{display:block;font:500 13px Mono;letter-spacing:.06em;opacity:.6;margin:18px 0 4px}
+.page .his{font:italic 22px/1.2 Serif;color:#a82a52;margin-bottom:14px}
+.pager{display:flex;justify-content:center;gap:0;flex:1}
+.pager button{background:none;border:0;color:var(--ink);opacity:.5;font:500 13px Mono;letter-spacing:.02em;padding:10px 7px;min-height:44px;border-bottom:2px solid transparent}
+.pager button.on{opacity:1;border-bottom-color:var(--ink)}
+.machines{display:flex;gap:10px;margin-top:10px}
+.stamp,.shred{flex:1;height:56px;font:600 19px Geist}
+.stamp{background:var(--yel);color:var(--teal);border:0}
+.shred{background:none;color:var(--ink);border:1.5px solid rgba(253,253,252,.4)}
+.inked{position:absolute;right:14px;top:14px;transform:rotate(-9deg);border:3px solid #a82a52;color:#a82a52;font:600 14px Mono;padding:6px 10px;opacity:0}
 .inked.on{opacity:.9;animation:thump .25s}
 @keyframes thump{0%{transform:rotate(-9deg) scale(1.6)}100%{transform:rotate(-9deg) scale(1)}}
 .gone{animation:shred .45s ease-in forwards}
@@ -100,13 +106,13 @@ svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;o
   <div class="hint" id="hint">TAP A HEADLINE · OR PULL THE CORD</div>
 </section>
 
-<!-- SIGNAL: the printed sheet -->
+<!-- SIGNAL: the whole screen is reading surface; headline scrolls away; depth = finger-tracked pages -->
 <section class="screen" id="signal">
-  <div class="top"><button class="back" onclick="home()">‹ Desk</button><span class="meta" id="count" style="opacity:.75"></span></div>
-  <div class="sheet" id="sheet"></div>
+  <div class="top"><button class="back" onclick="home()">‹</button><div class="pager" id="pager"></div><span class="meta" id="count"></span></div>
+  <div class="track" id="track"></div>
   <div class="machines">
-    <button class="stamp" onclick="stamp()">℞ Stamp it<small>ADD TO TODAY · REMINDER</small></button>
-    <button class="shred" onclick="shred()">Shred<small>NOT ABOUT ME · NEXT</small></button>
+    <button class="stamp" onclick="stamp()">℞ Stamp it</button>
+    <button class="shred" onclick="shred()">Shred · next</button>
   </div>
 </section>
 
@@ -157,21 +163,25 @@ function drawWires(){
  $('wires').innerHTML=h}
 // open a signal: the wire pulses first (anticipation), then the sheet prints
 function open(i){cur=i;depth=0;const p=$('pulse'+i);if(p){p.classList.remove('go');void p.getBoundingClientRect();p.classList.add('go')}
- navigator.vibrate&&navigator.vibrate(12);setTimeout(()=>{show('signal');renderSheet()},520)}
-function renderSheet(){const r=R[cur],s=r.s;
- const lv=[
-  `<p class="gist">${s.summary}</p>`,
+ navigator.vibrate&&navigator.vibrate(12);setTimeout(()=>{$('track').classList.remove('gone');show('signal');renderSheet()},520)}
+const NAMES=['Gist','Story','You','Do'];
+function levels(r){const s=r.s;return [
+  `<div class="his">${r.why}</div><p class="gist">${s.summary}</p>`,
   s.expanded.map(e=>`<b>${e.label}</b><p>${e.lead?'<strong>'+e.lead+'</strong> ':''}${e.text}</p>`).join(''),
   s.forYou.map(e=>`<b>${e.label}</b><p>${e.text}</p>`).join(''),
-  `<b>DO THIS</b><p>${s.action}</p>`];
- $('count').textContent=`0${cur+1} OF 03`;
- $('sheet').className='sheet'+(r.red?' red':'');
- $('sheet').innerHTML=`<small>0${cur+1} · ${r.red?'CODE RED · ':''}${s.source}</small><h1>${s.headline}</h1>
-  <div class="his">${r.why}</div><div class="inked" id="inked">℞ PRESCRIBED</div>
-  <div class="dial">${['GIST','DEPTH','YOUR PRODUCT','DO'].map((n,k)=>`<button class="${k===depth?'on':''}" onclick="depth=${k};renderSheet()">0${k} ${n}</button>`).join('')}</div>
-  <div class="lvl">${lv[depth]}</div>`}
-function stamp(){const r=R[cur];if(!rx.includes(r.s.action))rx.push(r.s.action);$('inked').classList.add('on');navigator.vibrate&&navigator.vibrate([10,40,20]);setTimeout(next,700)}
-function shred(){$('sheet').classList.add('gone');navigator.vibrate&&navigator.vibrate(30);setTimeout(next,450)}
+  `<b>DO THIS TODAY</b><p class="gist">${s.action}</p>`]}
+function renderSheet(){const r=R[cur],s=r.s;
+ $('count').textContent=`${cur+1}/3`;
+ const src=`<div class="lab">${r.red?'<span style="color:var(--red)">● Code red</span> · ':''}${s.source} · 0${cur+1} of 03</div>`;
+ $('track').innerHTML=levels(r).map((h,k)=>`<div class="page${r.red?' red':''}">${k===0?src+`<h1>${s.headline}</h1><div class="inked" id="inked">℞ PRESCRIBED</div>`:`<div class="lab">0${k} · ${NAMES[k]}</div><h2>${s.headline}</h2>`}${h}</div>`).join('');
+ $('pager').innerHTML=NAMES.map((n,k)=>`<button onclick="go(${k})">${n}</button>`).join('');
+ $('track').scrollLeft=0;depth=0;mark();
+ $('track').onscroll=()=>{const t=$('track'),w=t.firstElementChild.offsetWidth+8;const k=Math.round(t.scrollLeft/w);if(k!==depth){depth=k;mark();navigator.vibrate&&navigator.vibrate(5)}}}
+function mark(){[...$('pager').children].forEach((b,k)=>b.classList.toggle('on',k===depth))}
+function go(k){const t=$('track');t.scrollTo({left:t.children[k].offsetLeft-18,behavior:'smooth'})}
+addEventListener('keydown',e=>{if(!$('signal').classList.contains('on'))return;if(e.key==='ArrowRight')go(Math.min(3,depth+1));if(e.key==='ArrowLeft')go(Math.max(0,depth-1))});
+function stamp(){const r=R[cur];if(!rx.includes(r.s.action))rx.push(r.s.action);go(0);$('inked').classList.add('on');navigator.vibrate&&navigator.vibrate([10,40,20]);setTimeout(next,700)}
+function shred(){$('track').classList.add('gone');navigator.vibrate&&navigator.vibrate(30);setTimeout(next,450)}
 function next(){if(!done.includes(cur))done.push(cur);const n=[0,1,2].find(i=>!done.includes(i));
  if(n===undefined){$('rxlist').innerHTML=rx.map(a=>`<div class="rx">℞ ${a}</div>`).join('');show('out')}else open(n)}
 function home(){show('home');drawTags()}
