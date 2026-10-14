@@ -47,11 +47,11 @@ const panel=new THREE.Mesh(new RoundedBoxGeometry(8,12,0.2,8,0.12),
 panel.position.z=-0.1;panel.receiveShadow=true;scene.add(panel);
 
 // 2. the bezel: a turned profile (lathe), glossy black with a polished lip
-const prof=[[0.70,0],[0.88,0],[0.885,0.004],[0.885,0.176],[0.881,0.18],[0.704,0.18],[0.70,0.176],[0.70,0.12]].map(p=>new THREE.Vector2(p[0],p[1]));
-const bezel=new THREE.Mesh(new THREE.LatheGeometry(prof,160),new THREE.MeshPhysicalMaterial({color:0x0c0c0d,roughness:0.82,metalness:0,clearcoat:0,roughnessMap:grain,sheen:0.15,sheenRoughness:0.9,sheenColor:new THREE.Color(0x333333)}));
+const prof=[[0.70,0],[0.88,0],[0.89,0.008],[0.89,0.10],[0.887,0.125],[0.877,0.148],[0.861,0.166],[0.842,0.177],[0.82,0.182],[0.76,0.182],[0.74,0.176],[0.723,0.163],[0.71,0.145],[0.703,0.125],[0.70,0.105]].map(p=>new THREE.Vector2(p[0],p[1]));
+const bezel=new THREE.Mesh(new THREE.LatheGeometry(prof,220),new THREE.MeshPhysicalMaterial({color:0x0c0c0d,roughness:0.82,metalness:0,clearcoat:0,roughnessMap:grain,sheen:0.15,sheenRoughness:0.9,sheenColor:new THREE.Color(0x333333)}));
 bezel.rotation.x=Math.PI/2;bezel.castShadow=true;bezel.receiveShadow=true;scene.add(bezel);
 const lip=new THREE.Mesh(new THREE.TorusGeometry(0.705,0.008,16,200),new THREE.MeshPhysicalMaterial({color:0xc9ccd1,metalness:1,roughness:0.18,roughnessMap:brushed}));
-lip.position.z=0.178;scene.add(lip);
+lip.position.z=0.108;scene.add(lip);
 
 // 3. the dial face: printed scale on a matte black disc, recessed
 const S=2048,c=document.createElement('canvas');c.width=c.height=S;const g=c.getContext('2d');
@@ -61,8 +61,6 @@ for(let i=0;i<=100;i++){const v=i/100,a=ang(v),maj=i%10===0,mid=i%5===0;const r1
 g.font='800 120px Geist';g.textAlign='center';g.textBaseline='middle';
 [0,20,40,60,80,100].forEach((n,k)=>{const a=ang(n/100);g.fillStyle=n/100<0.6?'#F2C21B':'#ECECEC';g.fillText(n,cx+Math.cos(a)*S*0.285,cy+Math.sin(a)*S*0.285)});
 g.strokeStyle='#1c1c1c';g.lineWidth=6;g.beginPath();g.arc(cx,cy,S*0.2,0,7);g.stroke();
-g.fillStyle='#F2F2F2';g.font='800 330px Geist';g.fillText('74',cx,cy-20);
-g.fillStyle='#FF3B4E';g.font='800 110px Geist';g.fillText('▲ 12',cx,cy+230);
 g.fillStyle='#8a8a8a';g.font='800 72px Geist';g.fillText('PRESSURE',cx,cy+S*0.33);
 const faceTex=new THREE.CanvasTexture(c);faceTex.colorSpace=THREE.SRGBColorSpace;faceTex.anisotropy=R.capabilities.getMaxAnisotropy();
 const face=new THREE.Mesh(new THREE.CircleGeometry(0.70,160),new THREE.MeshPhysicalMaterial({map:faceTex,roughness:0.55,metalness:0,roughnessMap:grain}));
@@ -79,25 +77,48 @@ const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.05,0.03,48),new THRE
 // 5. the glass: a shallow dome with real refraction and a faint tint
 const glass=new THREE.Mesh(new THREE.SphereGeometry(4.0,192,48,0,Math.PI*2,0,Math.asin(0.705/4.0)),
  new THREE.MeshPhysicalMaterial({color:0xffffff,metalness:0,roughness:0.06,transmission:1,thickness:0.06,ior:1.52,clearcoat:1,clearcoatRoughness:0.12,attenuationColor:new THREE.Color(0xd9e6ee),attenuationDistance:2,envMapIntensity:0.7,specularIntensity:1}));
-glass.rotation.x=Math.PI/2;glass.position.z=0.17-4.0*Math.cos(Math.asin(0.705/4.0));scene.add(glass);
+glass.rotation.x=Math.PI/2;glass.position.z=0.112-4.0*Math.cos(Math.asin(0.705/4.0));scene.add(glass);
 
 // a studio softbox above-left, out of frame: it is what draws the diagonal sweep across the glass
 const box=new THREE.Mesh(new THREE.PlaneGeometry(2.2,5),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));
 box.position.set(-1.4,2.2,3.0);box.lookAt(0,0,0);box.rotateZ(0.6);box.layers.set(0);scene.add(box);
 // needle animation to the value with a little settle
-const target=0.74;let val=0,vel=0;
+// the centre number lives on its own small printed disc so it can count with the needle
+const nc=document.createElement('canvas');nc.width=nc.height=512;const ng=nc.getContext('2d');
+const numTex=new THREE.CanvasTexture(nc);numTex.colorSpace=THREE.SRGBColorSpace;numTex.anisotropy=R.capabilities.getMaxAnisotropy();
+const numDisc=new THREE.Mesh(new THREE.CircleGeometry(0.27,96),new THREE.MeshPhysicalMaterial({map:numTex,roughness:0.55,metalness:0,roughnessMap:grain}));
+numDisc.position.z=0.021;scene.add(numDisc);
+let shown=-1;
+function drawNum(n,done){if(n===shown&&!done)return;shown=n;ng.fillStyle='#060606';ng.fillRect(0,0,512,512);ng.textAlign='center';ng.textBaseline='middle';
+ ng.fillStyle='#F2F2F2';ng.font='800 200px Geist';ng.fillText(String(n),256,236);
+ if(done){ng.fillStyle='#FF3B4E';ng.font='800 66px Geist';ng.fillText('▲ 12',256,370)}
+ numTex.needsUpdate=true}
+drawNum(0,false);
+const target=0.74;let val=0,start=performance.now(),landed=false,lastDecade=0,phase='up',from=0,downStart=0;
+const haptic=m=>{try{window.webkit.messageHandlers.haptic.postMessage(m)}catch(e){}};
+// press the gauge: the needle drops to 0 and sweeps up to today's score
+const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();
+addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
+ if(ray.intersectObjects([face,glass,bezel,numDisc],false).length){from=val;phase='down';downStart=performance.now();landed=false;haptic('press')}});
+const sweep=p=>{const c1=1.70158*1.15,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2)}; // ease out with a small overshoot
+
 // gyroscope: the camera moves, the light stays — reflections and the needle shadow slide
 let tx=0,ty=0,gx=0,gy=0;
 window.__tilt=(x,y)=>{tx=Math.max(-1,Math.min(1,x));ty=Math.max(-1,Math.min(1,y))};
 addEventListener('deviceorientation',e=>{tx=THREE.MathUtils.clamp((e.gamma||0)/30,-1,1);ty=THREE.MathUtils.clamp(((e.beta||50)-50)/30,-1,1)});
 addEventListener('pointermove',e=>{tx=(e.clientX/innerWidth-.5)*2;ty=(e.clientY/innerHeight-.5)*2});
-addEventListener('click',()=>{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(()=>{});val=0;vel=0},{once:false});
+addEventListener('click',()=>{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(()=>{})},{once:true});
 function fit(){cam.aspect=innerWidth/innerHeight;cam.fov=cam.aspect<0.7?44:30;cam.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)}fit();addEventListener('resize',fit);
 const clk=new THREE.Clock();
 (function tick(){const dt=Math.min(clk.getDelta(),0.033);
  gx+=(tx-gx)*0.08;gy+=(ty-gy)*0.08;
  cam.position.set(gx*1.2,-gy*1.2,cam.aspect<0.7?6.2:4.2);cam.lookAt(0,0,0);
- const k=40,dmp=7;vel+=((target-val)*k-vel*dmp)*dt;val+=vel*dt;
+ const now=performance.now();let p=0;
+ if(phase==='down'){const q=Math.min(1,(now-downStart)/(120+380*from));val=from*(1-q*q);if(q>=1){phase='up';start=now-250;lastDecade=0;val=0}}
+ else{p=Math.min(1,Math.max(0,(now-start-250)/1600));val=target*sweep(p)}
+ const n=Math.max(0,Math.min(74,Math.round(val*100)));const dec=Math.floor(n/10);
+ if(phase==='up'&&dec>lastDecade){lastDecade=dec;haptic('tick')}
+ if(phase==='up'&&p>=1&&!landed){landed=true;haptic('land');drawNum(74,true)}else if(!landed)drawNum(n,false);
  pivot.rotation.z=-( -225+270*val + 90)*Math.PI/180;
  R.render(scene,cam);requestAnimationFrame(tick)})();
 window.__ready=true;

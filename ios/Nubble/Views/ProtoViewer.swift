@@ -24,6 +24,7 @@ struct ProtoViewer: UIViewRepresentable {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
         config.setURLSchemeHandler(BundleSchemeHandler(), forURLScheme: "proto")
+        config.userContentController.add(context.coordinator, name: "haptic")
         let web = WKWebView(frame: .zero, configuration: config)
         web.navigationDelegate = context.coordinator
         web.uiDelegate = context.coordinator
@@ -57,7 +58,16 @@ struct ProtoViewer: UIViewRepresentable {
         func webView(_ webView: WKWebView, stop task: any WKURLSchemeTask) {}
     }
 
-    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
+        /// The page asks for a physical click: 'press' when the gauge is touched, 'tick' every 10 points, 'land' at the score.
+        func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
+            switch message.body as? String {
+            case "press": UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            case "tick": UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: 0.6)
+            case "land": UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+            default: break
+            }
+        }
         nonisolated(unsafe) private let motion = CMMotionManager()
         /// Feeds the phone's tilt into the page (window.__tilt) — pages served from the app are not a secure
         /// context, so the web DeviceOrientation API stays silent there.
