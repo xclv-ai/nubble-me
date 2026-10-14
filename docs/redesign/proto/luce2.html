@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Nubble · Luce v2</title>
+<style>
+@font-face{font-family:Geist;src:url(fonts/Geist-Variable.woff2)}
+:root{--ink:#F2F2F2;--grey:#9A9A9A;--red:#FF3B4E;--yel:#F2D32B;--green:#2FB65A;--org:#F0641E;--blue:#2F6BFF}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{background:#000;color:var(--ink);font-family:Geist,system-ui}
+.phone{position:relative;width:393px;height:852px;overflow:hidden;background:#000}
+.c{position:absolute;left:0;right:0;top:59px;bottom:34px;padding:0 16px;display:flex;flex-direction:column;gap:10px}
+/* 1 SOS capsule */
+.sos{height:54px;border-radius:27px;background:linear-gradient(#0d0d0e,#000);box-shadow:inset 0 0 0 1.5px #2c2c2e,inset 0 2px 2px rgba(255,255,255,.07),0 3px 10px #000;display:flex;align-items:center;justify-content:center;gap:10px;font:800 21px Geist;color:#ff5a6a;text-shadow:0 0 12px rgba(255,40,60,.85),0 0 26px rgba(255,40,60,.45)}
+.sos small{font:700 12px Geist;letter-spacing:.06em;color:#ff8a96;text-shadow:none;opacity:.85}
+/* 2 outlined tags */
+.tags{display:flex;gap:6px}
+.tag{border:1.5px solid;border-radius:3px;padding:4px 7px 3px;font:800 12px/1 Geist;letter-spacing:.06em;text-transform:uppercase}
+.tag.g{color:var(--green)}.tag.y{color:var(--yel)}.tag.w{color:var(--ink);border-color:#666}
+/* 4 + 3 pods */
+.pods{display:flex;align-items:flex-end;justify-content:space-between}
+.pod{position:relative;border-radius:50%;background:radial-gradient(circle at 50% 30%,#2e2f33,#0b0b0c 60%,#000 70%);box-shadow:0 10px 22px #000,inset 0 2px 1px rgba(255,255,255,.2),inset 0 -4px 8px #000}
+.pod .face{position:absolute;inset:8%;border-radius:50%;overflow:hidden;box-shadow:inset 0 0 0 2px #050505,inset 0 5px 12px rgba(0,0,0,.8)}
+.pod svg{width:100%;height:100%;display:block}
+.pod .gl{position:absolute;inset:8%;border-radius:50%;background:linear-gradient(128deg,rgba(255,255,255,.26),rgba(255,255,255,.06) 40%,transparent 41%);pointer-events:none}
+.podcap{text-align:center;font:800 13px Geist;letter-spacing:.05em;text-transform:uppercase;color:var(--grey);margin-top:6px}
+.podcap b{color:var(--ink)}
+/* 7 trend */
+.trend{position:relative;height:58px;border-top:1px solid #262626;border-bottom:1px solid #262626}
+.trend .lab{position:absolute;left:0;top:4px;font:800 12px Geist;letter-spacing:.05em;color:var(--grey);text-transform:uppercase}
+.trend .lab b{color:var(--red)}
+/* 5 signals: Luce side keys */
+.sig{display:flex;align-items:center;gap:12px;min-height:56px}
+.key{flex:0 0 74px;height:50px;border-radius:12px;background:linear-gradient(#4b4b50,#2c2c30);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 3px 6px #000;display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 17px/1 Geist}
+.key small{font:800 9px Geist;color:#c9c9cd;margin-top:3px;letter-spacing:.04em}
+.key.r{color:#ff6b7a}.key.g{color:#5fe08a}
+.sig .h{font:800 21px/1.15 Geist;letter-spacing:-.01em}.sig .l{font:700 15px/1.3 Geist;color:#bdbdbd}
+.do{font:800 19px/1.2 Geist;color:var(--yel);display:flex;align-items:center;gap:8px}
+/* 8 paddles, 9 rotary, 6 glossy buttons */
+.ctl{display:grid;grid-template-columns:repeat(3,40px) 1fr repeat(2,40px);align-items:end;gap:2px}
+.sw{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.sw .i{font:800 9.5px Geist;letter-spacing:.04em;color:var(--grey);text-transform:uppercase}
+.sw.on .i{color:var(--ink)}
+.sock{position:relative;width:30px;height:46px}
+.sock .hole{position:absolute;inset:5px 4px;border-radius:11px;background:linear-gradient(#000,#1d1d20);box-shadow:inset 0 2px 4px #000,0 1px 0 rgba(255,255,255,.1)}
+.sock .lv{position:absolute;left:-1px;right:-1px;top:16px;height:14px;border-radius:7px;background:linear-gradient(#fff,#c4c7cb 45%,#6f7378);box-shadow:0 4px 5px rgba(0,0,0,.85);transition:transform .14s cubic-bezier(.3,1.7,.5,1)}
+.sw.on .lv{transform:translateY(-10px) scaleY(.85)}.sw:not(.on) .lv{transform:translateY(9px) scaleY(.85)}
+.rot{justify-self:center;position:relative;width:132px;height:72px}
+.rot .dial{position:absolute;left:50%;bottom:0;width:56px;height:56px;margin-left:-28px;border-radius:50%;background:#000;box-shadow:0 0 0 2px #262628,0 3px 8px #000}
+.rot .knob{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px;border-radius:50%;background:radial-gradient(circle at 40% 30%,#ff5a4a,#c4141c 60%,#7a0a10);box-shadow:inset 0 2px 2px rgba(255,255,255,.35),0 2px 4px #000}
+.rot .bar{position:absolute;left:50%;top:50%;width:12px;height:40px;margin:-20px -6px;border-radius:6px;background:linear-gradient(90deg,#ff6d5e,#d61c22 60%,#9e0f15);transform:rotate(-35deg);box-shadow:0 2px 3px rgba(0,0,0,.6)}
+.rot .lbls{position:absolute;inset:0;font:800 9px Geist;letter-spacing:.04em}
+.rot .lbls span{position:absolute}
+.btns{display:flex;justify-content:space-between;gap:8px}
+.gb{flex:1;height:48px;border-radius:24px;background:radial-gradient(120% 140% at 40% 20%,#3a3b3f,#0d0d0e 60%);box-shadow:0 3px 7px #000,inset 0 1px 1px rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;gap:7px;font:800 14px Geist}
+.gb i{width:16px;height:16px;border-radius:50%;display:inline-block}
+</style></head><body>
+<div class="phone" id="phone"><div class="c">
+  <div class="sos" data-el="1 alarm">● PROFOUND: $155M <small>CODE RED</small></div>
+  <div class="tags" data-el="2 state"><span class="tag g">Mode: war</span><span class="tag y">3 signals</span><span class="tag w">2 actions open</span></div>
+  <div class="pods">
+    <div data-el="4 pressure"><div class="pod" style="width:176px;height:176px"><div class="face"><svg viewBox="0 0 200 200" id="gP"></svg></div><div class="gl"></div></div><div class="podcap"><b>Pressure</b> on pokpok.ai</div></div>
+    <div data-el="3 deadline"><div class="pod" style="width:140px;height:140px"><div class="face"><svg viewBox="0 0 200 200" id="gD"></svg></div><div class="gl"></div></div><div class="podcap"><b>Zoomtopia</b> EU</div></div>
+  </div>
+  <div class="trend" data-el="7 trend"><div class="lab">7 days · <b>rising 4 in a row</b></div>
+    <svg viewBox="0 0 360 58" preserveAspectRatio="none" width="100%" height="100%"><polyline fill="none" stroke="#F2F2F2" stroke-width="2" points="0,46 40,44 80,47 120,42 160,40 200,34 240,30 280,26 320,20 352,14"/><polyline fill="none" stroke="#F2D32B" stroke-width="2" points="0,52 30,40 50,54 80,36 100,50 140,32 170,48 200,30 240,44 280,24 320,38 352,22"/><line x1="352" y1="0" x2="352" y2="58" stroke="#FF3B4E" stroke-width="2.5"/></svg></div>
+  <div data-el="5 signals" style="display:flex;flex-direction:column;gap:6px">
+    <div class="sig"><div class="key r">$1B<small>VALUE</small></div><div><div class="h">Profound</div><div class="l">Sells AI visibility to the Fortune 500</div></div></div>
+    <div class="sig"><div class="key">$4M<small>ARR</small></div><div><div class="h">Peec AI</div><div class="l">In 10 months. Your buyers.</div></div></div>
+    <div class="sig"><div class="key g">.042<small>$ / 1M</small></div><div><div class="h">Jev</div><div class="l">Your decisions got cheaper</div></div></div>
+  </div>
+  <div class="do" data-el="do first">▶ Do first: answer Profound</div>
+  <div class="ctl" data-el="8 filters + 9 range">
+    <div class="sw on"><span class="i">Rivals</span><div class="sock"><div class="hole"></div><div class="lv"></div></div></div>
+    <div class="sw on"><span class="i">Models</span><div class="sock"><div class="hole"></div><div class="lv"></div></div></div>
+    <div class="sw"><span class="i">Money</span><div class="sock"><div class="hole"></div><div class="lv"></div></div></div>
+    <div class="rot"><div class="lbls"><span style="left:0;top:10px;color:#5fe08a">TODAY</span><span style="left:50%;transform:translateX(-50%);top:0">WEEK</span><span style="right:0;top:10px">MONTH</span></div><div class="dial"><div class="knob"></div><div class="bar"></div></div></div>
+    <div class="sw on"><span class="i">Buyers</span><div class="sock"><div class="hole"></div><div class="lv"></div></div></div>
+    <div class="sw"><span class="i">Dates</span><div class="sock"><div class="hole"></div><div class="lv"></div></div></div>
+  </div>
+  <div class="btns" data-el="6 setup"><div class="gb"><i style="border:3px solid var(--yel)"></i>Sources 13</div><div class="gb"><i style="border:3px solid;border-color:var(--red) var(--red) var(--blue) var(--blue)"></i>Watchlist 4</div><div class="gb"><i style="border:2.5px solid var(--ink);border-radius:3px;width:10px"></i>pokpok.ai</div></div>
+</div></div>
+<script>
+const ang=(v,a0=-225,a1=45)=>(a0+(a1-a0)*v)*Math.PI/180;
+function gauge(o){let s='<rect width="200" height="200" fill="#000"/>';
+ for(let i=0;i<=60;i++){const v=i/60,a=ang(v),maj=i%10===0,r1=maj?74:82;s+=`<line x1="${100+Math.cos(a)*r1}" y1="${100+Math.sin(a)*r1}" x2="${100+Math.cos(a)*90}" y2="${100+Math.sin(a)*90}" stroke="${v<o.warm?o.c:'#EDEDED'}" stroke-width="${maj?3.5:1.2}"/>`}
+ o.lab.forEach((l,k)=>{const a=ang(k/(o.lab.length-1));s+=`<text x="${100+Math.cos(a)*58}" y="${100+Math.sin(a)*58+6}" fill="${k/(o.lab.length-1)<o.warm?o.c:'#EDEDED'}" font-family="Geist" font-weight="700" font-size="15" text-anchor="middle">${l}</text>`});
+ s+=`<text x="100" y="${o.big.length>3?112:118}" fill="#F2F2F2" font-family="Geist" font-weight="800" font-size="${o.big.length>3?34:52}" text-anchor="middle">${o.big}</text>`;
+ if(o.sub)s+=`<text x="100" y="140" fill="${o.subc||'#9A9A9A'}" font-family="Geist" font-weight="800" font-size="16" text-anchor="middle">${o.sub}</text>`;
+ const na=ang(o.v);s+=`<line x1="${100+Math.cos(na)*44}" y1="${100+Math.sin(na)*44}" x2="${100+Math.cos(na)*90}" y2="${100+Math.sin(na)*90}" stroke="${o.n}" stroke-width="6" stroke-linecap="round"/>`;
+ return s}
+function stopwatch(){let s='<circle cx="100" cy="100" r="100" fill="#F2D32B"/>';
+ for(let i=0;i<60;i++){const a=i*6*Math.PI/180,r1=i%5?86:78;s+=`<line x1="${100+Math.sin(a)*r1}" y1="${100-Math.cos(a)*r1}" x2="${100+Math.sin(a)*92}" y2="${100-Math.cos(a)*92}" stroke="#1a1400" stroke-width="${i%5?1.2:3}"/>`}
+ const a=(6/7)*360*Math.PI/180;s+=`<line x1="100" y1="100" x2="${100+Math.sin(a)*88}" y2="${100-Math.cos(a)*88}" stroke="#d6141f" stroke-width="5" stroke-linecap="round"/>`;
+ s+='<rect x="30" y="76" width="140" height="48" rx="24" fill="#0b0b0c"/><text x="100" y="110" fill="#F2D32B" font-family="Geist" font-weight="800" font-size="30" text-anchor="middle">6 DAYS</text>';
+ return s}
+document.getElementById('gP').innerHTML=gauge({v:.74,warm:.6,c:'#F2D32B',lab:['0','20','40','60','80','100'],big:'74',sub:'▲ 12',subc:'#FF3B4E',n:'#F0641E'});
+document.getElementById('gD').innerHTML=stopwatch();
+document.querySelectorAll('.sw').forEach(s=>s.onclick=()=>{s.classList.toggle('on');navigator.vibrate&&navigator.vibrate(14)});
+</script>
+</body></html>
