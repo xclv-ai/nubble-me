@@ -10,7 +10,7 @@ canvas{display:block}
 .cap{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 28px);text-align:center;color:#9a9a9a;font:800 13px Geist;letter-spacing:.06em;text-transform:uppercase}
 .cap b{color:#f2f2f2}
 </style>
-<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.169.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.169.0/examples/jsm/"}}</script>
 </head><body>
 <div class="read"><div class="t" id="rt"></div><div class="d" id="rd"></div><div class="big">6d 13h</div><div class="s">Zoomtopia EU</div><div class="s">nearest deadline</div></div>
 <div class="cap"><b>Pressure</b> on pokpok.ai · tilt the phone</div>
@@ -85,19 +85,21 @@ const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.05,0.03,48),new THRE
 
 // 5. the glass: a shallow dome with real refraction and a faint tint
 const glass=new THREE.Mesh(new THREE.SphereGeometry(4.0,192,48,0,Math.PI*2,0,Math.asin(0.705/4.0)),
- new THREE.MeshPhysicalMaterial({color:0x000000,metalness:0,roughness:0.04,clearcoat:1,clearcoatRoughness:0.06,envMapIntensity:1.1,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
+ new THREE.MeshPhysicalMaterial({color:0x000000,metalness:0,roughness:0.16,clearcoat:1,clearcoatRoughness:0.22,envMapIntensity:0.45,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
 glass.rotation.x=Math.PI/2;glass.position.z=0.112-4.0*Math.cos(Math.asin(0.705/4.0));scene.add(glass);
 
 // a studio softbox above-left, out of frame: it is what draws the diagonal sweep across the glass
 const box=new THREE.Mesh(new THREE.PlaneGeometry(2.2,5),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));
 /* softbox removed: the glare overlay draws the sheen */
 // glare on the glass: upper-right half, crisp diagonal edge (the look of the Luce dials)
-const gc=document.createElement('canvas');gc.width=gc.height=1024;const gg=gc.getContext('2d');
-gg.beginPath();gg.arc(512,512,512,0,7);gg.clip();
-const grd=gg.createLinearGradient(380,0,1024,880);grd.addColorStop(0,'rgba(255,255,255,0.20)');grd.addColorStop(0.5,'rgba(255,255,255,0.10)');grd.addColorStop(1,'rgba(255,255,255,0.03)');
-gg.fillStyle=grd;gg.beginPath();gg.moveTo(400,0);gg.lineTo(1024,0);gg.lineTo(1024,760);gg.closePath();gg.fill();
-const glareTex=new THREE.CanvasTexture(gc);glareTex.colorSpace=THREE.SRGBColorSpace;
-const glare=new THREE.Mesh(new THREE.CircleGeometry(0.70,128),new THREE.MeshBasicMaterial({map:glareTex,transparent:true,depthTest:false,depthWrite:false}));
+const gc=document.createElement('canvas');gc.width=gc.height=2048;const gg=gc.getContext('2d');
+// a large sheet: the glass shows its middle half, so the band can slide without reaching an edge
+const grd=gg.createLinearGradient(892,512,1536,1392);grd.addColorStop(0,'rgba(255,255,255,0.20)');grd.addColorStop(0.5,'rgba(255,255,255,0.10)');grd.addColorStop(1,'rgba(255,255,255,0.03)');
+gg.fillStyle=grd;gg.beginPath();gg.moveTo(288,-248);gg.lineTo(2160,2032);gg.lineTo(2600,-600);gg.closePath();gg.fill();
+const glareTex=new THREE.CanvasTexture(gc);glareTex.colorSpace=THREE.SRGBColorSpace;glareTex.wrapS=glareTex.wrapT=THREE.ClampToEdgeWrapping;glareTex.repeat.set(0.5,0.5);glareTex.offset.set(0.25,0.25);
+const mk=document.createElement('canvas');mk.width=mk.height=512;{const m=mk.getContext('2d');m.fillStyle='#000';m.fillRect(0,0,512,512);m.fillStyle='#fff';m.beginPath();m.arc(256,256,254,0,7);m.fill()}
+const glareMask=new THREE.CanvasTexture(mk);
+const glare=new THREE.Mesh(new THREE.CircleGeometry(0.70,128),new THREE.MeshBasicMaterial({map:glareTex,alphaMap:glareMask,transparent:true,depthTest:false,depthWrite:false}));
 glare.position.z=0.2;glare.renderOrder=10;scene.add(glare);
 // needle animation to the value with a little settle
 // the centre number lives on its own small printed disc so it can count with the needle
@@ -154,7 +156,10 @@ const clk=new THREE.Clock();
  gx+=(tx-gx)*0.08;gy+=(ty-gy)*0.08;
  cam.position.set(0,0,cam.aspect<0.7?26:18);cam.lookAt(0,0,0);
  if(!window.__rig){window.__rig=new THREE.Group();window.__rig.add(panel,mainG,miniG);scene.add(window.__rig)}
- window.__rig.rotation.set(-gy*0.07,gx*0.07,0);
+ window.__rig.rotation.set(-gy*0.04,gx*0.04,0);
+ scene.environmentRotation.set(-gy*0.22,gx*0.3,0);
+ key.position.set(-1.2+gx*0.5,2.4-gy*0.5,3.2);
+ glareTex.offset.set(0.25-gx*0.12,0.25+gy*0.12);
  const now=performance.now();let p=0;
  if(phase==='down'){const q=Math.min(1,(now-downStart)/(120+380*from));val=from*(1-q*q);if(q>=1){phase='up';start=now-250;lastDecade=0;val=0}}
  else{p=Math.min(1,Math.max(0,(now-start-250)/1600));val=target*sweep(p)}
