@@ -83,6 +83,25 @@ svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;o
 @keyframes thump{0%{transform:rotate(-9deg) scale(1.6)}100%{transform:rotate(-9deg) scale(1)}}
 .gone{animation:shred .45s ease-in forwards}
 @keyframes shred{to{transform:translateY(120%);opacity:0}}
+
+.flow{display:flex;align-items:center;justify-content:space-between;gap:4px;margin:18px 0 14px}
+.node{flex:1;text-align:center}.node .ic{font-size:34px;height:64px;width:64px;margin:0 auto 8px;display:grid;place-items:center;background:rgba(10,59,68,.08);border:1.5px solid var(--teal)}
+.node .nt{font:600 15px/1.2 Geist}.arr{font:600 22px Geist;opacity:.5;padding-bottom:28px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}.chips span{font:500 13px Mono;padding:7px 10px;background:var(--teal);color:var(--beige)}
+.row{display:flex;align-items:center;gap:10px;padding:14px 0;border-top:1.5px solid rgba(10,59,68,.15)}
+.row .k{font:600 17px Geist;flex:1}.row .v{font:600 17px Mono;width:36px;text-align:right}
+.meter{display:flex;gap:4px}.meter i{width:22px;height:22px;border:1.5px solid var(--teal)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{background:rgba(10,59,68,.07);border-left:4px solid var(--teal);padding:12px 10px 14px}
+.tile .n{font:600 26px/1.05 Geist;letter-spacing:-.01em}.tile .t{font:400 15px/1.3 Geist;margin-top:6px}
+.tl{display:flex;margin:22px 0 10px;position:relative}.tl:before{content:"";position:absolute;left:8px;right:8px;top:7px;height:2px;background:var(--teal);opacity:.4}
+.ti{flex:1;position:relative;padding-right:6px}.ti .dot{width:16px;height:16px;border-radius:50%;background:var(--beige);border:2px solid var(--teal);position:relative}
+.ti.now .dot{background:var(--teal)}.ti .d{font:600 15px Mono;margin-top:8px}.ti .e{font:400 15px/1.3 Geist;margin-top:2px}
+.src{font:500 12px Mono;opacity:.55;margin-top:14px}
+.vs{display:flex;align-items:stretch;gap:6px;margin-top:16px}.vs .col{flex:1;padding:12px 10px;font:400 15px/1.3 Geist;display:flex;flex-direction:column;gap:8px}
+.vs .them{background:var(--teal);color:var(--beige)}.vs .us{border:2px solid var(--teal)}
+.vs .h{font:600 18px Geist}.vs .m{font:600 15px Mono;margin-top:auto}.vs .mid{align-self:center;font:500 13px Mono;opacity:.6}
+.do{display:flex;gap:14px;align-items:flex-start;font:600 24px/1.25 Geist;margin-top:8px}.do .box{flex:0 0 30px;height:30px;border:3px solid var(--teal);margin-top:3px}
 .discharge{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
 .discharge h1{font:600 40px/1 Geist}
 .rx{font:500 17px/1.35 Geist;margin-top:8px;color:var(--yel)}
@@ -132,9 +151,36 @@ svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;o
 const S=window.SIGNALS;
 // three rounds from the real phone stories: the competitor-ish one first
 const R=[
- {s:S[1],red:true,why:"OpenAI just did inside ChatGPT what your report charges for: show a product the way a buyer sees it. Free. Your move."},
- {s:S[0],why:"Retail bought Apple because it needs no training. Your report needs a reading guide. That's the gap."},
- {s:S[3],why:"Zoom sells webinars with an AI host. Your clients' CMOs live in webinars. Nobody there has heard of you."}
+ {s:S[1],red:true,
+  why:"OpenAI just did inside ChatGPT what your report charges for: show a product the way a buyer sees it. Free.",
+  flow:[["📷","Your selfie"],["✦","ChatGPT\nTry On"],["👕","You, wearing it"]],
+  chips:["1 Oct 2026","Global","Web + mobile"],
+  tiles:[["Any site","works from a screenshot"],["Images 2.5","the model behind it"],["Saved","your photo kept for next time"],["No fit","guarantee — OpenAI's own warning"]],
+  timeline:[["Sep","Images 2.5 released"],["1 Oct","Try On + Favorites live"],["Next","more categories?"]],
+  impact:5, threat:4, opp:3,
+  vs:{them:["ChatGPT","Shows the product on the buyer","Free, inside the chat"],us:["POKPOK.AI","Shows how buyers & AI read the brand","€150 report"]},
+  todo:"Write one post: what Try On cannot tell a brand — how AI describes it. Ship it this week.",
+  src:"TechCrunch · Gulf News · 1 Oct 2026"},
+ {s:S[0],
+  why:"Retail bought Apple because it needs no training. Your report needs a reading guide. That's the gap.",
+  flow:[["🏬","Store staff"],["📱","Apple device\n+ AI"],["⚡","Faster, less training"]],
+  chips:["Retail","Ops","NRF 2026"],
+  tiles:[["~1 in 2","retail AI leaders train staff on AI (Forrester)"],["3 reasons","cost · ruggedness · enterprise-ready (vendor claim)"],["Core","AI is now infrastructure, not an add-on (eMarketer)"],["Gap","training cost is never mentioned"]],
+  timeline:[["Jan","NRF 2026: Apple pitch"],["2026","AI moves to core"],["Now","the training gap"]],
+  impact:2, threat:1, opp:3,
+  vs:{them:["Retail tech","Zero training to use","Value is obvious"],us:["POKPOK.AI","Report needs reading","Value needs explaining"]},
+  todo:"Add a 3-line 'how to read this' strip to the top of every report.",
+  src:"Forrester · eMarketer · Stratix (vendor)"},
+ {s:S[3],
+  why:"Zoom runs its biggest AI event in a week. Your buyers' CMOs will be in the audience. Nobody there has heard of you.",
+  flow:[["🎙","Zoom AI"],["📅","Zoomtopia\n20–22 Oct"],["🎯","CMOs watching"]],
+  chips:["Virtual","3 regions","AI-centred"],
+  tiles:[["20 Oct","Americas"],["21 Oct","EMEA"],["22 Oct","APAC + Japan"],["Roadmap","Workplace · ZoomMate · Contact Center"]],
+  timeline:[["Now","early registration open"],["20–22 Oct","Zoomtopia"],["After","AI webinar tools ship"]],
+  impact:3, threat:1, opp:4,
+  vs:{them:["Zoom","Owns the room where CMOs listen","Free to attend"],us:["POKPOK.AI","Not in that room","Zero mentions"]},
+  todo:"Register for EMEA day (21 Oct) and post one take on the keynote the same day.",
+  src:"UC Today · Zoom community · IT Brief"}
 ];
 const done=[],rx=[];let cur=0,depth=0;
 const $=id=>document.getElementById(id);
@@ -164,12 +210,27 @@ function drawWires(){
 // open a signal: the wire pulses first (anticipation), then the sheet prints
 function open(i){cur=i;depth=0;const p=$('pulse'+i);if(p){p.classList.remove('go');void p.getBoundingClientRect();p.classList.add('go')}
  navigator.vibrate&&navigator.vibrate(12);setTimeout(()=>{$('track').classList.remove('gone');show('signal');renderSheet()},520)}
-const NAMES=['Gist','Story','You','Do'];
-function levels(r){const s=r.s;return [
-  `<div class="his">${r.why}</div><p class="gist">${s.summary}</p>`,
-  s.expanded.map(e=>`<b>${e.label}</b><p>${e.lead?'<strong>'+e.lead+'</strong> ':''}${e.text}</p>`).join(''),
-  s.forYou.map(e=>`<b>${e.label}</b><p>${e.text}</p>`).join(''),
-  `<b>DO THIS TODAY</b><p class="gist">${s.action}</p>`]}
+const NAMES=['Gist','Facts','You','Do'];
+const meter=(n,c)=>`<span class="meter">${[1,2,3,4,5].map(k=>`<i class="${k<=n?'f':''}" style="${k<=n?'background:'+c:''}"></i>`).join('')}</span>`;
+function levels(r){return [
+ // GIST: what happened, as a diagram
+ `<div class="his">${r.why}</div>
+  <div class="flow">${r.flow.map((f,k)=>`<div class="node"><div class="ic">${f[0]}</div><div class="nt">${f[1].replace('\n','<br>')}</div></div>${k<r.flow.length-1?'<div class="arr">→</div>':''}`).join('')}</div>
+  <div class="chips">${r.chips.map(c=>`<span>${c}</span>`).join('')}</div>
+  <div class="row"><span class="k">Hits your product</span>${meter(r.impact,r.red?'var(--red)':'var(--teal)')}<span class="v">${r.impact}/5</span></div>`,
+ // FACTS: number tiles + timeline
+ `<div class="tiles">${r.tiles.map(t=>`<div class="tile"><div class="n">${t[0]}</div><div class="t">${t[1]}</div></div>`).join('')}</div>
+  <div class="tl">${r.timeline.map((t,k)=>`<div class="ti${k===1?' now':''}"><div class="dot"></div><div class="d">${t[0]}</div><div class="e">${t[1]}</div></div>`).join('')}</div>
+  <div class="src">${r.src}</div>`,
+ // YOU: meters + you vs them
+ `<div class="row"><span class="k">Threat</span>${meter(r.threat,'var(--red)')}<span class="v">${r.threat}/5</span></div>
+  <div class="row"><span class="k">Opportunity</span>${meter(r.opp,'#1f8a5b')}<span class="v">${r.opp}/5</span></div>
+  <div class="vs"><div class="col them"><div class="h">${r.vs.them[0]}</div><div>${r.vs.them[1]}</div><div class="m">${r.vs.them[2]}</div></div>
+   <div class="mid">vs</div>
+   <div class="col us"><div class="h">${r.vs.us[0]}</div><div>${r.vs.us[1]}</div><div class="m">${r.vs.us[2]}</div></div></div>`,
+ // DO
+ `<div class="do"><div class="box"></div><div>${r.todo}</div></div>
+  <div class="his" style="margin-top:18px">Stamp it and I'll put it in Reminders. Or shred it and admit you weren't going to.</div>`]}
 function renderSheet(){const r=R[cur],s=r.s;
  $('count').textContent=`${cur+1}/3`;
  const src=`<div class="lab">${r.red?'<span style="color:var(--red)">● Code red</span> · ':''}${s.source} · 0${cur+1} of 03</div>`;
