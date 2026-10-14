@@ -74,10 +74,12 @@ struct ProtoViewer: UIViewRepresentable {
         func startMotion(for web: WKWebView) {
             guard motion.isDeviceMotionAvailable else { return }
             motion.deviceMotionUpdateInterval = 1.0 / 60.0
+            var base: CMAcceleration?
             motion.startDeviceMotionUpdates(to: .main) { [weak web] data, _ in
                 guard let g = data?.gravity, let web else { return }
-                // gravity x = left/right tilt; y+0.5 ≈ 0 when the phone is held at a normal reading angle
-                let x = g.x * 2.2, y = (g.y + 0.55) * 2.2
+                // the way the phone is held when the screen opens counts as "straight"; tilt is measured from there
+                if base == nil { base = g }
+                let x = (g.x - base!.x) * 3.0, y = (g.y - base!.y) * 3.0
                 web.evaluateJavaScript("window.__tilt && window.__tilt(\(x), \(y))", completionHandler: nil)
             }
         }
