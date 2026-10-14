@@ -6,7 +6,7 @@
 @font-face{font-family:Geist;src:url(fonts/Geist-Variable.woff2)}
 html,body{margin:0;height:100%;background:#050505;overflow:hidden;touch-action:none;font-family:Geist}
 canvas{display:block}
-.read{position:fixed;left:22px;top:calc(env(safe-area-inset-top) + 96px);border-left:1px solid #333;padding-left:14px;font-family:Geist;color:#e9e9e9}.read .t{font:600 19px Geist}.read .d{font:600 19px Geist;color:#8a8a8a}.read .big{font:300 40px/1.1 Geist;margin-top:14px;color:#cfcfcf}.read .s{font:500 15px/1.35 Geist;color:#8a8a8a}
+.read{position:fixed;left:22px;top:calc(env(safe-area-inset-top) + 22px);border-left:1px solid #333;padding-left:14px;font-family:Geist;color:#e9e9e9}.read .t{font:600 19px Geist}.read .d{font:600 19px Geist;color:#8a8a8a}.read .big{font:300 40px/1.1 Geist;margin-top:14px;color:#cfcfcf}.read .s{font:500 15px/1.35 Geist;color:#8a8a8a}
 .cap{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 28px);text-align:center;color:#9a9a9a;font:800 13px Geist;letter-spacing:.06em;text-transform:uppercase}
 .cap b{color:#f2f2f2}
 </style>
@@ -70,16 +70,16 @@ g.font='400 150px Geist';g.textAlign='center';g.textBaseline='middle';
 // yesterday: a small red mark outside the scale at 62
 {const a=ang(0.62);g.fillStyle='#FF3B4E';g.save();g.translate(cx+Math.cos(a)*S*0.472,cy+Math.sin(a)*S*0.472);g.rotate(a+Math.PI/2);g.beginPath();g.moveTo(0,22);g.lineTo(-18,-14);g.lineTo(18,-14);g.closePath();g.fill();g.restore()}
 // bottom readout, like the range line on the Luce cluster
-g.fillStyle='#FF3B4E';g.font='500 84px Geist';g.fillText('▲ 12 since yesterday',cx,cy+S*0.335);
+g.fillStyle='#FF3B4E';g.font='600 112px Geist';g.fillText('▲ 12 since yesterday',cx,cy+S*0.335);
 const faceTex=new THREE.CanvasTexture(c);faceTex.colorSpace=THREE.SRGBColorSpace;faceTex.anisotropy=R.capabilities.getMaxAnisotropy();
 const face=new THREE.Mesh(new THREE.CircleGeometry(0.70,160),new THREE.MeshPhysicalMaterial({map:faceTex,roughness:0.55,metalness:0,roughnessMap:grain}));
 face.position.z=0.02;face.receiveShadow=true;scene.add(face);
 
 // 4. the needle: tapered, orange enamel, real shadow on the dial
-const ns=new THREE.Shape();ns.moveTo(-0.016,0);ns.lineTo(0.016,0);ns.lineTo(0.007,0.40);ns.quadraticCurveTo(0,0.415,-0.007,0.40);ns.closePath();
+const ns=new THREE.Shape();ns.moveTo(-0.016,0);ns.lineTo(0.016,0);ns.lineTo(0.007,0.31);ns.quadraticCurveTo(0,0.325,-0.007,0.31);ns.closePath();
 const needle=new THREE.Mesh(new THREE.ExtrudeGeometry(ns,{depth:0.012,bevelEnabled:true,bevelSize:0.003,bevelThickness:0.003,bevelSegments:3}),
  new THREE.MeshPhysicalMaterial({color:0xFF8A2A,roughness:0.3,clearcoat:1,clearcoatRoughness:0.1,emissive:0xFF5A00,emissiveIntensity:0.55}));
-needle.castShadow=true;const pivot=new THREE.Group();pivot.position.z=0.075;pivot.add(needle);needle.position.y=0.215;scene.add(pivot);
+needle.castShadow=true;const pivot=new THREE.Group();pivot.position.z=0.075;pivot.add(needle);needle.position.y=0.345;scene.add(pivot);
 const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.05,0.03,48),new THREE.MeshPhysicalMaterial({color:0x111111,metalness:0.6,roughness:0.3,clearcoat:1}));
 /* no hub: the number owns the centre, as on the Luce speedometer */
 
@@ -105,11 +105,11 @@ glare.position.z=0.2;glare.renderOrder=10;scene.add(glare);
 // the centre number lives on its own small printed disc so it can count with the needle
 const nc=document.createElement('canvas');nc.width=nc.height=512;const ng=nc.getContext('2d');
 const numTex=new THREE.CanvasTexture(nc);numTex.colorSpace=THREE.SRGBColorSpace;numTex.anisotropy=R.capabilities.getMaxAnisotropy();
-const numDisc=new THREE.Mesh(new THREE.CircleGeometry(0.27,96),new THREE.MeshPhysicalMaterial({map:numTex,roughness:0.55,metalness:0,roughnessMap:grain}));
+const numDisc=new THREE.Mesh(new THREE.CircleGeometry(0.34,96),new THREE.MeshPhysicalMaterial({map:numTex,roughness:0.55,metalness:0,roughnessMap:grain}));
 numDisc.position.z=0.021;scene.add(numDisc);
 let shown=-1;
-function drawNum(n,done){if(n===shown&&!done)return;shown=n;ng.fillStyle='#050505';ng.fillRect(0,0,512,512);ng.textAlign='center';ng.textBaseline='middle';ng.strokeStyle='#2a2a2a';ng.lineWidth=3;ng.beginPath();ng.arc(256,256,199,0,7);ng.stroke();
- ng.fillStyle='#E6E6E6';ng.font='400 210px Geist';ng.fillText(String(n),256,232);ng.fillStyle='#9A9A9A';ng.font='400 46px Geist';ng.fillText('pressure',256,352);
+function drawNum(n,done){if(n===shown&&!done)return;shown=n;ng.fillStyle='#050505';ng.fillRect(0,0,512,512);ng.textAlign='center';ng.textBaseline='middle';ng.strokeStyle='#2a2a2a';ng.lineWidth=3;ng.beginPath();ng.arc(256,256,248,0,7);ng.stroke();
+ ng.fillStyle='#F0F0F0';ng.font='500 228px Geist';ng.fillText(String(n),256,226);ng.fillStyle='#9A9A9A';ng.fillStyle='#C8C8C8';ng.font='600 66px Geist';ng.fillText('PRESSURE',256,378);
  
  numTex.needsUpdate=true}
 drawNum(0,false);
@@ -120,21 +120,21 @@ const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();
 addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
  if(ray.intersectObjects([face,glass,bezel,numDisc],true).length){from=val;phase='down';downStart=performance.now();landed=false;haptic('press')}});
 // ---------- layout: the main gauge sits low-centre, a smaller stopwatch top-right ----------
-const mainG=new THREE.Group();[bezel,lip,face,pivot,glass,numDisc,glare].forEach(o=>mainG.add(o));mainG.position.y=-0.32;scene.add(mainG);
-const miniG=new THREE.Group();miniG.position.set(0.56,1.42,0);miniG.scale.setScalar(0.52);scene.add(miniG);
+const mainG=new THREE.Group();[bezel,lip,face,pivot,glass,numDisc,glare].forEach(o=>mainG.add(o));mainG.position.y=0.2;scene.add(mainG);
+const miniG=new THREE.Group();miniG.position.set(0.56,1.6,0);miniG.scale.setScalar(0.52);scene.add(miniG);
 miniG.add(bezel.clone(),lip.clone());const miniGlass=glass.clone();miniG.add(miniGlass);const miniGlare=glare.clone();miniG.add(miniGlare);
 // stopwatch face: yellow, black minute ticks, days 0–14, black capsule window
 const mc=document.createElement('canvas');mc.width=mc.height=1024;const mg=mc.getContext('2d');
 {const r=mg.createRadialGradient(512,380,40,512,512,520);r.addColorStop(0,'#FBE27A');r.addColorStop(1,'#E9C640');mg.fillStyle=r;mg.fillRect(0,0,1024,1024);
  for(let i=0;i<70;i++){const a=(-90+i*360/70)*Math.PI/180,maj=i%5===0;mg.strokeStyle='#141100';mg.lineWidth=maj?7:3;const r1=maj?440:462;mg.beginPath();mg.moveTo(512+Math.cos(a)*r1,512+Math.sin(a)*r1);mg.lineTo(512+Math.cos(a)*496,512+Math.sin(a)*496);mg.stroke()}
- mg.fillStyle='#141100';mg.font='600 104px Geist';mg.textAlign='center';mg.textBaseline='middle';
- for(let d=0;d<14;d+=2){const a=(-90+d*360/14)*Math.PI/180;mg.fillText(d===0?'14':String(d),512+Math.cos(a)*352,512+Math.sin(a)*352)}
- mg.fillStyle='#0a0a0a';mg.beginPath();mg.roundRect(312,560,400,120,60);mg.fill();
- mg.fillStyle='#F5D24A';mg.font='700 70px Geist';mg.fillText('21 OCT',512,622)}
+ mg.fillStyle='#141100';mg.font='700 124px Geist';mg.textAlign='center';mg.textBaseline='middle';
+ for(let d=2;d<14;d+=2){const a=(-90+d*360/14)*Math.PI/180;mg.fillText(d===0?'14':String(d),512+Math.cos(a)*352,512+Math.sin(a)*352)}
+ mg.fillStyle='#0a0a0a';mg.beginPath();mg.roundRect(332,262,360,112,56);mg.fill();
+ mg.fillStyle='#F5D24A';mg.font='800 74px Geist';mg.fillText('21 OCT',512,320)}
 const miniTex=new THREE.CanvasTexture(mc);miniTex.colorSpace=THREE.SRGBColorSpace;miniTex.anisotropy=R.capabilities.getMaxAnisotropy();
 const miniFace=new THREE.Mesh(new THREE.CircleGeometry(0.70,128),new THREE.MeshPhysicalMaterial({map:miniTex,roughness:0.5,roughnessMap:grain}));miniFace.position.z=0.02;miniFace.receiveShadow=true;miniG.add(miniFace);
 // red hand with a short tail and a polished hub
-const hs=new THREE.Shape();hs.moveTo(-0.014,-0.12);hs.lineTo(0.014,-0.12);hs.lineTo(0.006,0.6);hs.lineTo(-0.006,0.6);hs.closePath();
+const hs=new THREE.Shape();hs.moveTo(-0.014,-0.1);hs.lineTo(0.014,-0.1);hs.lineTo(0.006,0.4);hs.lineTo(-0.006,0.4);hs.closePath();
 const hand=new THREE.Mesh(new THREE.ExtrudeGeometry(hs,{depth:0.01,bevelEnabled:true,bevelSize:0.003,bevelThickness:0.003,bevelSegments:2}),new THREE.MeshPhysicalMaterial({color:0xD8141E,roughness:0.3,clearcoat:1,clearcoatRoughness:0.1}));
 hand.castShadow=true;const handPivot=new THREE.Group();handPivot.position.z=0.07;handPivot.add(hand);miniG.add(handPivot);
 const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.055,0.03,48),new THREE.MeshPhysicalMaterial({color:0xd9dce0,metalness:1,roughness:0.2}));cap.rotation.x=Math.PI/2;cap.position.z=0.09;cap.castShadow=true;miniG.add(cap);
@@ -143,16 +143,16 @@ window.__mini=now=>{const p=Math.min(1,Math.max(0,(now-miniStart)/1100));const e
 addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
  if(ray.intersectObjects(miniG.children,true).length){miniFrom=0;miniStart=performance.now();haptic('press')}});
 // ---------- bottom console (after the Luce overhead panel): every control has one job ----------
-const con=new THREE.Group();con.position.set(0,-1.48,0);mainG.add(con); // mainG sits at y=-0.32 → console centre at y=-1.80
+const con=new THREE.Group();con.position.set(0,-1.575,0);mainG.add(con); // mainG sits at y=-0.32 → console centre at y=-1.80
 const satin=new THREE.MeshPhysicalMaterial({color:0x0c0c0d,roughness:0.78,metalness:0,roughnessMap:grain});
 const gloss=new THREE.MeshPhysicalMaterial({color:0x080809,roughness:0.62,metalness:0,roughnessMap:grain}); // matte, as on the Luce panel
 
 const alu=new THREE.MeshPhysicalMaterial({color:0xf2f3f5,metalness:0.9,roughness:0.36,roughnessMap:brushed,envMapIntensity:4.2});
-const bs=new THREE.Shape();{const w=0.98,h=0.455,r=0.2;bs.moveTo(-w+r,-h);bs.lineTo(w-r,-h);bs.quadraticCurveTo(w,-h,w,-h+r);bs.lineTo(w,h-r);bs.quadraticCurveTo(w,h,w-r,h);bs.lineTo(-w+r,h);bs.quadraticCurveTo(-w,h,-w,h-r);bs.lineTo(-w,-h+r);bs.quadraticCurveTo(-w,-h,-w+r,-h)}
+const bs=new THREE.Shape();{const w=0.98,h=0.575,r=0.2;bs.moveTo(-w+r,-h);bs.lineTo(w-r,-h);bs.quadraticCurveTo(w,-h,w,-h+r);bs.lineTo(w,h-r);bs.quadraticCurveTo(w,h,w-r,h);bs.lineTo(-w+r,h);bs.quadraticCurveTo(-w,h,-w,h-r);bs.lineTo(-w,-h+r);bs.quadraticCurveTo(-w,-h,-w+r,-h)}
 const base=new THREE.Mesh(new THREE.ExtrudeGeometry(bs,{depth:0.03,bevelEnabled:true,bevelSize:0.02,bevelThickness:0.02,bevelSegments:6,curveSegments:24}),satin);base.position.z=-0.015;base.receiveShadow=true;con.add(base);
 // printed labels and icons on the console face
-const lc=document.createElement('canvas');lc.width=2000;lc.height=950;const lg=lc.getContext('2d');
-const PX=(x,y)=>[(x+1)*1000,(0.475-y)*1000];
+const lc=document.createElement('canvas');lc.width=2000;lc.height=1150;const lg=lc.getContext('2d');
+const PX=(x,y)=>[(x+1)*1000,(0.575-y)*1000];
 lg.textAlign='center';lg.textBaseline='middle';
 function label(t,x,y,size=40,col='#8c8c8c',w=600){const [a,b]=PX(x,y);lg.fillStyle=col;lg.font=`${w} ${size}px Geist`;lg.fillText(t,a,b)}
 function icon(kind,x,y){const [a,b]=PX(x,y);lg.save();lg.translate(a,b);lg.scale(1.35,1.35);lg.strokeStyle='#ffffff';lg.fillStyle='#ffffff';lg.lineWidth=7;lg.lineCap='round';
@@ -161,16 +161,16 @@ function icon(kind,x,y){const [a,b]=PX(x,y);lg.save();lg.translate(a,b);lg.scale
  if(kind==='money'){lg.font='600 76px Geist';lg.fillText('$',0,4)}
  if(kind==='buyers'){lg.beginPath();lg.arc(0,-14,14,0,7);lg.stroke();lg.beginPath();lg.arc(0,34,28,Math.PI*1.1,Math.PI*1.9);lg.stroke()}
  lg.restore()}
-const TOG=[['rivals',-0.64,'RIVALS'],['models',0.64,'MODELS']]; // two switches: the founder's top two needs
-TOG.forEach(t=>{icon(t[0],t[1],0.07);label(t[2],t[1],-0.36,78,'#d0d0d0',700)});
-label('TODAY',0,0.2,66,'#5fe08a',800);label('WEEK',0.29,0.12,58,'#d0d0d0',700);label('MONTH',0.31,-0.3,58,'#d0d0d0',700);
-label('SCAN',-0.5,0.3,70,'#d0d0d0',700);label('WATCH',0.5,0.3,70,'#d0d0d0',700);
+const TOG=[['rivals',-0.7,'RIVALS'],['models',0.7,'MODELS']]; // two switches: the founder's top two needs
+TOG.forEach(t=>{icon(t[0],t[1],0.06);label(t[2],t[1],-0.44,72,'#d0d0d0',700)});
+label('TODAY',-0.28,0.1,56,'#5fe08a',800);label('WEEK',0,0.2,56,'#d0d0d0',700);label('MONTH',0.29,0.1,56,'#d0d0d0',700);
+label('SCAN',-0.535,0.4,58,'#d0d0d0',700);label('WATCH',0.535,0.4,58,'#d0d0d0',700);
 const labTex=new THREE.CanvasTexture(lc);labTex.colorSpace=THREE.SRGBColorSpace;labTex.anisotropy=R.capabilities.getMaxAnisotropy();
-const labels=new THREE.Mesh(new THREE.PlaneGeometry(2.0,0.95),new THREE.MeshBasicMaterial({map:labTex,transparent:true,depthWrite:false}));labels.position.z=0.0365;con.add(labels);
-function redrawRange(sel){['TODAY','WEEK','MONTH'].forEach((t,k)=>{const [x,y,z]=[[0,0.2,66],[0.29,0.12,58],[0.31,-0.3,58]][k];const [a,b]=PX(x,y);lg.clearRect(a-130,b-40,260,80);label(t,x,y,z,t===sel?'#5fe08a':'#d0d0d0',t===sel?800:700)});labTex.needsUpdate=true}
+const labels=new THREE.Mesh(new THREE.PlaneGeometry(2.0,1.15),new THREE.MeshBasicMaterial({map:labTex,transparent:true,depthWrite:false}));labels.position.z=0.0365;con.add(labels);
+function redrawRange(sel){['TODAY','WEEK','MONTH'].forEach((t,k)=>{const [x,y,z]=[[-0.28,0.1,56],[0,0.2,56],[0.29,0.1,56]][k];const [a,b]=PX(x,y);lg.clearRect(a-130,b-40,260,80);label(t,x,y,z,t===sel?'#5fe08a':'#d0d0d0',t===sel?800:700)});labTex.needsUpdate=true}
 // 1. SOS capsule → code red
 const capShape=new THREE.Shape();{const w=0.33,h=0.1;capShape.absarc(w-h,0,h,-Math.PI/2,Math.PI/2);capShape.absarc(-w+h,0,h,Math.PI/2,Math.PI*1.5)}
-const sos=new THREE.Mesh(new THREE.ExtrudeGeometry(capShape,{depth:0.012,bevelEnabled:true,bevelSize:0.008,bevelThickness:0.008,bevelSegments:4}),gloss);sos.position.set(0,0.36,0.03);sos.userData.act='sos';con.add(sos);
+const sos=new THREE.Mesh(new THREE.ExtrudeGeometry(capShape,{depth:0.012,bevelEnabled:true,bevelSize:0.008,bevelThickness:0.008,bevelSegments:4}),gloss);sos.position.set(0,0.4,0.03);sos.userData.act='sos';con.add(sos);
 const sc=document.createElement('canvas');sc.width=1100;sc.height=330;const sg=sc.getContext('2d');const sosTex=new THREE.CanvasTexture(sc);sosTex.colorSpace=THREE.SRGBColorSpace;
 function drawSos(muted){sg.clearRect(0,0,1100,330);sg.textAlign='center';sg.textBaseline='middle';sg.font='800 150px Geist';
  if(muted){sg.fillStyle='#9a9a9a';sg.fillText('MUTED',550,172)}else{
@@ -178,30 +178,31 @@ function drawSos(muted){sg.clearRect(0,0,1100,330);sg.textAlign='center';sg.text
   sg.save();sg.shadowColor='rgba(255,40,60,0.55)';sg.shadowBlur=18;sg.fillStyle='rgba(255,70,85,0.55)';sg.fillText('PROFOUND',550,172);sg.restore();
   sg.fillStyle='#ff5a6a';sg.fillText('PROFOUND',550,172)}sosTex.needsUpdate=true}
 drawSos(false);
-const sosText=new THREE.Mesh(new THREE.PlaneGeometry(0.64,0.192),new THREE.MeshBasicMaterial({map:sosTex,transparent:true,depthWrite:false}));sosText.position.set(0,0.36,0.06);sosText.userData.act='sos';con.add(sosText);
+const sosText=new THREE.Mesh(new THREE.PlaneGeometry(0.64,0.192),new THREE.MeshBasicMaterial({map:sosTex,transparent:true,depthWrite:false}));sosText.position.set(0,0.4,0.06);sosText.userData.act='sos';con.add(sosText);
 // 2. lenses → scan now / watchlist
-function lens(x,act){const g=new THREE.Group();g.position.set(x,0.28,0.035);
+function lens(x,act){const g=new THREE.Group();g.position.set(x,0.4,0.035);
  const ring=new THREE.Mesh(new THREE.TorusGeometry(0.105,0.016,20,96),gloss);g.add(ring);
  const glassM=new THREE.MeshPhysicalMaterial({color:0x060607,roughness:0.2,clearcoat:1,clearcoatRoughness:0.25,emissive:0xffffff,emissiveIntensity:0});
  const dome=new THREE.Mesh(new THREE.SphereGeometry(0.095,48,24,0,Math.PI*2,0,Math.PI/2.6),glassM);dome.rotation.x=Math.PI/2;dome.position.z=-0.04;g.add(dome);
  g.children.forEach(o=>o.userData.act=act);g.userData.mat=glassM;con.add(g);return g}
-const lensL=lens(-0.74,'scan'),lensR=lens(0.74,'watch');
+const lensL=lens(-0.8,'scan'),lensR=lens(0.8,'watch');
 // 3. toggle switches → what feeds the gauge
-const toggles=TOG.map(t=>{const g=new THREE.Group();g.position.set(t[1],-0.13,0.035);
+const toggles=TOG.map(t=>{const g=new THREE.Group();g.position.set(t[1],-0.17,0.035);
+ const ledM=new THREE.MeshBasicMaterial({color:0x2fd36b});const led=new THREE.Mesh(new THREE.CircleGeometry(0.018,24),ledM);led.position.set(0.16,-0.0,0.005);g.add(led);
  const sock=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.064,0.014,48),new THREE.MeshPhysicalMaterial({color:0x1c1d1f,metalness:0.7,roughness:0.4,roughnessMap:brushed,envMapIntensity:2}));sock.rotation.x=Math.PI/2;g.add(sock);
  const piv=new THREE.Group();piv.position.z=0.012;g.add(piv);
  const stem=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.025,0.1,24),alu);stem.position.y=0.05;piv.add(stem);
  const tip=new THREE.Mesh(new RoundedBoxGeometry(0.24,0.055,0.06,5,0.025),alu);tip.position.y=0.105;piv.add(tip);
- piv.rotation.x=Math.PI/2-0.5;[sock,stem,tip].forEach(o=>{o.castShadow=true;o.userData.act='toggle';o.userData.key=t[0]});con.add(g);return {key:t[0],piv,on:true}});
+ piv.rotation.x=Math.PI/2-0.5;[sock,stem,tip].forEach(o=>{o.castShadow=true;o.userData.act='toggle';o.userData.key=t[0]});con.add(g);return {key:t[0],piv,on:true,ledM}});
 // 4. rotary → range
-const rot=new THREE.Group();rot.position.set(0,-0.1,0.035);con.add(rot);
+const rot=new THREE.Group();rot.position.set(0,-0.18,0.035);con.add(rot);
 const rotRing=new THREE.Mesh(new THREE.LatheGeometry([[0.2,0],[0.25,0],[0.255,0.03],[0.235,0.05],[0.205,0.05]].map(p=>new THREE.Vector2(p[0],p[1])),120),alu);rotRing.rotation.x=Math.PI/2;rot.add(rotRing);
 const rotWell=new THREE.Mesh(new THREE.CircleGeometry(0.205,64),new THREE.MeshPhysicalMaterial({color:0x6a6c70,metalness:0.85,roughness:0.42,roughnessMap:brushed,envMapIntensity:2.5}));rotWell.position.z=0.01;rot.add(rotWell);
 const knob=new THREE.Group();knob.position.z=0.01;rot.add(knob);
 const bar=new THREE.Mesh(new RoundedBoxGeometry(0.19,0.47,0.15,8,0.07),alu);bar.position.z=0.075;bar.castShadow=true;knob.add(bar);
 const slot=new THREE.Mesh(new RoundedBoxGeometry(0.034,0.26,0.02,3,0.012),new THREE.MeshBasicMaterial({color:0x050505}));slot.position.z=0.151;knob.add(slot);
 [rotRing,rotWell,bar,slot].forEach(o=>o.userData.act='range');
-const RANGES=[['TODAY',1.0,0],['WEEK',0.92,-0.9],['MONTH',0.75,-2.35]];let rangeIdx=0,knobAng=0;
+const RANGES=[['TODAY',1.0,0.8],['WEEK',0.92,0],['MONTH',0.75,-0.8]];let rangeIdx=0,knobAng=0.8;
 // 5. pills → mute / share
 function pill(x,act){const m=new THREE.Mesh(new THREE.CapsuleGeometry(0.038,0.17,8,24),gloss);m.position.set(x,-0.13,0.05);m.scale.z=0.55;m.castShadow=true;m.userData.act=act;con.add(m);return m}
 const pillL=null,pillR=null; // pills removed: room for readable labels
@@ -218,7 +219,7 @@ addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/
  if(act==='mute'){muted=!muted;drawSos(muted);haptic('tick');flash.mute=performance.now()}
  if(act==='share'){haptic('press');flash.share=performance.now()}});
 window.__consoleTick=now=>{
- toggles.forEach(g=>{const tgt=g.on?Math.PI/2-0.5:Math.PI/2+0.5;g.piv.rotation.x+=(tgt-g.piv.rotation.x)*0.3});
+ toggles.forEach(g=>{g.ledM.color.setHex(g.on?0x2fd36b:0x2a2a2a);const tgt=g.on?Math.PI/2-0.5:Math.PI/2+0.5;g.piv.rotation.x+=(tgt-g.piv.rotation.x)*0.3});
  knobAng+=(RANGES[rangeIdx][2]-knobAng)*0.18;knob.rotation.z=knobAng;
  const pulse=muted?0.6:0.75+0.25*Math.sin(now/260);sosText.material.color.setScalar(flash.sos&&now-flash.sos<400?1.6:pulse);
  [['scan',lensL],['watch',lensR]].forEach(([k,l])=>{const d=flash[k]?now-flash[k]:9999;l.userData.mat.emissiveIntensity=d<600?0.9*(1-d/600):0});
