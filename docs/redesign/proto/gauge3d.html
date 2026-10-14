@@ -12,8 +12,8 @@ canvas{display:block}
 </style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.169.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.169.0/examples/jsm/"}}</script>
 </head><body>
-<div class="read"><div class="t" id="rt"></div><div class="d" id="rd"></div><div class="big">6d 13h</div><div class="s">Zoomtopia EU</div><div class="s">nearest deadline</div></div>
-<div class="cap"><b>Pressure</b> on pokpok.ai · tilt the phone</div>
+<div class="read"><div class="t" id="rt"></div><div class="d" id="rd"></div><div class="big">6d 13h</div><div class="s" id="read-s1">Zoomtopia EU</div><div class="s">nearest deadline</div></div>
+
 <script type="module">
 import * as THREE from 'three';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
@@ -113,7 +113,7 @@ function drawNum(n,done){if(n===shown&&!done)return;shown=n;ng.fillStyle='#05050
  
  numTex.needsUpdate=true}
 drawNum(0,false);
-const target=0.74;let val=0,start=performance.now(),landed=false,lastDecade=0,phase='up',from=0,downStart=0;
+let target=0.74,upFrom=0;let val=0,start=performance.now(),landed=false,lastDecade=0,phase='up',from=0,downStart=0;
 const haptic=m=>{try{window.webkit.messageHandlers.haptic.postMessage(m)}catch(e){}};
 // press the gauge: the needle drops to 0 and sweeps up to today's score
 const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();
@@ -142,6 +142,87 @@ const miniTarget=6/14;let miniStart=performance.now()+400,miniFrom=0;
 window.__mini=now=>{const p=Math.min(1,Math.max(0,(now-miniStart)/1100));const e=1-Math.pow(1-p,3);const v=miniFrom+(miniTarget-miniFrom)*e;handPivot.rotation.z=-v*Math.PI*2};
 addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
  if(ray.intersectObjects(miniG.children,true).length){miniFrom=0;miniStart=performance.now();haptic('press')}});
+// ---------- bottom console (after the Luce overhead panel): every control has one job ----------
+const con=new THREE.Group();con.position.set(0,-1.48,0);mainG.add(con); // mainG sits at y=-0.32 → console centre at y=-1.80
+const satin=new THREE.MeshPhysicalMaterial({color:0x0c0c0d,roughness:0.78,metalness:0,roughnessMap:grain});
+const gloss=new THREE.MeshPhysicalMaterial({color:0x080809,roughness:0.62,metalness:0,roughnessMap:grain}); // matte, as on the Luce panel
+
+const alu=new THREE.MeshPhysicalMaterial({color:0xf2f3f5,metalness:0.9,roughness:0.36,roughnessMap:brushed,envMapIntensity:4.2});
+const bs=new THREE.Shape();{const w=0.98,h=0.455,r=0.2;bs.moveTo(-w+r,-h);bs.lineTo(w-r,-h);bs.quadraticCurveTo(w,-h,w,-h+r);bs.lineTo(w,h-r);bs.quadraticCurveTo(w,h,w-r,h);bs.lineTo(-w+r,h);bs.quadraticCurveTo(-w,h,-w,h-r);bs.lineTo(-w,-h+r);bs.quadraticCurveTo(-w,-h,-w+r,-h)}
+const base=new THREE.Mesh(new THREE.ExtrudeGeometry(bs,{depth:0.03,bevelEnabled:true,bevelSize:0.02,bevelThickness:0.02,bevelSegments:6,curveSegments:24}),satin);base.position.z=-0.015;base.receiveShadow=true;con.add(base);
+// printed labels and icons on the console face
+const lc=document.createElement('canvas');lc.width=2000;lc.height=950;const lg=lc.getContext('2d');
+const PX=(x,y)=>[(x+1)*1000,(0.475-y)*1000];
+lg.textAlign='center';lg.textBaseline='middle';
+function label(t,x,y,size=40,col='#8c8c8c',w=600){const [a,b]=PX(x,y);lg.fillStyle=col;lg.font=`${w} ${size}px Geist`;lg.fillText(t,a,b)}
+function icon(kind,x,y){const [a,b]=PX(x,y);lg.save();lg.translate(a,b);lg.strokeStyle='#ffffff';lg.fillStyle='#ffffff';lg.lineWidth=7;lg.lineCap='round';
+ if(kind==='rivals'){lg.beginPath();lg.arc(0,0,26,0,7);lg.stroke();lg.beginPath();lg.moveTo(-40,0);lg.lineTo(-14,0);lg.moveTo(14,0);lg.lineTo(40,0);lg.moveTo(0,-40);lg.lineTo(0,-14);lg.moveTo(0,14);lg.lineTo(0,40);lg.stroke()}
+ if(kind==='models'){lg.strokeRect(-22,-22,44,44);for(const k of [-11,0,11]){lg.beginPath();lg.moveTo(k,-22);lg.lineTo(k,-36);lg.moveTo(k,22);lg.lineTo(k,36);lg.moveTo(-22,k);lg.lineTo(-36,k);lg.moveTo(22,k);lg.lineTo(36,k);lg.stroke()}}
+ if(kind==='money'){lg.font='600 76px Geist';lg.fillText('$',0,4)}
+ if(kind==='buyers'){lg.beginPath();lg.arc(0,-14,14,0,7);lg.stroke();lg.beginPath();lg.arc(0,34,28,Math.PI*1.1,Math.PI*1.9);lg.stroke()}
+ lg.restore()}
+const TOG=[['rivals',-0.62,'RIVALS'],['models',-0.44,'MODELS'],['money',0.44,'MONEY'],['buyers',0.62,'BUYERS']];
+TOG.forEach(t=>{icon(t[0],t[1],0.06);label(t[2],t[1],-0.33,34)});
+label('TODAY',0,0.215,34,'#5fe08a',700);label('WEEK',0.25,0.15,30);label('MONTH',0.315,-0.03,30);
+label('SCAN',-0.74,0.12,32);label('WATCH',0.74,0.12,32);label('MUTE',-0.86,-0.33,32);label('SHARE',0.86,-0.33,32);
+const labTex=new THREE.CanvasTexture(lc);labTex.colorSpace=THREE.SRGBColorSpace;labTex.anisotropy=R.capabilities.getMaxAnisotropy();
+const labels=new THREE.Mesh(new THREE.PlaneGeometry(2.0,0.95),new THREE.MeshBasicMaterial({map:labTex,transparent:true,depthWrite:false}));labels.position.z=0.0365;con.add(labels);
+function redrawRange(sel){['TODAY','WEEK','MONTH'].forEach((t,k)=>{const [x,y,z]=[[0,0.215,34],[0.25,0.15,30],[0.315,-0.03,30]][k];const [a,b]=PX(x,y);lg.clearRect(a-70,b-24,140,48);label(t,x,y,z,t===sel?'#5fe08a':'#8c8c8c',t===sel?700:600)});labTex.needsUpdate=true}
+// 1. SOS capsule → code red
+const capShape=new THREE.Shape();{const w=0.25,h=0.085;capShape.absarc(w-h,0,h,-Math.PI/2,Math.PI/2);capShape.absarc(-w+h,0,h,Math.PI/2,Math.PI*1.5)}
+const sos=new THREE.Mesh(new THREE.ExtrudeGeometry(capShape,{depth:0.012,bevelEnabled:true,bevelSize:0.008,bevelThickness:0.008,bevelSegments:4}),gloss);sos.position.set(0,0.33,0.03);sos.userData.act='sos';con.add(sos);
+const sc=document.createElement('canvas');sc.width=512;sc.height=170;const sg=sc.getContext('2d');const sosTex=new THREE.CanvasTexture(sc);sosTex.colorSpace=THREE.SRGBColorSpace;
+function drawSos(muted){sg.clearRect(0,0,512,170);sg.textAlign='center';sg.textBaseline='middle';sg.font='700 64px Geist';
+ if(muted){sg.fillStyle='#8a8a8a';sg.fillText('MUTED',256,88)}else{sg.shadowColor='rgba(255,40,60,0.95)';sg.shadowBlur=26;sg.fillStyle='#ff4a5c';sg.fillText('● PROFOUND',256,88)}sosTex.needsUpdate=true}
+drawSos(false);
+const sosText=new THREE.Mesh(new THREE.PlaneGeometry(0.46,0.153),new THREE.MeshBasicMaterial({map:sosTex,transparent:true,depthWrite:false}));sosText.position.set(0,0.33,0.06);sosText.userData.act='sos';con.add(sosText);
+// 2. lenses → scan now / watchlist
+function lens(x,act){const g=new THREE.Group();g.position.set(x,0.28,0.035);
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(0.105,0.016,20,96),gloss);g.add(ring);
+ const glassM=new THREE.MeshPhysicalMaterial({color:0x060607,roughness:0.2,clearcoat:1,clearcoatRoughness:0.25,emissive:0xffffff,emissiveIntensity:0});
+ const dome=new THREE.Mesh(new THREE.SphereGeometry(0.095,48,24,0,Math.PI*2,0,Math.PI/2.6),glassM);dome.rotation.x=Math.PI/2;dome.position.z=-0.04;g.add(dome);
+ g.children.forEach(o=>o.userData.act=act);g.userData.mat=glassM;con.add(g);return g}
+const lensL=lens(-0.74,'scan'),lensR=lens(0.74,'watch');
+// 3. toggle switches → what feeds the gauge
+const toggles=TOG.map(t=>{const g=new THREE.Group();g.position.set(t[1],-0.13,0.035);
+ const sock=new THREE.Mesh(new THREE.CapsuleGeometry(0.045,0.07,8,24),gloss);sock.scale.z=0.3;g.add(sock);
+ const piv=new THREE.Group();piv.position.z=0.012;g.add(piv);
+ const stem=new THREE.Mesh(new THREE.CylinderGeometry(0.016,0.02,0.08,24),alu);stem.position.y=0.04;piv.add(stem);
+ const tip=new THREE.Mesh(new RoundedBoxGeometry(0.15,0.04,0.045,4,0.018),alu);tip.position.y=0.085;piv.add(tip);
+ piv.rotation.x=Math.PI/2-0.5;[sock,stem,tip].forEach(o=>{o.castShadow=true;o.userData.act='toggle';o.userData.key=t[0]});con.add(g);return {key:t[0],piv,on:true}});
+// 4. rotary → range
+const rot=new THREE.Group();rot.position.set(0,-0.1,0.035);con.add(rot);
+const rotRing=new THREE.Mesh(new THREE.LatheGeometry([[0.2,0],[0.25,0],[0.255,0.03],[0.235,0.05],[0.205,0.05]].map(p=>new THREE.Vector2(p[0],p[1])),120),alu);rotRing.rotation.x=Math.PI/2;rot.add(rotRing);
+const rotWell=new THREE.Mesh(new THREE.CircleGeometry(0.205,64),new THREE.MeshPhysicalMaterial({color:0x6a6c70,metalness:0.85,roughness:0.42,roughnessMap:brushed,envMapIntensity:2.5}));rotWell.position.z=0.01;rot.add(rotWell);
+const knob=new THREE.Group();knob.position.z=0.01;rot.add(knob);
+const bar=new THREE.Mesh(new RoundedBoxGeometry(0.19,0.47,0.15,8,0.07),alu);bar.position.z=0.075;bar.castShadow=true;knob.add(bar);
+const slot=new THREE.Mesh(new RoundedBoxGeometry(0.034,0.26,0.02,3,0.012),new THREE.MeshBasicMaterial({color:0x050505}));slot.position.z=0.151;knob.add(slot);
+[rotRing,rotWell,bar,slot].forEach(o=>o.userData.act='range');
+const RANGES=[['TODAY',1.0,0],['WEEK',0.92,-0.75],['MONTH',0.75,-1.5]];let rangeIdx=0,knobAng=0;
+// 5. pills → mute / share
+function pill(x,act){const m=new THREE.Mesh(new THREE.CapsuleGeometry(0.038,0.17,8,24),gloss);m.position.set(x,-0.13,0.05);m.scale.z=0.55;m.castShadow=true;m.userData.act=act;con.add(m);return m}
+const pillL=pill(-0.86,'mute'),pillR=pill(0.86,'share');
+// the gauge reads what the console says: share of each feed × range
+const FEED={rivals:0.30,models:0.12,money:0.08,buyers:0.06},BASE=0.18;
+function recompute(){let t=BASE;toggles.forEach(g=>{if(g.on)t+=FEED[g.key]});window.__setTarget(Math.min(1,t*RANGES[rangeIdx][1]))}
+let muted=false,flash={};
+addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
+ const hit=ray.intersectObjects(con.children,true)[0];if(!hit)return;let o=hit.object;while(o&&!o.userData.act)o=o.parent;if(!o)return;const act=o.userData.act;
+ if(act==='toggle'){const g=toggles.find(t=>t.key===o.userData.key);g.on=!g.on;haptic('tick');recompute()}
+ if(act==='range'){rangeIdx=(rangeIdx+1)%3;redrawRange(RANGES[rangeIdx][0]);haptic('press');recompute()}
+ if(act==='sos'){haptic('land');flash.sos=performance.now();document.getElementById('read-s1').textContent='CODE RED · Profound raised $155M'}
+ if(act==='scan'||act==='watch'){haptic('press');flash[act]=performance.now()}
+ if(act==='mute'){muted=!muted;drawSos(muted);haptic('tick');flash.mute=performance.now()}
+ if(act==='share'){haptic('press');flash.share=performance.now()}});
+window.__consoleTick=now=>{
+ toggles.forEach(g=>{const tgt=g.on?Math.PI/2-0.5:Math.PI/2+0.5;g.piv.rotation.x+=(tgt-g.piv.rotation.x)*0.3});
+ knobAng+=(RANGES[rangeIdx][2]-knobAng)*0.18;knob.rotation.z=knobAng;
+ const pulse=muted?0.6:0.75+0.25*Math.sin(now/260);sosText.material.color.setScalar(flash.sos&&now-flash.sos<400?1.6:pulse);
+ [['scan',lensL],['watch',lensR]].forEach(([k,l])=>{const d=flash[k]?now-flash[k]:9999;l.userData.mat.emissiveIntensity=d<600?0.9*(1-d/600):0});
+ [['mute',pillL],['share',pillR]].forEach(([k,m])=>{const d=flash[k]?now-flash[k]:9999;m.position.z=0.05-(d<180?0.012:0)});
+};
+
+window.__setTarget=t=>{upFrom=val;target=t;start=performance.now()-250;landed=false;phase='up';lastDecade=Math.floor(val*10)};
 const sweep=p=>{const c1=1.70158*1.15,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2)}; // ease out with a small overshoot
 
 // gyroscope: the camera moves, the light stays — reflections and the needle shadow slide
@@ -161,13 +242,14 @@ const clk=new THREE.Clock();
  key.position.set(-1.2+gx*0.5,2.4-gy*0.5,3.2);
  glareTex.offset.set(0.25-gx*0.12,0.25+gy*0.12);
  const now=performance.now();let p=0;
- if(phase==='down'){const q=Math.min(1,(now-downStart)/(120+380*from));val=from*(1-q*q);if(q>=1){phase='up';start=now-250;lastDecade=0;val=0}}
- else{p=Math.min(1,Math.max(0,(now-start-250)/1600));val=target*sweep(p)}
- const n=Math.max(0,Math.min(74,Math.round(val*100)));const dec=Math.floor(n/10);
+ if(phase==='down'){const q=Math.min(1,(now-downStart)/(120+380*from));val=from*(1-q*q);if(q>=1){phase='up';start=now-250;lastDecade=0;val=0;upFrom=0}}
+ else{p=Math.min(1,Math.max(0,(now-start-250)/1600));val=upFrom+(target-upFrom)*sweep(p)}
+ const n=Math.max(0,Math.min(100,Math.round(val*100)));const dec=Math.floor(n/10);
  if(phase==='up'&&dec>lastDecade){lastDecade=dec;haptic('tick')}
- if(phase==='up'&&p>=1&&!landed){landed=true;haptic('land');drawNum(74,true)}else if(!landed)drawNum(n,false);
+ if(phase==='up'&&p>=1&&!landed){landed=true;haptic('land');drawNum(Math.round(target*100),true)}else if(!landed)drawNum(n,false);
  pivot.rotation.z=(-250-220*val)*Math.PI/180;
  if(window.__mini)window.__mini(performance.now());
+ if(window.__consoleTick)window.__consoleTick(performance.now());
  R.render(scene,cam);requestAnimationFrame(tick)})();
 window.__ready=true;
 (function clock(){const d=new Date();document.getElementById('rt').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});document.getElementById('rd').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric'}).toUpperCase();setTimeout(clock,15000)})();

@@ -79,7 +79,7 @@ struct ProtoViewer: UIViewRepresentable {
                 guard let g = data?.gravity, let web else { return }
                 // the way the phone is held when the screen opens counts as "straight"; tilt is measured from there
                 if base == nil { base = g }
-                let x = (g.x - base!.x) * 3.0, y = (g.y - base!.y) * 3.0
+                let x = (g.x - base!.x) * 6.0, y = (g.y - base!.y) * 6.0
                 web.evaluateJavaScript("window.__tilt && window.__tilt(\(x), \(y))", completionHandler: nil)
             }
         }
