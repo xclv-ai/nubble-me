@@ -23,6 +23,22 @@ A founder of an early-stage AI startup who is neurodivergent (ADHD-like attentio
 7. Big readable type, high contrast, one decision per screen. **O** ("large and readable"), **R** C2, C4, C8, C9
 8. Cheap to run. **O** ("cost-efficient").
 
+## What an AI-startup founder needs from news — priorities (draft 2026-10-14, for the owner to reorder)
+| # | Need | The question in their head | What they do with it | How fast | The visual |
+|---|---|---|---|---|---|
+| 1 | **Platform risk** — a big AI lab (OpenAI, Google, Anthropic, Apple) ships what I sell | "Did ChatGPT just make my product a free feature?" | reposition, change the pitch, find what they can't do | hours — **code red** | you vs them, side by side |
+| 2 | **Competitor moves** — launch, price change, funding, acquisition, key hire | "What did *they* just do, and does it hurt me?" | answer publicly, adjust price/roadmap | same day — **code red** if on the watchlist | before → after; the number (price, $ raised) |
+| 3 | **Model & API changes** — new model, price cut, deprecation, limits | "Does my cost or quality change? Do I have to migrate?" | switch model, re-price, re-test | days | cost per 1M tokens old vs new; deadline on a calendar |
+| 4 | **Customer signals** — what is happening to the people who buy from me | "Who needs me more this week, and why?" | sales outreach, a post, a feature | days | the buyer's metric moving (bar / trend) |
+| 5 | **Money** — rounds in my category, investors active in my space, credit programs | "Who funds companies like mine right now, at what size?" | build the investor list, time the raise | weeks | round sizes on one scale; investor names |
+| 6 | **Distribution openings** — directories, app stores, events, partner programs, a story to newsjack | "Where can I get in front of buyers this week?" | apply, register, post the same day | days, often a deadline | calendar with the date; "open until…" |
+| 7 | **Regulation** — AI Act deadlines, privacy, copyright rulings | "Do I have to change something by a date?" | compliance task, a selling point | weeks, hard deadline | countdown to the date |
+| 8 | **Trends & language** — what buyers and investors are talking about | "Which words should my pitch and page use now?" | rewrite the headline, the deck | weeks | rising / falling terms |
+| 9 | **Talent** — layoffs, people leaving big labs | "Can I hire someone good now?" | reach out | weeks | — (low priority) |
+| 10 | **Tools** — something that saves me time or money | "Is there a shortcut?" | try it | whenever | — (lowest) |
+
+How this changes the app: a story's **type** (one of the ten) decides its visual and its urgency; 1–2 can be code red, 3, 6, 7 carry a date, 4–5 carry a number. The founder's product URL + watchlist decide relevance; the type decides what the screen looks like.
+
 ## What they will hate (each one already happened on this project)
 - Walls of text, small grey type, fixed headers eating the screen (failures N09, N18, N20).
 - Buttons instead of the swipe (N19).
