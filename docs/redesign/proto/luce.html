@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Nubble · Luce</title>
+<style>
+@font-face{font-family:Geist;src:url(fonts/Geist-Variable.woff2)}
+:root{--ink:#EDEDED;--grey:#8A8A8A;--red:#E8213B;--yel:#F2D32B;--green:#2FB65A;--org:#F0641E;--blue:#2F6BFF}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{height:100%;background:#cfd2d6;overflow:hidden;font-family:Geist,system-ui;color:var(--ink)}
+/* the device: thick rubber frame, glass screen, red + yellow edge buttons */
+.dev{position:fixed;inset:calc(env(safe-area-inset-top) + 6px) 6px calc(env(safe-area-inset-bottom) + 6px);border-radius:46px;background:linear-gradient(160deg,#3a3c40,#121315 40%,#0a0a0b);padding:9px;box-shadow:0 20px 50px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.12)}
+.dev:before{content:"";position:absolute;top:-5px;right:64px;width:30px;height:8px;border-radius:4px 4px 0 0;background:linear-gradient(#ff4a5c,#a3101f);box-shadow:0 0 0 2px #1a1b1d}
+.dev:after{content:"";position:absolute;right:-5px;top:110px;width:8px;height:26px;border-radius:0 4px 4px 0;background:linear-gradient(90deg,#f2d32b,#9c8410);box-shadow:0 0 0 2px #1a1b1d}
+.scr{position:relative;height:100%;border-radius:38px;background:#000;overflow:hidden;padding:26px 18px 18px;display:flex;flex-direction:column}
+.scr:after{content:"";position:absolute;inset:0;border-radius:38px;background:linear-gradient(125deg,rgba(255,255,255,.07),transparent 28%);pointer-events:none}
+/* flat UI, as on the Luce screen */
+.tag{display:inline-block;border:1.5px solid;border-radius:2px;padding:2px 6px 1px;font:500 11px/1.2 Geist;letter-spacing:.06em;text-transform:uppercase}
+.tag.g{color:var(--green);border-color:var(--green)}.tag.y{color:var(--yel);border-color:var(--yel)}.tag.r{color:var(--red);border-color:var(--red)}
+.num{font:300 36px/1.05 Geist;letter-spacing:-.01em;margin:4px 0 10px}.num small{font-size:24px;margin-left:4px}
+.row1{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+.time{font:500 15px/1.3 Geist;letter-spacing:.02em}.time .d{color:var(--grey)}.time .big{font:300 30px/1.1 Geist;margin-top:8px}.time .s{font:500 13px/1.35 Geist;color:var(--grey)}
+.charts{display:grid;grid-template-columns:1fr 1px auto;gap:12px;margin-top:6px}
+.charts svg{display:block;width:100%}
+.vr{background:#333}
+.ax{display:flex;justify-content:space-between;font:500 10px Geist;color:var(--grey);margin-top:2px}
+/* glass pods (3D) */
+.pod{position:relative;border-radius:50%;background:radial-gradient(circle at 50% 35%,#2b2c2f,#0b0b0c 62%,#000 72%);box-shadow:0 8px 18px rgba(0,0,0,.9),inset 0 2px 1px rgba(255,255,255,.18),inset 0 -3px 6px rgba(0,0,0,.9)}
+.pod .face{position:absolute;inset:9%;border-radius:50%;overflow:hidden;box-shadow:inset 0 0 0 2px #050505,inset 0 4px 10px rgba(0,0,0,.8)}
+.pod .face svg{width:100%;height:100%;display:block}
+.pod .gl{position:absolute;inset:9%;border-radius:50%;background:linear-gradient(130deg,rgba(255,255,255,.28) 0,rgba(255,255,255,.08) 38%,transparent 39%),radial-gradient(120% 60% at 30% 0,rgba(255,255,255,.12),transparent 60%);pointer-events:none}
+/* middle: signals in Luce typography */
+.mid{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:6px 2px}
+.wm{position:absolute;inset:0;display:grid;place-items:center;font:800 64px Geist;letter-spacing:-.02em;color:#0f0f10;text-shadow:0 1px 0 #1a1a1b,0 -1px 0 #050505;pointer-events:none}
+.sig{position:relative;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:baseline;cursor:pointer}
+.sig .tag{grid-row:1/3;align-self:start;margin-top:8px;min-width:86px;text-align:center}
+.sig .n{font:300 34px/1 Geist;letter-spacing:-.01em}.sig .n small{font-size:18px;color:var(--grey);margin-left:6px}
+.sig .h{font:500 14px/1.3 Geist;color:#bdbdbd}
+.sig:active .n{color:#fff}
+
+.sos{align-self:center;position:relative;padding:12px 26px;border-radius:999px;background:linear-gradient(#0c0c0d,#000);box-shadow:inset 0 0 0 1.5px #2a2a2c,inset 0 2px 3px rgba(255,255,255,.08),0 3px 8px #000;cursor:pointer}
+.sos span{font:600 14px Geist;letter-spacing:.08em;color:#ff4a5c;text-shadow:0 0 10px rgba(255,40,60,.9),0 0 22px rgba(255,40,60,.5);animation:sosb 1.4s ease-in-out infinite}
+@keyframes sosb{50%{opacity:.45}}
+.cluster{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:0;margin:2px 0}
+.cp{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.cp.side{margin-bottom:20px}.cp.side:first-child{margin-right:-10px;z-index:1}.cp.side:last-child{margin-left:-10px;z-index:1}
+.cl{font:500 11px/1.3 Geist;color:#8A8A8A;text-align:center}.cl b{display:block;font:500 13px Geist;color:#EDEDED;letter-spacing:.02em}
+.mid{gap:12px}
+/* bottom: flat icons, chrome paddles, glossy buttons, knob */
+.icons,.ctrls{display:grid;grid-template-columns:repeat(3,30px) 1fr repeat(2,30px);gap:6px;align-items:center;justify-items:center}
+.icons{margin-bottom:10px}.icons .lab{font:500 8.5px Geist;letter-spacing:.06em;color:var(--grey);text-transform:uppercase}
+.ring{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:500 12px Geist;background:conic-gradient(var(--red) 0 50%,var(--blue) 50% 100%);-webkit-mask:radial-gradient(circle,transparent 14px,#000 15px);mask:radial-gradient(circle,transparent 14px,#000 15px)}
+.ringw{position:relative;width:34px;height:34px;display:grid;place-items:center;font:500 12px Geist}.ringw .ring{position:absolute;inset:0}
+.pad{position:relative;width:28px;height:44px;cursor:pointer}
+.pad .hole{position:absolute;left:5px;right:5px;top:6px;bottom:6px;border-radius:12px;background:linear-gradient(#000,#1a1a1c);box-shadow:inset 0 2px 4px #000,0 1px 0 rgba(255,255,255,.08)}
+.pad .lv{position:absolute;left:1px;right:1px;top:15px;height:14px;border-radius:7px;background:linear-gradient(180deg,#fdfdfd,#c3c6ca 45%,#74787d);box-shadow:0 4px 5px rgba(0,0,0,.8);transition:transform .14s cubic-bezier(.3,1.7,.5,1)}
+.pad.on .lv{transform:translateY(-9px) scaleY(.85)}.pad:not(.on) .lv{transform:translateY(8px) scaleY(.85)}
+.bt{display:flex;gap:6px;align-items:center;justify-content:center}
+.gb{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 40% 28%,#3d3e42,#0d0d0e 62%);box-shadow:0 3px 6px rgba(0,0,0,.9),inset 0 1px 1px rgba(255,255,255,.25);display:grid;place-items:center;cursor:pointer}
+.gb:active{transform:scale(.95)}
+.knob{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 50% 50%,#000 46%,#2a2b2e 50%,#0a0a0b 62%,#3a3b3f 70%,#060606 74%);box-shadow:0 4px 8px rgba(0,0,0,.9),inset 0 1px 1px rgba(255,255,255,.2);cursor:pointer}
+/* dossier */
+.dos{position:fixed;inset:0;background:#000;transform:translateY(102%);transition:transform .4s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 14px) 20px calc(env(safe-area-inset-bottom) + 14px);z-index:9}
+.dos.on{transform:none}
+.dtop{display:flex;justify-content:space-between;align-items:center}
+.close{width:44px;height:44px}
+.dpod{align-self:center;margin:18px 0 14px}
+.dh{font:300 30px/1.12 Geist;letter-spacing:-.01em;margin-top:12px}
+.lines{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+.ln{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:center;font:500 14px Geist;color:#bdbdbd}
+.ln .b{height:3px;background:#333;position:relative}.ln .b i{position:absolute;left:0;top:-1px;height:5px;background:var(--ink)}
+.ln .v{font:300 20px Geist;color:var(--ink)}
+.do{margin-top:auto;display:flex;gap:12px;align-items:center;padding-top:14px;border-top:1px solid #222}
+.do .t{font:400 17px/1.35 Geist;flex:1}
+.src{font:500 10px/1.4 Geist;letter-spacing:.04em;color:#555;margin-top:12px;text-transform:uppercase}
+</style></head><body>
+<div class="dev"><div class="scr">
+  <div class="row1">
+    <div>
+      <span class="tag r">● Code red</span>&nbsp;<span class="tag g">Mode: war</span>
+      <div class="num">1<small>rival alarm</small></div>
+      <span class="tag y">Market: AI visibility</span>
+      <div class="num">3<small>signals</small></div>
+    </div>
+    <div class="pod" id="clock" style="width:132px;height:132px"><div class="face"><svg viewBox="0 0 200 200" id="clkface"></svg></div><div class="gl"></div></div>
+  </div>
+  <div class="charts">
+    <div>
+      <svg viewBox="0 0 220 56" preserveAspectRatio="none" height="44"><g stroke="#1d1d1d">${''}</g>
+        <polyline fill="none" stroke="#EDEDED" stroke-width="1.6" points="0,36 18,30 34,38 52,26 70,32 90,22 110,34 128,28 146,30 166,20 186,14 200,10"/>
+        <line x1="200" y1="0" x2="200" y2="56" stroke="#E8213B" stroke-width="1.5"/><line x1="0" y1="55" x2="220" y2="55" stroke="#333"/>
+        <text x="219" y="52" fill="#8A8A8A" font-size="8" text-anchor="end" font-family="Geist">pressure</text></svg>
+      <svg viewBox="0 0 220 56" preserveAspectRatio="none" height="44" style="margin-top:4px">
+        <polyline fill="none" stroke="#F2D32B" stroke-width="1.6" points="0,30 12,18 22,40 34,14 44,44 58,20 70,36 84,12 96,46 110,22 124,40 140,16 156,38 172,24 186,32 200,18"/>
+        <path fill="none" stroke="#2FB65A" stroke-width="2.2" d="M22,40 L26,44 L30,40 M44,44 L46,48 L50,44 M96,46 L98,50 L102,46"/>
+        <line x1="200" y1="0" x2="200" y2="56" stroke="#E8213B" stroke-width="1.5"/><line x1="0" y1="55" x2="220" y2="55" stroke="#333"/>
+        <text x="219" y="52" fill="#F2D32B" font-size="8" text-anchor="end" font-family="Geist">mentions</text></svg>
+      <div class="ax"><span>7d</span><span>|</span><span>|</span><span>|</span><span>|</span><span>now</span></div>
+    </div>
+    <div class="vr"></div>
+    <div class="time"><div id="tm"></div><div class="d" id="dt"></div><div class="big">6d</div><div class="s">ZOOMTOPIA EU</div><div class="s">21 OCT</div></div>
+  </div>
+  <div class="mid">
+    <div class="wm">nubble</div>
+    <div class="sos" onclick="openS(0)"><span>CODE RED · PROFOUND</span></div>
+    <div class="cluster">
+      <div class="cp side" onclick="openS(0)"><div class="pod" style="width:100px;height:100px"><div class="face"><svg viewBox="0 0 200 200" id="g0"></svg></div><div class="gl"></div></div><div class="cl"><b>Profound</b>rival · raised</div></div>
+      <div class="cp mainp" onclick="openS(3)"><div class="pod" style="width:158px;height:158px"><div class="face"><svg viewBox="0 0 200 200" id="g1"></svg></div><div class="gl"></div></div><div class="cl"><b>Pressure</b>on pokpok.ai today</div></div>
+      <div class="cp side" onclick="openS(2)"><div class="pod" style="width:100px;height:100px"><div class="face"><svg viewBox="0 0 200 200" id="g2"></svg></div><div class="gl"></div></div><div class="cl"><b>Jev</b>cost per 1M</div></div>
+    </div>
+    <div class="sig" onclick="openS(1)"><span class="tag y">Rival</span><div class="n">$4M<small>Peec AI</small></div><div class="h">a year in revenue after 10 months</div></div>
+  </div>
+  <div class="icons">
+    <span class="lab">Rivals</span><span class="lab">Models</span><span class="lab">Money</span>
+    <div class="ringw"><div class="ring"></div>1</div>
+    <span class="lab">Alarm</span><span class="lab">Sound</span>
+  </div>
+  <div class="ctrls">
+    <div class="pad on"><div class="hole"></div><div class="lv"></div></div>
+    <div class="pad on"><div class="hole"></div><div class="lv"></div></div>
+    <div class="pad"><div class="hole"></div><div class="lv"></div></div>
+    <div class="bt">
+      <div class="gb" title="Alarm"><svg width="18" height="18"><circle cx="9" cy="9" r="6.5" fill="none" stroke="#E8213B" stroke-width="2.4" stroke-dasharray="20.4 20.4" transform="rotate(-90 9 9)"/><circle cx="9" cy="9" r="6.5" fill="none" stroke="#2F6BFF" stroke-width="2.4" stroke-dasharray="20.4 20.4" stroke-dashoffset="20.4" transform="rotate(-90 9 9)"/></svg></div>
+      <div class="gb" title="Sources"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 1.8l1.6 1.9 2.4-.5.5 2.4 2.2 1.1-1 2.3 1 2.3-2.2 1.1-.5 2.4-2.4-.5L9 16.2l-1.6-1.9-2.4.5-.5-2.4-2.2-1.1 1-2.3-1-2.3 2.2-1.1.5-2.4 2.4.5z" fill="none" stroke="#F2D32B" stroke-width="1.8"/></svg></div>
+      <div class="gb" title="Widgets"><svg width="18" height="18"><rect x="5" y="2" width="8" height="14" rx="2" fill="none" stroke="#EDEDED" stroke-width="1.8"/></svg></div>
+      <div class="knob" title="Scan" onclick="openS(0)"></div>
+    </div>
+    <div class="pad on"><div class="hole"></div><div class="lv"></div></div>
+    <div class="pad"><div class="hole"></div><div class="lv"></div></div>
+  </div>
+</div></div>
+
+<div class="dos" id="dos">
+  <div class="dtop"><span id="dtag"></span><div class="gb close" onclick="dos.classList.remove('on')"><svg width="14" height="14"><path d="M2 2l10 10M12 2L2 12" stroke="#EDEDED" stroke-width="2"/></svg></div></div>
+  <div class="dh" id="dh"></div>
+  <div class="pod dpod" style="width:250px;height:250px"><div class="face"><svg viewBox="0 0 200 200" id="dface"></svg></div><div class="gl"></div></div>
+  <div class="lines" id="lines"></div>
+  <div class="src" id="src"></div>
+  <div class="do"><div class="pad on" onclick="this.classList.toggle('on')"><div class="hole"></div><div class="lv"></div></div><div class="t" id="todo"></div></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+// ---------- dial faces (flat drawing inside the 3D pod) ----------
+function clockFace(){let s='<rect width="200" height="200" fill="#000"/>';
+ for(let i=0;i<60;i++){const a=i*6*Math.PI/180,r1=i%5?88:82;s+=`<line x1="${100+Math.sin(a)*r1}" y1="${100-Math.cos(a)*r1}" x2="${100+Math.sin(a)*92}" y2="${100-Math.cos(a)*92}" stroke="#ddd" stroke-width="${i%5?1:2}"/>`}
+ for(let h=1;h<=12;h++){const a=h*30*Math.PI/180;s+=`<text x="${100+Math.sin(a)*68}" y="${100-Math.cos(a)*68+7}" fill="#EDEDED" font-family="Geist" font-size="20" text-anchor="middle">${h}</text>`}
+ s+='<g id="hh"><line x1="100" y1="100" x2="100" y2="58" stroke="#EDEDED" stroke-width="6" stroke-linecap="round"/></g><g id="mh"><line x1="100" y1="100" x2="100" y2="30" stroke="#EDEDED" stroke-width="4" stroke-linecap="round"/></g><g id="sh"><line x1="100" y1="118" x2="100" y2="22" stroke="#E8213B" stroke-width="2"/></g><circle cx="100" cy="100" r="6" fill="#E8213B"/>';
+ return s}
+// gauge face like the Luce speedometer: amber scale, white upper part, orange needle, one big number
+function gauge(o){let s='<rect width="200" height="200" fill="#000"/>';const a0=-225,a1=45;const ang=v=>(a0+(a1-a0)*v)*Math.PI/180;
+ for(let i=0;i<=80;i++){const v=i/80,a=ang(v),maj=i%10===0,r1=maj?76:83;s+=`<line x1="${100+Math.cos(a)*r1}" y1="${100+Math.sin(a)*r1}" x2="${100+Math.cos(a)*90}" y2="${100+Math.sin(a)*90}" stroke="${v<o.warm?o.c1:'#EDEDED'}" stroke-width="${maj?3:1}"/>`}
+ o.labels.forEach((l,k)=>{const a=ang(k/(o.labels.length-1));s+=`<text x="${100+Math.cos(a)*62}" y="${100+Math.sin(a)*62+5}" fill="${k/(o.labels.length-1)<o.warm?o.c1:'#EDEDED'}" font-family="Geist" font-size="13" text-anchor="middle">${l}</text>`});
+ if(o.arc){const r=56,st=ang(0.62),en=ang(0.62+0.38*o.arc);s+=`<path d="M${100+Math.cos(st)*r} ${100+Math.sin(st)*r} A${r} ${r} 0 0 1 ${100+Math.cos(en)*r} ${100+Math.sin(en)*r}" fill="none" stroke="${o.arcC}" stroke-width="5"/>`}
+ s+=`<circle cx="100" cy="100" r="34" fill="none" stroke="#222"/><text x="100" y="106" fill="#EDEDED" font-family="Geist" font-weight="300" font-size="${o.big.length>4?24:30}" text-anchor="middle">${o.big}</text><text x="100" y="124" fill="#8A8A8A" font-family="Geist" font-size="10" text-anchor="middle">${o.unit}</text>`;
+ const na=ang(o.v);s+=`<line x1="${100+Math.cos(na)*40}" y1="${100+Math.sin(na)*40}" x2="${100+Math.cos(na)*90}" y2="${100+Math.sin(na)*90}" stroke="${o.needle}" stroke-width="5" stroke-linecap="round"/>`;
+ return s}
+$('clkface').innerHTML=clockFace();
+function tick(){const d=new Date(),h=d.getHours()%12,m=d.getMinutes(),sc=d.getSeconds();
+ $('hh').setAttribute('transform',`rotate(${h*30+m*.5} 100 100)`);$('mh').setAttribute('transform',`rotate(${m*6+sc*.1} 100 100)`);$('sh').setAttribute('transform',`rotate(${sc*6} 100 100)`);
+ $('tm').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});$('dt').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric'}).toUpperCase()}
+tick();setInterval(tick,1000);
+document.querySelectorAll('.ctrls .pad').forEach(p=>p.onclick=()=>{p.classList.toggle('on');navigator.vibrate&&navigator.vibrate(14)});
+// ---------- the three signals ----------
+const S=[
+ {tag:'<span class="tag r">● Code red · rival</span>',head:'Profound is valued at a billion dollars.',
+  g:{v:155/200,labels:['0','40','80','120','160','200'],c1:'#F2D32B',warm:.6,big:'$155M',unit:'raised · $1B value',needle:'#F0641E',arc:.0},
+  lines:[['Profound','$155M',100],['Peec AI','$29M',19]],
+  todo:'One line on pokpok.ai: “Profound tells you if AI sees you. We tell you what it thinks of you.”',
+  src:'Profound and Peec figures as reported in 2026 comparisons (Sacra, Piabo); not confirmed by the companies'},
+ {tag:'<span class="tag y">Rival</span>',head:'Peec AI reached $4M a year in 10 months.',
+  g:{v:.4,labels:['0','2','4','6','8','10'],c1:'#F2D32B',warm:.6,big:'$4M',unit:'ARR · 10 months',needle:'#F0641E',arc:.0},
+  lines:[['Revenue','$4M+',100],['Raised','$29M',100]],
+  todo:'Comparison page: Peec counts mentions, POKPOK reads meaning. Ship Friday.',
+  src:'As reported in a 2026 comparison (Piabo); not confirmed by Peec'},
+ {tag:'<span class="tag g">Your stack</span>',head:'Jev is out. Your decisions just got cheaper.',
+  g:{v:.042/.22,labels:['0','.05','.10','.15','.20','.25'],c1:'#2FB65A',warm:.3,big:'$0.042',unit:'per 1M input tokens',needle:'#2FB65A',arc:.0},
+  lines:[['Jev','$0.042',19],['GPT-6 Luna','$0.11',50],['GPT-5.6 Luna','$0.22',100]],
+  todo:'Move the territory step fully to Jev; put the saving in the cost table.',
+  src:'TypeSafe Jev launch 15 Sep 2026; Luna prices from POKPOK AWS notes, 4 Oct 2026'}];
+S.push({tag:'<span class="tag g">Mode: war</span>',head:'Pressure on pokpok.ai: 74 of 100, rising since Monday.',
+  g:{v:.74,labels:['0','20','40','60','80','100'],c1:'#F2D32B',warm:.6,big:'74',unit:'pressure',needle:'#F0641E'},
+  lines:[['Profound','$1B',100],['Peec AI','$4M ARR',40],['Jev','cheaper',20]],
+  todo:'Start with the code red: Profound. Then Peec. Jev is good news; it can wait.',
+  src:'Pressure = Nubble’s own score of today’s signals for your product (illustrative in this mockup)'});
+function openS(i){const s=S[i];$('dtag').innerHTML=s.tag;$('dh').textContent=s.head;$('dface').innerHTML=gauge(s.g);
+ $('lines').innerHTML=s.lines.map(l=>`<div class="ln"><span>${l[0]}</span><div class="b"><i style="width:${l[2]}%"></i></div><span class="v">${l[1]}</span></div>`).join('');
+ $('todo').textContent=s.todo;$('src').textContent=s.src;$('dos').classList.add('on');navigator.vibrate&&navigator.vibrate(10)}
+window.openS=openS;
+$('g0').innerHTML=gauge({v:155/200,labels:['0','50','100','150','200'],c1:'#F2D32B',warm:.6,big:'$155M',unit:'raised',needle:'#F0641E'});
+$('g1').innerHTML=gauge({v:.74,labels:['0','20','40','60','80','100'],c1:'#F2D32B',warm:.6,big:'74',unit:'pressure',needle:'#F0641E',arc:.8,arcC:'#2FB65A'});
+$('g2').innerHTML=gauge({v:.042/.22,labels:['0','.05','.10','.15','.20'],c1:'#2FB65A',warm:.3,big:'.042',unit:'$ / 1M',needle:'#2FB65A'});
+</script>
+</body></html>
