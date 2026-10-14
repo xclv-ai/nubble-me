@@ -122,6 +122,58 @@ svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;o
 .discharge h1{font:600 40px/1 Geist}
 .rx{font:500 17px/1.35 Geist;margin-top:8px;color:var(--yel)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== 2026 restyle: layered glass, soft radii, one family, colour as light ===== */
+html,body{background:#041F25}
+body:before{content:"";position:fixed;inset:-20% -20% auto;height:70%;background:radial-gradient(60% 50% at 30% 20%,rgba(255,196,214,.16),transparent 70%),radial-gradient(50% 40% at 85% 10%,rgba(245,249,0,.08),transparent 70%);pointer-events:none}
+.meta{font:500 14px Geist;letter-spacing:0;text-transform:none;opacity:.6}
+.voice{font:italic 28px/1.12 Serif}
+.sum span{font:600 14px Geist;border:0;border-radius:999px;padding:8px 14px;background:rgba(255,255,255,.08);backdrop-filter:blur(20px)}
+.sum span.r{background:linear-gradient(135deg,#FF5A6E,#FF8A9B);box-shadow:0 6px 24px rgba(255,90,110,.45)}
+.list{gap:14px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04));color:var(--ink);border-radius:28px;padding:18px 18px 16px;border:1px solid rgba(255,255,255,.09);box-shadow:0 20px 50px rgba(0,0,0,.35);backdrop-filter:blur(24px)}
+.card.red{border-left:0;background:linear-gradient(160deg,rgba(255,90,110,.32),rgba(255,90,110,.06) 55%,rgba(255,255,255,.04));border:1px solid rgba(255,120,140,.45);box-shadow:0 20px 60px rgba(255,90,110,.25)}
+.card .ty{font:600 13px Geist;letter-spacing:0;text-transform:none;opacity:1;align-items:center}
+.card .ty span:first-child{background:rgba(255,255,255,.1);padding:6px 11px;border-radius:999px}
+.card .ty .u{color:var(--yel)}.card.red .ty .u{color:#FFB3BE}
+.card h3{font:650 26px/1.12 Geist;letter-spacing:-.02em;margin:14px 0 14px}
+.mini{gap:8px}
+.mini .a,.mini .b{border-radius:20px;padding:14px;font:500 15px/1.3 Geist}
+.mini .a{background:rgba(255,196,214,.16);color:var(--ink)}.mini .b{border:0;background:rgba(245,249,0,.12);color:var(--ink)}
+.mini small{font:600 12px Geist;opacity:.7;letter-spacing:.02em}
+.mini .price{display:block;font:700 30px/1 Geist;letter-spacing:-.02em;margin:6px 0 6px}
+.mini .a .price{color:var(--pink)}.mini .b .price{color:var(--yel)}
+.mini .big{font:750 56px/1 Geist;background:linear-gradient(120deg,var(--pink),var(--yel));-webkit-background-clip:text;background-clip:text;color:transparent}
+.mini .lbl{font:500 15px/1.35 Geist;opacity:.85}
+.cal{gap:8px;align-items:stretch}.cal div{border:0;border-radius:18px;background:rgba(255,255,255,.08);padding:10px 0}
+.cal b{font:700 26px Geist}.cal i{font:500 12px Geist;opacity:.7}
+.cal .cd{background:var(--yel);color:#062A31}.cal .cd b{font:750 26px Geist}
+.card .act{border-top:0;margin-top:4px;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.06);font:600 16px/1.3 Geist;align-items:center}
+.card .act:before{content:"";flex:0 0 26px;height:26px;border-radius:50%;border:2px solid var(--yel)}
+.card.done{opacity:.4}
+/* reading pages */
+.back{border-radius:999px;background:rgba(255,255,255,.08);border:0}
+.pager button{font:600 14px Geist;letter-spacing:0;border-radius:999px;border:0;padding:9px 13px;min-height:40px}
+.pager button.on{background:rgba(255,255,255,.14);border:0}
+.page{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.035));color:var(--ink);border-radius:28px;border:1px solid rgba(255,255,255,.09)}
+.page.red{border-top:1px solid rgba(255,120,140,.5);background:linear-gradient(170deg,rgba(255,90,110,.22),rgba(255,255,255,.04) 45%)}
+.page .lab{font:600 13px Geist;letter-spacing:0;text-transform:none;opacity:.6}
+.page h1{font:700 32px/1.08 Geist;letter-spacing:-.02em}.page h2{font:650 19px/1.25 Geist}
+.page .his{color:var(--pink)}
+.page b{font:600 13px Geist;letter-spacing:0;opacity:.6}
+.node .ic{border:0;border-radius:20px;background:rgba(255,255,255,.1)}
+.chips span{border-radius:999px;background:rgba(255,255,255,.1);color:var(--ink);font:600 13px Geist}
+.row{border-top:1px solid rgba(255,255,255,.1)}
+.meter{gap:5px}.meter i{border:0;border-radius:999px;width:24px;height:10px;background:rgba(255,255,255,.14)}
+.tile{border-left:0;border-radius:18px;background:rgba(255,255,255,.08)}
+.tile .n{font:700 26px/1.05 Geist;color:var(--yel)}
+.tl:before{background:rgba(255,255,255,.3)}.ti .dot{background:#0b3a43;border-color:rgba(255,255,255,.5)}.ti.now .dot{background:var(--yel);border-color:var(--yel)}
+.vs .col{border-radius:18px}.vs .them{background:rgba(255,196,214,.16);color:var(--ink)}.vs .us{border:0;background:rgba(245,249,0,.12)}
+.do .box{border-radius:50%;border-color:var(--yel)}
+.stamp,.shred{border-radius:999px;height:58px}
+.stamp{box-shadow:0 10px 30px rgba(245,249,0,.25)}
+.shred{background:rgba(255,255,255,.08);border:0}
+.inked{border-radius:12px;border-color:var(--pink);color:var(--pink)}
 </style></head><body>
 
 <!-- HOME: today's signals, ranked by the founder's needs; each card = its type's mini infographic -->
@@ -198,9 +250,9 @@ var ORDER=[0,1,2];
 function drawTags(){
  $('sum').innerHTML=`<span class="r">● 1 code red</span><span>3 signals</span><span>~2 min</span>`;
  $('list').innerHTML=ORDER.map(i=>{const r=R[i];let m='';
-  if(r.mini==='vs')m=`<div class="mini"><div class="a"><small>CHATGPT</small>Shows the product on the buyer · free</div><div class="b"><small>POKPOK.AI</small>Shows how buyers & AI read it · €150</div></div>`;
+  if(r.mini==='vs')m=`<div class="mini"><div class="a"><small>ChatGPT</small><span class="price">Free</span>Shows the product on the buyer</div><div class="b"><small>pokpok.ai</small><span class="price">€150</span>Shows how buyers & AI read it</div></div>`;
   if(r.mini==='num')m=`<div class="mini"><div class="big">~1 in 2</div><div class="lbl">retail AI leaders train their staff on AI — your buyers can't read complex reports</div></div>`;
-  if(r.mini==='cal')m=`<div class="cal"><div><b>20</b><i>OCT · US</i></div><div><b>21</b><i>OCT · EU</i></div><div><b>22</b><i>OCT · APAC</i></div></div><div style="height:12px"></div>`;
+  if(r.mini==='cal')m=`<div class="cal"><div class="cd"><b>6</b><i>days left</i></div><div><b>20</b><i>Oct · US</i></div><div><b>21</b><i>Oct · EU</i></div><div><b>22</b><i>Oct · APAC</i></div></div><div style="height:12px"></div>`;
   return `<div class="card${r.red?' red':''}${done.includes(i)?' done':''}" onclick="open(${i})"><div class="ty"><span>${r.type}</span><span class="u">${r.urg}</span></div><h3>${r.s.headline}</h3>${m}<div class="act">${r.todo}</div></div>`}).join('')}
 function drawWires(){}
 // open a signal: the wire pulses first (anticipation), then the sheet prints
