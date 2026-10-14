@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>War Room</title>
+<style>
+@font-face{font-family:Geist;src:url(fonts/Geist-Variable.woff2)}
+@font-face{font-family:Mono;src:url(fonts/JetBrainsMono-Medium.woff2)}
+@font-face{font-family:Serif;src:url(fonts/InstrumentSerif-Italic.ttf);font-style:italic}
+:root{--ink:#F2EFE8;--dim:rgba(242,239,232,.55);--red:#FF2D3D;--pink:#FFC4D6;--yel:#F5F900;--teal:#0A3B44}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#040506;color:var(--ink);font-family:Geist,system-ui;overflow:hidden;touch-action:none}
+canvas{position:fixed;inset:0;display:block}
+.hud{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 12px) 18px 0;pointer-events:none}
+.bar{display:flex;justify-content:space-between;font:500 12px Mono;letter-spacing:.12em;color:var(--dim)}
+.bar b{color:var(--red);font-weight:500}
+.line{font:italic 24px/1.12 Serif;color:var(--pink);margin-top:10px;max-width:340px}
+.hint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 14px);text-align:center;font:500 12px Mono;letter-spacing:.12em;color:var(--dim);pointer-events:none}
+.widgets{position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom) + 40px);pointer-events:auto}
+.wbtn{font:600 13px Geist;color:var(--ink);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:10px 14px;backdrop-filter:blur(16px)}
+/* dossier: the infographic sheet that slides up */
+.dossier{position:fixed;inset:auto 0 0 0;height:88%;background:#0B0C0D;border-top:1px solid rgba(255,255,255,.12);border-radius:26px 26px 0 0;transform:translateY(105%);transition:transform .45s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;box-shadow:0 -30px 80px rgba(0,0,0,.7)}
+.dossier.on{transform:none}
+.dtop{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px}
+.grab{width:40px;height:5px;border-radius:3px;background:rgba(255,255,255,.25);margin:8px auto 0}
+.close{font:600 20px Geist;color:var(--ink);background:rgba(255,255,255,.08);border:0;border-radius:999px;width:44px;height:44px}
+.tabs{display:flex;gap:4px}.tabs button{font:600 14px Geist;color:var(--dim);background:none;border:0;border-radius:999px;padding:9px 13px}.tabs button.on{color:var(--ink);background:rgba(255,255,255,.1)}
+.track{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;gap:0}
+.track::-webkit-scrollbar{display:none}
+.pg{flex:0 0 100%;scroll-snap-align:start;overflow-y:auto;padding:8px 20px 30px}
+.kind{font:500 12px Mono;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.kind.red{color:var(--red)}
+h1{font:700 34px/1.04 Geist;letter-spacing:-.02em;margin:10px 0 8px}
+.so{font:italic 22px/1.18 Serif;color:var(--pink);margin-bottom:18px}
+.hero{display:flex;align-items:baseline;gap:12px;margin:6px 0 4px}
+.hero .n{font:800 72px/0.9 Geist;letter-spacing:-.04em}
+.hero .u{font:600 18px/1.2 Geist;color:var(--dim)}
+.cap{font:500 15px/1.4 Geist;color:var(--dim);margin-bottom:20px}
+.bars{display:flex;flex-direction:column;gap:12px;margin:14px 0 8px}
+.br{display:grid;grid-template-columns:96px 1fr 70px;align-items:center;gap:10px;font:600 15px Geist}
+.br .t{height:18px;border-radius:0 4px 4px 0;background:rgba(242,239,232,.85)}
+.br.dim .t{background:rgba(242,239,232,.28)}.br.hi .t{background:var(--yel)}.br.alarm .t{background:var(--red)}
+.br .v{font:600 15px Mono;text-align:right}
+.br.you .lbl{color:var(--yel)}
+.src{font:500 11px Mono;color:var(--dim);margin-top:16px;letter-spacing:.04em}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.tile{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px}
+.tile .n{font:700 28px/1 Geist;letter-spacing:-.02em}.tile .t{font:500 14px/1.3 Geist;color:var(--dim);margin-top:6px}
+.tile .s{display:inline-flex;align-items:center;gap:6px;font:600 13px Geist;margin-top:10px}.tile .s i{width:8px;height:8px;border-radius:50%}
+.do{display:flex;gap:14px;align-items:flex-start;font:650 24px/1.25 Geist;margin-top:10px}
+.do .box{flex:0 0 32px;height:32px;border-radius:50%;border:2.5px solid var(--yel);margin-top:2px}
+.act{display:flex;gap:10px;padding:12px 20px calc(env(safe-area-inset-bottom) + 12px)}
+.act button{flex:1;height:56px;border-radius:999px;font:650 18px Geist;border:0}
+.act .go{background:var(--yel);color:#0B0C0D}.act .no{background:rgba(255,255,255,.08);color:var(--ink)}
+/* widgets preview */
+.wsheet{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px}
+.wsheet.on{display:flex}
+.wg{width:170px;height:170px;border-radius:26px;background:#101112;border:1px solid rgba(255,255,255,.1);padding:14px;display:flex;flex-direction:column;justify-content:space-between}
+.wg.m{width:350px}
+.wg .k{font:500 11px Mono;letter-spacing:.1em;color:var(--dim)}
+.wg .big{font:800 46px/0.9 Geist;letter-spacing:-.03em}
+.wrow{display:flex;gap:14px}
+</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head><body>
+<div class="hud">
+  <div class="bar"><span>POKPOK.AI · WAR ROOM</span><span id="clock"></span></div>
+  <div class="line" id="line">Two competitors moved overnight. One of them has a billion dollars. <b style="font-style:normal">Lift the cover.</b></div>
+</div>
+<div class="hint" id="hint">TILT · FLIP A SWITCH · LIFT THE COVER · X-RAY</div>
+<div class="widgets"><button class="wbtn" onclick="document.getElementById('ws').classList.add('on')">Widgets</button></div>
+
+<div class="dossier" id="dossier">
+  <div class="grab"></div>
+  <div class="dtop"><button class="close" onclick="closeD()">✕</button><div class="tabs" id="tabs"></div><span class="bar" id="dcount"></span></div>
+  <div class="track" id="track"></div>
+  <div class="act"><button class="go" onclick="decide(true)">Do it</button><button class="no" onclick="decide(false)">Not now</button></div>
+</div>
+
+<div class="wsheet" id="ws" onclick="this.classList.remove('on')">
+  <div class="wrow">
+    <div class="wg"><div class="k">ALARM</div><div class="big" style="color:var(--red)">1</div><div style="font:600 14px Geist">Profound · $1B</div></div>
+    <div class="wg"><div class="k">PRESSURE</div><div class="big">74</div><div style="font:600 14px Geist;color:var(--dim)">rising since Mon</div></div>
+  </div>
+  <div class="wg m"><div class="k">TODAY · 3 SIGNALS</div>
+    <div style="display:flex;flex-direction:column;gap:8px;font:600 15px Geist">
+      <div><span style="color:var(--red)">●</span> Profound raised $155M</div>
+      <div><span style="color:var(--pink)">●</span> Peec AI: $4M ARR in 10 months</div>
+      <div><span style="color:var(--yel)">●</span> Jev: $0.042 per 1M tokens</div></div></div>
+  <div class="bar" style="margin-top:6px">HOME SCREEN WIDGETS · TAP TO CLOSE</div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+
+// ---------- the three signals (facts from public coverage; see .src lines) ----------
+const SIG=[
+ {id:'profound',kind:'Competitor · code red',red:true,impact:0.95,lamp:0xff2d3d,
+  plate:['01','PROFOUND','$1B VALUATION'],
+  head:'Profound is now worth a billion dollars.',
+  so:'They sell "AI visibility" to the Fortune 500. Buyers will now ask you why you aren\'t them.',
+  chart:`<div class="hero"><span class="n">$155M</span><span class="u">raised<br>$1B valuation</span></div>
+   <div class="cap">Money raised by the AI-visibility tools your buyers compare you with</div>
+   <div class="bars">
+    <div class="br alarm"><span class="lbl">Profound</span><div class="t" style="width:100%"></div><span class="v">$155M</span></div>
+    <div class="br dim"><span class="lbl">Peec AI</span><div class="t" style="width:18.7%"></div><span class="v">$29M</span></div>
+   </div>
+   <div class="cap" style="margin-top:22px">Where each one sells — price per month</div>
+   <div class="bars">
+    <div class="br dim"><span class="lbl">Otterly</span><div class="t" style="width:20%"></div><span class="v">$29</span></div>
+    <div class="br you hi"><span class="lbl">pokpok.ai</span><div class="t" style="width:34%"></div><span class="v">€50</span></div>
+    <div class="br alarm"><span class="lbl">Profound</span><div class="t" style="width:100%;background:repeating-linear-gradient(90deg,var(--red) 0 10px,transparent 10px 16px)"></div><span class="v">Ent.</span></div>
+   </div>
+   <div class="src">PROFOUND $155M / $1B AND PEEC $29M AS REPORTED BY SACRA, PIABO 2026 COMPARISON · OTTERLY FROM $29/MO · ENT. = ENTERPRISE, NO LIST PRICE</div>`,
+  facts:[['$1B','valuation, reported','Threat','#FF2D3D'],['Fortune 500','who they sell to','Threat','#FF2D3D'],['Enterprise','no list price','Gap','#F5F900'],['€50 / mo','your price — 20× under','Edge','#7CE0A3']],
+  todo:'Put one line on pokpok.ai: "Profound tells you if AI sees you. We tell you what it thinks of you."'},
+ {id:'peec',kind:'Competitor',red:false,impact:0.7,lamp:0xffc4d6,
+  plate:['02','PEEC AI','$4M ARR / 10 MO'],
+  head:'Peec AI hit $4M a year in 10 months.',
+  so:'Mid-market, your market. They are selling the thing you explain. Faster.',
+  chart:`<div class="hero"><span class="n">$4M+</span><span class="u">annual revenue<br>in 10 months</span></div>
+   <div class="cap">Peec AI's revenue run-rate, month 0 to month 10 (reported end point; straight line shown, the real path is not public)</div>
+   <svg viewBox="0 0 340 150" width="100%" style="margin:6px 0 4px"><line x1="10" y1="135" x2="330" y2="135" stroke="rgba(242,239,232,.25)"/><polyline points="10,135 330,15" fill="none" stroke="#FFC4D6" stroke-width="3" stroke-dasharray="6 6"/><circle cx="330" cy="15" r="7" fill="#FFC4D6"/><text x="10" y="150" fill="rgba(242,239,232,.55)" font-family="Geist" font-size="12">month 0</text><text x="282" y="150" fill="rgba(242,239,232,.55)" font-family="Geist" font-size="12">month 10</text></svg>
+   <div class="bars"><div class="br dim"><span class="lbl">Raised</span><div class="t" style="width:60%"></div><span class="v">$29M</span></div></div>
+   <div class="src">PEEC AI $29M RAISED, $4M+ ARR IN 10 MONTHS AS REPORTED BY PIABO 2026 COMPARISON · NOT CONFIRMED BY PEEC</div>`,
+  facts:[['$4M+','a year, after 10 months','Threat','#FF2D3D'],['$29M','raised','Threat','#FFC4D6'],['Mid-market','same buyers as you','Overlap','#F5F900'],['Monitoring','what they sell — not diagnosis','Edge','#7CE0A3']],
+  todo:'Write the comparison page: Peec counts mentions, POKPOK reads meaning. Ship it Friday.'},
+ {id:'jev',kind:'Your stack · cost',red:false,impact:0.45,lamp:0xf5f900,
+  plate:['03','JEV LAUNCHED','$0.042 / 1M'],
+  head:'Jev is out. The model you already use got a price.',
+  so:'Cheapest decisions on the market. Your margins just improved and you did nothing. Enjoy it.',
+  chart:`<div class="hero"><span class="n">$0.042</span><span class="u">per 1M input tokens<br>output free</span></div>
+   <div class="cap">Price per 1M input tokens — the models POKPOK runs</div>
+   <div class="bars">
+    <div class="br hi"><span class="lbl">Jev</span><div class="t" style="width:19%"></div><span class="v">$0.042</span></div>
+    <div class="br dim"><span class="lbl">GPT-6 Luna</span><div class="t" style="width:50%"></div><span class="v">$0.11</span></div>
+    <div class="br dim"><span class="lbl">GPT-5.6 Luna</span><div class="t" style="width:100%"></div><span class="v">$0.22</span></div>
+   </div>
+   <div class="cap" style="margin-top:20px">Answer time, vendor's own test: <b style="color:var(--ink)">70–500 ms</b></div>
+   <div class="src">TYPESAFE JEV LAUNCH 15 SEP 2026, $40M SEED (DCVC) · LUNA PRICES FROM POKPOK'S AWS NOTES 4 OCT 2026</div>`,
+  facts:[['$40M','seed, led by DCVC','Watch','#F5F900'],['2×','paid teams vs any launch on Vercel','Momentum','#F5F900'],['70–500 ms','answer time (vendor)','Edge','#7CE0A3'],['Waitlist','early access only','Risk','#FFC4D6']],
+  todo:'Move the territory step fully to Jev and put the saving in the cost table.'}
+];
+
+// ---------- renderer, scene, noir light ----------
+const R=new THREE.WebGLRenderer({antialias:true});
+R.setPixelRatio(Math.min(devicePixelRatio,2.5));R.setSize(innerWidth,innerHeight);
+R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
+document.body.prepend(R.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x040506);scene.fog=new THREE.Fog(0x040506,7,14);
+const pm=new THREE.PMREMGenerator(R);scene.environment=pm.fromScene(new RoomEnvironment(),0.04).texture;scene.environmentIntensity=0.35;
+const cam=new THREE.PerspectiveCamera(36,innerWidth/innerHeight,0.1,50);
+const camBase=new THREE.Vector3(0,7.6,5.2);cam.position.copy(camBase);cam.lookAt(0,0,0.15);
+const key=new THREE.SpotLight(0xfff1dc,90,20,0.55,0.45,1.6);key.position.set(-2.4,6.5,1.8);key.target.position.set(0,0,0);
+key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.bias=-0.0004;scene.add(key,key.target);
+scene.add(new THREE.AmbientLight(0x223038,0.35));
+const rim=new THREE.DirectionalLight(0x6fb6c4,0.5);rim.position.set(3,2,-4);scene.add(rim);
+
+// ---------- materials ----------
+const bakelite=new THREE.MeshPhysicalMaterial({color:0x14171a,roughness:0.42,metalness:0.0,clearcoat:0.8,clearcoatRoughness:0.25});
+const gun=new THREE.MeshPhysicalMaterial({color:0x2a2e33,roughness:0.28,metalness:0.92});
+const chrome=new THREE.MeshPhysicalMaterial({color:0xd8dde2,roughness:0.08,metalness:1});
+const blackRub=new THREE.MeshStandardMaterial({color:0x0a0b0c,roughness:0.85});
+function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t}
+
+// ---------- the console ----------
+const desk=new THREE.Mesh(new THREE.BoxGeometry(3.3,0.25,5.6),bakelite);desk.position.set(0,-0.13,0.3);desk.receiveShadow=true;scene.add(desk);
+const trim=new THREE.Mesh(new THREE.BoxGeometry(3.36,0.06,5.66),gun);trim.position.set(0,0.0,0.3);scene.add(trim);
+// engraved panel lines
+const plateTex=canvasTex(1024,1700,(g,w,h)=>{g.fillStyle='#121417';g.fillRect(0,0,w,h);
+ g.strokeStyle='rgba(255,255,255,.06)';g.lineWidth=3;for(let y=360;y<h;y+=430){g.beginPath();g.moveTo(40,y);g.lineTo(w-40,y);g.stroke()}
+ g.fillStyle='rgba(242,239,232,.35)';g.font='500 34px JetBrains Mono, monospace';g.fillText('CTRL · MARKET DEFENSE · SEC 01',60,70);});
+const panel=new THREE.Mesh(new THREE.BoxGeometry(3.1,0.04,5.4),new THREE.MeshPhysicalMaterial({map:plateTex,roughness:0.5,metalness:0.3,clearcoat:0.4}));
+panel.position.set(0,0.03,0.3);panel.receiveShadow=true;scene.add(panel);
+// screws
+for(const [x,z] of [[-1.42,-2.3],[1.42,-2.3],[-1.42,2.9],[1.42,2.9]]){const s=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.03,20),chrome);s.position.set(x,0.06,z);scene.add(s)}
+
+const clickable=[];
+// ---------- BIG RED ALARM under a flip cover ----------
+const alarm=new THREE.Group();alarm.position.set(0,0.05,-1.6);scene.add(alarm);
+const hazard=canvasTex(512,512,(g,w,h)=>{for(let i=-w;i<w*2;i+=64){g.fillStyle='#F5F900';g.beginPath();g.moveTo(i,0);g.lineTo(i+32,0);g.lineTo(i+32-h,h);g.lineTo(i-h,h);g.fill();g.fillStyle='#0b0b0b';g.beginPath();g.moveTo(i+32,0);g.lineTo(i+64,0);g.lineTo(i+64-h,h);g.lineTo(i+32-h,h);g.fill()}});
+const ring=new THREE.Mesh(new THREE.CylinderGeometry(0.95,1.0,0.06,64),new THREE.MeshStandardMaterial({map:hazard,roughness:0.6}));ring.receiveShadow=true;alarm.add(ring);
+const collar=new THREE.Mesh(new THREE.CylinderGeometry(0.66,0.7,0.22,64),chrome);collar.position.y=0.12;collar.castShadow=true;alarm.add(collar);
+const btnMat=new THREE.MeshPhysicalMaterial({color:0xd4101e,roughness:0.18,clearcoat:1,clearcoatRoughness:0.05,emissive:0xff1a2a,emissiveIntensity:0.25});
+const btn=new THREE.Mesh(new THREE.SphereGeometry(0.58,64,32,0,Math.PI*2,0,Math.PI/2.2),btnMat);btn.scale.set(1,0.55,1);btn.position.y=0.22;btn.castShadow=true;alarm.add(btn);
+const glow=new THREE.PointLight(0xff2030,3,3.2,1.8);glow.position.set(0,0.6,0);alarm.add(glow);
+const hinge=new THREE.Group();hinge.position.set(0,0.06,-0.78);alarm.add(hinge);
+const coverMat=new THREE.MeshPhysicalMaterial({color:0xffd0d6,roughness:0.04,metalness:0,clearcoat:1,transparent:true,opacity:0.22,depthWrite:false});
+const cover=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.62,1.56,1,1,1),coverMat);cover.position.set(0,0.31,0.78);cover.castShadow=false;hinge.add(cover);
+const coverEdge=new THREE.LineSegments(new THREE.EdgesGeometry(cover.geometry),new THREE.LineBasicMaterial({color:0xff6a78,transparent:true,opacity:0.5}));cover.add(coverEdge);
+cover.userData={act:'cover'};btn.userData={act:'alarm'};clickable.push(cover,btn);
+const alarmLabel=canvasTex(700,110,(g,w,h)=>{g.fillStyle='#0d0e10';g.fillRect(0,0,w,h);g.fillStyle='#FF2D3D';g.font='600 62px Geist, sans-serif';g.textAlign='center';g.fillText('CODE RED · PROFOUND',w/2,78)});
+const al=new THREE.Mesh(new THREE.PlaneGeometry(2.0,0.32),new THREE.MeshStandardMaterial({map:alarmLabel,roughness:0.4}));al.rotation.x=-Math.PI/2;al.position.set(0,0.06,-0.45);scene.add(al);
+
+// ---------- three channels: gauge · plate · switch · lamp ----------
+const chans=[];
+SIG.forEach((s,i)=>{
+ const z=0.25+i*1.05,G=new THREE.Group();G.position.set(0,0.05,z);scene.add(G);
+ // gauge
+ const dial=canvasTex(512,512,(g,w,h)=>{g.fillStyle='#e9e4d8';g.beginPath();g.arc(w/2,h/2,250,0,7);g.fill();
+  g.strokeStyle='#111';g.lineWidth=6;for(let k=0;k<=10;k++){const a=Math.PI*0.8+k*Math.PI*1.4/10;g.beginPath();g.moveTo(w/2+Math.cos(a)*200,h/2+Math.sin(a)*200);g.lineTo(w/2+Math.cos(a)*(k%5?225:240),h/2+Math.sin(a)*(k%5?225:240));g.stroke()}
+  g.strokeStyle='#d4101e';g.lineWidth=18;g.beginPath();g.arc(w/2,h/2,214,Math.PI*0.8+Math.PI*1.4*0.7,Math.PI*2.2);g.stroke();
+  g.fillStyle='#111';g.font='600 40px Geist, sans-serif';g.textAlign='center';g.fillText('IMPACT',w/2,h/2+120)});
+ const face=new THREE.Mesh(new THREE.CircleGeometry(0.36,64),new THREE.MeshPhysicalMaterial({map:dial,roughness:0.5}));face.rotation.x=-Math.PI/2;face.position.set(-1.0,0.05,0);G.add(face);
+ const bezel=new THREE.Mesh(new THREE.TorusGeometry(0.37,0.045,16,64),chrome);bezel.rotation.x=Math.PI/2;bezel.position.set(-1.0,0.06,0);bezel.castShadow=true;G.add(bezel);
+ const glass=new THREE.Mesh(new THREE.CircleGeometry(0.36,64),new THREE.MeshPhysicalMaterial({roughness:0.02,transmission:1,thickness:0.05,transparent:true,opacity:0.25,clearcoat:1}));glass.rotation.x=-Math.PI/2;glass.position.set(-1.0,0.085,0);G.add(glass);
+ const needle=new THREE.Mesh(new THREE.BoxGeometry(0.02,0.012,0.3),new THREE.MeshStandardMaterial({color:0x111111}));needle.geometry.translate(0,0,-0.13);
+ const piv=new THREE.Group();piv.position.set(-1.0,0.07,0);piv.add(needle);G.add(piv);
+ // plate (engraved label)
+ const pt=canvasTex(900,300,(g,w,h)=>{g.fillStyle='#0e0f11';g.fillRect(0,0,w,h);g.strokeStyle='rgba(255,255,255,.15)';g.lineWidth=4;g.strokeRect(6,6,w-12,h-12);
+  g.fillStyle='rgba(242,239,232,.5)';g.font='500 40px JetBrains Mono, monospace';g.fillText(s.plate[0],36,74);
+  g.fillStyle=s.red?'#FF2D3D':'#F2EFE8';g.font='700 92px Geist, sans-serif';g.fillText(s.plate[1],36,170);
+  g.fillStyle='rgba(242,239,232,.75)';g.font='600 52px Geist, sans-serif';g.fillText(s.plate[2],36,250)});
+ const plate=new THREE.Mesh(new THREE.BoxGeometry(1.25,0.03,0.42),[gun,gun,new THREE.MeshPhysicalMaterial({map:pt,roughness:0.35,clearcoat:0.6}),gun,gun,gun]);plate.position.set(0.05,0.05,0);plate.castShadow=true;G.add(plate);
+ // toggle switch
+ const base=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.18,0.08,32),chrome);base.position.set(0.98,0.08,0);base.castShadow=true;G.add(base);
+ const leverG=new THREE.Group();leverG.position.set(0.98,0.12,0);G.add(leverG);
+ const lever=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.05,0.42,24),chrome);lever.position.y=0.21;lever.castShadow=true;leverG.add(lever);
+ const tip=new THREE.Mesh(new THREE.SphereGeometry(0.07,24,16),blackRub);tip.position.y=0.43;leverG.add(tip);
+ leverG.rotation.x=0.5;
+ // lamp
+ const lampMat=new THREE.MeshPhysicalMaterial({color:s.lamp,emissive:s.lamp,emissiveIntensity:0.15,roughness:0.15,clearcoat:1,transmission:0.3,thickness:0.2});
+ const lamp=new THREE.Mesh(new THREE.SphereGeometry(0.09,32,16,0,Math.PI*2,0,Math.PI/2),lampMat);lamp.position.set(1.36,0.06,0);G.add(lamp);
+ const ll=new THREE.PointLight(s.lamp,0,1.2,2);ll.position.set(1.36,0.25,0);G.add(ll);
+ [plate,lever,tip,base,face].forEach(o=>{o.userData={act:'open',i};clickable.push(o)});
+ chans.push({piv,leverG,lampMat,ll,s,target:-Math.PI*0.7+s.impact*Math.PI*1.4,cur:-Math.PI*0.7,on:false});
+});
+
+
+// ---------- X-RAY: the casing turns transparent, the open wires inside light up ----------
+const xrayMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,
+ uniforms:{c:{value:new THREE.Color(0x9fe8ff)},p:{value:2.2},k:{value:0.9}},
+ vertexShader:`varying vec3 vN;varying vec3 vV;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);vN=normalize(normalMatrix*normal);vV=normalize(-mv.xyz);gl_Position=projectionMatrix*mv;}`,
+ fragmentShader:`uniform vec3 c;uniform float p;uniform float k;varying vec3 vN;varying vec3 vV;void main(){float f=pow(1.-abs(dot(vN,vV)),p);gl_FragColor=vec4(c*(f*k+.04),f*.9+.04);}`});
+const wires=new THREE.Group();wires.visible=false;scene.add(wires);
+const wireMats=[];
+chans.forEach((c,i)=>{const z=0.25+i*1.05;
+ const pts=[new THREE.Vector3(0.98,-0.02,z),new THREE.Vector3(1.25,-0.06,z-0.3),new THREE.Vector3(1.2,-0.06,-0.9),new THREE.Vector3(0.6,-0.04,-1.5),new THREE.Vector3(0.15,0.02,-1.6)];
+ const m=new THREE.MeshBasicMaterial({color:c.s.lamp,transparent:true,opacity:0.95});wireMats.push(m);
+ wires.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),80,0.025,10),m));
+ const pts2=[new THREE.Vector3(-1.0,-0.02,z),new THREE.Vector3(-0.4,-0.07,z+0.25),new THREE.Vector3(0.4,-0.07,z+0.25),new THREE.Vector3(0.98,-0.02,z)];
+ wires.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts2),60,0.018,8),new THREE.MeshBasicMaterial({color:0xF2EFE8,transparent:true,opacity:0.6})));
+ const pulse=new THREE.Mesh(new THREE.SphereGeometry(0.05,12,8),new THREE.MeshBasicMaterial({color:0xffffff}));pulse.userData.curve=new THREE.CatmullRomCurve3(pts);pulse.userData.o=i*0.33;wires.add(pulse)});
+// the X-RAY switch: a key plate bottom-left
+const xk=new THREE.Group();xk.position.set(-1.05,0.05,3.05);scene.add(xk);
+const xkPlate=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.03,0.42),new THREE.MeshPhysicalMaterial({map:canvasTex(600,280,(g,w,h)=>{g.fillStyle='#0e0f11';g.fillRect(0,0,w,h);g.fillStyle='#9fe8ff';g.font='700 96px Geist, sans-serif';g.fillText('X-RAY',30,150);g.fillStyle='rgba(242,239,232,.6)';g.font='500 40px JetBrains Mono, monospace';g.fillText('SEE THE WIRES',30,230)}),roughness:0.35,clearcoat:0.6}));
+xk.add(xkPlate);
+const xKnob=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,0.12,32),chrome);xKnob.position.set(0.68,0.07,0);xKnob.castShadow=true;xk.add(xKnob);
+const xFlag=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.05,0.28),blackRub);xFlag.position.set(0.68,0.15,0);xk.add(xFlag);
+[xkPlate,xKnob,xFlag].forEach(o=>{o.userData={act:'xray'};clickable.push(o)});
+let xray=false;const saved=new Map();
+function setX(on){xray=on;wires.visible=on;
+ scene.traverse(o=>{if(!o.isMesh||wires.children.includes(o)||o===xkPlate||o===xKnob||o===xFlag)return;
+  if(on){if(!saved.has(o))saved.set(o,o.material);o.material=xrayMat}else if(saved.has(o))o.material=saved.get(o)});
+ scene.background.setHex(on?0x02080b:0x040506);key.intensity=on?20:90;
+ document.getElementById('line').innerHTML=on?'Every switch is wired to the alarm. <b style="font-style:normal">Profound pulls hardest.</b>':'Two competitors moved overnight. One of them has a billion dollars. <b style="font-style:normal">Lift the cover.</b>'}
+window.__x=setX;
+
+// ---------- interaction ----------
+const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();let coverOpen=false,coverT=0;
+addEventListener('pointerdown',e=>{if(document.getElementById('dossier').classList.contains('on')||document.getElementById('ws').classList.contains('on'))return;
+ askMotion();ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
+ const hit=ray.intersectObjects(clickable,false)[0];if(!hit)return;const u=hit.object.userData;
+ if(u.act==='xray'){setX(!xray);buzz([8,20,8]);return}
+ if(u.act==='cover'){coverOpen=!coverOpen;buzz(15);return}
+ if(u.act==='alarm'){if(!coverOpen){coverOpen=true;buzz(15);return}press=1;buzz([20,40,60]);setTimeout(()=>open(0),380);return}
+ if(u.act==='open'){const c=chans[u.i];c.on=true;buzz(12);setTimeout(()=>open(u.i),300)}});
+let press=0;
+function buzz(p){navigator.vibrate&&navigator.vibrate(p)}
+
+// ---------- dossier (the infographic) ----------
+let cur=0;const NAMES=['Chart','Facts','Do'];
+window.open=open;
+function open(i){cur=i;const s=SIG[i];
+ const pages=[
+  `<div class="kind ${s.red?'red':''}">${s.kind}</div><h1>${s.head}</h1><div class="so">${s.so}</div>${s.chart}`,
+  `<div class="kind ${s.red?'red':''}">${s.kind}</div><h1 style="font-size:26px">${s.head}</h1><div class="tiles">${s.facts.map(f=>`<div class="tile"><div class="n">${f[0]}</div><div class="t">${f[1]}</div><div class="s"><i style="background:${f[3]}"></i>${f[2]}</div></div>`).join('')}</div>`,
+  `<div class="kind">What to do</div><div class="do"><div class="box"></div><div>${s.todo}</div></div><div class="so" style="margin-top:20px">Or close it and pretend you didn't see the needle.</div>`];
+ document.getElementById('track').innerHTML=pages.map(p=>`<div class="pg">${p}</div>`).join('');
+ document.getElementById('tabs').innerHTML=NAMES.map((n,k)=>`<button onclick="goPg(${k})">${n}</button>`).join('');
+ document.getElementById('dcount').textContent=`0${i+1}/03`;
+ const t=document.getElementById('track');t.scrollLeft=0;mark(0);t.onscroll=()=>mark(Math.round(t.scrollLeft/t.clientWidth));
+ document.getElementById('dossier').classList.add('on')}
+function mark(k){[...document.getElementById('tabs').children].forEach((b,j)=>b.classList.toggle('on',j===k))}
+window.goPg=k=>{const t=document.getElementById('track');t.scrollTo({left:k*t.clientWidth,behavior:'smooth'})};
+window.closeD=()=>{document.getElementById('dossier').classList.remove('on')};
+window.decide=yes=>{buzz(yes?[10,30,10]:8);if(yes)chans[cur].lampMat.color.setHex(0x7ce0a3);closeD();
+ const next=chans.findIndex(c=>!c.on);if(next>=0&&yes)setTimeout(()=>{chans[next].on=true;open(next)},500)};
+
+// ---------- gyroscope: camera orbits, light stays → reflections and shadows move ----------
+let tx=0,ty=0,gx=0,gy=0;
+function askMotion(){if(window._m)return;window._m=1;if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(()=>{})}
+addEventListener('deviceorientation',e=>{tx=THREE.MathUtils.clamp((e.gamma||0)/25,-1,1);ty=THREE.MathUtils.clamp(((e.beta||50)-50)/25,-1,1)});
+addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){tx=(e.clientX/innerWidth-.5)*2;ty=(e.clientY/innerHeight-.5)*2}});
+addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();R.setSize(innerWidth,innerHeight);fit()});
+function fit(){const a=innerWidth/innerHeight;cam.fov=a<0.6?52:34;cam.updateProjectionMatrix()}fit();
+
+const clk=new THREE.Clock();
+function tick(){const t=clk.getElapsedTime(),dt=Math.min(clk.getDelta(),0.05);
+ gx+=(tx-gx)*0.06;gy+=(ty-gy)*0.06;
+ cam.position.set(camBase.x+gx*1.4,camBase.y-gy*0.6,camBase.z+gy*0.9);cam.lookAt(0,0,0.15);
+ coverT+=((coverOpen?1:0)-coverT)*0.12;hinge.rotation.x=-coverT*1.9;
+ btnMat.emissiveIntensity=0.25+0.55*(0.5+0.5*Math.sin(t*4));glow.intensity=2.2+2*(0.5+0.5*Math.sin(t*4));
+ press*=0.85;btn.position.y=0.22-press*0.08;
+ chans.forEach((c,i)=>{const jitter=Math.sin(t*7+i)*0.015*c.s.impact;c.cur+=(c.target-c.cur)*0.04;c.piv.rotation.y=-(c.cur+jitter);
+  c.leverG.rotation.x+=((c.on?-0.5:0.5)-c.leverG.rotation.x)*0.2;
+  const L=c.on?1.2:0.15+(c.s.red?0.25*(0.5+0.5*Math.sin(t*4)):0);c.lampMat.emissiveIntensity+=(L-c.lampMat.emissiveIntensity)*0.15;c.ll.intensity=c.lampMat.emissiveIntensity*1.5});
+ xFlag.rotation.y+=((xray?Math.PI/2:0)-xFlag.rotation.y)*0.2;
+ if(xray)wires.children.forEach(w=>{if(w.userData.curve){const u=(t*0.45+w.userData.o)%1;w.position.copy(w.userData.curve.getPoint(1-u))}});
+ R.render(scene,cam);requestAnimationFrame(tick)}
+tick();
+const d=new Date();document.getElementById('clock').textContent=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}).toUpperCase()+' · '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+</script>
+</body></html>
