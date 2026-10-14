@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dr HAOS desk</title>
+<style>
+@font-face{font-family:Geist;src:url(fonts/Geist-Variable.woff2)}
+@font-face{font-family:Serif;src:url(fonts/InstrumentSerif-Italic.ttf);font-style:italic}
+@font-face{font-family:Serif;src:url(fonts/InstrumentSerif-Regular.ttf)}
+@font-face{font-family:Mono;src:url(fonts/JetBrainsMono-Medium.woff2)}
+:root{--teal:#0A3B44;--deep:#062a31;--ink:#FDFDFC;--pink:#FFC4D6;--yel:#F5F900;--red:#FF5A6E;--beige:#E8E0D1}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--deep);color:var(--ink);font-family:Geist,system-ui;overflow:hidden}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;padding:calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 14px)}
+.screen.on{display:flex}
+.meta{font:500 13px/1.3 Mono;letter-spacing:.08em;text-transform:uppercase;opacity:.75;display:flex;justify-content:space-between}
+.voice{font:italic 26px/1.08 Serif;color:var(--pink);margin-top:14px}
+.voice b{font-style:normal;font-weight:400}
+/* the room: wall + desk with a floor shadow that slides with tilt */
+.room{position:relative;flex:1;margin:10px -18px 0;background:radial-gradient(120% 70% at 50% 18%,#0e4a55 0,var(--teal) 45%,var(--deep) 100%);overflow:hidden}
+.desk{position:absolute;left:-10%;right:-10%;bottom:0;height:46%;background:linear-gradient(#0c3f49,#052127);border-top:2px solid #135561}
+.lamp{position:absolute;right:30px;top:0;width:3px;height:22%;background:#0f3138}
+.lamp:after{content:"";position:absolute;left:-26px;bottom:-22px;width:56px;height:26px;background:#123b43;clip-path:polygon(20% 0,80% 0,100% 100%,0 100%)}
+.pool{position:absolute;right:-6%;top:22%;width:70%;height:78%;background:radial-gradient(50% 40% at 60% 60%,rgba(245,249,0,.18),transparent 70%);pointer-events:none;transition:opacity .4s}
+.cord{position:absolute;right:28px;top:0;width:2px;height:64%;z-index:4;background:var(--yel);transform-origin:top;animation:sway 3.4s ease-in-out infinite}
+.cord i{position:absolute;bottom:-22px;left:-21px;width:44px;height:44px;border-radius:50%;background:var(--yel);box-shadow:0 0 18px rgba(245,249,0,.6)}
+.cordlabel{position:absolute;right:14px;top:calc(64% + 30px);z-index:4;font:500 13px Mono;color:var(--yel);letter-spacing:.08em}
+@keyframes sway{50%{transform:rotate(4deg)}}
+.cord.pull{animation:pull .5s ease}
+@keyframes pull{30%{transform:scaleY(1.25)}100%{transform:scaleY(1)}}
+/* the patient: product at centre, three pins with wires to tags */
+svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.wire{fill:none;stroke:var(--pink);stroke-width:2;stroke-linecap:round}
+.wire.y{stroke:var(--yel);stroke-width:3}
+.pulse{fill:none;stroke:var(--yel);stroke-width:4;stroke-dasharray:14 400;stroke-dashoffset:414;opacity:0}
+.pulse.go{animation:run .55s linear forwards}
+@keyframes run{0%{opacity:1}100%{stroke-dashoffset:0;opacity:1}}
+.bottle{position:absolute;left:50%;bottom:17%;width:62px;height:118px;transform:translateX(-50%);background:linear-gradient(90deg,#08323a,#0d4a55 45%,#062a31);border-radius:14px 14px 10px 10px}
+.bottle:before{content:"";position:absolute;left:19px;top:-26px;width:24px;height:30px;background:#0b3d46;border-radius:4px 4px 0 0}
+.bottle span{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font:500 12px Mono;white-space:nowrap;opacity:.7}
+.shadow{position:absolute;left:50%;bottom:14%;width:120px;height:20px;margin-left:-60px;background:radial-gradient(closest-side,rgba(0,0,0,.6),transparent);transition:transform .08s linear}
+.tag{position:absolute;width:80%;z-index:3;padding:12px 14px 13px;background:var(--yel);color:var(--teal);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%);cursor:pointer;transition:transform .15s}
+.tag.l{clip-path:polygon(14px 0,100% 0,100% 100%,14px 100%,0 50%);padding-left:20px}
+.tag.red{background:var(--red);color:var(--ink)}
+.tag small{display:block;font:500 11px Mono;letter-spacing:.06em;text-transform:uppercase;opacity:.8;margin-bottom:4px}
+.tag p{font:600 23px/1.08 Geist;letter-spacing:-.01em}
+.tag:active{transform:scale(.96)}
+.tag.done{opacity:.35}.card.done{opacity:.45}
+/* sockets = sources */
+.sockets{z-index:2;position:absolute;left:14px;bottom:3%;display:flex;gap:7px}
+.sock{width:18px;height:18px;border-radius:3px;background:#0a2f36;border:1px solid #1a5a66;position:relative}
+.sock:after{content:"";position:absolute;left:5px;top:5px;width:4px;height:4px;border-radius:50%;background:var(--yel)}
+.sock.dead:after{background:var(--red)}
+.sockcap{z-index:2;position:absolute;left:14px;bottom:calc(3% + 26px);font:500 12px Mono;opacity:.6;letter-spacing:.06em}
+.hint{font:500 13px Mono;color:var(--yel);letter-spacing:.06em;text-align:center;padding-top:10px}
+/* sheet screen */
+.back{font:600 26px/1 Geist;color:var(--ink);background:none;border:1.5px solid rgba(253,253,252,.4);border-radius:22px;width:44px;height:44px;flex:0 0 44px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.head{margin-top:16px}
+.head small{font:500 13px Mono;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.head small.red{color:var(--red);opacity:1}
+.head h1{font:600 34px/1.06 Geist;letter-spacing:-.01em;margin-top:8px}
+.track{flex:1;min-height:0;margin:10px -18px 0;padding:0 18px;display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.track::-webkit-scrollbar{display:none}
+.page{flex:0 0 94%;scroll-snap-align:start;scroll-margin-left:18px;background:var(--beige);color:var(--teal);overflow-y:auto;padding:18px 18px 28px;position:relative}
+.page h1{font:600 32px/1.06 Geist;letter-spacing:-.01em;margin:6px 0 14px}
+.page h2{font:600 19px/1.25 Geist;margin:2px 0 6px;opacity:.85}
+.page:last-child{margin-right:18px}
+.page.red{border-top:6px solid var(--red)}
+.page .lab{font:500 13px Mono;letter-spacing:.06em;text-transform:uppercase;opacity:.6;margin-bottom:12px}
+.page p{font:400 19px/1.5 Geist;margin-bottom:14px}
+.page p.gist{font-weight:500}
+.page b{display:block;font:500 13px Mono;letter-spacing:.06em;opacity:.6;margin:18px 0 4px}
+.page .his{font:italic 22px/1.2 Serif;color:#a82a52;margin-bottom:14px}
+.pager{display:flex;justify-content:center;gap:0;flex:1}
+.pager button{background:none;border:0;color:var(--ink);opacity:.5;font:500 13px Mono;letter-spacing:.02em;padding:10px 7px;min-height:44px;border-bottom:2px solid transparent}
+.pager button.on{opacity:1;border-bottom-color:var(--ink)}
+.machines{display:flex;gap:10px;margin-top:10px}
+.stamp,.shred{flex:1;height:56px;font:600 19px Geist}
+.stamp{background:var(--yel);color:var(--teal);border:0}
+.shred{background:none;color:var(--ink);border:1.5px solid rgba(253,253,252,.4)}
+.inked{position:absolute;right:14px;top:14px;transform:rotate(-9deg);border:3px solid #a82a52;color:#a82a52;font:600 14px Mono;padding:6px 10px;opacity:0}
+.inked.on{opacity:.9;animation:thump .25s}
+@keyframes thump{0%{transform:rotate(-9deg) scale(1.6)}100%{transform:rotate(-9deg) scale(1)}}
+.gone{animation:shred .45s ease-in forwards}
+@keyframes shred{to{transform:translateY(120%);opacity:0}}
+
+.flow{display:flex;align-items:center;justify-content:space-between;gap:4px;margin:18px 0 14px}
+.node{flex:1;text-align:center}.node .ic{font-size:34px;height:64px;width:64px;margin:0 auto 8px;display:grid;place-items:center;background:rgba(10,59,68,.08);border:1.5px solid var(--teal)}
+.node .nt{font:600 15px/1.2 Geist}.arr{font:600 22px Geist;opacity:.5;padding-bottom:28px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}.chips span{font:500 13px Mono;padding:7px 10px;background:var(--teal);color:var(--beige)}
+.row{display:flex;align-items:center;gap:10px;padding:14px 0;border-top:1.5px solid rgba(10,59,68,.15)}
+.row .k{font:600 17px Geist;flex:1}.row .v{font:600 17px Mono;width:36px;text-align:right}
+.meter{display:flex;gap:4px}.meter i{width:22px;height:22px;border:1.5px solid var(--teal)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{background:rgba(10,59,68,.07);border-left:4px solid var(--teal);padding:12px 10px 14px}
+.tile .n{font:600 26px/1.05 Geist;letter-spacing:-.01em}.tile .t{font:400 15px/1.3 Geist;margin-top:6px}
+.tl{display:flex;margin:22px 0 10px;position:relative}.tl:before{content:"";position:absolute;left:8px;right:8px;top:7px;height:2px;background:var(--teal);opacity:.4}
+.ti{flex:1;position:relative;padding-right:6px}.ti .dot{width:16px;height:16px;border-radius:50%;background:var(--beige);border:2px solid var(--teal);position:relative}
+.ti.now .dot{background:var(--teal)}.ti .d{font:600 15px Mono;margin-top:8px}.ti .e{font:400 15px/1.3 Geist;margin-top:2px}
+.src{font:500 12px Mono;opacity:.55;margin-top:14px}
+.vs{display:flex;align-items:stretch;gap:6px;margin-top:16px}.vs .col{flex:1;padding:12px 10px;font:400 15px/1.3 Geist;display:flex;flex-direction:column;gap:8px}
+.vs .them{background:var(--teal);color:var(--beige)}.vs .us{border:2px solid var(--teal)}
+.vs .h{font:600 18px Geist}.vs .m{font:600 15px Mono;margin-top:auto}.vs .mid{align-self:center;font:500 13px Mono;opacity:.6}
+.do{display:flex;gap:14px;align-items:flex-start;font:600 24px/1.25 Geist;margin-top:8px}.do .box{flex:0 0 30px;height:30px;border:3px solid var(--teal);margin-top:3px}
+
+.sum{display:flex;gap:8px;margin:14px 0 4px}.sum span{font:500 13px Mono;padding:7px 10px;border:1.5px solid rgba(253,253,252,.35)}.sum span.r{background:var(--red);border-color:var(--red)}
+.list{flex:1;overflow-y:auto;margin:10px -18px 0;padding:0 18px 30px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--beige);color:var(--teal);padding:16px 16px 14px;cursor:pointer;position:relative}
+.card.red{border-left:8px solid var(--red)}
+.card .ty{display:flex;justify-content:space-between;font:500 13px Mono;letter-spacing:.04em;text-transform:uppercase;opacity:.75}
+.card .ty .u{opacity:1;font-weight:600}.card.red .ty .u{color:#c4223a}
+.card h3{font:600 25px/1.1 Geist;letter-spacing:-.01em;margin:8px 0 12px}
+.mini{display:flex;align-items:stretch;gap:6px;margin-bottom:12px}
+.mini .a,.mini .b{flex:1;padding:10px;font:600 16px/1.2 Geist}.mini .a{background:var(--teal);color:var(--beige)}.mini .b{border:2px solid var(--teal)}
+.mini small{display:block;font:500 12px Mono;opacity:.8;margin-bottom:4px}
+.mini .big{font:600 44px/1 Geist;letter-spacing:-.02em}.mini .lbl{font:500 15px/1.3 Geist;align-self:center;flex:1}
+.cal{display:flex;gap:6px}.cal div{flex:1;border:2px solid var(--teal);text-align:center;padding:6px 0}.cal b{display:block;font:600 22px Geist}.cal i{font:500 12px Mono;font-style:normal}
+.card .act{display:flex;gap:10px;align-items:flex-start;font:600 16px/1.3 Geist;padding-top:10px;border-top:1.5px solid rgba(10,59,68,.15)}
+.card .act:before{content:"℞";font:600 18px Geist;color:#a82a52}
+.card .go{position:absolute;right:14px;bottom:14px;font:600 20px Geist;opacity:.4}
+.discharge{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.discharge h1{font:600 40px/1 Geist}
+.rx{font:500 17px/1.35 Geist;margin-top:8px;color:var(--yel)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+
+<!-- HOME: today's signals, ranked by the founder's needs; each card = its type's mini infographic -->
+<section class="screen on" id="home">
+  <div class="meta"><span>Dr HAOS · <span id="date"></span></span><span>pokpok.ai</span></div>
+  <div class="voice">Three things moved. One of them is <b>OpenAI</b> doing your job for free. Start there.</div>
+  <div class="sum" id="sum"></div>
+  <div class="list" id="list"></div>
+</section>
+
+<!-- SIGNAL: the whole screen is reading surface; headline scrolls away; depth = finger-tracked pages -->
+<section class="screen" id="signal">
+  <div class="top"><button class="back" onclick="home()">‹</button><div class="pager" id="pager"></div><span class="meta" id="count"></span></div>
+  <div class="track" id="track"></div>
+  <div class="machines">
+    <button class="stamp" onclick="stamp()">℞ Stamp it</button>
+    <button class="shred" onclick="shred()">Shred · next</button>
+  </div>
+</section>
+
+<!-- DISCHARGE -->
+<section class="screen" id="out">
+  <div class="top"><button class="back" onclick="home()">‹ Desk</button><span></span></div>
+  <div class="discharge">
+    <div class="meta">Discharged · <span id="date2"></span></div>
+    <h1>Nothing else is wrong with you today.</h1>
+    <div class="voice">Sadly. Go build something. I'll have read everything <b>again</b> by tomorrow.</div>
+    <div id="rxlist"></div>
+  </div>
+</section>
+
+<script src="signals.js"></script>
+<script>
+const S=window.SIGNALS;
+// three rounds from the real phone stories: the competitor-ish one first
+const R=[
+ {s:S[1],red:true,
+  why:"OpenAI just did inside ChatGPT what your report charges for: show a product the way a buyer sees it. Free.",
+  flow:[["📷","Your selfie"],["✦","ChatGPT\nTry On"],["👕","You, wearing it"]],
+  chips:["1 Oct 2026","Global","Web + mobile"],
+  tiles:[["Any site","works from a screenshot"],["Images 2.5","the model behind it"],["Saved","your photo kept for next time"],["No fit","guarantee — OpenAI's own warning"]],
+  timeline:[["Sep","Images 2.5 released"],["1 Oct","Try On + Favorites live"],["Next","more categories?"]],
+  impact:5, threat:4, opp:3,
+  vs:{them:["ChatGPT","Shows the product on the buyer","Free, inside the chat"],us:["POKPOK.AI","Shows how buyers & AI read the brand","€150 report"]},
+  type:'Big lab ships what you sell',urg:'Code red · today',mini:'vs',todo:"Write one post: what Try On cannot tell a brand — how AI describes it. Ship it this week.",
+  src:"TechCrunch · Gulf News · 1 Oct 2026"},
+ {s:S[0],
+  why:"Retail bought Apple because it needs no training. Your report needs a reading guide. That's the gap.",
+  flow:[["🏬","Store staff"],["📱","Apple device\n+ AI"],["⚡","Faster, less training"]],
+  chips:["Retail","Ops","NRF 2026"],
+  tiles:[["~1 in 2","retail AI leaders train staff on AI (Forrester)"],["3 reasons","cost · ruggedness · enterprise-ready (vendor claim)"],["Core","AI is now infrastructure, not an add-on (eMarketer)"],["Gap","training cost is never mentioned"]],
+  timeline:[["Jan","NRF 2026: Apple pitch"],["2026","AI moves to core"],["Now","the training gap"]],
+  impact:2, threat:1, opp:3,
+  vs:{them:["Retail tech","Zero training to use","Value is obvious"],us:["POKPOK.AI","Report needs reading","Value needs explaining"]},
+  type:'Your customers\' world',urg:'This week',mini:'num',todo:"Add a 3-line 'how to read this' strip to the top of every report.",
+  src:"Forrester · eMarketer · Stratix (vendor)"},
+ {s:S[3],
+  why:"Zoom runs its biggest AI event in a week. Your buyers' CMOs will be in the audience. Nobody there has heard of you.",
+  flow:[["🎙","Zoom AI"],["📅","Zoomtopia\n20–22 Oct"],["🎯","CMOs watching"]],
+  chips:["Virtual","3 regions","AI-centred"],
+  tiles:[["20 Oct","Americas"],["21 Oct","EMEA"],["22 Oct","APAC + Japan"],["Roadmap","Workplace · ZoomMate · Contact Center"]],
+  timeline:[["Now","early registration open"],["20–22 Oct","Zoomtopia"],["After","AI webinar tools ship"]],
+  impact:3, threat:1, opp:4,
+  vs:{them:["Zoom","Owns the room where CMOs listen","Free to attend"],us:["POKPOK.AI","Not in that room","Zero mentions"]},
+  type:'Way to reach buyers',urg:'In 6 days',mini:'cal',todo:"Register for EMEA day (21 Oct) and post one take on the keynote the same day.",
+  src:"UC Today · Zoom community · IT Brief"}
+];
+const done=[],rx=[];let cur=0,depth=0;
+const $=id=>document.getElementById(id);
+const d=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});$('date').textContent=d;$('date2').textContent=d;
+// sockets
+
+var ORDER=[0,1,2];
+function drawTags(){
+ $('sum').innerHTML=`<span class="r">● 1 code red</span><span>3 signals</span><span>~2 min</span>`;
+ $('list').innerHTML=ORDER.map(i=>{const r=R[i];let m='';
+  if(r.mini==='vs')m=`<div class="mini"><div class="a"><small>CHATGPT</small>Shows the product on the buyer · free</div><div class="b"><small>POKPOK.AI</small>Shows how buyers & AI read it · €150</div></div>`;
+  if(r.mini==='num')m=`<div class="mini"><div class="big">~1 in 2</div><div class="lbl">retail AI leaders train their staff on AI — your buyers can't read complex reports</div></div>`;
+  if(r.mini==='cal')m=`<div class="cal"><div><b>20</b><i>OCT · US</i></div><div><b>21</b><i>OCT · EU</i></div><div><b>22</b><i>OCT · APAC</i></div></div><div style="height:12px"></div>`;
+  return `<div class="card${r.red?' red':''}${done.includes(i)?' done':''}" onclick="open(${i})"><div class="ty"><span>${r.type}</span><span class="u">${r.urg}</span></div><h3>${r.s.headline}</h3>${m}<div class="act">${r.todo}</div></div>`}).join('')}
+function drawWires(){}
+// open a signal: the wire pulses first (anticipation), then the sheet prints
+function open(i){cur=i;depth=0;
+ navigator.vibrate&&navigator.vibrate(12);setTimeout(()=>{$('track').classList.remove('gone');show('signal');renderSheet()},60)}
+const NAMES=['Gist','Facts','You','Do'];
+const meter=(n,c)=>`<span class="meter">${[1,2,3,4,5].map(k=>`<i class="${k<=n?'f':''}" style="${k<=n?'background:'+c:''}"></i>`).join('')}</span>`;
+function levels(r){return [
+ // GIST: what happened, as a diagram
+ `<div class="his">${r.why}</div>
+  <div class="flow">${r.flow.map((f,k)=>`<div class="node"><div class="ic">${f[0]}</div><div class="nt">${f[1].replace('\n','<br>')}</div></div>${k<r.flow.length-1?'<div class="arr">→</div>':''}`).join('')}</div>
+  <div class="chips">${r.chips.map(c=>`<span>${c}</span>`).join('')}</div>
+  <div class="row"><span class="k">Hits your product</span>${meter(r.impact,r.red?'var(--red)':'var(--teal)')}<span class="v">${r.impact}/5</span></div>`,
+ // FACTS: number tiles + timeline
+ `<div class="tiles">${r.tiles.map(t=>`<div class="tile"><div class="n">${t[0]}</div><div class="t">${t[1]}</div></div>`).join('')}</div>
+  <div class="tl">${r.timeline.map((t,k)=>`<div class="ti${k===1?' now':''}"><div class="dot"></div><div class="d">${t[0]}</div><div class="e">${t[1]}</div></div>`).join('')}</div>
+  <div class="src">${r.src}</div>`,
+ // YOU: meters + you vs them
+ `<div class="row"><span class="k">Threat</span>${meter(r.threat,'var(--red)')}<span class="v">${r.threat}/5</span></div>
+  <div class="row"><span class="k">Opportunity</span>${meter(r.opp,'#1f8a5b')}<span class="v">${r.opp}/5</span></div>
+  <div class="vs"><div class="col them"><div class="h">${r.vs.them[0]}</div><div>${r.vs.them[1]}</div><div class="m">${r.vs.them[2]}</div></div>
+   <div class="mid">vs</div>
+   <div class="col us"><div class="h">${r.vs.us[0]}</div><div>${r.vs.us[1]}</div><div class="m">${r.vs.us[2]}</div></div></div>`,
+ // DO
+ `<div class="do"><div class="box"></div><div>${r.todo}</div></div>
+  <div class="his" style="margin-top:18px">Stamp it and I'll put it in Reminders. Or shred it and admit you weren't going to.</div>`]}
+function renderSheet(){const r=R[cur],s=r.s;
+ $('count').textContent=`${cur+1}/3`;
+ const src=`<div class="lab">${r.red?'<span style="color:var(--red)">● Code red</span> · ':''}${s.source} · 0${cur+1} of 03</div>`;
+ $('track').innerHTML=levels(r).map((h,k)=>`<div class="page${r.red?' red':''}">${k===0?src+`<h1>${s.headline}</h1><div class="inked" id="inked">℞ PRESCRIBED</div>`:`<div class="lab">0${k} · ${NAMES[k]}</div><h2>${s.headline}</h2>`}${h}</div>`).join('');
+ $('pager').innerHTML=NAMES.map((n,k)=>`<button onclick="go(${k})">${n}</button>`).join('');
+ $('track').scrollLeft=0;depth=0;mark();
+ $('track').onscroll=()=>{const t=$('track'),w=t.firstElementChild.offsetWidth+8;const k=Math.round(t.scrollLeft/w);if(k!==depth){depth=k;mark();navigator.vibrate&&navigator.vibrate(5)}}}
+function mark(){[...$('pager').children].forEach((b,k)=>b.classList.toggle('on',k===depth))}
+function go(k){const t=$('track');t.scrollTo({left:t.children[k].offsetLeft-18,behavior:'smooth'})}
+addEventListener('keydown',e=>{if(!$('signal').classList.contains('on'))return;if(e.key==='ArrowRight')go(Math.min(3,depth+1));if(e.key==='ArrowLeft')go(Math.max(0,depth-1))});
+function stamp(){const r=R[cur];if(!rx.includes(r.s.action))rx.push(r.s.action);go(0);$('inked').classList.add('on');navigator.vibrate&&navigator.vibrate([10,40,20]);setTimeout(next,700)}
+function shred(){$('track').classList.add('gone');navigator.vibrate&&navigator.vibrate(30);setTimeout(next,450)}
+function next(){if(!done.includes(cur))done.push(cur);const n=[0,1,2].find(i=>!done.includes(i));
+ if(n===undefined){$('rxlist').innerHTML=rx.map(a=>`<div class="rx">℞ ${a}</div>`).join('');show('out')}else open(n)}
+function home(){show('home');drawTags()}
+function show(id){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===id));if(id==='home')requestAnimationFrame(drawWires)}
+// the cord: light on, rounds start at the first untouched signal
+//$('cord').onclick=()=>{askMotion();$('cord').classList.add('pull');$('pool').style.opacity=1;setTimeout(()=>{$('cord').classList.remove('pull');const n=[0,1,2].find(i=>!done.includes(i));n===undefined?show('out'):open(n)},500)};
+// gyroscope: the floor shadow slides, the room shifts a few px (parallax)
+let motionAsked=false;function askMotion(){if(motionAsked)return;motionAsked=true;
+ if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(()=>{})}
+document.addEventListener('click',askMotion,{once:true});
+addEventListener('deviceorientation',e=>{return;const x=Math.max(-20,Math.min(20,e.gamma||0)),y=Math.max(-20,Math.min(20,(e.beta||45)-45));
+ $('shadow').style.transform=`translate(${-x*2.2}px,${-y*0.6}px) scaleX(${1+Math.abs(x)/40})`;
+ document.querySelector('.desk').style.transform=`translateX(${x*0.4}px)`;
+ document.querySelector('.bottle').style.transform=`translateX(calc(-50% + ${x*0.8}px))`});
+//document.querySelector('.sockcap').onclick=()=>alert('Sources: 15 sockets, one per feed. Unplug = remove, plug a URL = add. (Mockup: not wired yet.)');
+addEventListener('resize',drawWires);drawTags();
+</script>
+</body></html>
