@@ -26,6 +26,9 @@ targets:
     platform: iOS
     sources:
       - path: Nubble
+      - path: ProtoBundle
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: SwiftSoup
       - package: ZIPFoundation
@@ -42,6 +45,9 @@ targets:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UILaunchScreen: {}
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        NSLocalNetworkUsageDescription: Debug viewer loads prototypes from your Mac on the home network.
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft

@@ -112,6 +112,7 @@
 		D1B44B8B76874EABEF3CBD6A /* LocalFeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027A81C7DF7C1C38B94FCE85 /* LocalFeedService.swift */; };
 		D1D4E5D16BBFE481F302302C /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04E26FE6EF8DFF3C3E5D05F /* Haptics.swift */; };
 		D1E7AD1132952341E726B35F /* ConversionPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07A2E061D21C18323C40575 /* ConversionPipeline.swift */; };
+		D59A3BC2818629AAD210FBB0 /* ProtoBundle in Resources */ = {isa = PBXBuildFile; fileRef = 88EF69BDA0F2FCA345F17369 /* ProtoBundle */; };
 		D8EAAB49EF959218CADAC762 /* ReaderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE85C30F593D0D5B249CAD0 /* ReaderState.swift */; };
 		DBC0B21E8845E78C39C1285B /* Zodiak-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = BA726363F300A8F68C0E0C8E /* Zodiak-LightItalic.otf */; };
 		DF461766F33E06419DCD77A0 /* SectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3E4B0C0C975EE7507ED102 /* SectionView.swift */; };
@@ -121,6 +122,7 @@
 		EE0FD3F1511E7A30E767854F /* NubbleShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EE2ABE357AC546CA1A6452F1 /* Satoshi-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3026CCA56112E799A3CD303D /* Satoshi-MediumItalic.otf */; };
 		F0DE4871420FA99BD38B1007 /* ProductProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B36ADE400BD8221DA781180 /* ProductProfile.swift */; };
+		F4092F44F297610CECEF7831 /* ProtoViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377EDFF7F6F67342E4864995 /* ProtoViewer.swift */; };
 		F671824E32938A60AEB9BE59 /* Zodiak-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = FD5A84476E2ABA2CEF0F4D95 /* Zodiak-Light.otf */; };
 		FA6BE86B973A3CA5739D09F6 /* Zodiak-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD371F1C4546416D71EB1FA /* Zodiak-Thin.otf */; };
 		FAD729CBDC27DCB615982DA7 /* HaosCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296010BA3ACAF95E3C0737E9 /* HaosCloud.swift */; };
@@ -191,6 +193,7 @@
 		34C640D0D9095A88A7BC394E /* InstrumentSerif-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InstrumentSerif-Italic.ttf"; sourceTree = "<group>"; };
 		359D962DAD2E3FD370D5D20A /* MotionTilt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTilt.swift; sourceTree = "<group>"; };
 		35F196EB4DB9DA422610F759 /* RemindersBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersBridge.swift; sourceTree = "<group>"; };
+		377EDFF7F6F67342E4864995 /* ProtoViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoViewer.swift; sourceTree = "<group>"; };
 		3A4BB6809551B3A8D236686E /* NubbleColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NubbleColors.swift; sourceTree = "<group>"; };
 		4026DBE5145A0630A8923FFC /* NewsConversionPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsConversionPipeline.swift; sourceTree = "<group>"; };
 		443FEA87C2BF29965EA9D3C1 /* Satoshi-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-Medium.otf"; sourceTree = "<group>"; };
@@ -216,6 +219,7 @@
 		82FD2B5D011BFE504075965C /* Nubble.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Nubble.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		87709AD64461DB08A4AD66E9 /* Satoshi-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Satoshi-Bold.otf"; sourceTree = "<group>"; };
 		87835B1148D75BFC1C62B5EC /* ReadingProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingProgressBar.swift; sourceTree = "<group>"; };
+		88EF69BDA0F2FCA345F17369 /* ProtoBundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ProtoBundle; sourceTree = SOURCE_ROOT; };
 		8B36ADE400BD8221DA781180 /* ProductProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductProfile.swift; sourceTree = "<group>"; };
 		91B050C65F6B276663D02AE8 /* NubbleWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NubbleWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		934BEC0CC6835A0C52F39F67 /* JetBrainsMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsMono-Regular.ttf"; sourceTree = "<group>"; };
@@ -379,6 +383,7 @@
 		7D172FF62339A74EA3B0E986 = {
 			isa = PBXGroup;
 			children = (
+				88EF69BDA0F2FCA345F17369 /* ProtoBundle */,
 				1DE5E51CD99D9A18DEEB706B /* Nubble */,
 				AF0A82991069707606D71A3F /* NubbleShare */,
 				435BFD2750C973A9600FD4CE /* NubbleWidget */,
@@ -389,6 +394,7 @@
 		92D402168E82E58D6829B2DA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				377EDFF7F6F67342E4864995 /* ProtoViewer.swift */,
 				487FBBB1CCA18D9D6E1CE5C7 /* Components */,
 				D543C1F0F61F89ECEF788BCD /* Feed */,
 				BEFD103CF63E339CB4570B34 /* Import */,
@@ -681,6 +687,7 @@
 				5591A2B07AA11874FF1E1ADA /* JetBrainsMono-Light.ttf in Resources */,
 				9674EEFFB80CC3C58DDEC142 /* JetBrainsMono-Medium.ttf in Resources */,
 				00C5D9D73788ABFE663271D5 /* JetBrainsMono-Regular.ttf in Resources */,
+				D59A3BC2818629AAD210FBB0 /* ProtoBundle in Resources */,
 				B9514BF98F9507CBDC45C042 /* Satoshi-Bold.otf in Resources */,
 				5BFF5E34899D89206E051D1C /* Satoshi-Italic.otf in Resources */,
 				FE572BCEE36767D521BF77B6 /* Satoshi-Light.otf in Resources */,
@@ -750,6 +757,7 @@
 				8FADAFE9BDC5900B43D3FED5 /* ProductNewsView.swift in Sources */,
 				F0DE4871420FA99BD38B1007 /* ProductProfile.swift in Sources */,
 				85290ECA0E595E7337E272B0 /* ProductView.swift in Sources */,
+				F4092F44F297610CECEF7831 /* ProtoViewer.swift in Sources */,
 				000462B2A78B824345206836 /* RSSParser.swift in Sources */,
 				D8EAAB49EF959218CADAC762 /* ReaderState.swift in Sources */,
 				639C8FC6E71179CF8EA707B1 /* ReadingProgressBar.swift in Sources */,

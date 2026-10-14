@@ -13,6 +13,19 @@ struct NubbleApp: App {
 
     var body: some Scene {
         WindowGroup {
+            #if DEBUG
+            if let protoURL = ProtoViewer.launchURL {
+                ProtoViewer(url: protoURL).ignoresSafeArea().background(Color.black)
+            } else {
+                mainTabs
+            }
+            #else
+            mainTabs
+            #endif
+        }
+    }
+
+    @ViewBuilder private var mainTabs: some View {
             TabView {
                 Tab("Rounds", systemImage: "cross.case") {
                     RoundsView()
@@ -65,6 +78,5 @@ struct NubbleApp: App {
                     break
                 }
             }
-        }
     }
 }
