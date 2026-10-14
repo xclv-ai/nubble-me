@@ -6,11 +6,13 @@
 @font-face{font-family:Geist;src:url(fonts/Geist-Variable.woff2)}
 html,body{margin:0;height:100%;background:#050505;overflow:hidden;touch-action:none;font-family:Geist}
 canvas{display:block}
+.read{position:fixed;left:22px;top:calc(env(safe-area-inset-top) + 96px);border-left:1px solid #333;padding-left:14px;font-family:Geist;color:#e9e9e9}.read .t{font:600 19px Geist}.read .d{font:600 19px Geist;color:#8a8a8a}.read .big{font:300 40px/1.1 Geist;margin-top:14px;color:#cfcfcf}.read .s{font:500 15px/1.35 Geist;color:#8a8a8a}
 .cap{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 28px);text-align:center;color:#9a9a9a;font:800 13px Geist;letter-spacing:.06em;text-transform:uppercase}
 .cap b{color:#f2f2f2}
 </style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
 </head><body>
+<div class="read"><div class="t" id="rt"></div><div class="d" id="rd"></div><div class="big">6d 13h</div><div class="s">Zoomtopia EU</div><div class="s">nearest deadline</div></div>
 <div class="cap"><b>Pressure</b> on pokpok.ai · tilt the phone</div>
 <script type="module">
 import * as THREE from 'three';
@@ -115,6 +117,29 @@ const haptic=m=>{try{window.webkit.messageHandlers.haptic.postMessage(m)}catch(e
 const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();
 addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
  if(ray.intersectObjects([face,glass,bezel,numDisc],true).length){from=val;phase='down';downStart=performance.now();landed=false;haptic('press')}});
+// ---------- layout: the main gauge sits low-centre, a smaller stopwatch top-right ----------
+const mainG=new THREE.Group();[bezel,lip,face,pivot,glass,numDisc,glare].forEach(o=>mainG.add(o));mainG.position.y=-0.32;scene.add(mainG);
+const miniG=new THREE.Group();miniG.position.set(0.56,1.42,0);miniG.scale.setScalar(0.52);scene.add(miniG);
+miniG.add(bezel.clone(),lip.clone());const miniGlass=glass.clone();miniG.add(miniGlass);const miniGlare=glare.clone();miniG.add(miniGlare);
+// stopwatch face: yellow, black minute ticks, days 0–14, black capsule window
+const mc=document.createElement('canvas');mc.width=mc.height=1024;const mg=mc.getContext('2d');
+{const r=mg.createRadialGradient(512,380,40,512,512,520);r.addColorStop(0,'#FBE27A');r.addColorStop(1,'#E9C640');mg.fillStyle=r;mg.fillRect(0,0,1024,1024);
+ for(let i=0;i<70;i++){const a=(-90+i*360/70)*Math.PI/180,maj=i%5===0;mg.strokeStyle='#141100';mg.lineWidth=maj?7:3;const r1=maj?440:462;mg.beginPath();mg.moveTo(512+Math.cos(a)*r1,512+Math.sin(a)*r1);mg.lineTo(512+Math.cos(a)*496,512+Math.sin(a)*496);mg.stroke()}
+ mg.fillStyle='#141100';mg.font='600 104px Geist';mg.textAlign='center';mg.textBaseline='middle';
+ for(let d=0;d<14;d+=2){const a=(-90+d*360/14)*Math.PI/180;mg.fillText(d===0?'14':String(d),512+Math.cos(a)*352,512+Math.sin(a)*352)}
+ mg.fillStyle='#0a0a0a';mg.beginPath();mg.roundRect(170,430,684,164,82);mg.fill();
+ mg.fillStyle='#F5D24A';mg.font='600 64px Geist';mg.fillText('DAYS',360,513);mg.fillStyle='#E9E9E9';mg.fillText('21 OCT',680,513)}
+const miniTex=new THREE.CanvasTexture(mc);miniTex.colorSpace=THREE.SRGBColorSpace;miniTex.anisotropy=R.capabilities.getMaxAnisotropy();
+const miniFace=new THREE.Mesh(new THREE.CircleGeometry(0.70,128),new THREE.MeshPhysicalMaterial({map:miniTex,roughness:0.5,roughnessMap:grain}));miniFace.position.z=0.02;miniFace.receiveShadow=true;miniG.add(miniFace);
+// red hand with a short tail and a polished hub
+const hs=new THREE.Shape();hs.moveTo(-0.014,-0.12);hs.lineTo(0.014,-0.12);hs.lineTo(0.006,0.6);hs.lineTo(-0.006,0.6);hs.closePath();
+const hand=new THREE.Mesh(new THREE.ExtrudeGeometry(hs,{depth:0.01,bevelEnabled:true,bevelSize:0.003,bevelThickness:0.003,bevelSegments:2}),new THREE.MeshPhysicalMaterial({color:0xD8141E,roughness:0.3,clearcoat:1,clearcoatRoughness:0.1}));
+hand.castShadow=true;const handPivot=new THREE.Group();handPivot.position.z=0.07;handPivot.add(hand);miniG.add(handPivot);
+const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.055,0.03,48),new THREE.MeshPhysicalMaterial({color:0xd9dce0,metalness:1,roughness:0.2}));cap.rotation.x=Math.PI/2;cap.position.z=0.09;cap.castShadow=true;miniG.add(cap);
+const miniTarget=6/14;let miniStart=performance.now()+400,miniFrom=0;
+window.__mini=now=>{const p=Math.min(1,Math.max(0,(now-miniStart)/1100));const e=1-Math.pow(1-p,3);const v=miniFrom+(miniTarget-miniFrom)*e;handPivot.rotation.z=-v*Math.PI*2};
+addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
+ if(ray.intersectObjects(miniG.children,true).length){miniFrom=0;miniStart=performance.now();haptic('press')}});
 const sweep=p=>{const c1=1.70158*1.15,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2)}; // ease out with a small overshoot
 
 // gyroscope: the camera moves, the light stays — reflections and the needle shadow slide
@@ -135,7 +160,9 @@ const clk=new THREE.Clock();
  if(phase==='up'&&dec>lastDecade){lastDecade=dec;haptic('tick')}
  if(phase==='up'&&p>=1&&!landed){landed=true;haptic('land');drawNum(74,true)}else if(!landed)drawNum(n,false);
  pivot.rotation.z=(-250-220*val)*Math.PI/180;
+ if(window.__mini)window.__mini(performance.now());
  R.render(scene,cam);requestAnimationFrame(tick)})();
 window.__ready=true;
+(function clock(){const d=new Date();document.getElementById('rt').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});document.getElementById('rd').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric'}).toUpperCase();setTimeout(clock,15000)})();
 </script>
 </body></html>
