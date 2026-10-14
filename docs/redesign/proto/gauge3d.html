@@ -155,27 +155,30 @@ const lc=document.createElement('canvas');lc.width=2000;lc.height=950;const lg=l
 const PX=(x,y)=>[(x+1)*1000,(0.475-y)*1000];
 lg.textAlign='center';lg.textBaseline='middle';
 function label(t,x,y,size=40,col='#8c8c8c',w=600){const [a,b]=PX(x,y);lg.fillStyle=col;lg.font=`${w} ${size}px Geist`;lg.fillText(t,a,b)}
-function icon(kind,x,y){const [a,b]=PX(x,y);lg.save();lg.translate(a,b);lg.strokeStyle='#ffffff';lg.fillStyle='#ffffff';lg.lineWidth=7;lg.lineCap='round';
+function icon(kind,x,y){const [a,b]=PX(x,y);lg.save();lg.translate(a,b);lg.scale(1.35,1.35);lg.strokeStyle='#ffffff';lg.fillStyle='#ffffff';lg.lineWidth=7;lg.lineCap='round';
  if(kind==='rivals'){lg.beginPath();lg.arc(0,0,26,0,7);lg.stroke();lg.beginPath();lg.moveTo(-40,0);lg.lineTo(-14,0);lg.moveTo(14,0);lg.lineTo(40,0);lg.moveTo(0,-40);lg.lineTo(0,-14);lg.moveTo(0,14);lg.lineTo(0,40);lg.stroke()}
  if(kind==='models'){lg.strokeRect(-22,-22,44,44);for(const k of [-11,0,11]){lg.beginPath();lg.moveTo(k,-22);lg.lineTo(k,-36);lg.moveTo(k,22);lg.lineTo(k,36);lg.moveTo(-22,k);lg.lineTo(-36,k);lg.moveTo(22,k);lg.lineTo(36,k);lg.stroke()}}
  if(kind==='money'){lg.font='600 76px Geist';lg.fillText('$',0,4)}
  if(kind==='buyers'){lg.beginPath();lg.arc(0,-14,14,0,7);lg.stroke();lg.beginPath();lg.arc(0,34,28,Math.PI*1.1,Math.PI*1.9);lg.stroke()}
  lg.restore()}
-const TOG=[['rivals',-0.62,'RIVALS'],['models',-0.44,'MODELS'],['money',0.44,'MONEY'],['buyers',0.62,'BUYERS']];
-TOG.forEach(t=>{icon(t[0],t[1],0.06);label(t[2],t[1],-0.33,34)});
-label('TODAY',0,0.215,34,'#5fe08a',700);label('WEEK',0.25,0.15,30);label('MONTH',0.315,-0.03,30);
-label('SCAN',-0.74,0.12,32);label('WATCH',0.74,0.12,32);label('MUTE',-0.86,-0.33,32);label('SHARE',0.86,-0.33,32);
+const TOG=[['rivals',-0.64,'RIVALS'],['models',0.64,'MODELS']]; // two switches: the founder's top two needs
+TOG.forEach(t=>{icon(t[0],t[1],0.07);label(t[2],t[1],-0.36,78,'#d0d0d0',700)});
+label('TODAY',0,0.2,66,'#5fe08a',800);label('WEEK',0.29,0.12,58,'#d0d0d0',700);label('MONTH',0.31,-0.3,58,'#d0d0d0',700);
+label('SCAN',-0.5,0.3,70,'#d0d0d0',700);label('WATCH',0.5,0.3,70,'#d0d0d0',700);
 const labTex=new THREE.CanvasTexture(lc);labTex.colorSpace=THREE.SRGBColorSpace;labTex.anisotropy=R.capabilities.getMaxAnisotropy();
 const labels=new THREE.Mesh(new THREE.PlaneGeometry(2.0,0.95),new THREE.MeshBasicMaterial({map:labTex,transparent:true,depthWrite:false}));labels.position.z=0.0365;con.add(labels);
-function redrawRange(sel){['TODAY','WEEK','MONTH'].forEach((t,k)=>{const [x,y,z]=[[0,0.215,34],[0.25,0.15,30],[0.315,-0.03,30]][k];const [a,b]=PX(x,y);lg.clearRect(a-70,b-24,140,48);label(t,x,y,z,t===sel?'#5fe08a':'#8c8c8c',t===sel?700:600)});labTex.needsUpdate=true}
+function redrawRange(sel){['TODAY','WEEK','MONTH'].forEach((t,k)=>{const [x,y,z]=[[0,0.2,66],[0.29,0.12,58],[0.31,-0.3,58]][k];const [a,b]=PX(x,y);lg.clearRect(a-130,b-40,260,80);label(t,x,y,z,t===sel?'#5fe08a':'#d0d0d0',t===sel?800:700)});labTex.needsUpdate=true}
 // 1. SOS capsule → code red
-const capShape=new THREE.Shape();{const w=0.25,h=0.085;capShape.absarc(w-h,0,h,-Math.PI/2,Math.PI/2);capShape.absarc(-w+h,0,h,Math.PI/2,Math.PI*1.5)}
-const sos=new THREE.Mesh(new THREE.ExtrudeGeometry(capShape,{depth:0.012,bevelEnabled:true,bevelSize:0.008,bevelThickness:0.008,bevelSegments:4}),gloss);sos.position.set(0,0.33,0.03);sos.userData.act='sos';con.add(sos);
-const sc=document.createElement('canvas');sc.width=512;sc.height=170;const sg=sc.getContext('2d');const sosTex=new THREE.CanvasTexture(sc);sosTex.colorSpace=THREE.SRGBColorSpace;
-function drawSos(muted){sg.clearRect(0,0,512,170);sg.textAlign='center';sg.textBaseline='middle';sg.font='700 64px Geist';
- if(muted){sg.fillStyle='#8a8a8a';sg.fillText('MUTED',256,88)}else{sg.shadowColor='rgba(255,40,60,0.95)';sg.shadowBlur=26;sg.fillStyle='#ff4a5c';sg.fillText('● PROFOUND',256,88)}sosTex.needsUpdate=true}
+const capShape=new THREE.Shape();{const w=0.33,h=0.1;capShape.absarc(w-h,0,h,-Math.PI/2,Math.PI/2);capShape.absarc(-w+h,0,h,Math.PI/2,Math.PI*1.5)}
+const sos=new THREE.Mesh(new THREE.ExtrudeGeometry(capShape,{depth:0.012,bevelEnabled:true,bevelSize:0.008,bevelThickness:0.008,bevelSegments:4}),gloss);sos.position.set(0,0.36,0.03);sos.userData.act='sos';con.add(sos);
+const sc=document.createElement('canvas');sc.width=1100;sc.height=330;const sg=sc.getContext('2d');const sosTex=new THREE.CanvasTexture(sc);sosTex.colorSpace=THREE.SRGBColorSpace;
+function drawSos(muted){sg.clearRect(0,0,1100,330);sg.textAlign='center';sg.textBaseline='middle';sg.font='800 150px Geist';
+ if(muted){sg.fillStyle='#9a9a9a';sg.fillText('MUTED',550,172)}else{
+  // soft glow behind, then crisp letters on top so the word stays sharp
+  sg.save();sg.shadowColor='rgba(255,40,60,0.55)';sg.shadowBlur=18;sg.fillStyle='rgba(255,70,85,0.55)';sg.fillText('PROFOUND',550,172);sg.restore();
+  sg.fillStyle='#ff5a6a';sg.fillText('PROFOUND',550,172)}sosTex.needsUpdate=true}
 drawSos(false);
-const sosText=new THREE.Mesh(new THREE.PlaneGeometry(0.46,0.153),new THREE.MeshBasicMaterial({map:sosTex,transparent:true,depthWrite:false}));sosText.position.set(0,0.33,0.06);sosText.userData.act='sos';con.add(sosText);
+const sosText=new THREE.Mesh(new THREE.PlaneGeometry(0.64,0.192),new THREE.MeshBasicMaterial({map:sosTex,transparent:true,depthWrite:false}));sosText.position.set(0,0.36,0.06);sosText.userData.act='sos';con.add(sosText);
 // 2. lenses → scan now / watchlist
 function lens(x,act){const g=new THREE.Group();g.position.set(x,0.28,0.035);
  const ring=new THREE.Mesh(new THREE.TorusGeometry(0.105,0.016,20,96),gloss);g.add(ring);
@@ -185,10 +188,10 @@ function lens(x,act){const g=new THREE.Group();g.position.set(x,0.28,0.035);
 const lensL=lens(-0.74,'scan'),lensR=lens(0.74,'watch');
 // 3. toggle switches → what feeds the gauge
 const toggles=TOG.map(t=>{const g=new THREE.Group();g.position.set(t[1],-0.13,0.035);
- const sock=new THREE.Mesh(new THREE.CapsuleGeometry(0.045,0.07,8,24),gloss);sock.scale.z=0.3;g.add(sock);
+ const sock=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.064,0.014,48),new THREE.MeshPhysicalMaterial({color:0x1c1d1f,metalness:0.7,roughness:0.4,roughnessMap:brushed,envMapIntensity:2}));sock.rotation.x=Math.PI/2;g.add(sock);
  const piv=new THREE.Group();piv.position.z=0.012;g.add(piv);
- const stem=new THREE.Mesh(new THREE.CylinderGeometry(0.016,0.02,0.08,24),alu);stem.position.y=0.04;piv.add(stem);
- const tip=new THREE.Mesh(new RoundedBoxGeometry(0.15,0.04,0.045,4,0.018),alu);tip.position.y=0.085;piv.add(tip);
+ const stem=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.025,0.1,24),alu);stem.position.y=0.05;piv.add(stem);
+ const tip=new THREE.Mesh(new RoundedBoxGeometry(0.24,0.055,0.06,5,0.025),alu);tip.position.y=0.105;piv.add(tip);
  piv.rotation.x=Math.PI/2-0.5;[sock,stem,tip].forEach(o=>{o.castShadow=true;o.userData.act='toggle';o.userData.key=t[0]});con.add(g);return {key:t[0],piv,on:true}});
 // 4. rotary → range
 const rot=new THREE.Group();rot.position.set(0,-0.1,0.035);con.add(rot);
@@ -198,12 +201,12 @@ const knob=new THREE.Group();knob.position.z=0.01;rot.add(knob);
 const bar=new THREE.Mesh(new RoundedBoxGeometry(0.19,0.47,0.15,8,0.07),alu);bar.position.z=0.075;bar.castShadow=true;knob.add(bar);
 const slot=new THREE.Mesh(new RoundedBoxGeometry(0.034,0.26,0.02,3,0.012),new THREE.MeshBasicMaterial({color:0x050505}));slot.position.z=0.151;knob.add(slot);
 [rotRing,rotWell,bar,slot].forEach(o=>o.userData.act='range');
-const RANGES=[['TODAY',1.0,0],['WEEK',0.92,-0.75],['MONTH',0.75,-1.5]];let rangeIdx=0,knobAng=0;
+const RANGES=[['TODAY',1.0,0],['WEEK',0.92,-0.9],['MONTH',0.75,-2.35]];let rangeIdx=0,knobAng=0;
 // 5. pills → mute / share
 function pill(x,act){const m=new THREE.Mesh(new THREE.CapsuleGeometry(0.038,0.17,8,24),gloss);m.position.set(x,-0.13,0.05);m.scale.z=0.55;m.castShadow=true;m.userData.act=act;con.add(m);return m}
-const pillL=pill(-0.86,'mute'),pillR=pill(0.86,'share');
+const pillL=null,pillR=null; // pills removed: room for readable labels
 // the gauge reads what the console says: share of each feed × range
-const FEED={rivals:0.30,models:0.12,money:0.08,buyers:0.06},BASE=0.18;
+const FEED={rivals:0.30,models:0.12},BASE=0.32; // money + buyers always count
 function recompute(){let t=BASE;toggles.forEach(g=>{if(g.on)t+=FEED[g.key]});window.__setTarget(Math.min(1,t*RANGES[rangeIdx][1]))}
 let muted=false,flash={};
 addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
@@ -219,7 +222,7 @@ window.__consoleTick=now=>{
  knobAng+=(RANGES[rangeIdx][2]-knobAng)*0.18;knob.rotation.z=knobAng;
  const pulse=muted?0.6:0.75+0.25*Math.sin(now/260);sosText.material.color.setScalar(flash.sos&&now-flash.sos<400?1.6:pulse);
  [['scan',lensL],['watch',lensR]].forEach(([k,l])=>{const d=flash[k]?now-flash[k]:9999;l.userData.mat.emissiveIntensity=d<600?0.9*(1-d/600):0});
- [['mute',pillL],['share',pillR]].forEach(([k,m])=>{const d=flash[k]?now-flash[k]:9999;m.position.z=0.05-(d<180?0.012:0)});
+
 };
 
 window.__setTarget=t=>{upFrom=val;target=t;start=performance.now()-250;landed=false;phase='up';lastDecade=Math.floor(val*10)};
