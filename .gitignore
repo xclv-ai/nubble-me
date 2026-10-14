@@ -12,3 +12,4 @@ server/data/feed/nightly-*.log
 
 # generated secrets (ios/scripts/secrets.sh)
 ios/Nubble/Generated/
+docs/redesign/proto/hdr/*_4k.hdr

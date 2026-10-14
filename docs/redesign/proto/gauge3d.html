@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Nubble · gauge 3D</title>
+<style>
+@font-face{font-family:Geist;src:url(fonts/Geist-Variable.woff2)}
+html,body{margin:0;height:100%;background:#050505;overflow:hidden;touch-action:none;font-family:Geist}
+canvas{display:block}
+.cap{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 28px);text-align:center;color:#9a9a9a;font:800 13px Geist;letter-spacing:.06em;text-transform:uppercase}
+.cap b{color:#f2f2f2}
+</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head><body>
+<div class="cap"><b>Pressure</b> on pokpok.ai · tilt the phone</div>
+<script type="module">
+import * as THREE from 'three';
+import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+await document.fonts.load('800 40px Geist');
+const R=new THREE.WebGLRenderer({antialias:true});
+R.setPixelRatio(Math.min(devicePixelRatio,3));R.setSize(innerWidth,innerHeight);
+R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=0.95;R.outputColorSpace=THREE.SRGBColorSpace;
+R.shadowMap.enabled=true;R.shadowMap.type=THREE.VSMShadowMap;
+document.body.prepend(R.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x050505);
+const cam=new THREE.PerspectiveCamera(30,innerWidth/innerHeight,0.1,50);
+
+// studio light from a real photographed environment
+const pm=new THREE.PMREMGenerator(R);
+const hdr=await new RGBELoader().loadAsync('hdr/studio_small_09_4k.hdr');
+const env=pm.fromEquirectangular(hdr).texture;scene.environment=env;scene.environmentIntensity=0.5;
+const key=new THREE.DirectionalLight(0xffffff,1.6);key.position.set(-1.2,2.4,3.2);key.castShadow=true;
+key.shadow.mapSize.set(2048,2048);key.shadow.radius=10;key.shadow.blurSamples=20;key.shadow.bias=-0.0004;
+Object.assign(key.shadow.camera,{left:-1.5,right:1.5,top:1.5,bottom:-1.5,near:0.5,far:8});scene.add(key);
+
+// fine noise for surface micro-detail (roughness variation, brushing)
+function noiseTex(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');const d=g.createImageData(w,h);
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){const v=fn(x,y);const i=(y*w+x)*4;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}g.putImageData(d,0,0);
+ const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t}
+const grain=noiseTex(256,256,()=>150+Math.random()*60);grain.repeat.set(6,6);
+const brushed=noiseTex(512,64,(x,y)=>{const r=Math.sin(y*1.7+Math.random()*0.6)*20+Math.random()*25;return 140+r});
+
+// 1. the panel: soft-touch black, rounded
+const panel=new THREE.Mesh(new RoundedBoxGeometry(8,12,0.2,8,0.12),
+ new THREE.MeshPhysicalMaterial({color:0x0b0b0c,roughness:0.62,roughnessMap:grain,metalness:0,clearcoat:0.15,clearcoatRoughness:0.5}));
+panel.position.z=-0.1;panel.receiveShadow=true;scene.add(panel);
+
+// 2. the bezel: a turned profile (lathe), glossy black with a polished lip
+const prof=[[0.70,0],[0.76,0.004],[0.84,0.03],[0.88,0.08],[0.885,0.13],[0.87,0.18],[0.83,0.21],[0.77,0.225],[0.72,0.22],[0.70,0.19]].map(p=>new THREE.Vector2(p[0],p[1]));
+const bezel=new THREE.Mesh(new THREE.LatheGeometry(prof,160),new THREE.MeshPhysicalMaterial({color:0x0e0e10,roughness:0.28,metalness:0.2,clearcoat:1,clearcoatRoughness:0.08,roughnessMap:grain}));
+bezel.rotation.x=Math.PI/2;bezel.castShadow=true;bezel.receiveShadow=true;scene.add(bezel);
+const lip=new THREE.Mesh(new THREE.TorusGeometry(0.705,0.008,16,200),new THREE.MeshPhysicalMaterial({color:0xc9ccd1,metalness:1,roughness:0.18,roughnessMap:brushed}));
+lip.position.z=0.205;scene.add(lip);
+
+// 3. the dial face: printed scale on a matte black disc, recessed
+const S=2048,c=document.createElement('canvas');c.width=c.height=S;const g=c.getContext('2d');
+g.fillStyle='#060606';g.fillRect(0,0,S,S);const cx=S/2,cy=S/2,ang=v=>(-225+270*v)*Math.PI/180;
+for(let i=0;i<=100;i++){const v=i/100,a=ang(v),maj=i%10===0,mid=i%5===0;const r1=maj?S*0.36:mid?S*0.395:S*0.415,r2=S*0.44;
+ g.strokeStyle=v<0.6?'#F2C21B':'#ECECEC';g.lineWidth=maj?16:mid?8:4;g.beginPath();g.moveTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1);g.lineTo(cx+Math.cos(a)*r2,cy+Math.sin(a)*r2);g.stroke()}
+g.font='800 120px Geist';g.textAlign='center';g.textBaseline='middle';
+[0,20,40,60,80,100].forEach((n,k)=>{const a=ang(n/100);g.fillStyle=n/100<0.6?'#F2C21B':'#ECECEC';g.fillText(n,cx+Math.cos(a)*S*0.285,cy+Math.sin(a)*S*0.285)});
+g.strokeStyle='#1c1c1c';g.lineWidth=6;g.beginPath();g.arc(cx,cy,S*0.2,0,7);g.stroke();
+g.fillStyle='#F2F2F2';g.font='800 330px Geist';g.fillText('74',cx,cy-20);
+g.fillStyle='#FF3B4E';g.font='800 110px Geist';g.fillText('▲ 12',cx,cy+230);
+g.fillStyle='#8a8a8a';g.font='800 72px Geist';g.fillText('PRESSURE',cx,cy+S*0.33);
+const faceTex=new THREE.CanvasTexture(c);faceTex.colorSpace=THREE.SRGBColorSpace;faceTex.anisotropy=R.capabilities.getMaxAnisotropy();
+const face=new THREE.Mesh(new THREE.CircleGeometry(0.70,160),new THREE.MeshPhysicalMaterial({map:faceTex,roughness:0.55,metalness:0,roughnessMap:grain}));
+face.position.z=0.02;face.receiveShadow=true;scene.add(face);
+
+// 4. the needle: tapered, orange enamel, real shadow on the dial
+const ns=new THREE.Shape();ns.moveTo(-0.011,0);ns.lineTo(0.011,0);ns.lineTo(0.005,0.33);ns.lineTo(-0.005,0.33);ns.closePath();
+const needle=new THREE.Mesh(new THREE.ExtrudeGeometry(ns,{depth:0.012,bevelEnabled:true,bevelSize:0.003,bevelThickness:0.003,bevelSegments:3}),
+ new THREE.MeshPhysicalMaterial({color:0xF0641E,roughness:0.25,clearcoat:1,clearcoatRoughness:0.1,emissive:0x5a1d00,emissiveIntensity:0.4}));
+needle.castShadow=true;const pivot=new THREE.Group();pivot.position.z=0.075;pivot.add(needle);needle.position.y=0.30;scene.add(pivot);
+const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.05,0.03,48),new THREE.MeshPhysicalMaterial({color:0x111111,metalness:0.6,roughness:0.3,clearcoat:1}));
+/* no hub: the number owns the centre, as on the Luce speedometer */
+
+// 5. the glass: a shallow dome with real refraction and a faint tint
+const glass=new THREE.Mesh(new THREE.SphereGeometry(4.0,192,48,0,Math.PI*2,0,Math.asin(0.705/4.0)),
+ new THREE.MeshPhysicalMaterial({color:0xffffff,metalness:0,roughness:0.06,transmission:1,thickness:0.06,ior:1.52,clearcoat:1,clearcoatRoughness:0.12,attenuationColor:new THREE.Color(0xd9e6ee),attenuationDistance:2,envMapIntensity:0.7,specularIntensity:1}));
+glass.rotation.x=Math.PI/2;glass.position.z=0.2-4.0*Math.cos(Math.asin(0.705/4.0));scene.add(glass);
+
+// a studio softbox above-left, out of frame: it is what draws the diagonal sweep across the glass
+const box=new THREE.Mesh(new THREE.PlaneGeometry(2.2,5),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));
+box.position.set(-1.4,2.2,3.0);box.lookAt(0,0,0);box.rotateZ(0.6);box.layers.set(0);scene.add(box);
+// needle animation to the value with a little settle
+const target=0.74;let val=0,vel=0;
+// gyroscope: the camera moves, the light stays — reflections and the needle shadow slide
+let tx=0,ty=0,gx=0,gy=0;
+addEventListener('deviceorientation',e=>{tx=THREE.MathUtils.clamp((e.gamma||0)/30,-1,1);ty=THREE.MathUtils.clamp(((e.beta||50)-50)/30,-1,1)});
+addEventListener('pointermove',e=>{tx=(e.clientX/innerWidth-.5)*2;ty=(e.clientY/innerHeight-.5)*2});
+addEventListener('click',()=>{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(()=>{});val=0;vel=0},{once:false});
+function fit(){cam.aspect=innerWidth/innerHeight;cam.fov=cam.aspect<0.7?44:30;cam.updateProjectionMatrix();R.setSize(innerWidth,innerHeight)}fit();addEventListener('resize',fit);
+const clk=new THREE.Clock();
+(function tick(){const dt=Math.min(clk.getDelta(),0.033);
+ gx+=(tx-gx)*0.08;gy+=(ty-gy)*0.08;
+ cam.position.set(gx*1.2,-gy*1.2,cam.aspect<0.7?6.2:4.2);cam.lookAt(0,0,0);
+ const k=40,dmp=7;vel+=((target-val)*k-vel*dmp)*dt;val+=vel*dt;
+ pivot.rotation.z=-( -225+270*val + 90)*Math.PI/180;
+ R.render(scene,cam);requestAnimationFrame(tick)})();
+window.__ready=true;
+</script>
+</body></html>
