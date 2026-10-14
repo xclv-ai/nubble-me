@@ -48,7 +48,7 @@ panel.position.z=-0.1;panel.receiveShadow=true;scene.add(panel);
 
 // 2. the bezel: a turned profile (lathe), glossy black with a polished lip
 const prof=[[0.70,0],[0.76,0.004],[0.84,0.03],[0.88,0.08],[0.885,0.13],[0.87,0.18],[0.83,0.21],[0.77,0.225],[0.72,0.22],[0.70,0.19]].map(p=>new THREE.Vector2(p[0],p[1]));
-const bezel=new THREE.Mesh(new THREE.LatheGeometry(prof,160),new THREE.MeshPhysicalMaterial({color:0x0e0e10,roughness:0.28,metalness:0.2,clearcoat:1,clearcoatRoughness:0.08,roughnessMap:grain}));
+const bezel=new THREE.Mesh(new THREE.LatheGeometry(prof,160),new THREE.MeshPhysicalMaterial({color:0x0c0c0d,roughness:0.82,metalness:0,clearcoat:0,roughnessMap:grain,sheen:0.15,sheenRoughness:0.9,sheenColor:new THREE.Color(0x333333)}));
 bezel.rotation.x=Math.PI/2;bezel.castShadow=true;bezel.receiveShadow=true;scene.add(bezel);
 const lip=new THREE.Mesh(new THREE.TorusGeometry(0.705,0.008,16,200),new THREE.MeshPhysicalMaterial({color:0xc9ccd1,metalness:1,roughness:0.18,roughnessMap:brushed}));
 lip.position.z=0.205;scene.add(lip);
@@ -88,6 +88,7 @@ box.position.set(-1.4,2.2,3.0);box.lookAt(0,0,0);box.rotateZ(0.6);box.layers.set
 const target=0.74;let val=0,vel=0;
 // gyroscope: the camera moves, the light stays — reflections and the needle shadow slide
 let tx=0,ty=0,gx=0,gy=0;
+window.__tilt=(x,y)=>{tx=Math.max(-1,Math.min(1,x));ty=Math.max(-1,Math.min(1,y))};
 addEventListener('deviceorientation',e=>{tx=THREE.MathUtils.clamp((e.gamma||0)/30,-1,1);ty=THREE.MathUtils.clamp(((e.beta||50)-50)/30,-1,1)});
 addEventListener('pointermove',e=>{tx=(e.clientX/innerWidth-.5)*2;ty=(e.clientY/innerHeight-.5)*2});
 addEventListener('click',()=>{if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(()=>{});val=0;vel=0},{once:false});

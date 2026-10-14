@@ -2,6 +2,7 @@
 import SwiftUI
 import WebKit
 import UniformTypeIdentifiers
+import CoreMotion
 
 /// Debug only: shows a web prototype full screen inside the app.
 /// `-proto gauge3d.html` loads the page bundled in ProtoBundle (no network to the Mac needed);
@@ -31,6 +32,7 @@ struct ProtoViewer: UIViewRepresentable {
         web.scrollView.isScrollEnabled = false
         web.scrollView.contentInsetAdjustmentBehavior = .never
         web.load(URLRequest(url: url))
+        context.coordinator.startMotion(for: web)
         return web
     }
 
@@ -56,6 +58,21 @@ struct ProtoViewer: UIViewRepresentable {
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
+        nonisolated(unsafe) private let motion = CMMotionManager()
+        /// Feeds the phone's tilt into the page (window.__tilt) — pages served from the app are not a secure
+        /// context, so the web DeviceOrientation API stays silent there.
+        func startMotion(for web: WKWebView) {
+            guard motion.isDeviceMotionAvailable else { return }
+            motion.deviceMotionUpdateInterval = 1.0 / 60.0
+            motion.startDeviceMotionUpdates(to: .main) { [weak web] data, _ in
+                guard let g = data?.gravity, let web else { return }
+                // gravity x = left/right tilt; y+0.5 ≈ 0 when the phone is held at a normal reading angle
+                let x = g.x * 2.2, y = (g.y + 0.55) * 2.2
+                web.evaluateJavaScript("window.__tilt && window.__tilt(\(x), \(y))", completionHandler: nil)
+            }
+        }
+        deinit { motion.stopDeviceMotionUpdates() }
+
         func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge,
                      completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
             if let trust = challenge.protectionSpace.serverTrust {
