@@ -47,11 +47,11 @@ const panel=new THREE.Mesh(new RoundedBoxGeometry(8,12,0.2,8,0.12),
 panel.position.z=-0.1;panel.receiveShadow=true;scene.add(panel);
 
 // 2. the bezel: a turned profile (lathe), glossy black with a polished lip
-const prof=[[0.70,0],[0.76,0.004],[0.84,0.03],[0.88,0.08],[0.885,0.13],[0.87,0.18],[0.83,0.21],[0.77,0.225],[0.72,0.22],[0.70,0.19]].map(p=>new THREE.Vector2(p[0],p[1]));
+const prof=[[0.70,0],[0.88,0],[0.885,0.004],[0.885,0.176],[0.881,0.18],[0.704,0.18],[0.70,0.176],[0.70,0.12]].map(p=>new THREE.Vector2(p[0],p[1]));
 const bezel=new THREE.Mesh(new THREE.LatheGeometry(prof,160),new THREE.MeshPhysicalMaterial({color:0x0c0c0d,roughness:0.82,metalness:0,clearcoat:0,roughnessMap:grain,sheen:0.15,sheenRoughness:0.9,sheenColor:new THREE.Color(0x333333)}));
 bezel.rotation.x=Math.PI/2;bezel.castShadow=true;bezel.receiveShadow=true;scene.add(bezel);
 const lip=new THREE.Mesh(new THREE.TorusGeometry(0.705,0.008,16,200),new THREE.MeshPhysicalMaterial({color:0xc9ccd1,metalness:1,roughness:0.18,roughnessMap:brushed}));
-lip.position.z=0.205;scene.add(lip);
+lip.position.z=0.178;scene.add(lip);
 
 // 3. the dial face: printed scale on a matte black disc, recessed
 const S=2048,c=document.createElement('canvas');c.width=c.height=S;const g=c.getContext('2d');
@@ -79,7 +79,7 @@ const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.05,0.03,48),new THRE
 // 5. the glass: a shallow dome with real refraction and a faint tint
 const glass=new THREE.Mesh(new THREE.SphereGeometry(4.0,192,48,0,Math.PI*2,0,Math.asin(0.705/4.0)),
  new THREE.MeshPhysicalMaterial({color:0xffffff,metalness:0,roughness:0.06,transmission:1,thickness:0.06,ior:1.52,clearcoat:1,clearcoatRoughness:0.12,attenuationColor:new THREE.Color(0xd9e6ee),attenuationDistance:2,envMapIntensity:0.7,specularIntensity:1}));
-glass.rotation.x=Math.PI/2;glass.position.z=0.2-4.0*Math.cos(Math.asin(0.705/4.0));scene.add(glass);
+glass.rotation.x=Math.PI/2;glass.position.z=0.17-4.0*Math.cos(Math.asin(0.705/4.0));scene.add(glass);
 
 // a studio softbox above-left, out of frame: it is what draws the diagonal sweep across the glass
 const box=new THREE.Mesh(new THREE.PlaneGeometry(2.2,5),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));
