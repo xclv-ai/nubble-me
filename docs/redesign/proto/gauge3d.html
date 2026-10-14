@@ -9,11 +9,36 @@ canvas{display:block}
 .read{position:fixed;left:22px;top:calc(env(safe-area-inset-top) + 22px);border-left:1px solid #333;padding-left:14px;font-family:Geist;color:#e9e9e9}.read .t{font:600 19px Geist}.read .d{font:600 19px Geist;color:#8a8a8a}.read .big{font:300 40px/1.1 Geist;margin-top:14px;color:#cfcfcf}.read .s{font:500 15px/1.35 Geist;color:#8a8a8a}
 .cap{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 28px);text-align:center;color:#9a9a9a;font:800 13px Geist;letter-spacing:.06em;text-transform:uppercase}
 .cap b{color:#f2f2f2}
+.dots{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 10px);display:flex;justify-content:center;gap:8px;z-index:20}
+.dots i{width:7px;height:7px;border-radius:50%;background:#555}.dots i.on{background:#e9e9e9}
+.trend{position:fixed;inset:0;background:#050505;z-index:10;transform:translateX(100%);transition:transform .38s cubic-bezier(.2,.8,.2,1);padding:calc(env(safe-area-inset-top) + 18px) 20px 60px;font-family:Geist;color:#e9e9e9;overflow:hidden}
+.trend.on{transform:none}
+.tr-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tag{display:inline-block;border:1.5px solid;border-radius:2px;padding:4px 8px 3px;font:600 13px Geist;letter-spacing:.06em}
+.tag.g{color:#2fb65a}.tag.r{color:#ff4a5c}
+.big{font:300 40px/1.05 Geist;margin-top:8px;letter-spacing:-.01em}.big small{display:block;font:500 15px Geist;color:#9a9a9a;margin-top:4px}
+.ch{margin-top:26px}.ch-h{display:flex;justify-content:space-between;align-items:baseline;font:600 13px Geist;letter-spacing:.05em;color:#9a9a9a;margin-bottom:8px}
+.ch-h b{font:600 17px Geist;letter-spacing:0;color:#e9e9e9}.ch-h b.y{color:#f2d32b}
+.ch svg{width:100%;height:205px;display:block}
+.key{margin-top:14px;font:500 14px Geist;color:#9a9a9a;display:flex;align-items:center;gap:8px}.key i{width:10px;height:10px;border-radius:50%;background:#2fb65a}
+.lax{position:relative;height:20px;margin-top:6px;font:600 13px Geist;color:#9a9a9a}.lax span{position:absolute;transform:translateX(-50%)}
+#chv{font:500 15px Geist;color:#9a9a9a;letter-spacing:0}#chv b{color:#e9e9e9;font-weight:700}#chv b.y{color:#f2d32b}
+.ax{display:flex;justify-content:space-between;font:600 13px Geist;color:#9a9a9a;margin-top:6px}
 </style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.169.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.169.0/examples/jsm/"}}</script>
 </head><body>
 <div class="read"><div class="t" id="rt"></div><div class="d" id="rd"></div><div class="big">6d 13h</div><div class="s" id="read-s1">Zoomtopia EU</div><div class="s">nearest deadline</div></div>
 
+<div class="dots" id="dots"><i class="on"></i><i></i></div>
+<section class="trend" id="trend">
+  <div class="tr-grid">
+    <div><div class="tag g">MODE: WAR</div><div class="big">74<small>pressure</small></div></div>
+    <div><div class="tag r">RIVALS: 1 ALARM</div><div class="big">$155M<small>Profound</small></div></div>
+  </div>
+  <div class="ch-h" style="margin-top:28px"><span>7 DAYS</span><span id="chv">tap a day</span></div>
+  <svg id="lucechart" style="width:100%;height:472px;display:block"></svg>
+  <div class="lax" id="lax"></div>
+</section>
 <script type="module">
 import * as THREE from 'three';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
@@ -32,8 +57,8 @@ const cam=new THREE.PerspectiveCamera(30,innerWidth/innerHeight,1,80);
 const pm=new THREE.PMREMGenerator(R);
 const hdr=await new RGBELoader().loadAsync('hdr/studio_small_09_4k.hdr');
 const env=pm.fromEquirectangular(hdr).texture;scene.environment=env;scene.environmentIntensity=0.5;
-const key=new THREE.DirectionalLight(0xffffff,1.6);key.position.set(-1.2,2.4,3.2);key.castShadow=true;
-key.shadow.mapSize.set(2048,2048);key.shadow.radius=10;key.shadow.blurSamples=20;key.shadow.bias=-0.0004;
+const key=new THREE.DirectionalLight(0xffffff,1.6);key.position.set(1.4,2.6,3.2);key.castShadow=true;
+key.shadow.mapSize.set(4096,4096);key.shadow.radius=14;key.shadow.blurSamples=20;key.shadow.bias=-0.0004;
 Object.assign(key.shadow.camera,{left:-3,right:3,top:3,bottom:-3,near:0.5,far:10});scene.add(key);
 
 // fine noise for surface micro-detail (roughness variation, brushing)
@@ -84,7 +109,7 @@ const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.05,0.03,48),new THRE
 
 // 5. the glass: a shallow dome with real refraction and a faint tint
 const glass=new THREE.Mesh(new THREE.SphereGeometry(4.0,192,48,0,Math.PI*2,0,Math.asin(0.705/4.0)),
- new THREE.MeshPhysicalMaterial({color:0x000000,metalness:0,roughness:0.16,clearcoat:1,clearcoatRoughness:0.22,envMapIntensity:0.45,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
+ new THREE.MeshPhysicalMaterial({color:0x000000,metalness:0,roughness:0.16,clearcoat:1,clearcoatRoughness:0.22,envMapIntensity:0.3,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
 glass.rotation.x=Math.PI/2;glass.position.z=0.112-4.0*Math.cos(Math.asin(0.705/4.0));scene.add(glass);
 
 // a studio softbox above-left, out of frame: it is what draws the diagonal sweep across the glass
@@ -228,6 +253,16 @@ window.__consoleTick=now=>{
 
 };
 
+// ---------- one light for the whole screen: soft drop shadows that move with the light ----------
+function dropShadow(parent,w,h,rad,x,y,z,alpha){const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');
+ g.filter='blur(34px)';g.fillStyle=`rgba(0,0,0,${alpha})`;const m=60,W=512-2*m,H=(512-2*m)*h/w;const oy=(512-H)/2;
+ g.beginPath();g.roundRect(m,oy,W,H,rad*W/w);g.fill();
+ const t=new THREE.CanvasTexture(c);const ms=new THREE.Mesh(new THREE.PlaneGeometry(w*512/W,w*512/W),new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));
+ ms.position.set(x,y,z);ms.renderOrder=-1;parent.add(ms);ms.userData.base=[x,y];return ms}
+const shadows=[dropShadow(mainG,1.62,1.62,0.81,0,0,0.002,0.85),dropShadow(miniG,1.62,1.62,0.81,0,0,0.002,0.85),dropShadow(con,2.0,1.19,0.22,0,0,-0.03,0.8),dropShadow(rot,0.52,0.52,0.26,0,0,0.002,0.7)];
+lensL&&shadows.push(dropShadow(lensL,0.26,0.26,0.13,0,0,-0.03,0.6));lensR&&shadows.push(dropShadow(lensR,0.26,0.26,0.13,0,0,-0.03,0.6));
+window.__shadowTick=(gx,gy)=>{const ox=-0.07-gx*0.06,oy=-0.09+gy*0.06;shadows.forEach(s=>{const k=s.parent===mainG||s.parent===miniG||s.parent===con?1:0.45;s.position.x=s.userData.base[0]+ox*k;s.position.y=s.userData.base[1]+oy*k})};
+
 window.__setTarget=t=>{upFrom=val;target=t;start=performance.now()-250;landed=false;phase='up';lastDecade=Math.floor(val*10)};
 const sweep=p=>{const c1=1.70158*1.15,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2)}; // ease out with a small overshoot
 
@@ -244,8 +279,9 @@ const clk=new THREE.Clock();
  cam.position.set(0,0,cam.aspect<0.7?26:18);cam.lookAt(0,0,0);
  if(!window.__rig){window.__rig=new THREE.Group();window.__rig.add(panel,mainG,miniG);scene.add(window.__rig)}
  window.__rig.rotation.set(-gy*0.04,gx*0.04,0);
- scene.environmentRotation.set(-gy*0.22,gx*0.3,0);
- key.position.set(-1.2+gx*0.5,2.4-gy*0.5,3.2);
+ scene.environmentRotation.set(-gy*0.35,gx*0.45,0);
+ key.position.set(1.4+gx*1.6,2.6-gy*1.6,3.2);
+ if(window.__shadowTick)window.__shadowTick(gx,gy);
  glareTex.offset.set(0.25-gx*0.12,0.25+gy*0.12);
  const now=performance.now();let p=0;
  if(phase==='down'){const q=Math.min(1,(now-downStart)/(120+380*from));val=from*(1-q*q);if(q>=1){phase='up';start=now-250;lastDecade=0;val=0;upFrom=0}}
@@ -260,4 +296,44 @@ const clk=new THREE.Clock();
 window.__ready=true;
 (function clock(){const d=new Date();document.getElementById('rt').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});document.getElementById('rd').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric'}).toUpperCase();setTimeout(clock,15000)})();
 </script>
+<script>
+(function(){
+ // 7 days × 4 readings a day (illustrative): pressure climbs 48 → 74, mentions spike when a rival moves
+ const D=['Thu','Fri','Sat','Sun','Mon','Tue','Wed'],T=['night','morning','afternoon','evening'];
+ const P=[],M=[],LAB=[];let r=7;const rnd=()=>{r=(r*16807)%2147483647;return r/2147483647};
+ const pk=[48,51,55,58,57,62,74],mk=[3,6,2,5,1,4,9];
+ for(let i=0;i<28;i++){const d=Math.floor(i/4),f=(i%4)/4,a=pk[d],b=pk[Math.min(6,d+1)];P.push(+(a+(b-a)*f+(rnd()-0.5)*3).toFixed(1));
+  M.push(Math.max(0,+(mk[d]*(0.55+0.9*rnd())+(i%4===1?2:0)).toFixed(1)));LAB.push(D[d]+' '+T[i%4])}
+ P[27]=74;LAB[27]='Now';
+ const DAYS=LAB;
+ const W=353,PH=228,GAP=16,NOW=W*0.79,H=PH*2+GAP;
+ const svg=document.getElementById('lucechart');
+ const xs=i=>6+i*(NOW-6)/(P.length-1);
+ function pane(top,data,lo,hi,col,unit,base){const y=v=>top+PH-14-(v-lo)/(hi-lo)*(PH-30);let s='';
+  for(let k=0;k<=14;k++){const yy=top+k*PH/14;s+=`<line x1="0" x2="${W}" y1="${yy}" y2="${yy}" stroke="${k===0||k===14?'#3a3a3a':'#181818'}" stroke-width="${k===0||k===14?1.2:1}"/>`}
+  let d=`M${xs(0)},${y(data[0])}`;for(let i=1;i<data.length;i++){const cx=(xs(i-1)+xs(i))/2;d+=` C${cx},${y(data[i-1])} ${cx},${y(data[i])} ${xs(i)},${y(data[i])}`}
+  s+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="2.4" stroke-linecap="round"/>`;
+  if(base!=null){const by=y(base);const id='clip'+top;s+=`<clipPath id="${id}"><rect x="0" y="${by}" width="${W}" height="${top+PH-by}"/></clipPath><path d="${d}" fill="none" stroke="#2fb65a" stroke-width="5" stroke-linecap="round" clip-path="url(#${id})"/><line x1="0" x2="${NOW}" y1="${by}" y2="${by}" stroke="#3a3a3a" stroke-width="1"/>`}
+  s+=`<line x1="0" x2="${W}" y1="${top+PH-14}" y2="${top+PH-14}" stroke="#8a8a8a" stroke-width="1.4"/>`;
+  s+=`<text x="${W-2}" y="${top+PH-22}" fill="${col}" font-family="Geist" font-weight="700" font-size="14" text-anchor="end">${unit}</text>`;
+  return {s,y}}
+ const a=pane(0,P,40,80,'#e9e9e9','pressure',null), b=pane(PH+GAP,M,0,10,'#f2d32b','mentions',2.2);
+ svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ svg.innerHTML=a.s+b.s+`<line x1="${NOW}" x2="${NOW}" y1="0" y2="${H}" stroke="#ff3b4e" stroke-width="2"/><g id="mk"></g>`;
+ svg.onclick=e=>{const r=svg.getBoundingClientRect();const fx=(e.clientX-r.left)/r.width*W;const k=Math.max(0,Math.min(P.length-1,Math.round((fx-6)/((NOW-6)/(P.length-1)))));
+  document.getElementById('mk').innerHTML=`<line x1="${xs(k)}" x2="${xs(k)}" y1="0" y2="${H}" stroke="#e9e9e9" stroke-width="1" stroke-dasharray="3 3"/><circle cx="${xs(k)}" cy="${a.y(P[k])}" r="5.5" fill="#050505" stroke="#e9e9e9" stroke-width="2.2"/><circle cx="${xs(k)}" cy="${b.y(M[k])}" r="5.5" fill="#050505" stroke="#f2d32b" stroke-width="2.2"/>`;
+  document.getElementById('chv').innerHTML=`${DAYS[k]} · <b>${Math.round(P[k])}</b> · <b class="y">${Math.round(M[k])}</b> mentions`};
+ const ax=document.getElementById('lax');ax.innerHTML=D.map((d,i)=>`<span style="left:${xs(i*4)/W*100}%">${i===0?'7d':'|'}</span>`).join('')+`<span style="left:${(NOW/W*100)+7}%">now</span>`;
+ const tr=document.getElementById('trend'),dots=[...document.querySelectorAll('#dots i')];
+ function page(n){tr.classList.toggle('on',n===1);dots.forEach((d,i)=>d.classList.toggle('on',i===n));try{window.webkit.messageHandlers.haptic.postMessage('tick')}catch(e){}}
+ dots.forEach((d,i)=>d.onclick=()=>page(i));
+ let x0=null,y0=null;
+ addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+ addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4)page(dx<0?1:0)},{passive:true});
+ window.__page=page;
+ if(location.hash==='#trend')setTimeout(()=>page(1),300);
+})();
+</script>
+
 </body></html>
