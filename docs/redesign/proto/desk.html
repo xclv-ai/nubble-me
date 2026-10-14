@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dr HAOS desk</title>
+<style>
+@font-face{font-family:Geist;src:url(fonts/Geist-Variable.woff2)}
+@font-face{font-family:Serif;src:url(fonts/InstrumentSerif-Italic.ttf);font-style:italic}
+@font-face{font-family:Serif;src:url(fonts/InstrumentSerif-Regular.ttf)}
+@font-face{font-family:Mono;src:url(fonts/JetBrainsMono-Medium.woff2)}
+:root{--teal:#0A3B44;--deep:#062a31;--ink:#FDFDFC;--pink:#FFC4D6;--yel:#F5F900;--red:#FF5A6E;--beige:#E8E0D1}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--deep);color:var(--ink);font-family:Geist,system-ui;overflow:hidden}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;padding:calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 14px)}
+.screen.on{display:flex}
+.meta{font:500 13px/1.3 Mono;letter-spacing:.08em;text-transform:uppercase;opacity:.75;display:flex;justify-content:space-between}
+.voice{font:italic 26px/1.08 Serif;color:var(--pink);margin-top:14px}
+.voice b{font-style:normal;font-weight:400}
+/* the room: wall + desk with a floor shadow that slides with tilt */
+.room{position:relative;flex:1;margin:10px -18px 0;background:radial-gradient(120% 70% at 50% 18%,#0e4a55 0,var(--teal) 45%,var(--deep) 100%);overflow:hidden}
+.desk{position:absolute;left:-10%;right:-10%;bottom:0;height:46%;background:linear-gradient(#0c3f49,#052127);border-top:2px solid #135561}
+.lamp{position:absolute;right:30px;top:0;width:3px;height:22%;background:#0f3138}
+.lamp:after{content:"";position:absolute;left:-26px;bottom:-22px;width:56px;height:26px;background:#123b43;clip-path:polygon(20% 0,80% 0,100% 100%,0 100%)}
+.pool{position:absolute;right:-6%;top:22%;width:70%;height:78%;background:radial-gradient(50% 40% at 60% 60%,rgba(245,249,0,.18),transparent 70%);pointer-events:none;transition:opacity .4s}
+.cord{position:absolute;right:28px;top:0;width:2px;height:64%;z-index:4;background:var(--yel);transform-origin:top;animation:sway 3.4s ease-in-out infinite}
+.cord i{position:absolute;bottom:-22px;left:-21px;width:44px;height:44px;border-radius:50%;background:var(--yel);box-shadow:0 0 18px rgba(245,249,0,.6)}
+.cordlabel{position:absolute;right:14px;top:calc(64% + 30px);z-index:4;font:500 13px Mono;color:var(--yel);letter-spacing:.08em}
+@keyframes sway{50%{transform:rotate(4deg)}}
+.cord.pull{animation:pull .5s ease}
+@keyframes pull{30%{transform:scaleY(1.25)}100%{transform:scaleY(1)}}
+/* the patient: product at centre, three pins with wires to tags */
+svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.wire{fill:none;stroke:var(--pink);stroke-width:2;stroke-linecap:round}
+.wire.y{stroke:var(--yel);stroke-width:3}
+.pulse{fill:none;stroke:var(--yel);stroke-width:4;stroke-dasharray:14 400;stroke-dashoffset:414;opacity:0}
+.pulse.go{animation:run .55s linear forwards}
+@keyframes run{0%{opacity:1}100%{stroke-dashoffset:0;opacity:1}}
+.bottle{position:absolute;left:50%;bottom:17%;width:62px;height:118px;transform:translateX(-50%);background:linear-gradient(90deg,#08323a,#0d4a55 45%,#062a31);border-radius:14px 14px 10px 10px}
+.bottle:before{content:"";position:absolute;left:19px;top:-26px;width:24px;height:30px;background:#0b3d46;border-radius:4px 4px 0 0}
+.bottle span{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font:500 12px Mono;white-space:nowrap;opacity:.7}
+.shadow{position:absolute;left:50%;bottom:14%;width:120px;height:20px;margin-left:-60px;background:radial-gradient(closest-side,rgba(0,0,0,.6),transparent);transition:transform .08s linear}
+.tag{position:absolute;width:80%;z-index:3;padding:12px 14px 13px;background:var(--yel);color:var(--teal);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%);cursor:pointer;transition:transform .15s}
+.tag.l{clip-path:polygon(14px 0,100% 0,100% 100%,14px 100%,0 50%);padding-left:20px}
+.tag.red{background:var(--red);color:var(--ink)}
+.tag small{display:block;font:500 11px Mono;letter-spacing:.06em;text-transform:uppercase;opacity:.8;margin-bottom:4px}
+.tag p{font:600 23px/1.08 Geist;letter-spacing:-.01em}
+.tag:active{transform:scale(.96)}
+.tag.done{opacity:.35}
+/* sockets = sources */
+.sockets{z-index:2;position:absolute;left:14px;bottom:3%;display:flex;gap:7px}
+.sock{width:18px;height:18px;border-radius:3px;background:#0a2f36;border:1px solid #1a5a66;position:relative}
+.sock:after{content:"";position:absolute;left:5px;top:5px;width:4px;height:4px;border-radius:50%;background:var(--yel)}
+.sock.dead:after{background:var(--red)}
+.sockcap{z-index:2;position:absolute;left:14px;bottom:calc(3% + 26px);font:500 12px Mono;opacity:.6;letter-spacing:.06em}
+.hint{font:500 13px Mono;color:var(--yel);letter-spacing:.06em;text-align:center;padding-top:10px}
+/* sheet screen */
+.back{font:600 17px Geist;color:var(--ink);background:none;border:1.5px solid rgba(253,253,252,.4);border-radius:24px;padding:11px 18px;min-height:44px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.sheet{flex:1;margin-top:14px;background:var(--beige);color:var(--teal);padding:20px 18px;position:relative;overflow:auto;box-shadow:0 18px 40px rgba(0,0,0,.45);animation:print .6s cubic-bezier(.2,.8,.2,1)}
+.sheet.red{border-top:8px solid var(--red)}
+@keyframes print{from{transform:translateY(-60%);clip-path:inset(60% 0 0 0)}to{transform:none;clip-path:inset(0)}}
+.sheet small{font:500 13px Mono;letter-spacing:.07em;text-transform:uppercase;opacity:.7}
+.sheet h1{font:600 42px/1.0 Geist;letter-spacing:-.01em;margin:10px 0 12px}
+.sheet .his{font:italic 25px/1.15 Serif;color:#b0305a}
+.dial{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0 10px}
+.dial button{flex:1;font:600 13px Mono;min-height:48px;padding:6px 0;border:1.5px solid var(--teal);background:none;color:var(--teal);letter-spacing:.04em}
+.dial button.on{background:var(--teal);color:var(--beige)}
+.lvl p{font:400 19px/1.4 Geist;margin-bottom:10px}
+.lvl p.gist{font:500 26px/1.22 Geist}
+.lvl b{display:block;font:500 13px Mono;letter-spacing:.07em;margin-top:8px;opacity:.75}
+.machines{display:flex;gap:10px;margin-top:12px}
+.stamp,.shred{flex:1;height:82px;border:0;font:600 21px Geist;position:relative}
+.stamp{background:var(--yel);color:var(--teal)}
+.shred{background:#0d3d46;color:var(--ink)}
+.stamp small,.shred small{display:block;font:500 12px Mono;opacity:.75;margin-top:3px}
+.inked{position:absolute;right:16px;top:70px;transform:rotate(-9deg);border:3px solid #b0305a;color:#b0305a;font:600 14px Mono;padding:6px 10px;opacity:0;transition:opacity .2s}
+.inked.on{opacity:.9;animation:thump .25s}
+@keyframes thump{0%{transform:rotate(-9deg) scale(1.6)}100%{transform:rotate(-9deg) scale(1)}}
+.gone{animation:shred .45s ease-in forwards}
+@keyframes shred{to{transform:translateY(120%);opacity:0}}
+.discharge{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.discharge h1{font:600 40px/1 Geist}
+.rx{font:500 17px/1.35 Geist;margin-top:8px;color:var(--yel)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+
+<!-- HOME: the desk -->
+<section class="screen on" id="home">
+  <div class="meta"><span>Dr HAOS · <span id="date"></span></span><span>171 read</span></div>
+  <div class="voice" id="opening">Three things moved in your market. One is a <b>competitor</b>. Pull the cord.</div>
+  <div class="room" id="room">
+    <div class="sockets" id="sockets"></div><div class="sockcap">SOURCES 13/15</div>
+    <div class="lamp"></div><div class="pool" id="pool" style="opacity:.25"></div>
+    <div class="cord" id="cord"><i></i></div><div class="cordlabel">PULL<br>START</div>
+    <div class="desk"></div>
+    <div class="shadow" id="shadow"></div>
+    <div class="bottle"><span>POKPOK.AI</span></div>
+    <svg class="wires" id="wires"></svg>
+    <div id="tags"></div>
+  </div>
+  <div class="hint" id="hint">TAP A HEADLINE · OR PULL THE CORD</div>
+</section>
+
+<!-- SIGNAL: the printed sheet -->
+<section class="screen" id="signal">
+  <div class="top"><button class="back" onclick="home()">‹ Desk</button><span class="meta" id="count" style="opacity:.75"></span></div>
+  <div class="sheet" id="sheet"></div>
+  <div class="machines">
+    <button class="stamp" onclick="stamp()">℞ Stamp it<small>ADD TO TODAY · REMINDER</small></button>
+    <button class="shred" onclick="shred()">Shred<small>NOT ABOUT ME · NEXT</small></button>
+  </div>
+</section>
+
+<!-- DISCHARGE -->
+<section class="screen" id="out">
+  <div class="top"><button class="back" onclick="home()">‹ Desk</button><span></span></div>
+  <div class="discharge">
+    <div class="meta">Discharged · <span id="date2"></span></div>
+    <h1>Nothing else is wrong with you today.</h1>
+    <div class="voice">Sadly. Go build something. I'll have read everything <b>again</b> by tomorrow.</div>
+    <div id="rxlist"></div>
+  </div>
+</section>
+
+<script src="signals.js"></script>
+<script>
+const S=window.SIGNALS;
+// three rounds from the real phone stories: the competitor-ish one first
+const R=[
+ {s:S[1],red:true,why:"OpenAI just did inside ChatGPT what your report charges for: show a product the way a buyer sees it. Free. Your move."},
+ {s:S[0],why:"Retail bought Apple because it needs no training. Your report needs a reading guide. That's the gap."},
+ {s:S[3],why:"Zoom sells webinars with an AI host. Your clients' CMOs live in webinars. Nobody there has heard of you."}
+];
+const done=[],rx=[];let cur=0,depth=0;
+const $=id=>document.getElementById(id);
+const d=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});$('date').textContent=d;$('date2').textContent=d;
+// sockets
+for(let i=0;i<15;i++){const k=document.createElement('div');k.className='sock'+(i>12?' dead':'');$('sockets').appendChild(k)}
+// tags + wires
+const pos=[{x:4,y:3},{x:4,y:24},{x:4,y:45}];
+function drawTags(){
+ $('tags').innerHTML='';
+ R.forEach((r,i)=>{const t=document.createElement('div');const p=pos[i];
+  t.className='tag'+(r.red?' red':'')+(done.includes(i)?' done':'');
+  t.style.left=p.x+'%';t.style.top=p.y+'%';
+  t.innerHTML=`<small>0${i+1} · ${r.red?'code red':r.s.source}</small><p>${r.s.headline}</p>`;
+  t.onclick=()=>open(i);t.id='tag'+i;$('tags').appendChild(t)});
+ requestAnimationFrame(drawWires)}
+function drawWires(){
+ const room=$('room').getBoundingClientRect(),b=document.querySelector('.bottle').getBoundingClientRect();
+ const bx=b.left-room.left+b.width/2,by=b.top-room.top+b.height*0.45;let h='';
+ R.forEach((r,i)=>{const t=$('tag'+i).getBoundingClientRect();const p=pos[i];
+  const tx=t.right-room.left-24-i*18,ty=t.bottom-room.top;
+  const mx=(tx+bx)/2,sag=10;const dpath=`M${bx},${by+i*14-14} Q${mx},${Math.max(ty,by)+sag} ${tx},${ty}`;
+  h+=`<path class="wire" d="${dpath}"/><path class="pulse" id="pulse${i}" d="M${tx},${ty} Q${mx},${Math.max(ty,by)+sag} ${bx},${by+i*14-14}" pathLength="400"/>`});
+ // the yellow mains cable: socket wall -> desk
+ h+=`<path class="wire y" d="M22,${room.height*0.95} C${room.width*0.2},${room.height*0.8} ${room.width*0.3},${room.height*0.98} ${bx-20},${room.height*0.9}"/>`;
+ $('wires').innerHTML=h}
+// open a signal: the wire pulses first (anticipation), then the sheet prints
+function open(i){cur=i;depth=0;const p=$('pulse'+i);if(p){p.classList.remove('go');void p.getBoundingClientRect();p.classList.add('go')}
+ navigator.vibrate&&navigator.vibrate(12);setTimeout(()=>{show('signal');renderSheet()},520)}
+function renderSheet(){const r=R[cur],s=r.s;
+ const lv=[
+  `<p class="gist">${s.summary}</p>`,
+  s.expanded.map(e=>`<b>${e.label}</b><p>${e.lead?'<strong>'+e.lead+'</strong> ':''}${e.text}</p>`).join(''),
+  s.forYou.map(e=>`<b>${e.label}</b><p>${e.text}</p>`).join(''),
+  `<b>DO THIS</b><p>${s.action}</p>`];
+ $('count').textContent=`0${cur+1} OF 03`;
+ $('sheet').className='sheet'+(r.red?' red':'');
+ $('sheet').innerHTML=`<small>0${cur+1} · ${r.red?'CODE RED · ':''}${s.source}</small><h1>${s.headline}</h1>
+  <div class="his">${r.why}</div><div class="inked" id="inked">℞ PRESCRIBED</div>
+  <div class="dial">${['GIST','DEPTH','YOUR PRODUCT','DO'].map((n,k)=>`<button class="${k===depth?'on':''}" onclick="depth=${k};renderSheet()">0${k} ${n}</button>`).join('')}</div>
+  <div class="lvl">${lv[depth]}</div>`}
+function stamp(){const r=R[cur];if(!rx.includes(r.s.action))rx.push(r.s.action);$('inked').classList.add('on');navigator.vibrate&&navigator.vibrate([10,40,20]);setTimeout(next,700)}
+function shred(){$('sheet').classList.add('gone');navigator.vibrate&&navigator.vibrate(30);setTimeout(next,450)}
+function next(){if(!done.includes(cur))done.push(cur);const n=[0,1,2].find(i=>!done.includes(i));
+ if(n===undefined){$('rxlist').innerHTML=rx.map(a=>`<div class="rx">℞ ${a}</div>`).join('');show('out')}else open(n)}
+function home(){show('home');drawTags()}
+function show(id){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===id));if(id==='home')requestAnimationFrame(drawWires)}
+// the cord: light on, rounds start at the first untouched signal
+$('cord').onclick=()=>{askMotion();$('cord').classList.add('pull');$('pool').style.opacity=1;setTimeout(()=>{$('cord').classList.remove('pull');const n=[0,1,2].find(i=>!done.includes(i));n===undefined?show('out'):open(n)},500)};
+// gyroscope: the floor shadow slides, the room shifts a few px (parallax)
+let motionAsked=false;function askMotion(){if(motionAsked)return;motionAsked=true;
+ if(window.DeviceOrientationEvent&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().catch(()=>{})}
+document.addEventListener('click',askMotion,{once:true});
+addEventListener('deviceorientation',e=>{const x=Math.max(-20,Math.min(20,e.gamma||0)),y=Math.max(-20,Math.min(20,(e.beta||45)-45));
+ $('shadow').style.transform=`translate(${-x*2.2}px,${-y*0.6}px) scaleX(${1+Math.abs(x)/40})`;
+ document.querySelector('.desk').style.transform=`translateX(${x*0.4}px)`;
+ document.querySelector('.bottle').style.transform=`translateX(calc(-50% + ${x*0.8}px))`});
+document.querySelector('.sockcap').onclick=()=>alert('Sources: 15 sockets, one per feed. Unplug = remove, plug a URL = add. (Mockup: not wired yet.)');
+addEventListener('resize',drawWires);drawTags();
+</script>
+</body></html>
