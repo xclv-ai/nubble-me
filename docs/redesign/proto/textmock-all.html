@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nubble · all 9 elements (measured)</title>
+<style>
+@font-face{font-family:Geist;src:url(fonts/Geist-Variable.woff2)}
+*{box-sizing:border-box;margin:0}
+html,body{background:#000;color:#EDEDED;font-family:Geist,system-ui}
+.phone{position:relative;width:393px;height:852px;overflow:hidden;background:#000}
+.safe-top{height:59px}.safe-bot{position:absolute;left:0;right:0;bottom:0;height:34px;border-top:1px dashed #333}
+.content{padding:0 20px}
+.t-display{font:800 80px/0.95 Geist;letter-spacing:-.02em}
+.t-head{font:800 24px/1.15 Geist;letter-spacing:-.01em}
+.t-body{font:600 17px/1.3 Geist}
+.t-meta{font:700 13px/1.3 Geist;letter-spacing:.04em;text-transform:uppercase;color:#A0A0A0}
+.red{color:#FF4A5C}.yel{color:#F2D32B}.grn{color:#2FB65A}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.n{display:inline-block;width:18px;height:18px;border-radius:50%;background:#333;color:#fff;font:800 11px/18px Geist;text-align:center;margin-right:6px;vertical-align:2px}
+.sig{padding:10px 0;border-top:1px solid #222;min-height:44px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{font:700 13px Geist;border:1.5px solid #555;border-radius:999px;padding:9px 12px;min-height:44px;display:flex;align-items:center}
+.chip.on{border-color:#EDEDED;color:#fff}.chip.off{color:#666}
+.keys{display:flex;gap:6px}.key{flex:1;font:700 13px Geist;background:#1a1a1c;border-radius:12px;min-height:44px;display:flex;align-items:center;justify-content:center}
+</style></head><body>
+<div class="phone" id="phone">
+ <div class="safe-top"></div>
+ <div class="content">
+  <div data-el="1 alarm" class="t-head red"><span class="n">1</span>● Profound: $155M</div>
+  <div data-el="2 state" class="t-meta" style="margin-top:2px"><span class="n">2</span>War mode · 3 signals · 2 actions open</div>
+  <div class="row" style="margin-top:10px">
+   <div><div data-el="4 pressure label" class="t-meta"><span class="n">4</span>Pressure today</div><div class="row" style="justify-content:flex-start"><div data-el="4 pressure" class="t-display">74</div><div data-el="4 change" class="t-head red">▲12</div></div></div>
+   <div style="text-align:right"><div data-el="3 deadline label" class="t-meta"><span class="n">3</span>Deadline</div><div data-el="3 deadline" class="t-head yel">6 days</div><div data-el="3 deadline what" class="t-body">Zoomtopia EU</div></div>
+  </div>
+  <div data-el="7 trend" class="t-body" style="margin:8px 0 10px"><span class="n">7</span>Trend: <span class="red">rising 4 days in a row</span> · 7-day chart</div>
+  <div class="sig"><div data-el="5 signal 1" class="t-head"><span class="n">5</span>Profound: $1B valuation</div><div data-el="5 s1 line" class="t-body">Sells AI visibility to the Fortune 500.</div></div>
+  <div class="sig"><div data-el="5 signal 2" class="t-head">Peec AI: $4M a year</div><div data-el="5 s2 line" class="t-body">In 10 months. Your buyers.</div></div>
+  <div class="sig"><div data-el="5 signal 3" class="t-head grn">Jev: $0.042 / 1M</div><div data-el="5 s3 line" class="t-body">Your decisions got cheaper.</div></div>
+  <div data-el="do first" class="t-head" style="margin-top:10px">Do first: answer Profound.</div>
+  <div style="margin-top:12px"><div data-el="8 filters label" class="t-meta" style="margin-bottom:6px"><span class="n">8</span>Show me · <span class="n">9</span>range</div>
+   <div class="chips" data-el="8+9 controls"><span class="chip on">Rivals</span><span class="chip on">Models</span><span class="chip off">Money</span><span class="chip on">Today ▾</span></div></div>
+  <div class="keys" style="margin-top:8px" data-el="6 setup"><div class="key"><span class="n">6</span>Sources 13</div><div class="key">Watchlist 4</div><div class="key">pokpok.ai</div></div>
+ </div>
+ <div class="safe-bot"></div>
+</div>
+</body></html>
