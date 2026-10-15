@@ -27,7 +27,7 @@ canvas{display:block}
 </style>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.169.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.169.0/examples/jsm/"}}</script>
 </head><body>
-<div class="read"><div class="t" id="rt"></div><div class="d" id="rd"></div><div class="big">6d 13h</div><div class="s" id="read-s1">Zoomtopia EU</div><div class="s">nearest deadline</div></div>
+<div class="read"><div class="t" id="rt"></div><div class="d" id="rd"></div><div class="big" id="rcount">–</div><div class="s" id="read-s1">Zoomtopia EU</div><div class="s">nearest deadline</div></div>
 
 <div class="dots" id="dots"><i class="on"></i><i></i></div>
 <section class="trend" id="trend">
@@ -109,7 +109,7 @@ const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.05,0.03,48),new THRE
 
 // 5. the glass: a shallow dome with real refraction and a faint tint
 const glass=new THREE.Mesh(new THREE.SphereGeometry(4.0,192,48,0,Math.PI*2,0,Math.asin(0.705/4.0)),
- new THREE.MeshPhysicalMaterial({color:0x000000,metalness:0,roughness:0.16,clearcoat:1,clearcoatRoughness:0.22,envMapIntensity:0.3,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
+ new THREE.MeshBasicMaterial({color:0x000000,envMap:env,reflectivity:0.32,combine:THREE.MixOperation,transparent:true,opacity:1,blending:THREE.AdditiveBlending,depthWrite:false}));
 glass.rotation.x=Math.PI/2;glass.position.z=0.112-4.0*Math.cos(Math.asin(0.705/4.0));scene.add(glass);
 
 // a studio softbox above-left, out of frame: it is what draws the diagonal sweep across the glass
@@ -132,9 +132,9 @@ const numTex=new THREE.CanvasTexture(nc);numTex.colorSpace=THREE.SRGBColorSpace;
 const numDisc=new THREE.Mesh(new THREE.CircleGeometry(0.34,96),new THREE.MeshPhysicalMaterial({map:numTex,roughness:0.55,metalness:0,roughnessMap:grain}));
 numDisc.position.z=0.021;scene.add(numDisc);
 let shown=-1;
-const dc=document.createElement('canvas');dc.width=1024;dc.height=160;const dg=dc.getContext('2d');const dTex=new THREE.CanvasTexture(dc);dTex.colorSpace=THREE.SRGBColorSpace;
-const dLine=new THREE.Mesh(new THREE.PlaneGeometry(0.8,0.125),new THREE.MeshBasicMaterial({map:dTex,transparent:true,depthWrite:false}));dLine.position.set(0,-0.469,0.022);scene.add(dLine);
-const YESTERDAY=62;function drawDelta(v){dg.clearRect(0,0,1024,160);if(v==null){dTex.needsUpdate=true;return}const d=v-YESTERDAY;dg.textAlign='center';dg.textBaseline='middle';dg.font='700 100px Geist';dg.fillStyle=d>0?'#FF3B4E':d<0?'#2fd36b':'#9a9a9a';dg.fillText((d>0?'▲ ':d<0?'▼ ':'= ')+Math.abs(d)+' since yesterday',512,84);dTex.needsUpdate=true}
+const dc=document.createElement('canvas');dc.width=1400;dc.height=160;const dg=dc.getContext('2d');const dTex=new THREE.CanvasTexture(dc);dTex.colorSpace=THREE.SRGBColorSpace;
+const dLine=new THREE.Mesh(new THREE.PlaneGeometry(1.09,0.125),new THREE.MeshBasicMaterial({map:dTex,transparent:true,depthWrite:false}));dLine.position.set(0,-0.469,0.022);scene.add(dLine);
+const YESTERDAY=62;function drawDelta(v){dg.clearRect(0,0,1400,160);if(v==null){dTex.needsUpdate=true;return}const d=v-YESTERDAY;dg.textAlign='center';dg.textBaseline='middle';dg.font='700 100px Geist';dg.fillStyle=d>0?'#FF3B4E':d<0?'#2fd36b':'#9a9a9a';dg.fillText((d>0?'▲ ':d<0?'▼ ':'= ')+Math.abs(d)+' since yesterday',700,84);dTex.needsUpdate=true}
 function drawNum(n,done){if(n===shown&&!done)return;shown=n;ng.fillStyle='#050505';ng.fillRect(0,0,512,512);ng.textAlign='center';ng.textBaseline='middle';ng.strokeStyle='#2a2a2a';ng.lineWidth=3;ng.beginPath();ng.arc(256,256,248,0,7);ng.stroke();
  ng.fillStyle='#F0F0F0';ng.font='500 228px Geist';ng.fillText(String(n),256,226);ng.fillStyle='#9A9A9A';ng.fillStyle='#C8C8C8';ng.font='600 66px Geist';ng.fillText('PRESSURE',256,378);drawDelta(done?n:null);
  
@@ -165,7 +165,7 @@ const hs=new THREE.Shape();hs.moveTo(-0.014,-0.1);hs.lineTo(0.014,-0.1);hs.lineT
 const hand=new THREE.Mesh(new THREE.ExtrudeGeometry(hs,{depth:0.01,bevelEnabled:true,bevelSize:0.003,bevelThickness:0.003,bevelSegments:2}),new THREE.MeshPhysicalMaterial({color:0xD8141E,roughness:0.3,clearcoat:1,clearcoatRoughness:0.1}));
 hand.castShadow=true;const handPivot=new THREE.Group();handPivot.position.z=0.07;handPivot.add(hand);miniG.add(handPivot);
 const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.055,0.03,48),new THREE.MeshPhysicalMaterial({color:0xd9dce0,metalness:1,roughness:0.2}));cap.rotation.x=Math.PI/2;cap.position.z=0.09;cap.castShadow=true;miniG.add(cap);
-const miniTarget=6/14;let miniStart=performance.now()+400,miniFrom=0;
+const DEADLINE=new Date('2026-10-21T09:00:00+02:00');const daysLeft=()=>Math.max(0,(DEADLINE-Date.now())/864e5);const miniTarget=Math.min(1,daysLeft()/14);let miniStart=performance.now()+400,miniFrom=0;
 window.__mini=now=>{const p=Math.min(1,Math.max(0,(now-miniStart)/1100));const e=1-Math.pow(1-p,3);const v=miniFrom+(miniTarget-miniFrom)*e;handPivot.rotation.z=-v*Math.PI*2};
 addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
  if(ray.intersectObjects(miniG.children,true).length){miniFrom=0;miniStart=performance.now();haptic('press')}});
@@ -294,7 +294,7 @@ const clk=new THREE.Clock();
  if(window.__consoleTick)window.__consoleTick(performance.now());
  R.render(scene,cam);requestAnimationFrame(tick)})();
 window.__ready=true;
-(function clock(){const d=new Date();document.getElementById('rt').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});document.getElementById('rd').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric'}).toUpperCase();setTimeout(clock,15000)})();
+(function clock(){const d=new Date();document.getElementById('rt').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});document.getElementById('rd').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric'}).toUpperCase();{const ms=Math.max(0,DEADLINE-d),dd=Math.floor(ms/864e5),hh=Math.floor(ms%864e5/36e5);document.getElementById('rcount').textContent=dd+'d '+hh+'h'}setTimeout(clock,15000)})();
 </script>
 <script>
 (function(){
