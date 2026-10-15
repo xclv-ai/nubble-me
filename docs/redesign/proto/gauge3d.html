@@ -12,7 +12,9 @@ canvas{display:block}
 .dots{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 10px);display:flex;justify-content:center;gap:8px;z-index:20}
 .dots i{width:7px;height:7px;border-radius:50%;background:#555}.dots i.on{background:#e9e9e9}
 .trend{position:fixed;inset:0;background:#050505;z-index:10;transform:translateX(100%);transition:transform .38s cubic-bezier(.2,.8,.2,1);padding:calc(env(safe-area-inset-top) + 18px) 20px 60px;font-family:Geist;color:#e9e9e9;overflow:hidden}
-.trend.on{transform:none}
+.trend.on{transform:none}.trend.left{transform:translateX(-100%)}
+.gildcap{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 30px);text-align:center;font:700 13px Geist;letter-spacing:.14em;color:#9a958a;opacity:0;transition:opacity .4s;pointer-events:none;z-index:20}.gildcap.on{opacity:1}
+.dots.light i{background:#c9c6be}.dots.light i.on{background:#3a3833}
 .tr-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .tag{display:inline-block;border:1.5px solid;border-radius:2px;padding:4px 8px 3px;font:600 13px Geist;letter-spacing:.06em}
 .tag.g{color:#2fb65a}.tag.r{color:#ff4a5c}
@@ -29,7 +31,7 @@ canvas{display:block}
 </head><body>
 <div class="read"><div class="t" id="rt"></div><div class="d" id="rd"></div><div class="big" id="rcount">–</div><div class="s" id="read-s1">Zoomtopia EU</div><div class="s">nearest deadline</div></div>
 
-<div class="dots" id="dots"><i class="on"></i><i></i></div>
+<div class="dots" id="dots"><i class="on"></i><i></i><i></i></div><div class="gildcap" id="gildcap">TOUCH TO GILD</div>
 <section class="trend" id="trend">
   <div class="tr-grid">
     <div><div class="tag g">MODE: WAR</div><div class="big">74<small>pressure</small></div></div>
@@ -42,6 +44,7 @@ canvas{display:block}
 <script type="module">
 import * as THREE from 'three';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 await document.fonts.load('800 40px Geist');
@@ -270,6 +273,39 @@ const shadows=[dropShadow(mainG,1.62,1.62,0.81,0,0,0.002,0.85),dropShadow(miniG,
 lensL&&shadows.push(dropShadow(lensL,0.26,0.26,0.13,0,0,-0.03,0.6));lensR&&shadows.push(dropShadow(lensR,0.26,0.26,0.13,0,0,-0.03,0.6));
 window.__shadowTick=(gx,gy)=>{const ox=0.06-gx*0.03,oy=-0.08+gy*0.03;shadows.forEach(s=>{const k=s.parent===mainG||s.parent===miniG||s.parent===con?1:0.45;s.position.x=s.userData.base[0]+ox*k;s.position.y=s.userData.base[1]+oy*k})};
 
+// ---------- page 3: white-on-white plaster; a tap turns that area into gold metal ----------
+const GOLD={uTime:{value:0},uTaps:{value:[new THREE.Vector4(0,0,0,-99),new THREE.Vector4(0,0,0,-99),new THREE.Vector4(0,0,0,-99),new THREE.Vector4(0,0,0,-99),new THREE.Vector4(0,0,0,-99),new THREE.Vector4(0,0,0,-99)]}};
+let tapIdx=0;
+function plaster(orig){const m=new THREE.MeshStandardMaterial({color:0xf2f0eb,roughness:0.88,metalness:0,envMapIntensity:0.6});
+ const tex=orig&&orig.map;if(tex){m.bumpMap=tex;m.bumpScale=2.2}
+ if(orig&&orig.transparent&&orig.map){m.transparent=true;m.alphaMap=null;m.depthWrite=false;m.opacity=1;m.color.setHex(0xf2f0eb);m.alphaTest=0.02;m.map=tex;m.color.setHex(0xffffff);m.onBeforeCompile0=true}
+ m.onBeforeCompile=sh=>{sh.uniforms.uTime=GOLD.uTime;sh.uniforms.uTaps=GOLD.uTaps;
+  sh.vertexShader='varying vec3 vGoldPos;\n'+sh.vertexShader.replace('#include <project_vertex>','#include <project_vertex>\n vGoldPos=(modelMatrix*vec4(transformed,1.0)).xyz;');
+  sh.fragmentShader='varying vec3 vGoldPos;uniform float uTime;uniform vec4 uTaps[6];\nfloat goldAmt(){float g=0.;for(int i=0;i<6;i++){float age=uTime-uTaps[i].w;if(age<0.)continue;float r=0.5*smoothstep(0.,0.55,age);float fade=1.-smoothstep(3.2,4.8,age);float d=distance(vGoldPos,uTaps[i].xyz);g=max(g,(1.-smoothstep(r-0.14,r,d))*fade);}return g;}\n'+sh.fragmentShader
+   .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\n float gA=goldAmt(); roughnessFactor=mix(roughnessFactor,0.14,gA);')
+   .replace('#include <metalnessmap_fragment>','#include <metalnessmap_fragment>\n metalnessFactor=mix(metalnessFactor,1.0,gA);')
+   .replace('#include <color_fragment>','#include <color_fragment>\n diffuseColor.rgb=mix(diffuseColor.rgb,vec3(1.0,0.80,0.42),goldAmt());')
+   .replace('#include <lights_fragment_maps>','#include <lights_fragment_maps>\n radiance*=mix(1.0,1.5,gA);');};
+ return m}
+const whiteSaved=new Map();let whiteOn=false;
+function whiteMode(on){if(on===whiteOn)return;whiteOn=on;const root=window.__rig||scene;
+ root.traverse(o=>{if(!o.isMesh)return;
+  const isShadow=shadows.includes(o),isGlassy=(o===glass||o===miniGlass||o===glare||o===miniGlare);
+  if(on){if(!whiteSaved.has(o))whiteSaved.set(o,{m:o.material,v:o.visible});
+   if(isShadow)return; if(isGlassy){o.visible=false;return}
+   const om=o.material;
+   if(om&&om.map&&om.transparent){// printed text/labels → raised plaster lettering only where ink is
+     const m=plaster(null);m.bumpMap=om.map;m.bumpScale=2.4;m.alphaMap=om.map;m.transparent=true;m.depthWrite=false;o.material=m}
+   else o.material=plaster(om)}
+  else if(whiteSaved.has(o)){const s=whiteSaved.get(o);o.material=s.m;o.visible=s.v}});
+ if(!window.__roomEnv)window.__roomEnv=pm.fromScene(new RoomEnvironment(),0.03).texture;scene.environment=on?window.__roomEnv:env;scene.environmentIntensity=on?0.75:0.5;
+ scene.background.setHex(on?0xe9e7e2:0x050505);shadows.forEach(sh=>sh.material.opacity=on?0.38:1);document.querySelector('.read').style.opacity=on?0:1;
+ key.intensity=on?2.2:1.6;}
+window.__white=whiteMode;
+addEventListener('pointerdown',e=>{if(!whiteOn)return;ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
+ const hit=ray.intersectObject(window.__rig||scene,true).find(h=>h.object.visible&&!shadows.includes(h.object));if(!hit)return;
+ GOLD.uTaps.value[tapIdx].set(hit.point.x,hit.point.y,hit.point.z,GOLD.uTime.value);tapIdx=(tapIdx+1)%6;haptic('land')});
+
 window.__setTarget=t=>{upFrom=val;target=t;start=performance.now()-250;landed=false;phase='up';lastDecade=Math.floor(val*10)};
 const sweep=p=>{const c1=1.70158*1.15,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2)}; // ease out with a small overshoot
 
@@ -299,6 +335,7 @@ const clk=new THREE.Clock();
  pivot.rotation.z=(-250-220*val)*Math.PI/180;
  if(window.__mini)window.__mini(performance.now());
  if(window.__consoleTick)window.__consoleTick(performance.now());
+ GOLD.uTime.value=performance.now()/1000;
  R.render(scene,cam);requestAnimationFrame(tick)})();
 window.__ready=true;
 (function clock(){const d=new Date();document.getElementById('rt').textContent=d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});document.getElementById('rd').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric'}).toUpperCase();{const ms=Math.max(0,DEADLINE-d),dd=Math.floor(ms/864e5),hh=Math.floor(ms%864e5/36e5);document.getElementById('rcount').textContent=dd+'d '+hh+'h'}setTimeout(clock,15000)})();
@@ -332,14 +369,15 @@ window.__ready=true;
   document.getElementById('chv').innerHTML=`${DAYS[k]} · <b>${Math.round(P[k])}</b> · <b class="y">${Math.round(M[k])}</b> mentions`};
  const ax=document.getElementById('lax');ax.innerHTML=D.map((d,i)=>`<span style="left:${xs(i*4)/W*100}%">${i===0?'7d':'|'}</span>`).join('')+`<span style="left:${(NOW/W*100)+7}%">now</span>`;
  const tr=document.getElementById('trend'),dots=[...document.querySelectorAll('#dots i')];
- function page(n){tr.classList.toggle('on',n===1);dots.forEach((d,i)=>d.classList.toggle('on',i===n));try{window.webkit.messageHandlers.haptic.postMessage('tick')}catch(e){}}
+ let cur=0;function page(n){n=Math.max(0,Math.min(2,n));cur=n;tr.classList.toggle('on',n===1);tr.classList.toggle('left',n===2);dots.forEach((d,i)=>d.classList.toggle('on',i===n));document.getElementById('gildcap').classList.toggle('on',n===2);document.getElementById('dots').classList.toggle('light',n===2);if(window.__white)window.__white(n===2);try{window.webkit.messageHandlers.haptic.postMessage('tick')}catch(e){}}
  dots.forEach((d,i)=>d.onclick=()=>page(i));
  let x0=null,y0=null;
  addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
  addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
-  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4)page(dx<0?1:0)},{passive:true});
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4)page(cur+(dx<0?1:-1))},{passive:true});
  window.__page=page;
  if(location.hash==='#trend')setTimeout(()=>page(1),300);
+ if(location.hash==='#gold')setTimeout(()=>page(2),1200);
 })();
 </script>
 
