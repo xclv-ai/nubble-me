@@ -109,7 +109,7 @@ const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.05,0.03,48),new THRE
 
 // 5. the glass: a shallow dome with real refraction and a faint tint
 const glass=new THREE.Mesh(new THREE.SphereGeometry(4.0,192,48,0,Math.PI*2,0,Math.asin(0.705/4.0)),
- new THREE.MeshBasicMaterial({color:0x000000,envMap:env,reflectivity:0.32,combine:THREE.MixOperation,transparent:true,opacity:1,blending:THREE.AdditiveBlending,depthWrite:false}));
+ new THREE.MeshPhysicalMaterial({color:0x000000,metalness:0,roughness:0.16,clearcoat:1,clearcoatRoughness:0.22,envMapIntensity:0.45,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
 glass.rotation.x=Math.PI/2;glass.position.z=0.112-4.0*Math.cos(Math.asin(0.705/4.0));scene.add(glass);
 
 // a studio softbox above-left, out of frame: it is what draws the diagonal sweep across the glass
@@ -287,7 +287,7 @@ const clk=new THREE.Clock();
  if(!window.__rig){window.__rig=new THREE.Group();window.__rig.add(panel,mainG,miniG);scene.add(window.__rig)}
  window.__rig.rotation.set(-gy*0.04,gx*0.04,0);
  scene.environmentRotation.set(-gy*0.35,gx*0.45,0);
- key.position.set(1.4+gx*1.6,2.6-gy*1.6,3.2);
+ key.position.set(1.4+gx*0.5,2.6-gy*0.5,3.2);
  if(window.__shadowTick)window.__shadowTick(gx,gy);
  glareTex.offset.set(0.25-gx*0.12,0.25+gy*0.12);
  const now=performance.now();let p=0;
