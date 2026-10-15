@@ -189,7 +189,14 @@ function icon(kind,x,y){const [a,b]=PX(x,y);lg.save();lg.translate(a,b);lg.scale
  if(kind==='buyers'){lg.beginPath();lg.arc(0,-14,14,0,7);lg.stroke();lg.beginPath();lg.arc(0,34,28,Math.PI*1.1,Math.PI*1.9);lg.stroke()}
  lg.restore()}
 const TOG=[['rivals',-0.7,'RIVALS'],['models',0.7,'MODELS']]; // two switches: the founder's top two needs
-TOG.forEach(t=>{icon(t[0],t[1],0.06);label(t[2],t[1],-0.44,72,'#d0d0d0',700)});
+// small engraved display above each switch: what this switch feeds into the gauge
+const FEEDS={rivals:['4','PROFOUND','#ff5a6a'],models:['3','JEV','#f2d32b']};
+function display(x,y,num,name,col,off){const [cx,cy]=PX(x,y);const w=390,h=112;lg.save();
+ lg.fillStyle='#030303';lg.beginPath();lg.roundRect(cx-w/2,cy-h/2,w,h,22);lg.fill();
+ lg.strokeStyle='#2c2c2e';lg.lineWidth=4;lg.stroke();lg.strokeStyle='rgba(0,0,0,.9)';lg.lineWidth=3;lg.beginPath();lg.roundRect(cx-w/2+4,cy-h/2+4,w-8,h-8,18);lg.stroke();
+ lg.textBaseline='middle';lg.textAlign='left';lg.fillStyle=off?'#3a3a3a':col;lg.font='700 80px Geist';lg.fillText(num,cx-w/2+26,cy+4);
+ const nw=lg.measureText(num).width;lg.fillStyle=off?'#3a3a3a':'#ececec';lg.font='700 54px Geist';lg.fillText(name,cx-w/2+26+nw+20,cy+6);lg.restore()}
+TOG.forEach(t=>{const f=FEEDS[t[0]];display(t[1],0.07,f[0],f[1],f[2]);label(t[2],t[1],-0.44,72,'#d0d0d0',700)});
 label('TODAY',-0.28,0.1,56,'#5fe08a',800);label('WEEK',0,0.2,56,'#d0d0d0',700);label('MONTH',0.29,0.1,56,'#d0d0d0',700);
 label('SCAN',-0.535,0.4,58,'#d0d0d0',700);label('WATCH',0.535,0.4,58,'#d0d0d0',700);
 const labTex=new THREE.CanvasTexture(lc);labTex.colorSpace=THREE.SRGBColorSpace;labTex.anisotropy=R.capabilities.getMaxAnisotropy();
@@ -239,7 +246,7 @@ function recompute(){let t=BASE;toggles.forEach(g=>{if(g.on)t+=FEED[g.key]});win
 let muted=false,flash={};
 addEventListener('pointerdown',e=>{ptr.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(ptr,cam);
  const hit=ray.intersectObjects(con.children,true)[0];if(!hit)return;let o=hit.object;while(o&&!o.userData.act)o=o.parent;if(!o)return;const act=o.userData.act;
- if(act==='toggle'){const g=toggles.find(t=>t.key===o.userData.key);g.on=!g.on;haptic('tick');recompute()}
+ if(act==='toggle'){const g=toggles.find(t=>t.key===o.userData.key);g.on=!g.on;haptic('tick');const t=TOG.find(t=>t[0]===g.key),f=FEEDS[g.key];display(t[1],0.07,f[0],f[1],f[2],!g.on);labTex.needsUpdate=true;recompute()}
  if(act==='range'){rangeIdx=(rangeIdx+1)%3;redrawRange(RANGES[rangeIdx][0]);haptic('press');recompute()}
  if(act==='sos'){haptic('land');flash.sos=performance.now();document.getElementById('read-s1').textContent='CODE RED · Profound raised $155M'}
  if(act==='scan'||act==='watch'){haptic('press');flash[act]=performance.now()}
