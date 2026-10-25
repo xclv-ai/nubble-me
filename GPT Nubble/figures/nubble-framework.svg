@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="921.6pt" height="540pt" viewBox="0 0 921.6 540" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <title>Three representations, one source of evidence</title>
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>Three representations, one source of evidence</dc:title>
+    <dc:description>Proposed framework — no performance results</dc:description>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Nubble Method</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 540 
+L 921.6 540 
+L 921.6 0 
+L 0 0 
+z
+" style="fill: #f8f5ed"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 164.9664 363.96 
+L 164.9664 397.98 
+L 755.712 397.98 
+" clip-path="url(#p95c8fbf135)" style="fill: none; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 36.864 71.82 
+L 884.736 71.82 
+" clip-path="url(#p95c8fbf135)" style="fill: none; stroke: #b5bfba; stroke-linecap: round"/>
+   </g>
+   <g id="patch_2">
+    <path d="M 343.7568 150.66 
+L 872.7552 150.66 
+Q 883.8144 150.66 883.8144 144.18 
+L 883.8144 95.04 
+Q 883.8144 88.56 872.7552 88.56 
+L 343.7568 88.56 
+Q 332.6976 88.56 332.6976 95.04 
+L 332.6976 144.18 
+Q 332.6976 150.66 343.7568 150.66 
+z
+" clip-path="url(#p95c8fbf135)" style="fill: #e4eee8; stroke: #185d58; stroke-width: 1.25; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 48.8448 363.42 
+L 282.9312 363.42 
+Q 293.9904 363.42 293.9904 356.94 
+L 293.9904 192.24 
+Q 293.9904 185.76 282.9312 185.76 
+L 48.8448 185.76 
+Q 37.7856 185.76 37.7856 192.24 
+L 37.7856 356.94 
+Q 37.7856 363.42 48.8448 363.42 
+z
+" clip-path="url(#p95c8fbf135)" style="fill: #fffdf7; stroke: #52605e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 343.7568 363.42 
+L 577.8432 363.42 
+Q 588.9024 363.42 588.9024 356.94 
+L 588.9024 192.24 
+Q 588.9024 185.76 577.8432 185.76 
+L 343.7568 185.76 
+Q 332.6976 185.76 332.6976 192.24 
+L 332.6976 356.94 
+Q 332.6976 363.42 343.7568 363.42 
+z
+" clip-path="url(#p95c8fbf135)" style="fill: #e4eee8; stroke: #185d58; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 638.6688 363.42 
+L 872.7552 363.42 
+Q 883.8144 363.42 883.8144 356.94 
+L 883.8144 192.24 
+Q 883.8144 185.76 872.7552 185.76 
+L 638.6688 185.76 
+Q 627.6096 185.76 627.6096 192.24 
+L 627.6096 356.94 
+Q 627.6096 363.42 638.6688 363.42 
+z
+" clip-path="url(#p95c8fbf135)" style="fill: #f8e9ca; stroke: #b36c14; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 48.8448 487.08 
+L 872.7552 487.08 
+Q 883.8144 487.08 883.8144 480.6 
+L 883.8144 432 
+Q 883.8144 425.52 872.7552 425.52 
+L 48.8448 425.52 
+Q 37.7856 425.52 37.7856 432 
+L 37.7856 480.6 
+Q 37.7856 487.08 48.8448 487.08 
+z
+" clip-path="url(#p95c8fbf135)" style="fill: #edefea; stroke: #b5bfba; stroke-width: 1.25; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 468.1728 150.66 
+Q 468.1728 166.59 468.1728 180.619342 
+" clip-path="url(#p95c8fbf135)" style="fill: none; stroke-dasharray: 6.29,2.72; stroke-dashoffset: 0; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+    <path d="M 470.5728 175.819342 
+L 468.1728 180.619342 
+L 465.7728 175.819342 
+z
+" clip-path="url(#p95c8fbf135)" style="fill: #185d58; stroke-dasharray: 6.29,2.72; stroke-dashoffset: 0; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 750.1824 150.66 
+Q 750.1824 166.59 750.1824 180.619342 
+" clip-path="url(#p95c8fbf135)" style="fill: none; stroke-dasharray: 6.29,2.72; stroke-dashoffset: 0; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+    <path d="M 752.5824 175.819342 
+L 750.1824 180.619342 
+L 747.7824 175.819342 
+z
+" clip-path="url(#p95c8fbf135)" style="fill: #185d58; stroke-dasharray: 6.29,2.72; stroke-dashoffset: 0; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 293.9904 261.36 
+Q 312.4224 261.36 328.953742 261.36 
+" clip-path="url(#p95c8fbf135)" style="fill: none; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+    <path d="M 323.753742 258.76 
+L 328.953742 261.36 
+L 323.753742 263.96 
+z
+" clip-path="url(#p95c8fbf135)" style="fill: #185d58; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 588.9024 261.36 
+Q 607.3344 261.36 623.865742 261.36 
+" clip-path="url(#p95c8fbf135)" style="fill: none; stroke: #b36c14; stroke-width: 1.7; stroke-linecap: round"/>
+    <path d="M 618.665742 258.76 
+L 623.865742 261.36 
+L 618.665742 263.96 
+z
+" clip-path="url(#p95c8fbf135)" style="fill: #b36c14; stroke: #b36c14; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 755.712 397.98 
+Q 755.712 380.97 755.712 365.860658 
+" clip-path="url(#p95c8fbf135)" style="fill: none; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+    <path d="M 753.312 370.660658 
+L 755.712 365.860658 
+L 758.112 370.660658 
+z
+" clip-path="url(#p95c8fbf135)" style="fill: #185d58; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 25px; font-family: 'DejaVu Serif'; text-anchor: start; fill: #222c2c" x="36.864" y="32.278437" transform="rotate(-0 36.864 32.278437)">1   Three representations, one source of evidence</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 14.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="36.864" y="56.381094" transform="rotate(-0 36.864 56.381094)">Nubble selects and interprets information against an explicit reader context and a limited attention budget.</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 12.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="36.864" y="525.089219" transform="rotate(-0 36.864 525.089219)">Proposed framework — no performance results</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #52605e" x="884.736" y="524.537344" transform="rotate(-0 884.736 524.537344)">NUBBLE METHOD  /  CONCEPTUAL</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="357.5808" y="112.39125" transform="rotate(-0 357.5808 112.39125)">READER CONTEXT</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222c2c" x="357.5808" y="135.899063" transform="rotate(-0 357.5808 135.899063)">Goal  •  current plan  •  constraints  •  decision horizon</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #52605e" x="163.1232" y="123.73125" transform="rotate(-0 163.1232 123.73125)">LIMITED ATTENTION</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 13.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #52605e" x="163.1232" y="146.285156" transform="rotate(-0 163.1232 146.285156)">Choose depth; preserve access.</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="59.904" y="211.21125" transform="rotate(-0 59.904 211.21125)">FULL</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222c2c" x="59.904" y="239.524531" transform="rotate(-0 59.904 239.524531)">Available original</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="354.816" y="211.21125" transform="rotate(-0 354.816 211.21125)">SHORT</text>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222c2c" x="354.816" y="239.590938" transform="rotate(-0 354.816 239.590938)">Personalized selection</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="649.728" y="211.21125" transform="rotate(-0 649.728 211.21125)">SO WHAT?</text>
+   </g>
+   <g id="text_14">
+    <text style="font-weight: 700; font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222c2c" x="649.728" y="239.590938" transform="rotate(-0 649.728 239.590938)">Conditional implication</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 14.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(59.904 273.200041)">Original text and source spans</text>
+    <text style="font-size: 14.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(59.904 291.336281)">Attribution and retrieval scope</text>
+    <text style="font-size: 14.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(59.904 309.472521)">A snippet remains a snippet</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 14.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(354.816 273.200041)">What matters to this reader?</text>
+    <text style="font-size: 14.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(354.816 291.336281)">Select source-supported facts</text>
+    <text style="font-size: 14.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(354.816 309.472521)">Compress within the budget</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 14.3px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(649.728 264.761801)">What could this change?</text>
+    <text style="font-size: 14.3px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(649.728 282.404538)">Label assumptions</text>
+    <text style="font-size: 14.3px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(649.728 300.047275)">and uncertainty</text>
+    <text style="font-size: 14.3px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(649.728 317.690011)">Propose a feasible next step</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 12.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="59.904" y="346.349219" transform="rotate(-0 59.904 346.349219)">Preserved evidence</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 12.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="354.816" y="346.349219" transform="rotate(-0 354.816 346.349219)">Generated representation</text>
+   </g>
+   <g id="text_20">
+    <text style="font-weight: 700; font-size: 12.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="649.728" y="346.349219" transform="rotate(-0 649.728 346.349219)">Generated proposal</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #185d58" x="460.8" y="388.694844" transform="rotate(-0 460.8 388.694844)">Direct source evidence supports both generated views</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="61.7472" y="450.833281" transform="rotate(-0 61.7472 450.833281)">EVIDENCE ACCESS</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 14.1px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222c2c" x="61.7472" y="473.690719" transform="rotate(-0 61.7472 473.690719)">Both generated views link to the original; generated prose never reconstructs the original.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p95c8fbf135">
+   <rect x="0" y="0" width="921.6" height="540"/>
+  </clipPath>
+ </defs>
+</svg>

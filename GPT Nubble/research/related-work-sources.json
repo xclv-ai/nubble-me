@@ -1,0 +1,354 @@
+{
+  "schema_version": "1.0",
+  "retrieved_at": "2026-10-25",
+  "scope": "Focused, non-exhaustive primary-source review of personalized, task-oriented and decision-focused summarization relevant to Nubble; selected close precedents and evaluation methods, not a systematic review.",
+  "search_routes": [
+    "Firecrawl research_search_papers",
+    "Firecrawl research_inspect_paper",
+    "Firecrawl research_read_paper",
+    "Targeted Firecrawl web search and primary-page scrape"
+  ],
+  "search_queries": [
+    "personalized summarization task oriented summaries user goals decision support news",
+    "decision focused summarization actionable intelligence business strategic report summarization",
+    "query focused summarization user model information need decision making",
+    "\"decision focused summarization\"",
+    "\"task based\" \"summarization\" \"decision\" user",
+    "\"strategic intelligence\" \"summarization\" language model",
+    "\"PersonalSum\" proceedings Zhang Liu",
+    "\"SumRecom\" Ghodratnama Zakershahrak journal",
+    "\"Does This Summary Answer My Question\" aclanthology",
+    "\"Comparative Personalization for Multi-document Summarization\" aclanthology",
+    "\"Information Satisfaction\" \"Cachola\"",
+    "site:aclanthology.org \"Decision-Focused Summarization\"",
+    "\"Improving Meeting Summarization by Focusing on User Needs\"",
+    "\"Extrinsic Summarization Evaluation: A Decision Audit Task\"",
+    "Improving Meeting Summarization by Focusing on User Needs A Task-Oriented Evaluation",
+    "Is Summary Useful or Not An Extrinsic Human Evaluation of Text Summaries on Downstream Tasks"
+  ],
+  "evidence_legend": {
+    "A": "Canonical primary metadata and relevant primary full-text passages read; not necessarily whole-paper cover-to-cover review.",
+    "B": "Primary method passages or abstract available but one bibliographic/empirical component remains unverified."
+  },
+  "sources": [
+    {
+      "id": "hsu_tan_2021_decsum",
+      "title": "Decision-Focused Summarization",
+      "authors": [
+        "Chao-Chun Hsu",
+        "Chenhao Tan"
+      ],
+      "year": 2021,
+      "venue": "Proceedings of EMNLP 2021",
+      "pages": "117–132",
+      "doi": "10.18653/v1/2021.emnlp-main.10",
+      "arxiv": "2109.06896",
+      "version_read": "arXiv v1 (2021-09-14); canonical EMNLP metadata verified",
+      "publication_status": "Published conference paper",
+      "canonical_url": "https://aclanthology.org/2021.emnlp-main.10/",
+      "full_text_url": "https://arxiv.org/html/2109.06896v1",
+      "access_level": "Open primary full text",
+      "evidence_level": "A: canonical proceedings metadata plus primary methods/evaluation passages",
+      "evidence_sections": [
+        "§2 decision faithfulness, representativeness and greedy extractive selection",
+        "§3.2 automatic and human evaluation"
+      ],
+      "core_method": "Selects a subset of input sentences to preserve a supervised predictor's decision, represent the sentence-level decision distribution, and avoid textual redundancy.",
+      "closest_overlap": "Explicitly makes downstream decisions, rather than generic textual salience, the summarization objective; controls summary length.",
+      "defensible_difference": "Nubble can test a linked presentation of evidence, contextual relevance and conditional implication/action options. DecSum does not operationalize a professional user's changing context or a structured act/verify/monitor/no-action choice.",
+      "verified_findings": "In the inspected setup, humans predicted which of two restaurants would receive a higher future rating from summaries of their first ten reviews. Authors report DecSum was the only evaluated method above chance; do not generalize to business or clinical decisions.",
+      "numeric_result": "Not reported here: the retrieved passages do not expose the results table and test details.",
+      "limitations": "Supervised prediction model and a Yelp proxy task; faithfulness to model output is not factual correctness or action quality. Author reports grammaticality/coherence cost.",
+      "nubble_upgrade": "Compare decision correctness, material-risk omissions and abstention calibration under equal total reading time; retain a strong extractive baseline.",
+      "citation_caution": "Some later papers miscite DecSum as 2021.emnlp-main.47. That DOI is Text2Mol. Correct ID is .10."
+    },
+    {
+      "id": "zhang_etal_2024_personalsum",
+      "title": "PersonalSum: A User-Subjective Guided Personalized Summarization Dataset for Large Language Models",
+      "authors": [
+        "Lemei Zhang",
+        "Peng Liu",
+        "Marcus Tiedemann Oekland Henriksboe",
+        "Even W. Lauvrak",
+        "Jon Atle Gulla",
+        "Heri Ramampiaro"
+      ],
+      "year": 2024,
+      "venue": "Advances in Neural Information Processing Systems 37, Datasets and Benchmarks",
+      "pages": "99333–99346",
+      "doi": "10.52202/079017-3151",
+      "arxiv": "2410.03905",
+      "version_read": "arXiv v1 (2024-10-04); NeurIPS 2024 metadata verified",
+      "publication_status": "Published conference paper",
+      "canonical_url": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/b3c318cd7ee132d8a6b1895a2d6436c7-Abstract-Datasets_and_Benchmarks_Track.html",
+      "full_text_url": "https://arxiv.org/html/2410.03905v1",
+      "code_data_url": "https://github.com/SmartmediaAI/PersonalSum",
+      "access_level": "Open primary full text; dataset license reported CC BY-NC 4.0",
+      "evidence_level": "A: proceedings metadata plus primary methods, human evaluation and limitations passages",
+      "evidence_sections": [
+        "§5 topic-centric personalization cases",
+        "§6 human evaluation",
+        "§7 limitations",
+        "Appendix accessibility"
+      ],
+      "core_method": "Human-authored personalized news summaries are linked to source sentences and user profiles; experiments condition on user history and entity, plot and article-structure preferences.",
+      "closest_overlap": "The same article can have different valid reader-specific summaries; source-sentence links and user-context personalization precede Nubble.",
+      "defensible_difference": "The dataset concerns preferred article content, not explicit conditional implications, feasible actions or measured decision benefit.",
+      "verified_findings": "The authors' small human evaluation used 50 samples and three Norwegian-speaking student evaluators. They report that entity/topic preference is insufficient to explain user preference, with plot and structure also contributing.",
+      "numeric_result": "No transferable effect size reported here.",
+      "limitations": "Limited training data and assigned rather than user-selected articles; preference matching is not decision usefulness.",
+      "nubble_upgrade": "Collect actual current task, prior knowledge, constraints and explicit goal rather than rely on an occupation label or keywords. Annotate summary propositions with source evidence and collect reader-owned labels."
+    },
+    {
+      "id": "ghodratnama_zakershahrak_2024_sumrecom",
+      "title": "SumRecom: A Personalized Summarization Approach by Learning from Users' Feedback",
+      "authors": [
+        "Samira Ghodratnama",
+        "Mehrdad Zakershahrak"
+      ],
+      "year": 2024,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2408.07294",
+      "arxiv": "2408.07294",
+      "version_read": "arXiv v1 (2024-08-02)",
+      "publication_status": "Preprint; journal or conference publication not verified",
+      "canonical_url": "https://arxiv.org/abs/2408.07294",
+      "full_text_url": "https://arxiv.org/html/2408.07294v1",
+      "access_level": "Open primary full text",
+      "evidence_level": "B: canonical research-index metadata plus primary method and human-study passages; venue not independently established",
+      "evidence_sections": [
+        "§3 user-preference extractor and summarizer",
+        "§4.2 75-word evaluation and human experiments"
+      ],
+      "core_method": "Learns concept preferences through active pairwise feedback and uses inverse reinforcement learning to generate a personalized summary without requiring a reference summary at use time.",
+      "closest_overlap": "Human-in-the-loop personalization and cognitive burden are already explicit design concerns; summaries are evaluated with a fixed 75-word length.",
+      "defensible_difference": "Preference optimization does not supply a separate conditional interpretation/action layer or evaluate feasibility and decision benefit.",
+      "verified_findings": "Primary text describes 15 AMT workers, ten DUC document clusters and an 83% preference selection result for the personalized summary among five alternatives. This is a small preference study, not evidence of better downstream decisions.",
+      "numeric_result": "83% preference selection as reported by authors; denominator and exact uncertainty beyond the described participant sample not verified.",
+      "limitations": "Requires interaction to infer interest; additional user elicitation consumes attention and its cost must be counted.",
+      "nubble_upgrade": "Count onboarding, feedback, source verification and follow-up time in the attention budget, not just output words."
+    },
+    {
+      "id": "spinoso_cheung_2024_rsa",
+      "title": "Does This Summary Answer My Question? Modeling Query-Focused Summary Readers with Rational Speech Acts",
+      "authors": [
+        "Cesare Spinoso-Di Piano",
+        "Jackie Chi Kit Cheung"
+      ],
+      "year": 2024,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2411.06524",
+      "arxiv": "2411.06524",
+      "version_read": "arXiv v1 (2024-11-10)",
+      "publication_status": "Preprint; other publication not verified",
+      "canonical_url": "https://arxiv.org/abs/2411.06524",
+      "full_text_url": "https://arxiv.org/html/2411.06524v1",
+      "access_level": "Open primary full text",
+      "evidence_level": "A: arXiv metadata plus primary methods, experiment and limitation passages",
+      "evidence_sections": [
+        "§4.1 MultiOpEd, QMSum, SQuALITY",
+        "§4.2 Answer-Rec reranking",
+        "Limitations"
+      ],
+      "core_method": "Generates ten query-focused candidate summaries, then reranks using a reader model's ability to reconstruct an answer, combined with generator likelihood.",
+      "closest_overlap": "Explicit reader utility is part of generation; preserving reader-relevant answers is not new.",
+      "defensible_difference": "Tests question answering from a summary rather than producing conditional, actionable implications for a bounded professional decision.",
+      "verified_findings": "Authors report better reference alignment from reader-aware reranking but explicitly acknowledge lack of an extensive human evaluation and imperfect validity of overlap and learned metrics.",
+      "numeric_result": "Not reported here.",
+      "limitations": "Synthetic QA answers introduce noise; BART/Llama 3 only; no direct evidence of actual reader task performance.",
+      "nubble_upgrade": "Use a reader-comprehension check, but validate it against blinded human decisions and risk recognition rather than treating an LLM reconstruction score as ground truth."
+    },
+    {
+      "id": "zhang_chen_2025_financial_cot",
+      "title": "Personalized Chain-of-Thought Summarization of Financial News for Investor Decision Support",
+      "authors": [
+        "Tianyi Zhang",
+        "Mu Chen"
+      ],
+      "year": 2025,
+      "venue": "arXiv; author comments state Proceedings of ICDM Workshops",
+      "doi": "10.48550/arXiv.2511.05508",
+      "arxiv": "2511.05508",
+      "version_read": "arXiv v2 (2025-11-13)",
+      "publication_status": "Workshop claim in arXiv comments; independent proceedings DOI not verified",
+      "canonical_url": "https://arxiv.org/abs/2511.05508",
+      "full_text_url": "https://arxiv.org/html/2511.05508v2",
+      "access_level": "Open primary full text",
+      "evidence_level": "A for framework/method; B for publication status; empirical claims intentionally restricted",
+      "evidence_sections": [
+        "§III four-stage pipeline",
+        "§III-D relevance, key insights and three investment actions",
+        "§III-F model context",
+        "§VI limitations"
+      ],
+      "core_method": "Raw financial-news PDF extraction → initial summaries → financial metadata/enhanced summaries → keyword-conditioned relevance, implications and exactly three investment recommendations; Mistral-7B-Instruct-v0.2 with 2,048-token truncation.",
+      "closest_overlap": "Very direct precedent for personalized summary → implications → recommendations. A summary plus 'So What' is not independently novel.",
+      "defensible_difference": "Nubble must test a visible and auditable source-to-interpretation chain, richer user constraints, explicit uncertainty and abstention, feasible verification/monitoring choices, and total attention cost.",
+      "verified_findings": "Evaluation text assesses enhanced summary overlap and keyword-based article selection. The inspected method/limitations do not establish improved investment outcomes. Authors explicitly characterize generated recommendations as preliminary insights requiring further analysis.",
+      "numeric_result": "Not reported here; headline BLEU/ROUGE and '40%' relevance improvement are not used without auditing evaluation references and denominator.",
+      "limitations": "Keyword-level personalization, obligatory three recommendations, context truncation, and no established investment-decision benefit in the inspected evaluation. Independent proceedings metadata and outcome evaluation remain unverified; use it as a closely overlapping system precedent rather than efficacy evidence.",
+      "nubble_upgrade": "Permit zero recommendations. Require action preconditions, owner, resource constraints and evidence sufficiency; compare to this staged prompt baseline with identical source/context/token budgets."
+    },
+    {
+      "id": "li_chaturvedi_2025_compsum",
+      "title": "Comparative Personalization for Multi-document Summarization",
+      "authors": [
+        "Haoyuan Li",
+        "Snigdha Chaturvedi"
+      ],
+      "year": 2025,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2509.21562",
+      "arxiv": "2509.21562",
+      "version_read": "arXiv v1 (2025-09-25)",
+      "publication_status": "Preprint; other publication not verified",
+      "canonical_url": "https://arxiv.org/abs/2509.21562",
+      "full_text_url": "https://arxiv.org/html/2509.21562v1",
+      "access_level": "Open primary full text",
+      "evidence_level": "A for method/limitations; numeric outcome comparisons not extracted",
+      "evidence_sections": [
+        "§3 problem statement",
+        "§4 structured user analysis",
+        "§9 limitations",
+        "Appendix author attribution and factuality evaluation"
+      ],
+      "core_method": "Compares a user's authored documents to same-topic documents by others to derive a structured style/content profile; uses it for MDS. AuthorMap evaluates personalization by authorship attribution; PerMSum supplies news and review data.",
+      "closest_overlap": "Structured user analysis as an intermediate representation and personalized multidocument summarization already exist.",
+      "defensible_difference": "Author identity/style discrimination differs from reader-goal fulfillment and decision usefulness. No explicit conditional action layer is established in the inspected passages.",
+      "verified_findings": "Authors report stronger personalization than baselines; no numerical superiority claim reproduced here. They explicitly limit generalization because comparable same-topic documents may be unavailable, and news profiles are authored texts rather than clicked/liked texts.",
+      "numeric_result": "Not reported here.",
+      "limitations": "Authorship match may reward style or ideology without improving usefulness; factuality assessed separately.",
+      "nubble_upgrade": "Keep content relevance, action quality and writing style as separate evaluation dimensions. Use counterfactual users with different constraints to test whether recommendations change for a justified reason."
+    },
+    {
+      "id": "pu_etal_2024_extrinsic",
+      "title": "Is Summary Useful or Not? An Extrinsic Human Evaluation of Text Summaries on Downstream Tasks",
+      "authors": [
+        "Xiao Pu",
+        "Mingqi Gao",
+        "Xiaojun Wan"
+      ],
+      "year": 2024,
+      "venue": "LREC-COLING 2024",
+      "pages": "9389–9404",
+      "doi": null,
+      "arxiv": "2305.15044",
+      "version_read": "arXiv v1 (2023-05-24), with LREC-COLING 2024 title/authors/abstract checked",
+      "publication_status": "Published conference paper; inspected arXiv version predates proceedings",
+      "canonical_url": "https://aclanthology.org/2024.lrec-main.821/",
+      "full_text_url": "https://arxiv.org/html/2305.15044v1",
+      "access_level": "Open primary full text",
+      "evidence_level": "A: canonical proceedings metadata plus primary experimental protocol/results in preprint; version distinction retained",
+      "evidence_sections": [
+        "§5.2 web platform",
+        "§5.3 participants and assignment",
+        "§6.2 Tables 2–3 source-versus-summary results"
+      ],
+      "core_method": "Measures human QA, text classification and text-similarity performance and time using original articles or similarly sized summaries; tests intrinsic metric agreement with extrinsic utility.",
+      "closest_overlap": "Directly measures what people can do after reading and time savings; this should be a methodological foundation rather than claimed novelty.",
+      "defensible_difference": "The task is not professional implication/action selection and lacks Nubble's linked representations and explicit abstention.",
+      "verified_findings": "In the inspected preprint, summaries reduce task time by approximately 61–62% in QA, 59% in classification and 42% in similarity, while QA performance worsens; task accuracy and time must therefore be reported separately.",
+      "numeric_result": "Percentages above are author-reported Table 2–3 comparisons for their setup, not expected Nubble gains. Protocol describes campus graduate participants aged 22–26; separate recruitment for source-based QA.",
+      "limitations": "Task-specific generalization and restricted participant population; reference-based versus source-based QA yields different conclusions.",
+      "nubble_upgrade": "Use a quality–time frontier and equal-budget primary comparison, report errors as well as speed, and sample questions independently of generated summary content."
+    },
+    {
+      "id": "kirstein_etal_2025_frame_scope",
+      "title": "Re-FRAME the Meeting Summarization SCOPE: Fact-Based Summarization and Personalization via Questions",
+      "authors": [
+        "Frederic Kirstein",
+        "Sonu Kumar",
+        "Terry Ruas",
+        "Bela Gipp"
+      ],
+      "year": 2025,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2509.15901",
+      "arxiv": "2509.15901",
+      "version_read": "arXiv v2 (version shown by indexed primary full-text links; date not independently checked)",
+      "publication_status": "Preprint record inspected; other publication not verified",
+      "canonical_url": "https://arxiv.org/abs/2509.15901",
+      "full_text_url": "https://arxiv.org/html/2509.15901v2",
+      "access_level": "Open primary full text passages",
+      "evidence_level": "A for primary method/evaluation passage reading; canonical arXiv version date not independently checked",
+      "evidence_sections": [
+        "§3 fact definition and four-stage enrichment",
+        "§4 P-MESA criteria and human study",
+        "Appendix I.1 nine-question SCOPE protocol"
+      ],
+      "core_method": "Extracts statement–context fact tuples, selects/scorers facts, organizes and synthesizes. SCOPE elicits model representations of a reader's knowledge, project, goals, urgency, comprehension needs, relevance and uncertainty before selection.",
+      "closest_overlap": "Strong precedent for source-grounded intermediate facts plus goal-, context- and knowledge-aware relevance; explicitly tests goal alignment and prioritization.",
+      "defensible_difference": "Meeting summarization does not itself establish Nubble's prospective conditional implication, feasible action/verify/monitor/no-action alternatives or equal-time decision benefit.",
+      "verified_findings": "P-MESA is an LLM-based seven-dimension evaluation with a human calibration study. Inspected Table 1 reports per-dimension balanced detection accuracies 89.1–93.3% and Spearman correlations 0.70–0.81. These validate that specific evaluator setup, not real decision outcomes.",
+      "numeric_result": "Do not transplant P-MESA scores into Nubble claims; table read only to verify evaluator design and boundaries.",
+      "limitations": "Reader fit as judged by P-MESA is a proxy, not demonstrated downstream utility. Nine-question generation protocol is not a guarantee that reader assumptions are correct.",
+      "nubble_upgrade": "Represent user context explicitly, allow correction, and separate human calibration of relevance from human evaluation of action quality; include goal/knowledge/urgency ablations."
+    },
+    {
+      "id": "cachola_etal_2026_information_satisfaction",
+      "title": "Information Satisfaction: A Reader-Centered Axis for Summarization Evaluation",
+      "authors": [
+        "Isabel Cachola",
+        "William Walden",
+        "Reno Kriz",
+        "Mark Dredze"
+      ],
+      "year": 2026,
+      "venue": "ACM publication linked by DOI; exact conference name not established from inspected metadata",
+      "doi": "10.1145/3834580.3838749",
+      "arxiv": "2608.14457",
+      "version_read": "arXiv v1 (2026-08-14); matching ACM full text verified",
+      "publication_status": "ACM publication exists with matching DOI/title/full text; precise venue label not verified",
+      "canonical_url": "https://dl.acm.org/doi/10.1145/3834580.3838749",
+      "full_text_url": "https://arxiv.org/html/2608.14457v1",
+      "code_data_url": "https://github.com/JHU-CLSP/persona-eval-metric",
+      "access_level": "Open primary arXiv and ACM full text",
+      "evidence_level": "A: arXiv metadata, matching ACM full text, primary perturbation and human protocol passages",
+      "evidence_sections": [
+        "§3.1 five perturbation tests",
+        "§4 self-reported persona, real query, same context and blinded tournament",
+        "§6–7 metric agreement and conclusion"
+      ],
+      "core_method": "Defines reader information satisfaction using query plus persona; tests metric sensitivity to distractors, incremental content, content-preserving length changes and audience shifts. Human study uses reader-owned expertise/use cases and real queries, fixed retrieved context, and a 2×2 model/persona prompt design.",
+      "closest_overlap": "Reader-specific informational utility and role/knowledge context are explicitly established. Even persona-conditioned LLM judges can fail to capture what the individual reader needs.",
+      "defensible_difference": "Information satisfaction differs from correct, feasible prospective decisions under an attention budget; Nubble must evaluate both rather than assume one implies the other.",
+      "verified_findings": "The primary text reports poor automatic-metric agreement with reader preferences, including persona-conditioned judges; no general Nubble validity follows from a rubric alone.",
+      "numeric_result": "Not reported here; avoid 'no metric exceeds chance' without reproducing their exact comparison and statistical test.",
+      "limitations": "Queries retrieve paper abstracts; scope is information satisfaction rather than action or real-world outcome.",
+      "nubble_upgrade": "Adopt audience-swap and content-preserving length perturbations as construct checks; use real users' self-reported contexts and goals, fixed evidence bundles, blinded paired preference, and an independent task-performance endpoint."
+    }
+  ],
+  "excluded_or_followup": [
+    {
+      "title": "Decision-Oriented Text Evaluation",
+      "authors": [
+        "Yu-Shiang Huang",
+        "Chuan-Ju Wang",
+        "Chung-Chi Chen"
+      ],
+      "year": 2025,
+      "url": "https://arxiv.org/abs/2507.01923",
+      "reason": "Read primary methods/results/limitations; useful adjacent financial decision-evaluation precedent but weak for efficacy because only three human annotators and narrow short-term market setup. Bibliography misidentifies DecSum's author and DOI. Not used as independent corroboration."
+    },
+    {
+      "title": "Improving meeting summarization by focusing on user needs: a task-oriented evaluation",
+      "year": 2009,
+      "doi": "10.1145/1502650.1502657",
+      "url": "https://dl.acm.org/doi/10.1145/1502650.1502657",
+      "reason": "Important historical candidate discovered through metadata search; full text not read here, so no empirical claims included."
+    },
+    {
+      "title": "Extrinsic summarization evaluation: A decision audit task",
+      "url": "https://dl.acm.org/doi/abs/10.1145/1596517.1596518",
+      "reason": "Historical candidate discovered; conference/journal variants and full text not resolved here. Do not cite from this record without bibliographic verification."
+    }
+  ],
+  "claim_limits": [
+    "This is not an exhaustive or systematic search.",
+    "Versions of the same paper are not independent evidence.",
+    "No reviewed study establishes Nubble's effectiveness.",
+    "Absence of a feature from inspected passages is a qualified comparison, not proof that no prior system has it.",
+    "Publication statuses are what was verified on 2026-10-25; preprint existence is not peer review.",
+    "Source metadata does not confer permission to redistribute source documents or datasets."
+  ]
+}

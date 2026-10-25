@@ -1,0 +1,552 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nubble:fixture-schema:1.0.0",
+  "title": "Nubble hand-authored fictional representation bundle",
+  "description": "CC-BY-4.0; Nubble project contributors. Structural research fixture, not model output or a validated inference engine. Cross-reference and hard constraint checks are additionally enforced by scripts/validate_release.py.",
+  "$comment": "Source sentence absence does not establish feature absence. The schema cannot establish semantic truth or entailment.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "fixture_status": {
+      "const": "hand-authored-fictional-not-model-output"
+    },
+    "license": {
+      "const": "CC-BY-4.0"
+    },
+    "attribution": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/context"
+      },
+      "minItems": 3
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/output"
+      },
+      "minItems": 3
+    }
+  },
+  "required": [
+    "schema_version",
+    "fixture_status",
+    "license",
+    "attribution",
+    "source",
+    "contexts",
+    "outputs"
+  ],
+  "$defs": {
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^S[1-9][0-9]*$"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publisher": {
+          "type": "string",
+          "minLength": 1
+        },
+        "published": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "fictional": {
+          "const": true
+        },
+        "retrieval_scope": {
+          "const": "complete-self-authored-fixture"
+        },
+        "url": {
+          "type": "null"
+        },
+        "source_record": {
+          "type": "string",
+          "minLength": 1
+        },
+        "full_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "spans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/span"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "publisher",
+        "published",
+        "fictional",
+        "retrieval_scope",
+        "url",
+        "source_record",
+        "full_text",
+        "spans"
+      ]
+    },
+    "assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "reader-supplied-unverified"
+        }
+      },
+      "required": [
+        "id",
+        "statement",
+        "status"
+      ]
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hard": {
+          "const": true
+        },
+        "max_new_action_minutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_new_spend_usd": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "hard",
+        "max_new_action_minutes",
+        "max_new_spend_usd"
+      ]
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hard": {
+          "const": true
+        },
+        "allowed_categories": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "research",
+              "copy-edit",
+              "engineering",
+              "purchase",
+              "roadmap-change"
+            ]
+          },
+          "minItems": 0
+        },
+        "prohibited_categories": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "research",
+              "copy-edit",
+              "engineering",
+              "purchase",
+              "roadmap-change"
+            ]
+          },
+          "minItems": 0
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "hard",
+        "allowed_categories",
+        "prohibited_categories",
+        "description"
+      ]
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "goal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pending_decision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "current_plan": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision_horizon": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attention_budget_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "constraints": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "resources": {
+              "$ref": "#/$defs/resources"
+            },
+            "authority": {
+              "$ref": "#/$defs/authority"
+            }
+          },
+          "required": [
+            "resources",
+            "authority"
+          ]
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assumption"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "goal",
+        "pending_decision",
+        "current_plan",
+        "decision_horizon",
+        "attention_budget_seconds",
+        "constraints",
+        "assumptions"
+      ]
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_span_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "statement",
+        "evidence_span_ids"
+      ]
+    },
+    "short": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_span_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "text",
+        "evidence_span_ids"
+      ]
+    },
+    "inference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "conditional",
+            "insufficient-evidence"
+          ]
+        },
+        "condition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_span_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "assumption_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "status",
+        "condition",
+        "statement",
+        "evidence_span_ids",
+        "assumption_ids"
+      ]
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "enum": [
+            "research",
+            "copy-edit",
+            "engineering",
+            "purchase",
+            "roadmap-change"
+          ]
+        },
+        "instruction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "estimated_minutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimated_spend_usd": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "actor",
+        "category",
+        "instruction",
+        "estimated_minutes",
+        "estimated_spend_usd"
+      ]
+    },
+    "next_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "executable": {
+          "type": "boolean"
+        },
+        "action": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/action"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "executable",
+        "action",
+        "rationale"
+      ]
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "context_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "short": {
+          "$ref": "#/$defs/short"
+        },
+        "source_facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fact"
+          },
+          "minItems": 1
+        },
+        "conditional_inference": {
+          "$ref": "#/$defs/inference"
+        },
+        "outcome": {
+          "enum": [
+            "act",
+            "verify",
+            "monitor",
+            "maintain",
+            "abstain"
+          ]
+        },
+        "proposed_next_step": {
+          "$ref": "#/$defs/next_step"
+        },
+        "reversal_condition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_gaps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "id",
+        "context_id",
+        "short",
+        "source_facts",
+        "conditional_inference",
+        "outcome",
+        "proposed_next_step",
+        "reversal_condition",
+        "evidence_gaps"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "maintain",
+                  "abstain"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "proposed_next_step": {
+                "properties": {
+                  "executable": {
+                    "const": false
+                  },
+                  "action": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "abstain"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "conditional_inference": {
+                "properties": {
+                  "status": {
+                    "const": "insufficient-evidence"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

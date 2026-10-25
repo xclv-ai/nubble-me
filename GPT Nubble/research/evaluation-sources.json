@@ -1,0 +1,500 @@
+{
+  "schema_version": "1.0",
+  "research_date": "2026-10-25",
+  "purpose": "Primary evidence and rigorous evaluation design for evidence-grounded personalized conditional decision support under attention/time constraints",
+  "scope_note": "Focused selection, not a systematic or exhaustive literature review; no product evaluation results.",
+  "searches": [
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_research_search_papers",
+      "query": "To Trust or to Think Cognitive Forcing Functions Can Reduce Overreliance on AI in AI-assisted Decision-making"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_research_search_papers",
+      "query": "Does the Whole Exceed its Parts The Effect of AI Explanations on Complementary Team Performance"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_research_search_papers",
+      "query": "Explanations Can Reduce Overreliance on AI Systems During Decision-Making"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_research_search_papers",
+      "query": "Enabling Large Language Models to Generate Text with Citations ALCE"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_research_search_papers",
+      "query": "Evaluating Verifiability in Generative Search Engines"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_research_search_papers",
+      "query": "SelectiveNet A Deep Neural Network with an Integrated Reject Option"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_research_search_papers",
+      "query": "Consistent Estimators for Learning to Defer to an Expert"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_research_search_papers",
+      "query": "Information foraging Pirolli Card 1999"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_search",
+      "query": "Pirolli Card 1999 Information Foraging Psychological Review 106 4 643 675 pdf"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_search",
+      "query": "\"Consistent Estimators for Learning to Defer to an Expert\" Mozannar Sontag pmlr"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_search",
+      "query": "\"Does the Whole Exceed its Parts\" \"10.1145\""
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_search",
+      "query": "\"Explanations Can Reduce Overreliance\" \"10.1145\""
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_search",
+      "query": "\"Pirolli\" \"Card\" \"Information Foraging\" \"1999\" filetype:pdf -site:researchgate.net -site:semanticscholar.org -site:dl.acm.org"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_search",
+      "query": "\"Information foraging\" \"1999\" site:parc.com OR site:ucsd.edu OR site:cmu.edu OR site:researchgate.net/publication"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_search",
+      "query": "\"Evaluating Verifiability in Generative Search Engines\" site:aclanthology.org"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_search",
+      "query": "\"Information foraging\" \"1999\" \"pdf\" site:peterpirolli.com OR site:parc.com OR site:parc.xerox.com"
+    },
+    {
+      "date": "2026-10-25",
+      "tool": "firecrawl_search",
+      "query": "\"SNIF-ACT: A Model of Information Foraging on the World Wide Web\" 2003 DOI"
+    }
+  ],
+  "records": [
+    {
+      "accessed_on": "2026-10-25",
+      "evidence_type": "primary_research",
+      "publication_status": "published",
+      "withdrawal_check": "No withdrawal/retraction notice was visible in the retrieved paper text or canonical pages; no separate retraction database audit performed.",
+      "id": "bansal2021",
+      "title": "Does the Whole Exceed its Parts? The Effect of AI Explanations on Complementary Team Performance",
+      "authors": [
+        "Gagan Bansal",
+        "Tongshuang Wu",
+        "Joyce Zhou",
+        "Raymond Fok",
+        "Besmira Nushi",
+        "Ece Kamar",
+        "Marco Tulio Ribeiro",
+        "Daniel S. Weld"
+      ],
+      "year": 2021,
+      "venue": "Proceedings of the 2021 CHI Conference on Human Factors in Computing Systems",
+      "doi": "10.1145/3411764.3445717",
+      "url": "https://doi.org/10.1145/3411764.3445717",
+      "fulltext_url": "https://idl.cs.washington.edu/files/2021-AIExplanationsTeamPerformance-CHI.pdf",
+      "arxiv_id": "2006.14779",
+      "access_level": "Full author-hosted version-of-record PDF (16/16 pages); also indexed in-body passages",
+      "version_read": "Author-hosted CHI 2021 final PDF; indexed author manuscript identifies arXiv:2006.14779v3 (12 January 2021)",
+      "metadata_verified_from": [
+        "Full PDF ACM reference block",
+        "Firecrawl research_inspect_paper"
+      ],
+      "sections_read": [
+        "Abstract",
+        "3 Setup and pilot studies",
+        "4 Main study",
+        "Results and figures 4-5",
+        "Discussion",
+        "Conclusions"
+      ],
+      "design": "Three-task mixed-method user experiments; comparable human/AI accuracy; confidence and multiple explanation baselines.",
+      "supports": [
+        "Explanations need evaluation on final team outcomes, not acceptance.",
+        "Separate correct and erroneous AI recommendation trials.",
+        "Complementarity requires comparison with both teammates alone."
+      ],
+      "limits": [
+        "Study task/case distribution was deliberately selected.",
+        "No direct evaluation of personalized summaries or real-world action utility."
+      ]
+    },
+    {
+      "accessed_on": "2026-10-25",
+      "evidence_type": "primary_research",
+      "publication_status": "published",
+      "withdrawal_check": "No withdrawal/retraction notice was visible in the retrieved paper text or canonical pages; no separate retraction database audit performed.",
+      "id": "bucinca2021",
+      "title": "To Trust or to Think: Cognitive Forcing Functions Can Reduce Overreliance on AI in AI-assisted Decision-making",
+      "authors": [
+        "Zana Buçinca",
+        "Maja Barbara Malaya",
+        "Krzysztof Z. Gajos"
+      ],
+      "year": 2021,
+      "venue": "Proceedings of the ACM on Human-Computer Interaction 5, CSCW1, Article 188",
+      "doi": "10.1145/3449287",
+      "url": "https://doi.org/10.1145/3449287",
+      "fulltext_url": "https://arxiv.org/abs/2102.09692",
+      "arxiv_id": "2102.09692",
+      "access_level": "Indexed in-body passages, including experimental task, conditions and conclusions; not an exhaustive full-paper read",
+      "version_read": "Body header arXiv:2102.09692v1, 19 February 2021; index metadata updated 22 February 2021. Version discrepancy retained rather than assuming latest text.",
+      "metadata_verified_from": [
+        "Firecrawl research_inspect_paper",
+        "Indexed first-page ACM reference and publication header"
+      ],
+      "sections_read": [
+        "Abstract",
+        "Introduction",
+        "3 Experiment",
+        "3.1 Task description",
+        "3.2 Conditions",
+        "Limitations and conclusion"
+      ],
+      "design": "199-person simulated AI nutrition experiment with no-AI, simple explainable AI, and three cognitive forcing conditions.",
+      "supports": [
+        "Cognitive forcing may reduce overreliance.",
+        "Subjective acceptability and performance can diverge.",
+        "Cognitive motivation can moderate intervention benefit."
+      ],
+      "limits": [
+        "Simulated advice and nutrition task.",
+        "Residual overreliance remained.",
+        "Added effort must be counted under a time budget."
+      ]
+    },
+    {
+      "accessed_on": "2026-10-25",
+      "evidence_type": "primary_research",
+      "publication_status": "published",
+      "withdrawal_check": "No withdrawal/retraction notice was visible in the retrieved paper text or canonical pages; no separate retraction database audit performed.",
+      "id": "vasconcelos2023",
+      "title": "Explanations Can Reduce Overreliance on AI Systems During Decision-Making",
+      "authors": [
+        "Helena Vasconcelos",
+        "Matthew Jörke",
+        "Madeleine Grunde-McLaughlin",
+        "Tobias Gerstenberg",
+        "Michael Bernstein",
+        "Ranjay Krishna"
+      ],
+      "year": 2023,
+      "venue": "Proceedings of the ACM on Human-Computer Interaction 7, CSCW1, Article 129",
+      "doi": "10.1145/3579605",
+      "url": "https://doi.org/10.1145/3579605",
+      "fulltext_url": "https://arxiv.org/abs/2212.06823",
+      "arxiv_id": "2212.06823",
+      "access_level": "Indexed in-body passages including framework, predictions and study task; not an exhaustive full-paper read",
+      "version_read": "Indexed body identifies PACMHCI 7 CSCW1 Article 129, April 2023. Exact arXiv version absent from passages; metadata updated 30 January 2023.",
+      "metadata_verified_from": [
+        "Firecrawl research_inspect_paper",
+        "Indexed publication headers",
+        "Publisher DOI and author-PDF search results"
+      ],
+      "sections_read": [
+        "Introduction",
+        "2.2 Decision-making in behavioral economics",
+        "3 Framework",
+        "3.1 Predictions",
+        "4.1 Human-AI collaboration task"
+      ],
+      "design": "Five studies manipulating effort and incentives in a simulated-AI maze task.",
+      "supports": [
+        "Verification effort relative to task effort matters.",
+        "Ease of checking an explanation is a testable mechanism.",
+        "Incentives and task conditions can change reliance."
+      ],
+      "limits": [
+        "Maze task has clear answers and controlled verification.",
+        "Does not establish the same effects in professional news-to-action workflows.",
+        "No Nubble performance inference."
+      ]
+    },
+    {
+      "accessed_on": "2026-10-25",
+      "evidence_type": "primary_research",
+      "publication_status": "published",
+      "withdrawal_check": "No withdrawal/retraction notice was visible in the retrieved paper text or canonical pages; no separate retraction database audit performed.",
+      "id": "gao2023alce",
+      "title": "Enabling Large Language Models to Generate Text with Citations",
+      "authors": [
+        "Tianyu Gao",
+        "Howard Yen",
+        "Jiatong Yu",
+        "Danqi Chen"
+      ],
+      "year": 2023,
+      "venue": "Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing",
+      "pages": "6465-6488",
+      "doi": "10.18653/v1/2023.emnlp-main.398",
+      "url": "https://aclanthology.org/2023.emnlp-main.398/",
+      "fulltext_url": "https://aclanthology.org/2023.emnlp-main.398.pdf",
+      "arxiv_id": "2305.14627",
+      "access_level": "Canonical publisher metadata/abstract plus indexed in-body methods, metric definitions, human validation and limitations; not an exhaustive full-paper read",
+      "version_read": "Canonical EMNLP December 2023 bibliographic record; exact indexed arXiv body version absent from passages; index updated 1 November 2023.",
+      "metadata_verified_from": [
+        "ACL Anthology page",
+        "Firecrawl research_inspect_paper"
+      ],
+      "sections_read": [
+        "Dataset construction",
+        "3 Automatic evaluation",
+        "3.2 Correctness",
+        "3.3 Citation quality",
+        "4 Modeling",
+        "6 Human evaluation",
+        "Limitations"
+      ],
+      "design": "ALCE benchmark over ASQA, QAMPARI and ELI5 with automatic metrics and human validation.",
+      "supports": [
+        "Correctness, fluency and citation quality are different dimensions.",
+        "Evaluate content coverage and groundedness together.",
+        "Automatic entailment metrics require human validation."
+      ],
+      "limits": [
+        "NLI accuracy limits citation evaluation.",
+        "Open-ended correctness references can be incomplete.",
+        "Not a test of decision utility or personalization."
+      ]
+    },
+    {
+      "accessed_on": "2026-10-25",
+      "evidence_type": "primary_research",
+      "publication_status": "published",
+      "withdrawal_check": "No withdrawal/retraction notice was visible in the retrieved paper text or canonical pages; no separate retraction database audit performed.",
+      "id": "liu2023verifiability",
+      "title": "Evaluating Verifiability in Generative Search Engines",
+      "authors": [
+        "Nelson F. Liu",
+        "Tianyi Zhang",
+        "Percy Liang"
+      ],
+      "author_display_note": "ACL citation_author metadata uses Nelson F. Liu; rendered citation uses Nelson Liu.",
+      "year": 2023,
+      "venue": "Findings of the Association for Computational Linguistics: EMNLP 2023",
+      "pages": "7001-7025",
+      "doi": "10.18653/v1/2023.findings-emnlp.467",
+      "url": "https://aclanthology.org/2023.findings-emnlp.467/",
+      "fulltext_url": "https://aclanthology.org/2023.findings-emnlp.467.pdf",
+      "arxiv_id": "2304.09848",
+      "access_level": "Canonical publisher metadata/abstract plus indexed in-body methods, annotation protocol and limitations; not an exhaustive full-paper read",
+      "version_read": "Canonical Findings EMNLP December 2023 bibliographic record; exact indexed arXiv body version absent from passages; index updated 25 October 2023.",
+      "metadata_verified_from": [
+        "ACL Anthology page and structured citation metadata",
+        "Firecrawl research_inspect_paper"
+      ],
+      "sections_read": [
+        "2 Human evaluation",
+        "2.3 Citation recall",
+        "2.4 Citation precision",
+        "3 Evaluation setup",
+        "3.3 Human evaluation protocol",
+        "Limitations"
+      ],
+      "design": "Human audit of four generative search engines and diverse query distributions.",
+      "supports": [
+        "Perceived utility and evidence support must be evaluated separately.",
+        "Citation precision and recall measure different failures.",
+        "Verifiability is not factuality."
+      ],
+      "limits": [
+        "Historical systems/queries, not a current-performance estimate.",
+        "Sentence segmentation differs from proposed atomic-claim adaptation.",
+        "Metric includes a specific joint/partial-support rule."
+      ]
+    },
+    {
+      "accessed_on": "2026-10-25",
+      "evidence_type": "primary_research",
+      "publication_status": "published",
+      "withdrawal_check": "No withdrawal/retraction notice was visible in the retrieved paper text or canonical pages; no separate retraction database audit performed.",
+      "id": "geifman2019selectivenet",
+      "title": "SelectiveNet: A Deep Neural Network with an Integrated Reject Option",
+      "authors": [
+        "Yonatan Geifman",
+        "Ran El-Yaniv"
+      ],
+      "year": 2019,
+      "venue": "Proceedings of the 36th International Conference on Machine Learning, PMLR 97",
+      "pages": "2151-2159",
+      "doi": null,
+      "doi_note": "No publication DOI supplied by the canonical PMLR record; arXiv identifier retained separately.",
+      "url": "https://proceedings.mlr.press/v97/geifman19a.html",
+      "fulltext_url": "https://proceedings.mlr.press/v97/geifman19a/geifman19a.pdf",
+      "arxiv_id": "1901.09192",
+      "access_level": "Canonical proceedings metadata plus indexed in-body formal definitions, experiments and calibration; not an exhaustive full-paper read",
+      "version_read": "Indexed body identifies arXiv:1901.09192v4, 26 June 2019; canonical ICML 2019 metadata verified.",
+      "metadata_verified_from": [
+        "PMLR canonical page",
+        "Firecrawl research_inspect_paper"
+      ],
+      "sections_read": [
+        "1 Introduction",
+        "2 Problem formulation",
+        "6 Experimental setup",
+        "7 Selective classification and regression",
+        "8 Empirical observations"
+      ],
+      "design": "Selective classification/regression with jointly trained predictor and selection function.",
+      "supports": [
+        "Coverage and selective risk must be reported together.",
+        "Evaluate risk-coverage trade-offs.",
+        "Abstention is a distinct policy outcome."
+      ],
+      "limits": [
+        "Classification/regression experiments, not generative decision support.",
+        "Provides no direct guarantee for LLM recommendation confidence.",
+        "An abstention metric alone ignores deferral consequences."
+      ]
+    },
+    {
+      "accessed_on": "2026-10-25",
+      "evidence_type": "primary_research",
+      "publication_status": "published",
+      "withdrawal_check": "No withdrawal/retraction notice was visible in the retrieved paper text or canonical pages; no separate retraction database audit performed.",
+      "id": "mozannar2020defer",
+      "title": "Consistent Estimators for Learning to Defer to an Expert",
+      "authors": [
+        "Hussein Mozannar",
+        "David Sontag"
+      ],
+      "year": 2020,
+      "venue": "Proceedings of the 37th International Conference on Machine Learning, PMLR 119",
+      "pages": "7076-7087",
+      "doi": null,
+      "doi_note": "No publication DOI supplied by canonical PMLR record; arXiv identifier retained separately.",
+      "url": "https://proceedings.mlr.press/v119/mozannar20b.html",
+      "fulltext_url": "https://proceedings.mlr.press/v119/mozannar20b/mozannar20b.pdf",
+      "arxiv_id": "2006.01862",
+      "access_level": "Original proceedings PDF first 10 of 12 pages, including formulation, theory, experiments and beginning of references; canonical metadata page read. Partial, not complete PDF coverage.",
+      "version_read": "ICML 2020 proceedings PDF, pages 7076-7085 fetched; pages 7086-7087 not read.",
+      "metadata_verified_from": [
+        "Original PMLR PDF",
+        "PMLR canonical page"
+      ],
+      "sections_read": [
+        "1 Introduction",
+        "2 Related work",
+        "3 Problem formulation",
+        "Surrogate consistency and generalization discussion",
+        "Experimental evaluation"
+      ],
+      "design": "Cost-sensitive learning of classifier and expert deferral policy, with human/synthetic expert experiments.",
+      "supports": [
+        "Deferral quality depends on downstream expert performance and cost.",
+        "Optimize the combined system outcome.",
+        "Additional human context can make complementarity possible."
+      ],
+      "limits": [
+        "Prediction routing differs from a human interpreting AI prose.",
+        "Some experts are synthetic.",
+        "No automatic safe or cost-free assumption for human deferral."
+      ]
+    },
+    {
+      "accessed_on": "2026-10-25",
+      "evidence_type": "primary_research",
+      "publication_status": "published",
+      "withdrawal_check": "No withdrawal/retraction notice was visible in the retrieved paper text or canonical pages; no separate retraction database audit performed.",
+      "id": "pirollifu2003snifact",
+      "title": "SNIF-ACT: A Model of Information Foraging on the World Wide Web",
+      "authors": [
+        "Peter Pirolli",
+        "Wai-Tat Fu"
+      ],
+      "year": 2003,
+      "venue": "User Modeling 2003, UM 2003, Lecture Notes in Computer Science 2702",
+      "pages": "45-54",
+      "doi": "10.1007/3-540-44963-9_8",
+      "url": "https://link.springer.com/chapter/10.1007/3-540-44963-9_8",
+      "fulltext_url": "https://www.peterpirolli.com/ewExternalFiles/Pirolli-Fu%20UM2003.pdf",
+      "access_level": "Full author-hosted 10-page manuscript; publisher abstract, references and canonical metadata. Publisher full chapter is subscription-only.",
+      "version_read": "Author manuscript labeled UM2003 by author-hosted filename; not asserted identical to version of record. Publisher metadata confirms 2003 chapter; references differ between manuscript and canonical page.",
+      "metadata_verified_from": [
+        "Full author-hosted manuscript",
+        "Springer canonical chapter page"
+      ],
+      "sections_read": [
+        "1 Introduction",
+        "2 SNIF-ACT including utility/information scent",
+        "3 User tracing method",
+        "4 Results",
+        "5 General discussion",
+        "References"
+      ],
+      "design": "Cognitive process model and user traces from four participants performing two unfamiliar web tasks each.",
+      "supports": [
+        "Goal-content relevance can guide navigation.",
+        "Source interaction traces can test information-foraging mechanisms.",
+        "Model process outcomes separately from decision quality."
+      ],
+      "limits": [
+        "Very small model-fitting sample.",
+        "Does not establish a causal benefit from personalized summaries.",
+        "Author manuscript differs from publisher record."
+      ]
+    }
+  ],
+  "contextual_unread_references": [
+    {
+      "id": "pirollicard1999",
+      "title": "Information foraging",
+      "authors": [
+        "Peter Pirolli",
+        "Stuart K. Card"
+      ],
+      "year": 1999,
+      "venue": "Psychological Review 106(4)",
+      "pages": "643-675",
+      "doi": "10.1037/0033-295X.106.4.643",
+      "url": "https://doi.org/10.1037/0033-295X.106.4.643",
+      "access_level": "Original full text not retrieved; bibliographic reference verified in Pirolli/Fu author manuscript and canonical Springer references.",
+      "attempts": [
+        {
+          "url": "https://act-r.psy.cmu.edu/wordpress/wp-content/uploads/2012/12/280uir-1999-05-pirolli.pdf",
+          "tool": "firecrawl_scrape",
+          "outcome": "INVALID_ARGUMENT"
+        },
+        {
+          "url": "https://act-r.psy.cmu.edu/wordpress/wp-content/uploads/2012/12/280uir-1999-05-pirolli.pdf",
+          "tool": "web.open",
+          "outcome": "Timeout fetching"
+        },
+        {
+          "url": "http://act-r.psy.cmu.edu/wordpress/?post_type=publications&p=13561",
+          "tool": "firecrawl_scrape",
+          "outcome": "INVALID_ARGUMENT"
+        }
+      ],
+      "counted_as_read": false
+    }
+  ],
+  "retrieval_limits": [
+    "Firecrawl shared rate-limit failures occurred; later targeted retries succeeded for Liu and Mozannar metadata.",
+    "Exact arXiv body version was not exposed for several indexed passage reads; index update date is not asserted to be manuscript version.",
+    "Retrieved passages are paper text, not generated research-agent summaries. Full PDFs were read only where explicitly recorded.",
+    "No autonomous research-agent jobs or crawls were launched.",
+    "Paywalled chapter access was not bypassed; full text came from author-hosted manuscript."
+  ],
+  "claims_note": "All proposed Nubble metrics, model adaptations and experiments in evaluation-notes.md are recommendations, not results or novelty claims."
+}

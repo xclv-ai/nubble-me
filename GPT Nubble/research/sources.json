@@ -1,0 +1,286 @@
+{
+  "schema_version": "0.2",
+  "research_date": "2026-10-25",
+  "scope": "Focused, non-exhaustive primary-source review. Access level does not imply whole-paper reading.",
+  "source_count": 17,
+  "sources": [
+    {
+      "id": "hsu_tan_2021_decsum",
+      "title": "Decision-Focused Summarization",
+      "authors": [
+        "Chao-Chun Hsu",
+        "Chenhao Tan"
+      ],
+      "year": 2021,
+      "venue": "Proceedings of EMNLP 2021",
+      "doi": "10.18653/v1/2021.emnlp-main.10",
+      "url": "https://aclanthology.org/2021.emnlp-main.10/",
+      "version_read": "arXiv v1 (2021-09-14); canonical EMNLP metadata verified",
+      "access_level": "Open primary full text",
+      "evidence_ledger": "related-work-sources.json"
+    },
+    {
+      "id": "zhang_etal_2024_personalsum",
+      "title": "PersonalSum: A User-Subjective Guided Personalized Summarization Dataset for Large Language Models",
+      "authors": [
+        "Lemei Zhang",
+        "Peng Liu",
+        "Marcus Tiedemann Oekland Henriksboe",
+        "Even W. Lauvrak",
+        "Jon Atle Gulla",
+        "Heri Ramampiaro"
+      ],
+      "year": 2024,
+      "venue": "Advances in Neural Information Processing Systems 37, Datasets and Benchmarks",
+      "doi": "10.52202/079017-3151",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/b3c318cd7ee132d8a6b1895a2d6436c7-Abstract-Datasets_and_Benchmarks_Track.html",
+      "version_read": "arXiv v1 (2024-10-04); NeurIPS 2024 metadata verified",
+      "access_level": "Open primary full text; dataset license reported CC BY-NC 4.0",
+      "evidence_ledger": "related-work-sources.json"
+    },
+    {
+      "id": "ghodratnama_zakershahrak_2024_sumrecom",
+      "title": "SumRecom: A Personalized Summarization Approach by Learning from Users' Feedback",
+      "authors": [
+        "Samira Ghodratnama",
+        "Mehrdad Zakershahrak"
+      ],
+      "year": 2024,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2408.07294",
+      "url": "https://arxiv.org/abs/2408.07294",
+      "version_read": "arXiv v1 (2024-08-02)",
+      "access_level": "Open primary full text",
+      "evidence_ledger": "related-work-sources.json"
+    },
+    {
+      "id": "spinoso_cheung_2024_rsa",
+      "title": "Does This Summary Answer My Question? Modeling Query-Focused Summary Readers with Rational Speech Acts",
+      "authors": [
+        "Cesare Spinoso-Di Piano",
+        "Jackie Chi Kit Cheung"
+      ],
+      "year": 2024,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2411.06524",
+      "url": "https://arxiv.org/abs/2411.06524",
+      "version_read": "arXiv v1 (2024-11-10)",
+      "access_level": "Open primary full text",
+      "evidence_ledger": "related-work-sources.json"
+    },
+    {
+      "id": "zhang_chen_2025_financial_cot",
+      "title": "Personalized Chain-of-Thought Summarization of Financial News for Investor Decision Support",
+      "authors": [
+        "Tianyi Zhang",
+        "Mu Chen"
+      ],
+      "year": 2025,
+      "venue": "arXiv; author comments state Proceedings of ICDM Workshops",
+      "doi": "10.48550/arXiv.2511.05508",
+      "url": "https://arxiv.org/abs/2511.05508",
+      "version_read": "arXiv v2 (2025-11-13)",
+      "access_level": "Open primary full text",
+      "evidence_ledger": "related-work-sources.json"
+    },
+    {
+      "id": "li_chaturvedi_2025_compsum",
+      "title": "Comparative Personalization for Multi-document Summarization",
+      "authors": [
+        "Haoyuan Li",
+        "Snigdha Chaturvedi"
+      ],
+      "year": 2025,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2509.21562",
+      "url": "https://arxiv.org/abs/2509.21562",
+      "version_read": "arXiv v1 (2025-09-25)",
+      "access_level": "Open primary full text",
+      "evidence_ledger": "related-work-sources.json"
+    },
+    {
+      "id": "pu_etal_2024_extrinsic",
+      "title": "Is Summary Useful or Not? An Extrinsic Human Evaluation of Text Summaries on Downstream Tasks",
+      "authors": [
+        "Xiao Pu",
+        "Mingqi Gao",
+        "Xiaojun Wan"
+      ],
+      "year": 2024,
+      "venue": "LREC-COLING 2024",
+      "doi": null,
+      "url": "https://aclanthology.org/2024.lrec-main.821/",
+      "version_read": "arXiv v1 (2023-05-24), with LREC-COLING 2024 title/authors/abstract checked",
+      "access_level": "Open primary full text",
+      "evidence_ledger": "related-work-sources.json"
+    },
+    {
+      "id": "kirstein_etal_2025_frame_scope",
+      "title": "Re-FRAME the Meeting Summarization SCOPE: Fact-Based Summarization and Personalization via Questions",
+      "authors": [
+        "Frederic Kirstein",
+        "Sonu Kumar",
+        "Terry Ruas",
+        "Bela Gipp"
+      ],
+      "year": 2025,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2509.15901",
+      "url": "https://arxiv.org/abs/2509.15901",
+      "version_read": "arXiv v2 (version shown by indexed primary full-text links; date not independently checked)",
+      "access_level": "Open primary full text passages",
+      "evidence_ledger": "related-work-sources.json"
+    },
+    {
+      "id": "cachola_etal_2026_information_satisfaction",
+      "title": "Information Satisfaction: A Reader-Centered Axis for Summarization Evaluation",
+      "authors": [
+        "Isabel Cachola",
+        "William Walden",
+        "Reno Kriz",
+        "Mark Dredze"
+      ],
+      "year": 2026,
+      "venue": "ACM publication linked by DOI; exact conference name not established from inspected metadata",
+      "doi": "10.1145/3834580.3838749",
+      "url": "https://dl.acm.org/doi/10.1145/3834580.3838749",
+      "version_read": "arXiv v1 (2026-08-14); matching ACM full text verified",
+      "access_level": "Open primary arXiv and ACM full text",
+      "evidence_ledger": "related-work-sources.json"
+    },
+    {
+      "id": "bansal2021",
+      "title": "Does the Whole Exceed its Parts? The Effect of AI Explanations on Complementary Team Performance",
+      "authors": [
+        "Gagan Bansal",
+        "Tongshuang Wu",
+        "Joyce Zhou",
+        "Raymond Fok",
+        "Besmira Nushi",
+        "Ece Kamar",
+        "Marco Tulio Ribeiro",
+        "Daniel S. Weld"
+      ],
+      "year": 2021,
+      "venue": "Proceedings of the 2021 CHI Conference on Human Factors in Computing Systems",
+      "doi": "10.1145/3411764.3445717",
+      "url": "https://doi.org/10.1145/3411764.3445717",
+      "version_read": "Author-hosted CHI 2021 final PDF; indexed author manuscript identifies arXiv:2006.14779v3 (12 January 2021)",
+      "access_level": "Full author-hosted version-of-record PDF (16/16 pages); also indexed in-body passages",
+      "evidence_ledger": "evaluation-sources.json"
+    },
+    {
+      "id": "bucinca2021",
+      "title": "To Trust or to Think: Cognitive Forcing Functions Can Reduce Overreliance on AI in AI-assisted Decision-making",
+      "authors": [
+        "Zana Buçinca",
+        "Maja Barbara Malaya",
+        "Krzysztof Z. Gajos"
+      ],
+      "year": 2021,
+      "venue": "Proceedings of the ACM on Human-Computer Interaction 5, CSCW1, Article 188",
+      "doi": "10.1145/3449287",
+      "url": "https://doi.org/10.1145/3449287",
+      "version_read": "Body header arXiv:2102.09692v1, 19 February 2021; index metadata updated 22 February 2021. Version discrepancy retained rather than assuming latest text.",
+      "access_level": "Indexed in-body passages, including experimental task, conditions and conclusions; not an exhaustive full-paper read",
+      "evidence_ledger": "evaluation-sources.json"
+    },
+    {
+      "id": "vasconcelos2023",
+      "title": "Explanations Can Reduce Overreliance on AI Systems During Decision-Making",
+      "authors": [
+        "Helena Vasconcelos",
+        "Matthew Jörke",
+        "Madeleine Grunde-McLaughlin",
+        "Tobias Gerstenberg",
+        "Michael Bernstein",
+        "Ranjay Krishna"
+      ],
+      "year": 2023,
+      "venue": "Proceedings of the ACM on Human-Computer Interaction 7, CSCW1, Article 129",
+      "doi": "10.1145/3579605",
+      "url": "https://doi.org/10.1145/3579605",
+      "version_read": "Indexed body identifies PACMHCI 7 CSCW1 Article 129, April 2023. Exact arXiv version absent from passages; metadata updated 30 January 2023.",
+      "access_level": "Indexed in-body passages including framework, predictions and study task; not an exhaustive full-paper read",
+      "evidence_ledger": "evaluation-sources.json"
+    },
+    {
+      "id": "gao2023alce",
+      "title": "Enabling Large Language Models to Generate Text with Citations",
+      "authors": [
+        "Tianyu Gao",
+        "Howard Yen",
+        "Jiatong Yu",
+        "Danqi Chen"
+      ],
+      "year": 2023,
+      "venue": "Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing",
+      "doi": "10.18653/v1/2023.emnlp-main.398",
+      "url": "https://aclanthology.org/2023.emnlp-main.398/",
+      "version_read": "Canonical EMNLP December 2023 bibliographic record; exact indexed arXiv body version absent from passages; index updated 1 November 2023.",
+      "access_level": "Canonical publisher metadata/abstract plus indexed in-body methods, metric definitions, human validation and limitations; not an exhaustive full-paper read",
+      "evidence_ledger": "evaluation-sources.json"
+    },
+    {
+      "id": "liu2023verifiability",
+      "title": "Evaluating Verifiability in Generative Search Engines",
+      "authors": [
+        "Nelson F. Liu",
+        "Tianyi Zhang",
+        "Percy Liang"
+      ],
+      "year": 2023,
+      "venue": "Findings of the Association for Computational Linguistics: EMNLP 2023",
+      "doi": "10.18653/v1/2023.findings-emnlp.467",
+      "url": "https://aclanthology.org/2023.findings-emnlp.467/",
+      "version_read": "Canonical Findings EMNLP December 2023 bibliographic record; exact indexed arXiv body version absent from passages; index updated 25 October 2023.",
+      "access_level": "Canonical publisher metadata/abstract plus indexed in-body methods, annotation protocol and limitations; not an exhaustive full-paper read",
+      "evidence_ledger": "evaluation-sources.json"
+    },
+    {
+      "id": "geifman2019selectivenet",
+      "title": "SelectiveNet: A Deep Neural Network with an Integrated Reject Option",
+      "authors": [
+        "Yonatan Geifman",
+        "Ran El-Yaniv"
+      ],
+      "year": 2019,
+      "venue": "Proceedings of the 36th International Conference on Machine Learning, PMLR 97",
+      "doi": null,
+      "url": "https://proceedings.mlr.press/v97/geifman19a.html",
+      "version_read": "Indexed body identifies arXiv:1901.09192v4, 26 June 2019; canonical ICML 2019 metadata verified.",
+      "access_level": "Canonical proceedings metadata plus indexed in-body formal definitions, experiments and calibration; not an exhaustive full-paper read",
+      "evidence_ledger": "evaluation-sources.json"
+    },
+    {
+      "id": "mozannar2020defer",
+      "title": "Consistent Estimators for Learning to Defer to an Expert",
+      "authors": [
+        "Hussein Mozannar",
+        "David Sontag"
+      ],
+      "year": 2020,
+      "venue": "Proceedings of the 37th International Conference on Machine Learning, PMLR 119",
+      "doi": null,
+      "url": "https://proceedings.mlr.press/v119/mozannar20b.html",
+      "version_read": "ICML 2020 proceedings PDF, pages 7076-7085 fetched; pages 7086-7087 not read.",
+      "access_level": "Original proceedings PDF first 10 of 12 pages, including formulation, theory, experiments and beginning of references; canonical metadata page read. Partial, not complete PDF coverage.",
+      "evidence_ledger": "evaluation-sources.json"
+    },
+    {
+      "id": "pirollifu2003snifact",
+      "title": "SNIF-ACT: A Model of Information Foraging on the World Wide Web",
+      "authors": [
+        "Peter Pirolli",
+        "Wai-Tat Fu"
+      ],
+      "year": 2003,
+      "venue": "User Modeling 2003, UM 2003, Lecture Notes in Computer Science 2702",
+      "doi": "10.1007/3-540-44963-9_8",
+      "url": "https://link.springer.com/chapter/10.1007/3-540-44963-9_8",
+      "version_read": "Author manuscript labeled UM2003 by author-hosted filename; not asserted identical to version of record. Publisher metadata confirms 2003 chapter; references differ between manuscript and canonical page.",
+      "access_level": "Full author-hosted 10-page manuscript; publisher abstract, references and canonical metadata. Publisher full chapter is subscription-only.",
+      "evidence_ledger": "evaluation-sources.json"
+    }
+  ]
+}

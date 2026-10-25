@@ -1,0 +1,4 @@
+# Artifact authoring dependencies; the offline validator/tests use only the Python standard library.
+matplotlib==3.10.9
+reportlab==4.4.9
+pypdf==6.10.0

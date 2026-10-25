@@ -1,0 +1,322 @@
+{
+  "schema_version": "1.0.0",
+  "fixture_status": "hand-authored-fictional-not-model-output",
+  "license": "CC-BY-4.0",
+  "attribution": "Nubble project contributors",
+  "source": {
+    "id": "fictional-monitor-update-v1",
+    "title": "Northstar Metrics introduces weekly AI brand mention monitoring",
+    "publisher": "Northstar Metrics, fictional",
+    "published": "2026-10-20",
+    "fictional": true,
+    "retrieval_scope": "complete-self-authored-fixture",
+    "url": null,
+    "source_record": "examples/competitor-update.md",
+    "full_text": "Northstar Metrics today announced a weekly report showing whether selected brands appear in answers returned by three AI assistants. The report includes the sampled questions, answer excerpts, and links to the captured results.\n\nThe first release is available to existing customers as a limited pilot. Wider availability and standalone pricing have not been announced.\n\nThe announcement describes AI answer monitoring. It does not discuss collecting human brand-perception data or comparing human responses with AI answers.\n\nThe company plans to collect pilot feedback before deciding which report features to expand.",
+    "spans": [
+      {
+        "id": "S1",
+        "text": "Northstar Metrics today announced a weekly report showing whether selected brands appear in answers returned by three AI assistants. The report includes the sampled questions, answer excerpts, and links to the captured results."
+      },
+      {
+        "id": "S2",
+        "text": "The first release is available to existing customers as a limited pilot. Wider availability and standalone pricing have not been announced."
+      },
+      {
+        "id": "S3",
+        "text": "The announcement describes AI answer monitoring. It does not discuss collecting human brand-perception data or comparing human responses with AI answers."
+      },
+      {
+        "id": "S4",
+        "text": "The company plans to collect pilot feedback before deciding which report features to expand."
+      }
+    ]
+  },
+  "contexts": [
+    {
+      "id": "pokpok-positioning-demo-v1",
+      "title": "Reader A: illustrative POKPOK positioning",
+      "goal": "Make an illustrative human-versus-AI brand-perception distinction clear to prospective buyers.",
+      "pending_decision": "Whether to revise the comparison page this week.",
+      "current_plan": "Keep the product roadmap unchanged and review positioning weekly.",
+      "decision_horizon": "The next positioning review.",
+      "attention_budget_seconds": 120,
+      "constraints": {
+        "resources": {
+          "hard": true,
+          "max_new_action_minutes": 30,
+          "max_new_spend_usd": 0
+        },
+        "authority": {
+          "hard": true,
+          "allowed_categories": [
+            "research",
+            "copy-edit"
+          ],
+          "prohibited_categories": [
+            "engineering",
+            "purchase",
+            "roadmap-change"
+          ],
+          "description": "Founder may inspect public pilot information and edit comparison copy; no engineering work this week."
+        }
+      },
+      "assumptions": [
+        {
+          "id": "A1",
+          "statement": "The illustrative POKPOK comparison is delivered as described; no current product specification is asserted.",
+          "status": "reader-supplied-unverified"
+        },
+        {
+          "id": "A2",
+          "statement": "Prospective buyers care about this distinction; no buyer research is in the source.",
+          "status": "reader-supplied-unverified"
+        },
+        {
+          "id": "A3",
+          "statement": "The founder controls the comparison-page copy.",
+          "status": "reader-supplied-unverified"
+        }
+      ]
+    },
+    {
+      "id": "accessibility-tooling-demo-v1",
+      "title": "Reader B: internal accessibility tooling",
+      "goal": "Finish keyboard-navigation fixes in a private web application.",
+      "pending_decision": "Which keyboard-interaction bugs to fix this sprint.",
+      "current_plan": "Finish the existing accessibility regression list.",
+      "decision_horizon": "This sprint.",
+      "attention_budget_seconds": 60,
+      "constraints": {
+        "resources": {
+          "hard": true,
+          "max_new_action_minutes": 0,
+          "max_new_spend_usd": 0
+        },
+        "authority": {
+          "hard": true,
+          "allowed_categories": [],
+          "prohibited_categories": [
+            "research",
+            "copy-edit",
+            "engineering",
+            "purchase",
+            "roadmap-change"
+          ],
+          "description": "Existing sprint work may continue; no new brand analytics or marketing tooling work this quarter."
+        }
+      },
+      "assumptions": [
+        {
+          "id": "B1",
+          "statement": "The stated regression list and sprint scope remain current.",
+          "status": "reader-supplied-unverified"
+        }
+      ]
+    },
+    {
+      "id": "pricing-impact-demo-v1",
+      "title": "Reader C: purchase value with missing evidence",
+      "goal": "Assess whether a standalone subscription is affordable and likely to improve relevant business outcomes.",
+      "pending_decision": "Whether to recommend buying based on standalone price and measured conversion impact.",
+      "current_plan": "Do not commit funds until offer terms, relevant outcome evidence and procurement approval are available.",
+      "decision_horizon": "The next budget review.",
+      "attention_budget_seconds": 60,
+      "constraints": {
+        "resources": {
+          "hard": true,
+          "max_new_action_minutes": 0,
+          "max_new_spend_usd": 0
+        },
+        "authority": {
+          "hard": true,
+          "allowed_categories": [],
+          "prohibited_categories": [
+            "research",
+            "copy-edit",
+            "engineering",
+            "purchase",
+            "roadmap-change"
+          ],
+          "description": "The reader cannot approve a purchase or allocate new work before budget approval."
+        }
+      },
+      "assumptions": [
+        {
+          "id": "C1",
+          "statement": "Standalone price and relevant conversion evidence are material to this purchase decision.",
+          "status": "reader-supplied-unverified"
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "id": "positioning-verify",
+      "context_id": "pokpok-positioning-demo-v1",
+      "short": {
+        "text": "Northstar is piloting weekly AI brand mention monitoring with visible sample questions and answer evidence. The announcement does not establish whether it compares human brand perception with AI answers.",
+        "evidence_span_ids": [
+          "S1",
+          "S2",
+          "S3"
+        ]
+      },
+      "source_facts": [
+        {
+          "statement": "The announced report monitors weekly AI brand mentions with sampled questions and answer evidence.",
+          "evidence_span_ids": [
+            "S1"
+          ]
+        },
+        {
+          "statement": "The release is an existing-customer pilot; standalone pricing and wider availability are unannounced.",
+          "evidence_span_ids": [
+            "S2"
+          ]
+        },
+        {
+          "statement": "The announcement does not discuss human-versus-AI comparison; silence does not prove that capability is absent.",
+          "evidence_span_ids": [
+            "S3"
+          ]
+        }
+      ],
+      "conditional_inference": {
+        "status": "conditional",
+        "condition": "If the illustrative offering has the stated comparison and buyers care about it, shared AI-monitoring language could obscure a distinction.",
+        "statement": "Buyer confusion is a positioning-risk hypothesis, not a reported event. Verify comparable features before claiming a competitive gap.",
+        "evidence_span_ids": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "assumption_ids": [
+          "A1",
+          "A2",
+          "A3"
+        ]
+      },
+      "outcome": "verify",
+      "proposed_next_step": {
+        "executable": true,
+        "action": {
+          "actor": "founder",
+          "category": "research",
+          "instruction": "Spend at most 30 minutes checking the pilot description or demo for human-versus-AI comparison. Consider a later one-sentence copy edit only if the distinction is confirmed; this proposal does not authorize engineering work.",
+          "estimated_minutes": 30,
+          "estimated_spend_usd": 0
+        },
+        "rationale": "A bounded evidence check fits the founder’s resources and authority. Keep the roadmap unchanged."
+      },
+      "reversal_condition": "Comparable human-versus-AI analysis would weaken the proposed differentiation; evidence that buyers already understand the distinction would reduce the need for a copy edit.",
+      "evidence_gaps": [
+        "Actual competitor comparison coverage",
+        "Buyer response",
+        "Standalone price and broad availability"
+      ]
+    },
+    {
+      "id": "accessibility-maintain",
+      "context_id": "accessibility-tooling-demo-v1",
+      "short": {
+        "text": "Northstar announced a limited pilot of weekly AI brand mention reports. The available source identifies no change to keyboard navigation or accessibility testing.",
+        "evidence_span_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ]
+      },
+      "source_facts": [
+        {
+          "statement": "The announcement concerns weekly AI brand mention reports and a limited pilot.",
+          "evidence_span_ids": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "conditional_inference": {
+        "status": "conditional",
+        "condition": "If the stated accessibility sprint scope and regression list remain current.",
+        "statement": "This update supplies no source-identified reason to change the stated keyboard-navigation decision. This is a context-specific relevance judgment.",
+        "evidence_span_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ],
+        "assumption_ids": [
+          "B1"
+        ]
+      },
+      "outcome": "maintain",
+      "proposed_next_step": {
+        "executable": false,
+        "action": null,
+        "rationale": "Maintain the existing regression list; no new task is proposed. Supported inaction is distinct from insufficient evidence about purchase value."
+      },
+      "reversal_condition": "A later source identifying a relevant testing capability or requirement could reopen the sprint decision.",
+      "evidence_gaps": [
+        "No relevant accessibility capability or requirement is identified in this fixture; this does not prove none exists."
+      ]
+    },
+    {
+      "id": "purchase-abstain",
+      "context_id": "pricing-impact-demo-v1",
+      "short": {
+        "text": "The pilot is limited to existing customers; standalone pricing and wider availability have not been announced. The fixture supplies no measured conversion-impact evidence.",
+        "evidence_span_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ]
+      },
+      "source_facts": [
+        {
+          "statement": "Standalone pricing and wider availability have not been announced.",
+          "evidence_span_ids": [
+            "S2"
+          ]
+        },
+        {
+          "statement": "The fixture describes monitoring, a pilot and planned feedback; it reports no conversion-impact measurement.",
+          "evidence_span_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4"
+          ]
+        }
+      ],
+      "conditional_inference": {
+        "status": "insufficient-evidence",
+        "condition": "Until material price, outcome evidence and procurement authority are available.",
+        "statement": "The available fixture cannot establish purchase value or predict conversion lift. No confident purchase outcome is supported.",
+        "evidence_span_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ],
+        "assumption_ids": [
+          "C1"
+        ]
+      },
+      "outcome": "abstain",
+      "proposed_next_step": {
+        "executable": false,
+        "action": null,
+        "rationale": "Abstain from a purchase recommendation because material evidence and authority are missing; do not invent a price, business effect or executable task."
+      },
+      "reversal_condition": "Published offer terms, relevant credible outcome evidence and procurement authorization would permit reassessment.",
+      "evidence_gaps": [
+        "Standalone price",
+        "Relevant measured conversion impact",
+        "Procurement authorization"
+      ]
+    }
+  ]
+}

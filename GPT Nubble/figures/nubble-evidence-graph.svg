@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="921.6pt" height="583.2pt" viewBox="0 0 921.6 583.2" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <title>From evidence to a conditional next step</title>
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>From evidence to a conditional next step</dc:title>
+    <dc:description>Proposed framework — no performance results</dc:description>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Nubble Method</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 583.2 
+L 921.6 583.2 
+L 921.6 0 
+L 0 0 
+z
+" style="fill: #f8f5ed"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 165.888 107.3088 
+L 165.888 95.0616 
+L 299.52 95.0616 
+" clip-path="url(#p420f8bdee7)" style="fill: none; stroke: #185d58; stroke-width: 1.1; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 631.296 95.0616 
+L 761.2416 95.0616 
+L 761.2416 107.3088 
+" clip-path="url(#p420f8bdee7)" style="fill: none; stroke: #185d58; stroke-width: 1.1; stroke-linecap: round"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 36.864 77.5656 
+L 884.736 77.5656 
+" clip-path="url(#p420f8bdee7)" style="fill: none; stroke: #b5bfba; stroke-linecap: round"/>
+   </g>
+   <g id="patch_2">
+    <path d="M 48.8448 258.3576 
+L 283.8528 258.3576 
+Q 294.912 258.3576 294.912 251.3592 
+L 294.912 114.3072 
+Q 294.912 107.3088 283.8528 107.3088 
+L 48.8448 107.3088 
+Q 37.7856 107.3088 37.7856 114.3072 
+L 37.7856 251.3592 
+Q 37.7856 258.3576 48.8448 258.3576 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #fffdf7; stroke: #185d58; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 48.8448 379.6632 
+L 283.8528 379.6632 
+Q 294.912 379.6632 294.912 372.6648 
+L 294.912 282.852 
+Q 294.912 275.8536 283.8528 275.8536 
+L 48.8448 275.8536 
+Q 37.7856 275.8536 37.7856 282.852 
+L 37.7856 372.6648 
+Q 37.7856 379.6632 48.8448 379.6632 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #e4eee8; stroke: #185d58; stroke-width: 1.25; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 349.2864 307.9296 
+L 584.2944 307.9296 
+Q 595.3536 307.9296 595.3536 300.9312 
+L 595.3536 114.3072 
+Q 595.3536 107.3088 584.2944 107.3088 
+L 349.2864 107.3088 
+Q 338.2272 107.3088 338.2272 114.3072 
+L 338.2272 300.9312 
+Q 338.2272 307.9296 349.2864 307.9296 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #f8e9ca; stroke: #b36c14; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 349.2864 379.6632 
+L 584.2944 379.6632 
+Q 595.3536 379.6632 595.3536 372.6648 
+L 595.3536 335.34 
+Q 595.3536 328.3416 584.2944 328.3416 
+L 349.2864 328.3416 
+Q 338.2272 328.3416 338.2272 335.34 
+L 338.2272 372.6648 
+Q 338.2272 379.6632 349.2864 379.6632 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #f2e4df; stroke: #92534e; stroke-width: 1.25; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 649.728 307.9296 
+L 872.7552 307.9296 
+Q 883.8144 307.9296 883.8144 300.9312 
+L 883.8144 114.3072 
+Q 883.8144 107.3088 872.7552 107.3088 
+L 649.728 107.3088 
+Q 638.6688 107.3088 638.6688 114.3072 
+L 638.6688 300.9312 
+Q 638.6688 307.9296 649.728 307.9296 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #fffdf7; stroke: #222c2c; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 48.8448 528.9624 
+L 190.7712 528.9624 
+Q 201.8304 528.9624 201.8304 521.964 
+L 201.8304 436.2336 
+Q 201.8304 429.2352 190.7712 429.2352 
+L 48.8448 429.2352 
+Q 37.7856 429.2352 37.7856 436.2336 
+L 37.7856 521.964 
+Q 37.7856 528.9624 48.8448 528.9624 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #e4eee8; stroke: #185d58; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 219.3408 528.9624 
+L 361.2672 528.9624 
+Q 372.3264 528.9624 372.3264 521.964 
+L 372.3264 436.2336 
+Q 372.3264 429.2352 361.2672 429.2352 
+L 219.3408 429.2352 
+Q 208.2816 429.2352 208.2816 436.2336 
+L 208.2816 521.964 
+Q 208.2816 528.9624 219.3408 528.9624 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #e4eee8; stroke: #185d58; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 389.8368 528.9624 
+L 531.7632 528.9624 
+Q 542.8224 528.9624 542.8224 521.964 
+L 542.8224 436.2336 
+Q 542.8224 429.2352 531.7632 429.2352 
+L 389.8368 429.2352 
+Q 378.7776 429.2352 378.7776 436.2336 
+L 378.7776 521.964 
+Q 378.7776 528.9624 389.8368 528.9624 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #e4eee8; stroke: #185d58; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 560.3328 528.9624 
+L 702.2592 528.9624 
+Q 713.3184 528.9624 713.3184 521.964 
+L 713.3184 436.2336 
+Q 713.3184 429.2352 702.2592 429.2352 
+L 560.3328 429.2352 
+Q 549.2736 429.2352 549.2736 436.2336 
+L 549.2736 521.964 
+Q 549.2736 528.9624 560.3328 528.9624 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #f8e9ca; stroke: #b36c14; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 730.8288 528.9624 
+L 872.7552 528.9624 
+Q 883.8144 528.9624 883.8144 521.964 
+L 883.8144 436.2336 
+Q 883.8144 429.2352 872.7552 429.2352 
+L 730.8288 429.2352 
+Q 719.7696 429.2352 719.7696 436.2336 
+L 719.7696 521.964 
+Q 719.7696 528.9624 730.8288 528.9624 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #f2e4df; stroke: #92534e; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 294.912 181.9584 
+Q 315.648 181.9584 334.483342 181.9584 
+" clip-path="url(#p420f8bdee7)" style="fill: none; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+    <path d="M 329.283342 179.3584 
+L 334.483342 181.9584 
+L 329.283342 184.5584 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #185d58; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 294.912 324.8424 
+Q 315.648 294.2244 335.318204 265.180115 
+" clip-path="url(#p420f8bdee7)" style="fill: none; stroke-dasharray: 6.29,2.72; stroke-dashoffset: 0; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+    <path d="M 330.249538 268.02768 
+L 335.318204 265.180115 
+L 334.555056 270.943587 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #185d58; stroke-dasharray: 6.29,2.72; stroke-dashoffset: 0; stroke: #185d58; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 467.2512 327.7584 
+Q 467.2512 318.4272 467.2512 310.996658 
+" clip-path="url(#p420f8bdee7)" style="fill: none; stroke-dasharray: 6.29,2.72; stroke-dashoffset: 0; stroke: #92534e; stroke-width: 1.7; stroke-linecap: round"/>
+    <path d="M 464.8512 315.796658 
+L 467.2512 310.996658 
+L 469.6512 315.796658 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #92534e; stroke-dasharray: 6.29,2.72; stroke-dashoffset: 0; stroke: #92534e; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 595.3536 206.4528 
+Q 616.0896 206.4528 634.924942 206.4528 
+" clip-path="url(#p420f8bdee7)" style="fill: none; stroke: #b36c14; stroke-width: 1.7; stroke-linecap: round"/>
+    <path d="M 629.724942 203.8528 
+L 634.924942 206.4528 
+L 629.724942 209.0528 
+z
+" clip-path="url(#p420f8bdee7)" style="fill: #b36c14; stroke: #b36c14; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 25px; font-family: 'DejaVu Serif'; text-anchor: start; fill: #222c2c" x="36.864" y="34.308837" transform="rotate(-0 36.864 34.308837)">2   From evidence to a conditional next step</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 14.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="36.864" y="60.571494" transform="rotate(-0 36.864 60.571494)">Keep source facts, reader context, assumptions, inferences and proposed actions separately inspectable.</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 12.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="36.864" y="566.820419" transform="rotate(-0 36.864 566.820419)">Proposed framework — no performance results</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #52605e" x="884.736" y="566.268544" transform="rotate(-0 884.736 566.268544)">NUBBLE METHOD  /  CONCEPTUAL</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="60.8256" y="136.28085" transform="rotate(-0 60.8256 136.28085)">SOURCE FACTS</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222c2c" x="60.8256" y="170.627" transform="rotate(-0 60.8256 170.627)">Source-supported facts</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 14.5px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(60.8256 200.729205)">Claim → exact source span</text>
+    <text style="font-size: 14.5px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(60.8256 218.618694)">Provenance, scope and date</text>
+    <text style="font-size: 14.5px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(60.8256 236.508182)">Omissions remain unknown</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="60.8256" y="302.49285" transform="rotate(-0 60.8256 302.49285)">EXPLICIT READER CONTEXT</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 14.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(60.8256 331.494561)">Goal and current plan</text>
+    <text style="font-size: 14.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(60.8256 349.630801)">Constraints and horizon</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="361.2672" y="136.28085" transform="rotate(-0 361.2672 136.28085)">CONDITIONAL INFERENCE</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222c2c" x="361.2672" y="172.586131" transform="rotate(-0 361.2672 172.586131)">What might follow</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 14.4px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(361.2672 188.890875)">If facts and context hold,</text>
+    <text style="font-size: 14.4px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(361.2672 206.656987)">this consequence may follow.</text>
+    <text style="font-size: 14.4px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(361.2672 224.4231)">State the reasoning and</text>
+    <text style="font-size: 14.4px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(361.2672 242.189212)">what would change the</text>
+    <text style="font-size: 14.4px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(361.2672 259.955325)">conclusion.</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="361.2672" y="289.938387" transform="rotate(-0 361.2672 289.938387)">Inference ≠ source fact.</text>
+   </g>
+   <g id="text_14">
+    <text style="font-weight: 700; font-size: 11.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #92534e" x="361.2672" y="349.038475" transform="rotate(-0 361.2672 349.038475)">ASSUMPTIONS</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #92534e" x="361.2672" y="366.810412" transform="rotate(-0 361.2672 366.810412)">Explicit and testable</text>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222c2c" x="661.7088" y="136.28085" transform="rotate(-0 661.7088 136.28085)">PROPOSED ACTION</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222c2c" x="661.7088" y="172.652537" transform="rotate(-0 661.7088 172.652537)">A feasible next step</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 14.3px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(661.7088 199.097801)">Who could do what?</text>
+    <text style="font-size: 14.3px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(661.7088 216.740538)">When? Under what condition?</text>
+    <text style="font-size: 14.3px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(661.7088 234.383275)">Link to evidence and</text>
+    <text style="font-size: 14.3px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(661.7088 252.026011)">the reader’s constraints.</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="661.7088" y="289.938387" transform="rotate(-0 661.7088 289.938387)">Reader retains the decision.</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #185d58" x="465.408" y="98.234881" transform="rotate(-0 465.408 98.234881)">Evidence links remain available throughout</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="43.3152" y="411.413281" transform="rotate(-0 43.3152 411.413281)">POSSIBLE DECISION STATUSES</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 12.3px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #52605e" x="878.2848" y="411.634031" transform="rotate(-0 878.2848 411.634031)">Select by support, feasibility and risk</text>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 15.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="54.3744" y="458.50705" transform="rotate(-0 54.3744 458.50705)">Act</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 12.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(54.3744 491.390044)">Take a supported</text>
+    <text style="font-size: 12.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(54.3744 507.058768)">next step.</text>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 15.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="224.8704" y="458.447675" transform="rotate(-0 224.8704 458.447675)">Verify</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 12.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(224.8704 491.390044)">Resolve a material</text>
+    <text style="font-size: 12.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(224.8704 507.058768)">unknown first.</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 15.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="395.3664" y="458.50705" transform="rotate(-0 395.3664 458.50705)">Monitor</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 12.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(395.3664 491.390044)">Watch a stated</text>
+    <text style="font-size: 12.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(395.3664 507.058768)">trigger or horizon.</text>
+   </g>
+   <g id="text_29">
+    <text style="font-weight: 700; font-size: 15.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="565.8624" y="458.50705" transform="rotate(-0 565.8624 458.50705)">Maintain plan</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 12.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(565.8624 491.390044)">Supported inaction:</text>
+    <text style="font-size: 12.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(565.8624 507.058768)">no change warranted.</text>
+   </g>
+   <g id="text_31">
+    <text style="font-weight: 700; font-size: 15.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #92534e" x="736.3584" y="458.50705" transform="rotate(-0 736.3584 458.50705)">Abstain</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 12.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(736.3584 491.390044)">Insufficient evidence</text>
+    <text style="font-size: 12.7px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(736.3584 507.058768)">or unresolved risk.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p420f8bdee7">
+   <rect x="0" y="0" width="921.6" height="583.2"/>
+  </clipPath>
+ </defs>
+</svg>
