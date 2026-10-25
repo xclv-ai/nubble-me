@@ -29,19 +29,20 @@ Reading depth is a separate control. Generated expansion cannot recreate an unav
 
 ## Open source and paid Cloud
 
-**Open source lets you nubble an article. Cloud keeps watch and tells you when something changes your situation.**
+**Paid: give us your focus or project URL. We'll do the rest.**
 
-The proposed open core accepts content and context supplied by the reader. The proposed paid product finds, follows, connects, and prioritizes developments continuously for that business. The paper and research reproduction assets remain public.
+![Nubble open source and paid Cloud: give us your focus or project URL](figures/nubble-open-source-cloud-handdrawn-v2.png)
 
-| Open core: you bring the signal | Paid Cloud: Nubble keeps watch |
+With open source, you bring an article and set your focus. With the proposed paid service, you provide your focus in a few words or share your project's URL. Nubble finds relevant news, watches competitors where relevant, explains the impact on your project, suggests next steps, and alerts you to important changes. The paper and research reproduction assets remain public.
+
+| Open source: you bring the article | Paid Cloud: you provide the focus or project URL |
 |---|---|
-| A supplied article/document and explicit context | Maintained source coverage and competitor/market watchlists |
-| Single-item Short and So what? reference method | Continuous collection, change detection, and event history |
-| Source links, uncertainty, and inspectable output | Cross-source checks, deduplication, and conflict/freshness handling |
-| Manual, on-demand use | A finite prioritized brief and material-change alerts |
-| Proposed next step for the item | Ongoing business context and decision follow-up |
+| Add an article | Find relevant news |
+| Set your focus | Understand your project from your focus or URL |
+| Read its summary and ask So what? | Watch competitors and explain changes that affect you |
+| Check sources and save the result | Suggest next steps and send important alerts |
 
-This is the **recommended product boundary**, not a list of currently shipped Cloud features. Team collaboration is deferred. The current v0.2 release ships paper/tooling/fixtures; a runnable single-item inference core is a subsequent milestone. See [CORE_VS_CLOUD.md](CORE_VS_CLOUD.md) for exact exclusions and release stages.
+This is the **proposed product boundary**, not a list of currently shipped Cloud features. The v0.2 release ships research artifacts and tooling; the runtime and paid service remain planned. See [CORE_VS_CLOUD.md](CORE_VS_CLOUD.md) for the scope and delivery stages.
 
 ## Try the offline artifacts
 
@@ -71,7 +72,7 @@ python3 scripts/build_paper.py
 python3 scripts/package_release.py
 ```
 
-PDF builds use the open font family documented in the renderer, with an explicit font-directory option. Review rendered pages after any manuscript or typography change. Conceptual diagrams are supplied as editable/reproducible SVG and PNG; no chart represents measured Nubble performance.
+PDF builds use the open font family documented in the renderer, with an explicit font-directory option. Review rendered pages after any manuscript or typography change. Four code-generated diagrams are supplied as SVG and PNG. The additional hand-drawn comparison is an AI-generated PNG with its prompt retained. No chart represents measured Nubble performance.
 
 ## Repository map
 

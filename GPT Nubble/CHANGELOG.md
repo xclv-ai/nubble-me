@@ -2,6 +2,8 @@
 
 ## 0.2 - 2026-10-25
 
+- Clarified paid onboarding: provide a focus or project URL; Nubble does the ongoing research. Added a hand-drawn comparison with plain feature labels and the approved paid promise.
+
 - Expanded the methods proposal using 17 closely relevant primary studies, preserving versions and partial-reading limits.
 - Added explicit decision constraints, typed evidence/context/assumption premises, maintain-versus-abstain outcomes, and a total-attention objective.
 - Added controlled and realistic evaluation tracks, stronger baselines, human/AI-only comparisons, and overreliance/coverage checks.

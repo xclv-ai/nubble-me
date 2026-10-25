@@ -2,11 +2,18 @@
 
 **Product-boundary proposal, version 0.2, October 25, 2026.** This document selects a recommended scope for review. It does not claim that the planned core or Cloud capabilities have shipped.
 
-> **Open source lets you nubble an article. Cloud keeps watch and tells you when something changes your situation.**
+> **Paid: give us your focus or project URL. We'll do the rest.**
 
-The commercial promise is ongoing intelligence for a reader's business. Team collaboration is not the primary paid feature and is deferred.
+The customer supplies either a focus in plain words or the URL of their project. Nubble does the ongoing research: finds relevant news, follows competitors where relevant, explains what changes for that project, suggests next steps, and sends important alerts. The customer does not need to find and submit each article.
 
-![Proposed open-core and paid-Cloud boundary](figures/nubble-open-core-cloud.png)
+![Nubble open source and paid Cloud: focus or project URL](figures/nubble-open-source-cloud-handdrawn-v2.png)
+
+## Starting with a focus or project URL
+
+- **A focus:** describe what you want to follow, such as a project, market, research question, or decision. A company website is optional.
+- **A project URL:** Nubble reads available public project pages to build an initial understanding and find relevant sources. The customer can correct that understanding or add priorities when needed.
+
+Nubble keeps the sources, dates, previous findings and customer corrections so it can explain what changed and avoid sending the same story repeatedly. A URL does not establish private plans or goals that the site never states; missing information remains explicit. The promise covers research and proposed next steps, not automatic execution of consequential actions.
 
 ## Open core: the research method on supplied content
 
@@ -24,20 +31,18 @@ The target core completes a useful single-item task without requiring Nubble Clo
 
 Do not publish only an SDK that cannot perform the advertised core task. The complete single-item research method stays open; the commercial platform need not all be part of that core.
 
-## Paid Cloud: ongoing intelligence for this business
+## Paid Cloud: we do the research for your focus
 
 | Paid capability | Concrete reason to pay |
 |---|---|
-| **Continuous collection and source coverage** | The reader does not have to find the article first. Monitor selected competitors, announcements and supported market sources. |
-| **Maintained business and decision context** | Keep goals, plans, competitor definitions, decisions and relevant changes current and correctable over time. |
-| **Change and event history** | Explain what changed since previous observations; distinguish repeated coverage from a new event. |
-| **Cross-source synthesis** | Connect developments, surface contradictions and source limits, and assess their combined relevance. Disclose bounded coverage. |
-| **Session-level prioritization** | Select a finite brief against the reader's attention budget and pending decisions, including what can wait. |
-| **Material-change alerts** | Interrupt under declared, inspectable conditions; expose freshness and uncertainty and allow quiet periods. |
-| **Decision follow-up** | Record accepted proposals and verification results, then revisit them when relevant evidence or assumptions change. |
-| **Managed integrations and operations** | Maintain connectors, retrieval, storage, models, retries and run records. The fee pays for ongoing work and reliability. |
+| **Find relevant news** | Search supported sources for developments related to the supplied focus; the customer does not need to bring the articles. |
+| **Watch competitors** | Follow relevant competitors' announcements and explain changes to their offering, rather than only listing mentions. |
+| **Understand your project** | Use the supplied focus or public project pages, retain corrections, and compare developments with the project's stated priorities. |
+| **Explain the impact** | Explain why an update or several related updates could affect the project, with sources and explicit uncertainty. |
+| **Suggest next steps** | Propose a feasible response, a fact to check, something to watch, or a reason to keep the current plan. |
+| **Send important alerts** | Notify the customer when a declared condition is met or a meaningful change deserves attention; make the reason inspectable. |
 
-These are proposed capabilities, not current service commitments or validated performance claims. No promise to catch every material event or correctly predict business outcomes is made. Accounts/security support the service; collaboration, enterprise controls and custom deployments can follow if customers need them.
+These are proposed capabilities, not current service commitments or validated performance claims. Coverage, freshness, source conflicts and missing information remain visible. Nubble does not promise to catch every event or predict business outcomes correctly. Running the searches, sources, history, models and alerts continuously is part of the paid service.
 
 ## Private assets and reproducibility
 

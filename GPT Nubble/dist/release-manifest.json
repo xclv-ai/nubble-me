@@ -23,8 +23,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 1017,
-      "sha256": "47bbfa96b268de537cb42e667169decdcd77494c0b48ddc5109c19daa3331ebe"
+      "bytes": 1200,
+      "sha256": "30173ec096a5e57c051f0aad9071244d1d5d3197703f4ceeb23f5789e1334639"
     },
     {
       "path": "CITATION.md",
@@ -38,8 +38,8 @@
     },
     {
       "path": "CORE_VS_CLOUD.md",
-      "bytes": 5996,
-      "sha256": "6e323a8952e5778c94eb15a010dc1f8d7f838cf162b0e87139c04411165dc3b0"
+      "bytes": 6606,
+      "sha256": "b858e919e37022a4c4457224c28cf7da5047fdac99933230fb3fa8e9debf1677"
     },
     {
       "path": "LICENSE",
@@ -68,8 +68,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 6782,
-      "sha256": "ca007b70d6745e7439957abb11e3f0e7e9eaf4214358ad19058cce51a7cbaa68"
+      "bytes": 6784,
+      "sha256": "44f6263af7c0b7bac62bbcbc68ef445d9be746830dbb5f8286df4cbd48d3d7c9"
     },
     {
       "path": "SECURITY.md",
@@ -103,8 +103,8 @@
     },
     {
       "path": "figures/README.md",
-      "bytes": 5896,
-      "sha256": "5f0a3a18c60a579be53314f69af0a7b7a89db62eac4ef605beb0184a2e8a8f62"
+      "bytes": 7539,
+      "sha256": "088d2df53d4dca740f2fff65cf8006766b3542137bf0fa94591c54aaf79b1a89"
     },
     {
       "path": "figures/nubble-evidence-graph.png",
@@ -135,6 +135,16 @@
       "path": "figures/nubble-open-core-cloud.svg",
       "bytes": 10713,
       "sha256": "33709b918d2758bc30949524784134d4615b601f654564d3b4ce989a1df89d92"
+    },
+    {
+      "path": "figures/nubble-open-source-cloud-handdrawn-v2.png",
+      "bytes": 1217597,
+      "sha256": "8a49016f02f6af8c2dbdc08b49266d345d5134b58f771b9ae053d9b6b43788ff"
+    },
+    {
+      "path": "figures/nubble-open-source-cloud-handdrawn-v2.prompt.txt",
+      "bytes": 2480,
+      "sha256": "1564b7a1e218457527e60adf60e269dce64c18d6c268d8dc5db6983038764e9a"
     },
     {
       "path": "figures/nubble-study-design.png",
