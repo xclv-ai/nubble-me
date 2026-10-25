@@ -1,5 +1,7 @@
 # Beyond the Summary: Nubble and the So-What Layer
 
+> Historical v0.1 proposal, superseded by the [v0.2 manuscript](paper/manuscript.md), [PDF](output/pdf/nubble-method-paper.pdf), and [17-study review](research/LITERATURE_REVIEW.md). See [CORE_VS_CLOUD.md](CORE_VS_CLOUD.md) for the current product scope.
+
 ## An Evidence-Grounded Framework for Personalized Implications and Proposed Actions Under an Attention Budget
 
 **Document type:** draft methods-paper proposal  

@@ -4,12 +4,12 @@
 
 ## Full / available original
 
-**Source ID:** `fictional-monitor-update-v1`  
-**Title:** Northstar Metrics introduces weekly AI brand mention monitoring  
-**Publisher:** Northstar Metrics, fictional  
-**Published:** October 20, 2026, fictional  
-**Retrieval scope:** complete self-authored fixture below  
-**Redistribution status:** created for this proposal; repository licensing remains undecided  
+**Source ID:** `fictional-monitor-update-v1`
+**Title:** Northstar Metrics introduces weekly AI brand mention monitoring
+**Publisher:** Northstar Metrics, fictional
+**Published:** October 20, 2026, fictional
+**Retrieval scope:** complete self-authored fixture below
+**Redistribution status:** original fictional research fixture, CC BY 4.0; [license scope](../LICENSE.md)
 **URL:** none; this local fixture is the source of record.
 
 <a id="s1"></a>
@@ -26,13 +26,13 @@
 
 ## Reader A: a POKPOK positioning decision
 
-**Illustrative context version:** `pokpok-positioning-demo-v1`  
-**Focus:** explaining a hypothetical product that compares how people and AI engines perceive a brand.  
-**Goal:** make that distinction clear to prospective buyers.  
-**Pending decision:** whether to revise the comparison page this week.  
-**Current plan:** keep the product roadmap unchanged and review positioning weekly.  
-**Constraints:** founder can spend 30 minutes verifying a competitor; no engineering work this week.  
-**Attention budget:** two minutes for the brief, including evidence inspection.  
+**Illustrative context version:** `pokpok-positioning-demo-v1`
+**Focus:** explaining a hypothetical product that compares how people and AI engines perceive a brand.
+**Goal:** make that distinction clear to prospective buyers.
+**Pending decision:** whether to revise the comparison page this week.
+**Current plan:** keep the product roadmap unchanged and review positioning weekly.
+**Constraints:** founder can spend 30 minutes verifying a competitor; no engineering work this week.
+**Attention budget:** two minutes for the brief, including evidence inspection.
 **Horizon:** the next positioning review.
 
 ### Short / relevant to this focus
@@ -55,12 +55,12 @@ Northstar is piloting weekly AI brand mention monitoring with visible sample que
 
 ## Reader B: an internal accessibility tooling decision
 
-**Context version:** `accessibility-tooling-demo-v1`  
-**Focus:** an internal tool for testing keyboard navigation in a private web application.  
-**Pending decision:** which keyboard-interaction bugs to fix this sprint.  
-**Current plan:** finish the existing accessibility regression list.  
-**Constraints:** no brand analytics or marketing tooling work this quarter.  
-**Attention budget:** one minute.  
+**Context version:** `accessibility-tooling-demo-v1`
+**Focus:** an internal tool for testing keyboard navigation in a private web application.
+**Pending decision:** which keyboard-interaction bugs to fix this sprint.
+**Current plan:** finish the existing accessibility regression list.
+**Constraints:** no brand analytics or marketing tooling work this quarter.
+**Attention budget:** one minute.
 **Horizon:** this sprint.
 
 ### Short / relevant to this focus
@@ -86,4 +86,4 @@ This conclusion concerns this reader's scope. It is not a judgment that the anno
 
 ## Important limit
 
-A well-written hand-authored example can clarify the method. It cannot establish that a model reliably follows it, that two minutes is sufficient, or that the outputs improve real decisions. Those are questions for the [evaluation protocol](../PAPER_PROPOSAL.md#evaluation-protocol).
+A hand-authored example clarifies intended behavior. It cannot establish model reliability, sufficient review time, or improved real decisions. Those require the [evaluation protocol](../evaluation/PROTOCOL.md). The [structured fixture](nubble-example.json) adds an insufficient-evidence/abstention case and explicit constraints.

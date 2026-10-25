@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="921.6pt" height="590.4pt" viewBox="0 0 921.6 590.4" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.9, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 590.4
+L 921.6 590.4
+L 921.6 0
+L 0 0
+z
+" style="fill: #f8f5ed"/>
+  </g>
+  <g id="axes_1">
+   <g id="line2d_1">
+    <path d="M 36.864 78.5232
+L 884.736 78.5232
+" clip-path="url(#p1b6d4413f2)" style="fill: none; stroke: #b5bfba; stroke-linecap: round"/>
+   </g>
+   <g id="patch_2">
+    <path d="M 47.0016 301.6944
+L 874.5984 301.6944
+Q 885.6576 301.6944 885.6576 294.6096
+L 885.6576 109.8144
+Q 885.6576 102.7296 874.5984 102.7296
+L 47.0016 102.7296
+Q 35.9424 102.7296 35.9424 109.8144
+L 35.9424 294.6096
+Q 35.9424 301.6944 47.0016 301.6944
+z
+" clip-path="url(#p1b6d4413f2)" style="fill: #e4eee8; stroke: #185d58; stroke-width: 1.7; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 47.0016 520.1424
+L 874.5984 520.1424
+Q 885.6576 520.1424 885.6576 513.0576
+L 885.6576 345.9744
+Q 885.6576 338.8896 874.5984 338.8896
+L 47.0016 338.8896
+Q 35.9424 338.8896 35.9424 345.9744
+L 35.9424 513.0576
+Q 35.9424 520.1424 47.0016 520.1424
+z
+" clip-path="url(#p1b6d4413f2)" style="fill: #f8e9ca; stroke: #b36c14; stroke-width: 1.7; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 460.8 305.8272
+Q 460.8 319.7016 460.8 331.675342
+" clip-path="url(#p1b6d4413f2)" style="fill: none; stroke: #b36c14; stroke-width: 1.7; stroke-linecap: round"/>
+    <path d="M 464 325.275342
+L 460.8 331.675342
+L 457.6 325.275342
+z
+" clip-path="url(#p1b6d4413f2)" style="fill: #b36c14; stroke: #b36c14; stroke-width: 1.7; stroke-linecap: round"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 25px; font-family: 'DejaVu Serif'; text-anchor: start; fill: #222c2c" x="36.864" y="34.647238" transform="rotate(-0 36.864 34.647238)">Open core processes an item. Cloud keeps watch.</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 14.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="36.864" y="61.269894" transform="rotate(-0 36.864 61.269894)">Proposed product scope - v0.2 ships research artifacts; runtime and service remain planned.</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 12.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #52605e" x="36.864" y="573.775619" transform="rotate(-0 36.864 573.775619)">Proposed framework — no performance results</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #52605e" x="884.736" y="573.223744" transform="rotate(-0 884.736 573.223744)">NUBBLE METHOD  /  CONCEPTUAL</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="64.512" y="135.246388" transform="rotate(-0 64.512 135.246388)">OPEN CORE  /  AGPL TOOLING + OPEN RESEARCH</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #222c2c" x="64.512" y="163.442131" transform="rotate(-0 64.512 163.442131)">You supply the content and the decision context.</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="64.512" y="204.499681" transform="rotate(-0 64.512 204.499681)">SOURCE</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 12.8px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(64.512 230.02475)">Available original</text>
+    <text style="font-size: 12.8px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(64.512 245.81685)">and retrieval scope</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="228.5568" y="204.499681" transform="rotate(-0 228.5568 204.499681)">CONTEXT</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 12.8px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(228.5568 230.02475)">Your goal, plan</text>
+    <text style="font-size: 12.8px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(228.5568 245.81685)">and constraints</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="392.6016" y="204.499681" transform="rotate(-0 392.6016 204.499681)">SHORT</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 12.8px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(392.6016 230.02475)">Supported facts</text>
+    <text style="font-size: 12.8px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(392.6016 245.81685)">relevant to you</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="556.6464" y="204.499681" transform="rotate(-0 556.6464 204.499681)">SO WHAT?</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 12.8px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(556.6464 230.02475)">Conditional impact</text>
+    <text style="font-size: 12.8px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(556.6464 245.81685)">and feasible options</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="720.6912" y="204.499681" transform="rotate(-0 720.6912 204.499681)">INSPECT</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 12.8px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(720.6912 230.02475)">Evidence links,</text>
+    <text style="font-size: 12.8px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(720.6912 245.81685)">export and evaluation</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 12.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #185d58" x="64.512" y="283.889219" transform="rotate(-0 64.512 283.889219)">Manual / on demand  •  Complete single-item task  •  No Cloud account required</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="64.512" y="367.863988" transform="rotate(-0 64.512 367.863988)">PAID CLOUD  /  ONGOING INTELLIGENCE FOR YOUR BUSINESS</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="64.512" y="407.006881" transform="rotate(-0 64.512 407.006881)">WATCH</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(64.512 433.190538)">Continuous sources</text>
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(64.512 448.735887)">and competitor coverage</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="228.5568" y="407.006881" transform="rotate(-0 228.5568 407.006881)">REMEMBER</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(228.5568 433.190538)">Business context</text>
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(228.5568 448.735887)">and change history</text>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="392.6016" y="407.006881" transform="rotate(-0 392.6016 407.006881)">CONNECT</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(392.6016 433.190538)">Cross-source synthesis</text>
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(392.6016 448.735887)">and conflicts</text>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="556.6464" y="407.006881" transform="rotate(-0 556.6464 407.006881)">PRIORITIZE</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(556.6464 433.190538)">A finite brief</text>
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(556.6464 448.735887)">and material alerts</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="720.6912" y="407.006881" transform="rotate(-0 720.6912 407.006881)">FOLLOW UP</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(720.6912 433.190538)">Decision review</text>
+    <text style="font-size: 12.6px; font-family: 'DejaVu Sans'; fill: #222c2c" transform="translate(720.6912 448.735887)">and follow-up</text>
+   </g>
+   <g id="text_29">
+    <text style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #b36c14" x="64.512" y="497.701206" transform="rotate(-0 64.512 497.701206)">Find the signal, maintain the context, and notice when the situation changes.</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #52605e" x="460.8" y="545.29845" transform="rotate(-0 460.8 545.29845)">Product-scope proposal. Runtime and paid intelligence remain planned.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p1b6d4413f2">
+   <rect x="0" y="0" width="921.6" height="590.4"/>
+  </clipPath>
+ </defs>
+</svg>

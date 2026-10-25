@@ -53,6 +53,11 @@ def build():
     for number, item in enumerate(sources, 1):
         refs.append(f"{number}. {', '.join(item['authors'])}. {item['year']}. **{item['title']}**. {item['venue']}. [Canonical record]({item['url']}).")
     (ROOT / "paper" / "REFERENCES.md").write_text("\n\n".join(refs) + "\n")
+    manuscript = ROOT / "paper" / "manuscript.md"
+    marker = "<!-- GENERATED-REFERENCES -->"
+    if manuscript.exists():
+        body = manuscript.read_text().split(marker)[0].rstrip()
+        manuscript.write_text(body + "\n\n" + marker + "\n\n### References cited\n\n" + "\n\n".join(refs[2:]) + "\n")
     print(f"Built BibTeX, source index, and reference list for {len(sources)} studies.")
 
 

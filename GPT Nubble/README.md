@@ -1,58 +1,96 @@
-# Nubble: Beyond the Summary
+# Nubble — make information earn your attention
 
-**Attention is currency. Information should earn it.**
+**Full → Short → So what?**
 
-Nubble is a proposed method for turning news and market signals into personally relevant understanding and evidence-linked next steps. Its unit of value is the decision a reader can make with the information.
+A **nubble** connects the available original to what matters for your focus and what could change in your next decision. [Why the name works](WHAT_IS_NUBBLE.md).
 
-> **Full → Short → So what?**  
-> What happened? → What matters to my focus? → What could this change, and what should I consider doing?
+![Nubble's proposed source, relevance, and implication framework](figures/nubble-framework.png)
 
-**Status:** research proposal and repository review, October 25, 2026. This folder contains documentation drafts, not a validated paper or a standalone runnable software release. The existing product prototype lives in the parent repository. No study results are claimed here, and no new license has been applied.
+**Research release v0.2.** This is a working methods paper and reproducible artifact toolkit. It contains no controlled Nubble effectiveness result, production inference engine, or public Cloud service. The existing reader and private Control Room motivate the method; their implementation is not included in this standalone package.
 
-## Proposed paper
+## Read the paper
 
-### Beyond the Summary: Nubble and the So-What Layer
+**Beyond the Summary: Nubble and the So-What Layer**
+*Evidence-linked decision support under an attention budget*
 
-*An Evidence-Grounded Framework for Personalized Implications and Proposed Actions Under an Attention Budget*
+[Paper PDF](output/pdf/nubble-method-paper.pdf) · [Manuscript source](paper/manuscript.md) · [17-study literature review](research/LITERATURE_REVIEW.md) · [BibTeX](paper/references.bib)
 
-The research question: **Does an explicit So-What Layer improve decision quality beyond a personalized summary alone, within the same attention budget?**
-
-[Read the paper proposal](PAPER_PROPOSAL.md) · [Read the method](METHOD.md) · [Inspect the worked example](examples/competitor-update.md) · [Read the repository review](REPO_REVIEW.md)
+The research question is whether explicit conditional implications and decision options improve decisions beyond personalized summaries, within the same total attention budget. Close prior work already addresses decision-focused and personalized action-oriented summaries; our contribution is a proposed inspectable contract and the experiment needed to test it.
 
 ## Three representations, three jobs
 
-| Representation | Reader's question | Required behavior |
+| Representation | Reader's question | Requirement |
 |---|---|---|
-| **Full / original** | What does the source actually say? | Preserve the available source faithfully, with attribution and retrieval scope. A snippet stays labeled as a snippet. |
-| **Short / relevant to you** | What matters for my current focus? | Select and summarize source-supported information against an explicit goal, decision, and constraints. |
-| **So what? / implications and next steps** | What could this change for me? | Connect evidence to the reader's situation, label assumptions and uncertainty, and propose a feasible next step—or explain why none is warranted. |
+| **Full** | What does the source actually say? | Preserve the available original and label incomplete retrieval. |
+| **Short** | What matters to my focus? | Select supported facts for an explicit goal and pending decision. |
+| **So what?** | What could this change, and what should I consider next? | Separate facts, assumptions and implications; propose feasible action, verification, monitoring, maintaining the plan, or abstention. |
 
-These are different functions. Summary length and reading depth can vary within them. Expanding an AI summary does not recreate the original source; a shorter article does not automatically explain its implications.
+Reading depth is a separate control. Generated expansion cannot recreate an unavailable original. “Maintain the plan” and “insufficient evidence to recommend” are different outcomes.
 
-## A small example
+## Open source and paid Cloud
 
-**Fictional source:** a competitor adds weekly monitoring of AI brand mentions, but its announcement says nothing about whether it compares AI answers with human brand perception.
+**Open source lets you nubble an article. Cloud keeps watch and tells you when something changes your situation.**
 
-**Reader's focus:** a hypothetical POKPOK positioning decision about comparing how people and AI engines perceive a brand. This is an example context supplied for the method, not a verified product specification.
+The proposed open core accepts content and context supplied by the reader. The proposed paid product finds, follows, connects, and prioritizes developments continuously for that business. The paper and research reproduction assets remain public.
 
-**Short:** “The competitor is moving into AI brand monitoring. Weekly mentions overlap with part of this positioning, but the announcement does not establish a human-versus-AI comparison.”
+| Open core: you bring the signal | Paid Cloud: Nubble keeps watch |
+|---|---|
+| A supplied article/document and explicit context | Maintained source coverage and competitor/market watchlists |
+| Single-item Short and So what? reference method | Continuous collection, change detection, and event history |
+| Source links, uncertainty, and inspectable output | Cross-source checks, deduplication, and conflict/freshness handling |
+| Manual, on-demand use | A finite prioritized brief and material-change alerts |
+| Proposed next step for the item | Ongoing business context and decision follow-up |
 
-**So what?** “This could increase buyer confusion about what distinguishes your offering. First verify the competitor's actual comparison features; then revise the comparison copy if the overlap is real. This announcement alone does not justify changing the product roadmap.”
+This is the **recommended product boundary**, not a list of currently shipped Cloud features. Team collaboration is deferred. The current v0.2 release ships paper/tooling/fixtures; a runnable single-item inference core is a subsequent milestone. See [CORE_VS_CLOUD.md](CORE_VS_CLOUD.md) for exact exclusions and release stages.
 
-The [complete example](examples/competitor-update.md) includes the full fictional source, a second reader profile, evidence links, assumptions, and a no-action case.
+## Try the offline artifacts
 
-## What would make the research useful
+No account, model key, network request, or private dashboard access is needed:
 
-- A source trail from every factual claim back to the available original.
-- An explicit reader context that can be inspected, corrected, and changed.
-- A visible distinction between source facts, contextual inferences, and proposed actions.
-- A finite attention budget and a reason to stop reading.
-- Evaluation against personalized summaries, including mistakes, irrelevant signals, and appropriate inaction.
+```bash
+python3 scripts/validate_release.py
+python3 -m unittest discover -s tests -v
+```
 
-Personalized summarization and decision-aware information presentation have substantial prior work. The [proposal](PAPER_PROPOSAL.md#related-work-and-contribution-boundary) identifies relevant precedents and limits the novelty claim to the proposed integration and its evaluation.
+Inspect the [human-readable example](examples/competitor-update.md) and [structured fixture](examples/nubble-example.json). The same fictional source produces a verification proposal, a maintain-plan recommendation, and abstention for three different contexts. These are hand-authored examples, not model outputs or benchmark results.
 
-## Release direction
+The validator checks structure, references, declared numeric/authority constraints, and local document links. It cannot determine the truth of an implication or whether a real decision will succeed. If `jsonschema` is installed, it additionally evaluates the complete published schema; the default checks use only Python's standard library.
 
-The recommended public project is **Nubble Method**: paper, method, small reproducible examples, prompts, and an evaluation package. The existing web/iOS app can serve as a prototype reference once its release blockers are resolved. See the [prioritized review](REPO_REVIEW.md#recommended-release-order).
+## Rebuild the artifacts
 
-The requested restriction to noncommercial use requires a licensing decision. Such a restriction is incompatible with the [OSI Open Source Definition, section 6](https://opensource.org/osd). Until the terms are selected, describe the intended project as a **public research repository with planned noncommercial terms**. This draft is not a license grant. Existing MIT declarations and third-party rights must be reviewed before release.
+Use Python 3.10+ in a virtual environment. Figure/PDF authoring requires the pinned packages in [requirements.txt](requirements.txt); the validator/tests do not.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
+python3 scripts/build_bibliography.py
+python3 scripts/make_figures.py
+python3 scripts/make_business_boundary.py
+python3 scripts/build_paper.py
+python3 scripts/package_release.py
+```
+
+PDF builds use the open font family documented in the renderer, with an explicit font-directory option. Review rendered pages after any manuscript or typography change. Conceptual diagrams are supplied as editable/reproducible SVG and PNG; no chart represents measured Nubble performance.
+
+## Repository map
+
+| Material | Location |
+|---|---|
+| Definition, contract, and failure taxonomy | [WHAT_IS_NUBBLE.md](WHAT_IS_NUBBLE.md), [METHOD.md](METHOD.md) |
+| Manuscript, PDF, and references | [Manuscript](paper/manuscript.md), [PDF](output/pdf/nubble-method-paper.pdf) |
+| Primary-source synthesis and access/version limits | [Literature review](research/LITERATURE_REVIEW.md), [Source index](research/sources.json) |
+| Proposed study and draft annotation rubric | [Protocol](evaluation/PROTOCOL.md), [Rubric](evaluation/annotation-rubric.csv) |
+| Prompt contract and structured output | [Prompts](prompts/nubble.md), [Schema](schemas/nubble.schema.json) |
+| Original diagrams and captions | [Figure manifest](figures/README.md) |
+| Product and licensing boundaries | [Product boundary](CORE_VS_CLOUD.md), [Licensing strategy](LICENSE_STRATEGY.md) |
+
+## Contribute and cite
+
+Bring a missed caveat, a justified profile-swap failure, an inappropriate action, or an independent reproduction. [Contribution guide](CONTRIBUTING.md) · [Citation instructions](CITATION.md) · [Security reporting](SECURITY.md) · [Change log](CHANGELOG.md).
+
+## Licensing
+
+New software tooling is **AGPL-3.0-only**. The original paper, diagrams, prompts, schema and fictional fixtures are **CC BY 4.0**. Commercial use is permitted under the applicable obligations; a managed service may be sold separately. [License scope](LICENSE.md) · [AGPL text](LICENSE) · [Third-party notices](NOTICE.md).
+
+The license applies to this research release, not the parent application's entire history or third-party materials. Previous grants remain relevant. No DOI, peer-review status, effectiveness result, or Cloud availability is implied.

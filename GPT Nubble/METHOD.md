@@ -1,6 +1,6 @@
 # The Nubble method
 
-**Version:** 0.1 proposal, October 25, 2026.  
+**Version:** 0.2 proposal, October 25, 2026.
 **Status:** a specification to test, not a claim that every component exists or works reliably in the current app.
 
 ## 1. Purpose
@@ -84,7 +84,7 @@ Use this compact reasoning contract:
 
 Owner and timeframe may be proposed from the context; never present them as commitments the reader made. Distinguish the time needed to read the card from the effort required to act. Do not invent urgency, financial projections, customer reactions, or capabilities absent from the inputs.
 
-Allowed outcomes are **act**, **verify**, **monitor**, **no action warranted**, and **insufficient evidence**. “No action warranted” means enough evidence supports keeping the current plan. “Insufficient evidence” means a confident recommendation cannot yet be made. Either can be more useful than a new task.
+Allowed outcomes are **act**, **verify**, **monitor**, **maintain**, and **abstain**. Maintain means enough evidence supports keeping the plan; abstain means evidence is insufficient to justify a recommendation. Maintaining a plan is a substantive choice that can be wrong; abstention has opportunity costs. Verification and monitoring also consume resources. Restraint can be more useful than a new task.
 
 ### Step E: check and package
 
@@ -146,4 +146,10 @@ These are starting instructions to freeze and version before evaluation, not pro
 
 The same source should produce different relevance selections for different decisions while retaining the same underlying facts. A matched reader profile should outperform a deliberately mismatched profile. Adding So what? should improve independently scored decisions, not only produce more accepted actions. In irrelevant or weak-evidence cases, the method should withhold action appropriately.
 
-The [paper proposal](PAPER_PROPOSAL.md#evaluation-protocol) specifies baselines, controls, and failure metrics. The [worked example](examples/competitor-update.md) shows the contract without requiring credentials, API calls, or access to private data.
+The [expanded manuscript](paper/manuscript.md) and [evaluation protocol](evaluation/PROTOCOL.md) specify baselines, controls and failure metrics. The [worked example](examples/competitor-update.md), [structured fixture](examples/nubble-example.json), and [schema](schemas/nubble.schema.json) show the contract offline. These are hand-authored examples, not model results.
+
+## 8. Research and product boundaries
+
+The method, inspection mechanisms, single-item reference task and research reproduction assets belong in open core. Continuous collection, maintained business context, event history, cross-source synthesis, session prioritization, alerts and follow-up define the proposed paid service. [CORE_VS_CLOUD.md](CORE_VS_CLOUD.md) records delivery stages. The current v0.2 toolkit is not an end-to-end inference engine.
+
+The [17-study review](research/LITERATURE_REVIEW.md) narrows the novelty claim. Factual support, inferential validity and final decision quality remain distinct; the primary test counts source checking within common elapsed time.

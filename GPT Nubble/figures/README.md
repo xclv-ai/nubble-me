@@ -1,11 +1,11 @@
 # Nubble conceptual figures
 
-All three figures are original diagrams created for the Nubble Method research
+All four figures are original diagrams created for the Nubble Method research
 proposal. They illustrate proposed representations, reasoning requirements and
 an evaluation design. **They contain no observations, estimated effects,
 performance scores or empirical results.** The diagrams are not third-party
 adaptations; their substantive source is the proposed Nubble method in this
-repository (`METHOD.md` and `PAPER_PROPOSAL.md`). They are not application
+repository (`METHOD.md`, `paper/manuscript.md`, and `CORE_VS_CLOUD.md`). They are not application
 screenshots or reports of measured results. No third-party images or fonts are
 bundled.
 
@@ -21,6 +21,7 @@ From the repository root:
 
 ```sh
 MPLCONFIGDIR=/private/tmp/nubble-mpl python3 scripts/make_figures.py
+MPLCONFIGDIR=/private/tmp/nubble-mpl python3 scripts/make_business_boundary.py
 ```
 
 Requires Python 3 and Matplotlib (tested with Matplotlib 3.10.9). No network,
@@ -83,3 +84,10 @@ with the same Matplotlib/font environment produces byte-identical files.
   A shared control strip states equal total time and original-source access for
   all arms, counterbalanced task blocks, and equal total generated-word budgets
   for C and D, including D's So-What text. The figure shows no outcome values.
+
+## Figure 4 — Open core and paid ongoing intelligence
+
+- Files: `nubble-open-core-cloud.svg`, `nubble-open-core-cloud.png`.
+- Caption: Proposed product boundary. Open core processes supplied content and context; Cloud adds continuous sources, maintained business context, history, cross-source synthesis, finite prioritization, material alerts and decision follow-up. The current release supplies research artifacts; a runtime and commercial service remain planned.
+- Source: Original product-scope synthesis in `CORE_VS_CLOUD.md`.
+- Alt text: A teal open-core panel lists Source, Context, Short, So What and Inspect. Below it, an amber paid-Cloud panel lists Watch, Remember, Connect, Prioritize and Follow Up. The diagram contains no revenue projections or performance results.

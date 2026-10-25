@@ -27,6 +27,7 @@ from urllib.parse import quote
 from PIL import Image as PILImage
 from pypdf import PdfReader
 from reportlab import rl_config
+import reportlab
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
@@ -97,18 +98,16 @@ def register_fonts(font_dir: Path | None) -> None:
         if not mono.is_file():
             mono = chosen / "LiberationMono-Regular.ttf"
     else:
-        native = Path("/System/Library/Fonts/Supplemental")
-        font_files = {
-            "PaperSerif": "Georgia.ttf", "PaperSerif-Bold": "Georgia Bold.ttf",
-            "PaperSerif-Italic": "Georgia Italic.ttf", "PaperSerif-BoldItalic": "Georgia Bold Italic.ttf",
-            "PaperSans": "Arial.ttf", "PaperSans-Bold": "Arial Bold.ttf",
-            "PaperSans-Italic": "Arial Italic.ttf", "PaperSans-BoldItalic": "Arial Bold Italic.ttf",
-        }
-        for name, filename in font_files.items():
-            pdfmetrics.registerFont(TTFont(name, str(native / filename)))
+        native = Path(reportlab.__file__).resolve().parent / "fonts"
+        variants = {"": "Vera.ttf", "-Bold": "VeraBd.ttf", "-Italic": "VeraIt.ttf", "-BoldItalic": "VeraBI.ttf"}
+        for family in ("PaperSerif", "PaperSans"):
+            for suffix, filename in variants.items():
+                pdfmetrics.registerFont(TTFont(family + suffix, str(native / filename)))
         for family in ("PaperSerif", "PaperSans"):
             pdfmetrics.registerFontFamily(family, normal=family, bold=family + "-Bold", italic=family + "-Italic", boldItalic=family + "-BoldItalic")
-        mono = Path("/Library/Fonts/SourceCodePro-Regular.ttf")
+        mono = native / "Vera.ttf"
+    if not mono.is_file():
+        mono = Path(reportlab.__file__).resolve().parent / "fonts/Vera.ttf"
     pdfmetrics.registerFont(TTFont("PaperMono", str(mono)))
 
 
@@ -292,6 +291,13 @@ def build_story(source: Path, s: dict) -> tuple[list[Flowable], dict]:
         if not line:
             i += 1
             continue
+        if line.startswith("<!--"):
+            while "-->" not in lines[i]:
+                i += 1
+                if i >= len(lines):
+                    raise ValueError("Unclosed Markdown HTML comment")
+            i += 1
+            continue
         if line.startswith("```"):
             code: list[str] = []
             i += 1
@@ -428,7 +434,7 @@ def main() -> None:
     doc.build(story, canvasmaker=NumberedCanvas)
     reader = PdfReader(destination)
     text = "\n".join(page.extract_text() or "" for page in reader.pages)
-    if not text.strip() or "No controlled Nubble effectiveness study is reported" not in text:
+    if not text.strip() or "No controlled Nubble effectiveness study is reported" not in " ".join(text.split()):
         raise RuntimeError("PDF text/proposal-status verification failed")
     links = sum(len(page.get("/Annots", [])) for page in reader.pages)
     print(json.dumps({"output": str(destination), "pages": len(reader.pages),
