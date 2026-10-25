@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3 - 2026-10-25
+
+- Reworked the proposal into a self-contained methods manuscript with two elementary formal properties, proofs, a reproducible verification-cost calculation, and a metadata audit of 50 pinned prototype records.
+- Added a calculated decision-model figure, numerical exports, audit hashes, and analytical regression tests. No controlled human or LLM efficacy result is claimed.
+- Added two foundational sources and corrected FRAME/SCOPE to its verified Findings of EMNLP 2025 publication.
+- Replaced the PDF renderer with portable LaTeX, a matching bibliography, four scientific figures, a seven-file arXiv draft archive, submission metadata, and explicit author-review requirements.
+- Added source-integrity and metadata checks; actual submission remains pending confirmed author and venue details.
+
 ## 0.2 - 2026-10-25
 
 - Clarified paid onboarding: provide a focus or project URL; Nubble does the ongoing research. Added a hand-drawn comparison with plain feature labels and the approved paid promise.

@@ -1,0 +1,56 @@
+{
+  "repository": "https://github.com/xclv-ai/nubble-me",
+  "revision": "d1a3f84a91c1616f0bdb9935f97b5c7ef7071f7a",
+  "selection": "All five client/public/data/feed/*/latest.json snapshots at the pinned revision",
+  "scope": "Descriptive metadata audit only; URL syntax is not source truth or support validation",
+  "rows": [
+    {
+      "category": "a16z-portfolio",
+      "snapshot_date": "2026-05-11",
+      "records": 10,
+      "usable_source_urls": 0,
+      "four_depth_records": 10,
+      "path": "client/public/data/feed/a16z-portfolio/latest.json",
+      "sha256": "a3116b4a34e09889d607cae85339839bffcff53924d1e03d33a5cf21209bb2c9"
+    },
+    {
+      "category": "ai-branding",
+      "snapshot_date": "2026-05-11",
+      "records": 10,
+      "usable_source_urls": 0,
+      "four_depth_records": 10,
+      "path": "client/public/data/feed/ai-branding/latest.json",
+      "sha256": "3c26c10186aaf4bd7469e70f6b910a9a8cf98f14e2566cbc27a3a5409488b126"
+    },
+    {
+      "category": "ai-ecommerce",
+      "snapshot_date": "2026-05-11",
+      "records": 10,
+      "usable_source_urls": 0,
+      "four_depth_records": 10,
+      "path": "client/public/data/feed/ai-ecommerce/latest.json",
+      "sha256": "303192291e97f700cb52cdbf53472e37f1397fcc9905ba0ecf523fb02e44edec"
+    },
+    {
+      "category": "ai-news",
+      "snapshot_date": "2026-05-11",
+      "records": 10,
+      "usable_source_urls": 0,
+      "four_depth_records": 10,
+      "path": "client/public/data/feed/ai-news/latest.json",
+      "sha256": "cd7345171d4ebf8916f14693d31f03aaab196fe3830a44f02f9b93de91d36b6a"
+    },
+    {
+      "category": "pokpok-personalized",
+      "snapshot_date": "2026-04-08",
+      "records": 10,
+      "usable_source_urls": 0,
+      "four_depth_records": 10,
+      "path": "client/public/data/feed/pokpok-personalized/latest.json",
+      "sha256": "30bf3e866e5b10021ac0704d7d94106e2b0424aded1d195e80da890e492fe245"
+    }
+  ],
+  "records": 50,
+  "usable_source_urls": 0,
+  "four_depth_records": 50
+}

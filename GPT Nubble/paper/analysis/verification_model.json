@@ -1,0 +1,31 @@
+{
+  "classification": "Hypothetical model calculation, not experimental effectiveness evidence",
+  "parameters": {
+    "gain_if_eligible": 6,
+    "loss_if_ineligible": 4,
+    "verification_cost": 0.5,
+    "verification_assumption": "Perfect revelation of eligibility; optional choice after checking",
+    "time": "Verification is available only if its review time fits the remaining budget"
+  },
+  "max_gross_information_value": 2.4,
+  "example_p_03": {
+    "maintain": 0.0,
+    "act": -1.0,
+    "verify": 1.2999999999999998
+  },
+  "example_p_01_k_08": {
+    "maintain": 0.0,
+    "act": -3.0,
+    "verify": -0.19999999999999996
+  },
+  "example_p_09_k_08": {
+    "maintain": 0.0,
+    "act": 5.0,
+    "verify": 4.6000000000000005
+  },
+  "action_threshold_without_verification": 0.4,
+  "verification_interval_k_05": [
+    0.08333333333333333,
+    0.875
+  ]
+}

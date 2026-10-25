@@ -13,9 +13,14 @@ FILES = ["README.md", "METHOD.md", "WHAT_IS_NUBBLE.md", "CORE_VS_CLOUD.md",
          "LICENSE", "LICENSE.md", "LICENSE_STRATEGY.md", "NOTICE.md", "CITATION.md",
          "CONTRIBUTING.md", "SECURITY.md", "CHANGELOG.md", "requirements.txt", ".gitignore", ".gitattributes",
          "research/LITERATURE_REVIEW.md", "research/sources.json", "research/related-work-sources.json",
-         "research/evaluation-sources.json", "research/related-work-notes.md", "research/evaluation-notes.md",
-         "output/pdf/nubble-method-paper.pdf"]
+         "research/evaluation-sources.json", "research/foundations-sources.json", "research/related-work-notes.md", "research/evaluation-notes.md",
+         "output/pdf/nubble-method-paper.pdf", "dist/nubble-arxiv-draft-v0.3.zip"]
 DIRECTORIES = ["paper", "figures", "examples", "prompts", "schemas", "evaluation", "scripts", "tests"]
+
+
+def arxiv_input(path):
+    from build_paper import allowed_source
+    return allowed_source(path.relative_to(ROOT / "paper/arxiv").as_posix())
 
 
 def main():
@@ -23,7 +28,7 @@ def main():
     paths = {ROOT / name for name in FILES}
     for directory in DIRECTORIES:
         paths.update(p for p in (ROOT / directory).rglob("*")
-                     if p.is_file() and "__pycache__" not in p.parts and p.suffix not in {".pyc", ".pyo"})
+                     if p.is_file() and "__pycache__" not in p.parts and p.suffix not in {".pyc", ".pyo", ".aux", ".log", ".out", ".blg", ".synctex", ".xdv"} and not ("arxiv" in p.parts and not arxiv_input(p)))
     manifest = []
     for path in sorted(paths):
         if not path.is_file() or not path.resolve().is_relative_to(ROOT):
@@ -31,7 +36,7 @@ def main():
         data = path.read_bytes()
         manifest.append({"path": str(path.relative_to(ROOT)), "bytes": len(data),
                          "sha256": hashlib.sha256(data).hexdigest()})
-    release = {"version": "0.2", "research_status": "proposal-no-controlled-effectiveness-results",
+    release = {"version": "0.3", "research_status": "methods-analysis-and-descriptive-audit-no-controlled-effectiveness-results",
                "code_license": "AGPL-3.0-only", "research_license": "CC-BY-4.0",
                "exclusions": ["legacy Git history", "parent application", "private implementation/audit memos", "credentials", "unpublished dashboard contents"],
                "files": manifest}
@@ -39,12 +44,12 @@ def main():
     destination.mkdir(exist_ok=True)
     manifest_bytes = (json.dumps(release, ensure_ascii=False, indent=2) + "\n").encode()
     (destination / "release-manifest.json").write_bytes(manifest_bytes)
-    archive = destination / "nubble-method-v0.2.zip"
+    archive = destination / "nubble-method-v0.3.zip"
     with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
         entries = [(entry["path"], (ROOT / entry["path"]).read_bytes()) for entry in manifest]
         entries.append(("release-manifest.json", manifest_bytes))
         for name, data in entries:
-            info = zipfile.ZipInfo("nubble-method-v0.2/" + name, date_time=(2026, 10, 25, 0, 0, 0))
+            info = zipfile.ZipInfo("nubble-method-v0.3/" + name, date_time=(2026, 10, 25, 0, 0, 0))
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o644 << 16
             bundle.writestr(info, data)

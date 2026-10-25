@@ -1,0 +1,50 @@
+{
+  "version": "0.3",
+  "submission_ready": false,
+  "blockers": [
+    "Confirmed author names and affiliations are missing.",
+    "author review complete has not been confirmed.",
+    "all authors consented has not been confirmed.",
+    "The requested venue is assumed to be arXiv and needs confirmation."
+  ],
+  "archive": "nubble-arxiv-draft-v0.3.zip",
+  "sha256": "3ff0bb7aac977b6143a4c1d452a3a99e2eea4852b7173b2c8db9f2ca0917d000",
+  "pdf_sha256": "3e0a6c8cdefc9131f63c810e47f1e481e6c91eaca9ee61698d1fb6cc1b8545ed",
+  "files": [
+    {
+      "path": "figures/nubble-evidence-graph.png",
+      "sha256": "971823f2a66e6a1ca7f7272f894531693b6eaf647c672d8c792736e4953ae750",
+      "bytes": 505200
+    },
+    {
+      "path": "figures/nubble-framework.png",
+      "sha256": "4bea8d147ca0f779f57b1947eb79bd0ba2bbc802eced88776bf66c975fecfac9",
+      "bytes": 411103
+    },
+    {
+      "path": "figures/nubble-study-design.png",
+      "sha256": "15502c204a1234e6f5ca004da6e501b88c72dfb157dddd999a9d6768a9387bfa",
+      "bytes": 397123
+    },
+    {
+      "path": "figures/nubble-verification-model.png",
+      "sha256": "84ff92b7c858cd60593458b23c64a37884c1f3f2a169efb9c6c204dd10b3f219",
+      "bytes": 409446
+    },
+    {
+      "path": "main.bbl",
+      "sha256": "c3e926f933ba0fac6acbc470bb0da666b9a841d741ba83df1de4f2b546e31050",
+      "bytes": 7860
+    },
+    {
+      "path": "main.tex",
+      "sha256": "901114934124217b642ae562951e9e1944b1a10e1989711498a52089d72b57dd",
+      "bytes": 31988
+    },
+    {
+      "path": "references.bib",
+      "sha256": "625b573b505e3db143974915373fb820b6ceb0f61c59e76a32dd9fd48e1f4570",
+      "bytes": 7312
+    }
+  ]
+}

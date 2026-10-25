@@ -1,0 +1,17 @@
+{
+  "authors": [],
+  "corresponding_email": "",
+  "primary_category": "cs.HC",
+  "cross_list": [
+    "cs.CL"
+  ],
+  "author_review_complete": false,
+  "all_authors_consented": false,
+  "title": "Beyond the Summary: Nubble and the So-What Layer",
+  "subtitle": "Evidence-linked, context-dependent decision support under limited attention",
+  "abstract": "Readers of news and market updates must decide not only what happened, but whether a development should change a current plan. We introduce Nubble, an inspectable representation contract linking the available original, a context-conditioned summary, and a separately labeled layer of conditional implications and proposed decisions. The contract distinguishes source assertions, reader context, assumptions, implications, and feasible options, including verification, monitoring, maintaining a plan, and abstention. We characterize when a compressed representation can preserve optimal decisions and show why an additional interpretation cannot improve an ideal decision-maker with identical evidence and zero interpretation cost. A reproducible binary decision model then makes the roles of verification cost and an attention constraint explicit. A descriptive audit of 50 archived prototype records finds complete four-depth text in every record but no usable source URL, illustrating a traceability failure that text-depth controls alone do not resolve. These are analytical results and a metadata audit, not evidence of improved human or language-model performance. We provide a reference schema, examples, tests, and an evaluation design that separates source support, inferential validity, and final decision quality.",
+  "version": "0.3",
+  "date": "2026-10-25",
+  "license": "CC BY 4.0",
+  "venue_confirmed": false
+}

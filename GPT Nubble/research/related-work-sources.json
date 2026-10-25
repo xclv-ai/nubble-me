@@ -262,12 +262,12 @@
         "Bela Gipp"
       ],
       "year": 2025,
-      "venue": "arXiv",
-      "doi": "10.48550/arXiv.2509.15901",
+      "venue": "Findings of the Association for Computational Linguistics: EMNLP 2025",
+      "doi": "10.18653/v1/2025.findings-emnlp.1094",
       "arxiv": "2509.15901",
-      "version_read": "arXiv v2 (version shown by indexed primary full-text links; date not independently checked)",
-      "publication_status": "Preprint record inspected; other publication not verified",
-      "canonical_url": "https://arxiv.org/abs/2509.15901",
+      "version_read": "arXiv v2, 2025-11-14; canonical proceedings metadata rechecked 2026-10-25",
+      "publication_status": "Published proceedings paper; canonical metadata rechecked 2026-10-25",
+      "canonical_url": "https://aclanthology.org/2025.findings-emnlp.1094/",
       "full_text_url": "https://arxiv.org/html/2509.15901v2",
       "access_level": "Open primary full text passages",
       "evidence_level": "A for primary method/evaluation passage reading; canonical arXiv version date not independently checked",
@@ -282,7 +282,9 @@
       "verified_findings": "P-MESA is an LLM-based seven-dimension evaluation with a human calibration study. Inspected Table 1 reports per-dimension balanced detection accuracies 89.1–93.3% and Spearman correlations 0.70–0.81. These validate that specific evaluator setup, not real decision outcomes.",
       "numeric_result": "Do not transplant P-MESA scores into Nubble claims; table read only to verify evaluator design and boundaries.",
       "limitations": "Reader fit as judged by P-MESA is a proxy, not demonstrated downstream utility. Nine-question generation protocol is not a guarantee that reader assumptions are correct.",
-      "nubble_upgrade": "Represent user context explicitly, allow correction, and separate human calibration of relevance from human evaluation of action quality; include goal/knowledge/urgency ablations."
+      "nubble_upgrade": "Represent user context explicitly, allow correction, and separate human calibration of relevance from human evaluation of action quality; include goal/knowledge/urgency ablations.",
+      "pages": "20087–20137",
+      "metadata_recheck": "https://aclanthology.org/2025.findings-emnlp.1094/"
     },
     {
       "id": "cachola_etal_2026_information_satisfaction",

@@ -8,4 +8,13 @@ tmp/
 dist/*
 !dist/nubble-method-v0.2.zip
 !dist/release-manifest.json
+!dist/nubble-method-v0.3.zip
+!dist/nubble-arxiv-draft-v0.3.zip
+!dist/nubble-arxiv-v0.3.zip
+paper/arxiv/*.aux
+paper/arxiv/*.log
+paper/arxiv/*.out
+paper/arxiv/*.blg
+paper/arxiv/*.pdf
+paper/arxiv/*.synctex.gz
 .DS_Store

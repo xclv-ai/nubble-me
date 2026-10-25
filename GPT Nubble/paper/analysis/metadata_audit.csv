@@ -1,0 +1,6 @@
+category,snapshot_date,records,usable_source_urls,four_depth_records,path,sha256
+a16z-portfolio,2026-05-11,10,0,10,client/public/data/feed/a16z-portfolio/latest.json,a3116b4a34e09889d607cae85339839bffcff53924d1e03d33a5cf21209bb2c9
+ai-branding,2026-05-11,10,0,10,client/public/data/feed/ai-branding/latest.json,3c26c10186aaf4bd7469e70f6b910a9a8cf98f14e2566cbc27a3a5409488b126
+ai-ecommerce,2026-05-11,10,0,10,client/public/data/feed/ai-ecommerce/latest.json,303192291e97f700cb52cdbf53472e37f1397fcc9905ba0ecf523fb02e44edec
+ai-news,2026-05-11,10,0,10,client/public/data/feed/ai-news/latest.json,cd7345171d4ebf8916f14693d31f03aaab196fe3830a44f02f9b93de91d36b6a
+pokpok-personalized,2026-04-08,10,0,10,client/public/data/feed/pokpok-personalized/latest.json,30bf3e866e5b10021ac0704d7d94106e2b0424aded1d195e80da890e492fe245

@@ -1,0 +1,33 @@
+{
+  "research_date": "2026-10-25",
+  "scope": "Two foundational references; not counted among the 17 focused related/evaluation studies.",
+  "sources": [
+    {
+      "id": "simon1971attention",
+      "title": "Designing Organizations for an Information-Rich World",
+      "authors": [
+        "Herbert A. Simon"
+      ],
+      "year": 1971,
+      "venue": "Archival manuscript, Carnegie Mellon University; chapter associated with Computers, Communications, and the Public Interest",
+      "canonical_url": "https://iiif.library.cmu.edu/file/Simon_box00055_fld04178_bdl0002_doc0001/Simon_box00055_fld04178_bdl0002_doc0001.pdf",
+      "version_read": "Original archived manuscript; opening 3 pages rechecked 2026-10-25; earlier focused reading supplied the attention-scarcity foundation.",
+      "access_level": "Primary archived manuscript, partial recheck; no new numerical claim derived."
+    },
+    {
+      "id": "horvitz1995display",
+      "title": "Display of Information for Time-Critical Decision Making",
+      "authors": [
+        "Eric J. Horvitz",
+        "Matthew Barry"
+      ],
+      "year": 1995,
+      "venue": "Proceedings of the Eleventh Conference on Uncertainty in Artificial Intelligence",
+      "pages": "296–305",
+      "arxiv": "1302.4959",
+      "canonical_url": "https://arxiv.org/abs/1302.4959",
+      "version_read": "Original UAI 1995 paper, author deposit arXiv:1302.4959v1 (2013); metadata rechecked 2026-10-25.",
+      "access_level": "Author-deposited primary paper and canonical metadata; historical year distinguished from deposit year."
+    }
+  ]
+}

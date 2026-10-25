@@ -1,8 +1,6 @@
 # References
 
-
-Generated from the curated source ledgers. Full access/version limitations remain in those ledgers.
-
+Generated from the curated source ledgers; version and access limits remain in those ledgers.
 
 1. Chao-Chun Hsu, Chenhao Tan. 2021. **Decision-Focused Summarization**. Proceedings of EMNLP 2021. [Canonical record](https://aclanthology.org/2021.emnlp-main.10/).
 
@@ -18,7 +16,7 @@ Generated from the curated source ledgers. Full access/version limitations remai
 
 7. Xiao Pu, Mingqi Gao, Xiaojun Wan. 2024. **Is Summary Useful or Not? An Extrinsic Human Evaluation of Text Summaries on Downstream Tasks**. LREC-COLING 2024. [Canonical record](https://aclanthology.org/2024.lrec-main.821/).
 
-8. Frederic Kirstein, Sonu Kumar, Terry Ruas, Bela Gipp. 2025. **Re-FRAME the Meeting Summarization SCOPE: Fact-Based Summarization and Personalization via Questions**. arXiv. [Canonical record](https://arxiv.org/abs/2509.15901).
+8. Frederic Kirstein, Sonu Kumar, Terry Ruas, Bela Gipp. 2025. **Re-FRAME the Meeting Summarization SCOPE: Fact-Based Summarization and Personalization via Questions**. Findings of the Association for Computational Linguistics: EMNLP 2025. [Canonical record](https://aclanthology.org/2025.findings-emnlp.1094/).
 
 9. Isabel Cachola, William Walden, Reno Kriz, Mark Dredze. 2026. **Information Satisfaction: A Reader-Centered Axis for Summarization Evaluation**. ACM publication linked by DOI; exact conference name not established from inspected metadata. [Canonical record](https://dl.acm.org/doi/10.1145/3834580.3838749).
 
@@ -37,3 +35,7 @@ Generated from the curated source ledgers. Full access/version limitations remai
 16. Hussein Mozannar, David Sontag. 2020. **Consistent Estimators for Learning to Defer to an Expert**. Proceedings of the 37th International Conference on Machine Learning, PMLR 119. [Canonical record](https://proceedings.mlr.press/v119/mozannar20b.html).
 
 17. Peter Pirolli, Wai-Tat Fu. 2003. **SNIF-ACT: A Model of Information Foraging on the World Wide Web**. User Modeling 2003, UM 2003, Lecture Notes in Computer Science 2702. [Canonical record](https://link.springer.com/chapter/10.1007/3-540-44963-9_8).
+
+18. Herbert A. Simon. 1971. **Designing Organizations for an Information-Rich World**. Archival manuscript, Carnegie Mellon University; chapter associated with Computers, Communications, and the Public Interest. [Canonical record](https://iiif.library.cmu.edu/file/Simon_box00055_fld04178_bdl0002_doc0001/Simon_box00055_fld04178_bdl0002_doc0001.pdf).
+
+19. Eric J. Horvitz, Matthew Barry. 1995. **Display of Information for Time-Critical Decision Making**. Proceedings of the Eleventh Conference on Uncertainty in Artificial Intelligence. [Canonical record](https://arxiv.org/abs/1302.4959).

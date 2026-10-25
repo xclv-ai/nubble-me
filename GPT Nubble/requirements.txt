@@ -1,4 +1,4 @@
-# Artifact authoring dependencies; the offline validator/tests use only the Python standard library.
+# Optional authoring/inspection dependencies; validators and tests use the standard library.
+# A separate Tectonic or latexmk/pdflatex installation compiles the manuscript.
 matplotlib==3.10.9
-reportlab==4.4.9
 pypdf==6.10.0

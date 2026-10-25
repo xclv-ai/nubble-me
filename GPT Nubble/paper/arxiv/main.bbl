@@ -1,0 +1,163 @@
+\begin{thebibliography}{19}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Bansal et~al.(2021)Bansal, Wu, Zhou, Fok, Nushi, Kamar, Ribeiro, and
+  Weld]{bansal2021}
+Gagan Bansal, Tongshuang Wu, Joyce Zhou, Raymond Fok, Besmira Nushi, Ece Kamar,
+  Marco~Tulio Ribeiro, and Daniel~S. Weld.
+\newblock {Does the Whole Exceed its Parts? The Effect of AI Explanations on
+  Complementary Team Performance}.
+\newblock In \emph{Proceedings of the 2021 CHI Conference on Human Factors in
+  Computing Systems}, 2021.
+\newblock \doi{10.1145/3411764.3445717}.
+\newblock URL \url{https://doi.org/10.1145/3411764.3445717}.
+
+\bibitem[Bu{\c{c}}inca et~al.(2021)Bu{\c{c}}inca, Malaya, and
+  Gajos]{bucinca2021}
+Zana Bu{\c{c}}inca, Maja~Barbara Malaya, and Krzysztof~Z. Gajos.
+\newblock {To Trust or to Think: Cognitive Forcing Functions Can Reduce
+  Overreliance on AI in AI-assisted Decision-making}.
+\newblock \emph{Proceedings of the ACM on Human-Computer Interaction},
+  5\penalty0 (CSCW1):\penalty0 188, 2021.
+\newblock \doi{10.1145/3449287}.
+
+\bibitem[Cachola et~al.(2026)Cachola, Walden, Kriz, and
+  Dredze]{cachola_etal_2026_information_satisfaction}
+Isabel Cachola, William Walden, Reno Kriz, and Mark Dredze.
+\newblock {Information Satisfaction: A Reader-Centered Axis for Summarization
+  Evaluation}.
+\newblock arXiv preprint arXiv:2608.14457, 2026.
+\newblock URL \url{https://arxiv.org/abs/2608.14457}.
+
+\bibitem[Gao et~al.(2023)Gao, Yen, Yu, and Chen]{gao2023alce}
+Tianyu Gao, Howard Yen, Jiatong Yu, and Danqi Chen.
+\newblock {Enabling Large Language Models to Generate Text with Citations}.
+\newblock In \emph{Proceedings of the 2023 Conference on Empirical Methods in
+  Natural Language Processing}, pages 6465--6488, 2023.
+\newblock \doi{10.18653/v1/2023.emnlp-main.398}.
+\newblock URL \url{https://aclanthology.org/2023.emnlp-main.398/}.
+
+\bibitem[Geifman and El-Yaniv(2019)]{geifman2019selectivenet}
+Yonatan Geifman and Ran El-Yaniv.
+\newblock {SelectiveNet: A Deep Neural Network with an Integrated Reject
+  Option}.
+\newblock In \emph{Proceedings of the 36th International Conference on Machine
+  Learning, PMLR 97}, pages 2151--2159, 2019.
+\newblock URL \url{https://proceedings.mlr.press/v97/geifman19a.html}.
+
+\bibitem[Ghodratnama and
+  Zakershahrak(2024)]{ghodratnama_zakershahrak_2024_sumrecom}
+Samira Ghodratnama and Mehrdad Zakershahrak.
+\newblock {SumRecom: A Personalized Summarization Approach by Learning from
+  Users' Feedback}.
+\newblock arXiv preprint arXiv:2408.07294, 2024.
+\newblock URL \url{https://arxiv.org/abs/2408.07294}.
+
+\bibitem[Horvitz and Barry(1995)]{horvitz1995display}
+Eric~J. Horvitz and Matthew Barry.
+\newblock {Display of Information for Time-Critical Decision Making}.
+\newblock In \emph{Proceedings of the Eleventh Conference on Uncertainty in
+  Artificial Intelligence}, pages 296--305, 1995.
+\newblock URL \url{https://arxiv.org/abs/1302.4959}.
+
+\bibitem[Hsu and Tan(2021)]{hsu_tan_2021_decsum}
+Chao-Chun Hsu and Chenhao Tan.
+\newblock {Decision-Focused Summarization}.
+\newblock In \emph{Proceedings of EMNLP 2021}, pages 117--132, 2021.
+\newblock \doi{10.18653/v1/2021.emnlp-main.10}.
+\newblock URL \url{https://aclanthology.org/2021.emnlp-main.10/}.
+
+\bibitem[Kirstein et~al.(2025)Kirstein, Kumar, Ruas, and
+  Gipp]{kirstein_etal_2025_frame_scope}
+Frederic Kirstein, Sonu Kumar, Terry Ruas, and Bela Gipp.
+\newblock {Re-FRAME the Meeting Summarization SCOPE: Fact-Based Summarization
+  and Personalization via Questions}.
+\newblock In \emph{Findings of the Association for Computational Linguistics:
+  EMNLP 2025}, pages 20087--20137, 2025.
+\newblock \doi{10.18653/v1/2025.findings-emnlp.1094}.
+\newblock URL \url{https://aclanthology.org/2025.findings-emnlp.1094/}.
+
+\bibitem[Li and Chaturvedi(2025)]{li_chaturvedi_2025_compsum}
+Haoyuan Li and Snigdha Chaturvedi.
+\newblock {Comparative Personalization for Multi-document Summarization}.
+\newblock arXiv preprint arXiv:2509.21562, 2025.
+\newblock URL \url{https://arxiv.org/abs/2509.21562}.
+
+\bibitem[Liu et~al.(2023)Liu, Zhang, and Liang]{liu2023verifiability}
+Nelson~F. Liu, Tianyi Zhang, and Percy Liang.
+\newblock {Evaluating Verifiability in Generative Search Engines}.
+\newblock In \emph{Findings of the Association for Computational Linguistics:
+  EMNLP 2023}, pages 7001--7025, 2023.
+\newblock \doi{10.18653/v1/2023.findings-emnlp.467}.
+\newblock URL \url{https://aclanthology.org/2023.findings-emnlp.467/}.
+
+\bibitem[Mozannar and Sontag(2020)]{mozannar2020defer}
+Hussein Mozannar and David Sontag.
+\newblock {Consistent Estimators for Learning to Defer to an Expert}.
+\newblock In \emph{Proceedings of the 37th International Conference on Machine
+  Learning, PMLR 119}, pages 7076--7087, 2020.
+\newblock URL \url{https://proceedings.mlr.press/v119/mozannar20b.html}.
+
+\bibitem[Pirolli and Fu(2003)]{pirollifu2003snifact}
+Peter Pirolli and Wai-Tat Fu.
+\newblock {SNIF-ACT: A Model of Information Foraging on the World Wide Web}.
+\newblock In \emph{User Modeling 2003, UM 2003, Lecture Notes in Computer
+  Science 2702}, pages 45--54, 2003.
+\newblock \doi{10.1007/3-540-44963-9_8}.
+\newblock URL \url{https://link.springer.com/chapter/10.1007/3-540-44963-9_8}.
+
+\bibitem[Pu et~al.(2024)Pu, Gao, and Wan]{pu_etal_2024_extrinsic}
+Xiao Pu, Mingqi Gao, and Xiaojun Wan.
+\newblock {Is Summary Useful or Not? An Extrinsic Human Evaluation of Text
+  Summaries on Downstream Tasks}.
+\newblock In \emph{LREC-COLING 2024}, pages 9389--9404, 2024.
+\newblock URL \url{https://aclanthology.org/2024.lrec-main.821/}.
+
+\bibitem[Simon(1971)]{simon1971attention}
+Herbert~A. Simon.
+\newblock {Designing Organizations for an Information-Rich World}.
+\newblock Archival manuscript, Carnegie Mellon University, 1971.
+\newblock URL
+  \url{https://iiif.library.cmu.edu/file/Simon_box00055_fld04178_bdl0002_doc0001/Simon_box00055_fld04178_bdl0002_doc0001.pdf}.
+
+\bibitem[Spinoso-Di~Piano and Cheung(2024)]{spinoso_cheung_2024_rsa}
+Cesare Spinoso-Di~Piano and Jackie Chi~Kit Cheung.
+\newblock {Does This Summary Answer My Question? Modeling Query-Focused Summary
+  Readers with Rational Speech Acts}.
+\newblock arXiv preprint arXiv:2411.06524, 2024.
+\newblock URL \url{https://arxiv.org/abs/2411.06524}.
+
+\bibitem[Vasconcelos et~al.(2023)Vasconcelos, J{\"{o}}rke, Grunde-McLaughlin,
+  Gerstenberg, Bernstein, and Krishna]{vasconcelos2023}
+Helena Vasconcelos, Matthew J{\"{o}}rke, Madeleine Grunde-McLaughlin, Tobias
+  Gerstenberg, Michael Bernstein, and Ranjay Krishna.
+\newblock {Explanations Can Reduce Overreliance on AI Systems During
+  Decision-Making}.
+\newblock \emph{Proceedings of the ACM on Human-Computer Interaction},
+  7\penalty0 (CSCW1):\penalty0 129, 2023.
+\newblock \doi{10.1145/3579605}.
+
+\bibitem[Zhang et~al.(2024)Zhang, Liu, Henriksboe, Lauvrak, Gulla, and
+  Ramampiaro]{zhang_etal_2024_personalsum}
+Lemei Zhang, Peng Liu, Marcus Tiedemann~Oekland Henriksboe, Even~W. Lauvrak,
+  Jon~Atle Gulla, and Heri Ramampiaro.
+\newblock {PersonalSum: A User-Subjective Guided Personalized Summarization
+  Dataset for Large Language Models}.
+\newblock In \emph{Advances in Neural Information Processing Systems 37,
+  Datasets and Benchmarks}, pages 99333--99346, 2024.
+\newblock \doi{10.52202/079017-3151}.
+\newblock URL
+  \url{https://proceedings.neurips.cc/paper_files/paper/2024/hash/b3c318cd7ee132d8a6b1895a2d6436c7-Abstract-Datasets_and_Benchmarks_Track.html}.
+
+\bibitem[Zhang and Chen(2025)]{zhang_chen_2025_financial_cot}
+Tianyi Zhang and Mu~Chen.
+\newblock {Personalized Chain-of-Thought Summarization of Financial News for
+  Investor Decision Support}.
+\newblock arXiv preprint arXiv:2511.05508, 2025.
+\newblock URL \url{https://arxiv.org/abs/2511.05508}.
+
+\end{thebibliography}
