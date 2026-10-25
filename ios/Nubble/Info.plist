@@ -82,6 +82,13 @@
 	<false/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Debug viewer loads prototypes from your Mac on the home network.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>Dr HAOS puts each prescription you accept on a "Dr HAOS ℞" list in Reminders.</string>
 	<key>UIAppFonts</key>
