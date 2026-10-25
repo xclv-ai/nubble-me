@@ -1,0 +1,30 @@
+Edit the supplied Nubble illustration. Keep its pure-white background, panoramic composition, friendly hand-drawn black marker outlines, soft pastel colors, handwritten lettering, single row of twelve icons, generous white space, and two grouping braces. This is a final product explanation for Nubble. Replace jargon with the exact plain-language labels below.
+
+Keep the first six icons in the open-source group, in this order:
+1. document/input arrow: "Add an article"
+2. profile/target: "Set your focus"
+3. concise document: "Read the summary"
+4. lightbulb/decision arrow: "So what?"
+5. linked document/check: "Check the sources"
+6. download document: "Save the result"
+
+Redraw or adjust the six additional Cloud icons so their symbols match these labels, in this exact order:
+7. incoming news/radar icon: "Find relevant news"
+8. binoculars or two observed competitor profiles: "Watch competitors"
+9. project profile/brain icon: "Understand your project"
+10. magnifier connecting a news document to a target: "Explain the impact"
+11. checklist with a forward arrow: "Suggest next steps"
+12. bell with a small notification dot: "Send important alerts"
+
+Every feature label must be legible, centered under its own icon, and use at most two or three short lines. There must be exactly twelve icons and twelve feature labels.
+
+The light-gray upper grouping brace must span ONLY the first six icons and stop after "Save the result". Its heading is exactly "Nubble - Open Source".
+The black lower grouping brace must span ALL twelve icons, to show the paid service includes the core. Its heading is exactly "Nubble - Cloud (Paid)".
+
+Under the Cloud heading, prominently add the paid promise in two centered lines of clearly readable handwritten lettering:
+"Give us your focus or project URL."
+"We'll do the rest."
+
+Allow a little extra white space at the bottom for this promise, keeping a very wide landscape composition around 3:1. Keep a tiny gray "Proposed product scope" in the lower-right corner, visually subordinate to the promise.
+
+Remove all old labels, especially "Signal synthesis", "Priority brief", "Business memory", "Decision follow-up", "Your context" and "24/7 monitoring". No corporate terminology, no team/collaboration icons, no pricing, no Firecrawl branding, no gradients, no shadows, no complex panels. Preserve the reference's relaxed hand-drawn character and clean optical alignment. Do not add any extra title, footer, or slogan beyond the specified text.

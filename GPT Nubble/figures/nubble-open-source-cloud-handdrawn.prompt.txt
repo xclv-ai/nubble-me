@@ -1,0 +1,27 @@
+Use case: infographic-diagram.
+Asset type: a finished horizontal comparison illustration for the Nubble research repository and product explanation.
+Input image role: style and composition reference ONLY. Create a new Nubble image, with new subject-specific icons and the exact Nubble labels below.
+
+Create a very wide panoramic landscape illustration, approximately 3:1 aspect ratio, on a pure white background. Match the reference's friendly hand-drawn marker/Excalidraw-like aesthetic: slightly imperfect thick black outlines, flat soft pastel fills, casual but very legible handwritten lettering, generous white space, clean presentation, no shadows, no gradients. One uninterrupted horizontal row of TWELVE equally spaced simple colorful icons. Each icon has its exact label centered beneath it, with at most two lines. Keep every label easy to read. Do not duplicate or omit any feature.
+
+LEFT SIX ICONS are the complete single-item open-source core:
+1. A light blue document with an incoming arrow. Label exactly "Source import".
+2. A pale yellow profile/target card. Label exactly "Your context".
+3. A soft lavender document with three concise highlighted lines. Label exactly "Relevant summary".
+4. A pale orange lightbulb with a forward decision arrow. Label exactly "So what?".
+5. A mint source document with a small link and check mark. Label exactly "Evidence".
+6. A pale coral document with a download arrow. Label exactly "Local export".
+
+RIGHT SIX ICONS are the additional paid Cloud intelligence:
+7. A peach radar and clock. Label exactly "24/7 monitoring".
+8. A lavender brain with small stacked history cards. Label exactly "Business memory".
+9. A blue connected network merging several signals into one. Label exactly "Signal synthesis".
+10. A mint dashboard with three prioritized lines and a star. Label exactly "Priority brief".
+11. A pastel yellow bell with one small orange notification dot. Label exactly "Smart alerts".
+12. A purple loop arrow around a check mark and a small calendar. Label exactly "Decision follow-up".
+
+Above ONLY icons 1 through 6, draw a long light-gray hand-drawn grouping brace, with its central cusp pointing upward, like the upper brace in the reference. Center this exact gray heading above it: "Nubble - Open Source". The upper brace must stop after Local export, before 24/7 monitoring.
+Below ALL TWELVE icons and their labels, draw a single long black hand-drawn grouping brace spanning the full row, with its central cusp pointing downward, like the lower brace in the reference. Center this exact black heading below it: "Nubble - Cloud (Paid)". This lower brace shows Cloud includes the open core plus the six ongoing-intelligence services.
+Small unobtrusive gray footer in the lower right: "Proposed product scope".
+
+Typography must feel drawn by hand but carefully spelled. Ensure twelve icons and twelve labels, correct brace extents, plenty of margins, and no clipped text. Keep all icons at a consistent optical scale. No Firecrawl name, branding or copied Firecrawl feature labels, no collaboration/team feature, no extra slogan, no pricing, no enterprise badge, no large UI panels, no decorative background. This is a conceptual product-scope illustration, not empirical results.
