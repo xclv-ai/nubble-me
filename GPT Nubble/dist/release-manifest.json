@@ -188,8 +188,8 @@
     },
     {
       "path": "paper/analysis/metadata_audit.csv",
-      "bytes": 823,
-      "sha256": "7409302a088f04c568469afa07a70b6a8a0e25e76779c39ce04b9c8cc9f6c445"
+      "bytes": 817,
+      "sha256": "14071a8fdece26bc036bd46d7f39365b4e0a9e57dbc0c4eb236782d8f7a5f3a8"
     },
     {
       "path": "paper/analysis/metadata_audit.json",
@@ -198,8 +198,8 @@
     },
     {
       "path": "paper/analysis/verification_model.csv",
-      "bytes": 5373,
-      "sha256": "a4b0d1d29fa8784565eecfe0fd3cdd0699cfd75d2e3df61cc92df1d275a83ec5"
+      "bytes": 5271,
+      "sha256": "e70f6829cd9f1afa9388a83ed24cbc14d16413b31d0ae6caab79757ecfd1d6e0"
     },
     {
       "path": "paper/analysis/verification_model.json",
@@ -318,8 +318,8 @@
     },
     {
       "path": "scripts/analyze_paper.py",
-      "bytes": 8741,
-      "sha256": "85ed12ea4be6298b8854b40d446e40240272fe50cd81323c60cceb86fb8a69e4"
+      "bytes": 8783,
+      "sha256": "b65858a6708c159548a4a38e8f365b9461f2858f233706976022a54b5e7220a5"
     },
     {
       "path": "scripts/build_bibliography.py",

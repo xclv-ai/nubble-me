@@ -130,7 +130,7 @@ def main():
         values = decision_values(p)
         rows.append({"p": p, **values, "preferred": choose(values), "gross_information_value": gross_information_value(p)})
     with (destination / "verification_model.csv").open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader(); writer.writerows(rows)
     result = {"classification": "Hypothetical model calculation, not experimental effectiveness evidence",
               "parameters": {"gain_if_eligible": 6, "loss_if_ineligible": 4, "verification_cost": .5,
@@ -145,7 +145,7 @@ def main():
         audit = audit_repo(args.audit_repo, args.audit_revision)
         (destination / "metadata_audit.json").write_text(json.dumps(audit, indent=2) + "\n")
         with (destination / "metadata_audit.csv").open("w", newline="") as stream:
-            writer = csv.DictWriter(stream, fieldnames=list(audit["rows"][0]))
+            writer = csv.DictWriter(stream, fieldnames=list(audit["rows"][0]), lineterminator="\n")
             writer.writeheader(); writer.writerows(audit["rows"])
         print(f"Metadata audit: {audit['records']} records; {audit['usable_source_urls']} usable source URLs; {audit['four_depth_records']} four-depth records.")
     if not args.no_figures:
