@@ -1,0 +1,250 @@
+{
+  "version": "0.2",
+  "research_status": "proposal-no-controlled-effectiveness-results",
+  "code_license": "AGPL-3.0-only",
+  "research_license": "CC-BY-4.0",
+  "exclusions": [
+    "legacy Git history",
+    "parent application",
+    "private implementation/audit memos",
+    "credentials",
+    "unpublished dashboard contents"
+  ],
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 26,
+      "sha256": "9618185d97a7b73972851bc179ac276080c298f79adbc1847951e647f4254c27"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 128,
+      "sha256": "b6e70dd9021a502577d68a289902488a1d79289f5f17d8a4c67322d8119b2aab"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 1017,
+      "sha256": "47bbfa96b268de537cb42e667169decdcd77494c0b48ddc5109c19daa3331ebe"
+    },
+    {
+      "path": "CITATION.md",
+      "bytes": 864,
+      "sha256": "e97db3f18c8031a1621da0181ecbee37e7abfb4a927d097dbb22d0a594edcc0d"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 2360,
+      "sha256": "22473025bdd71f2e806d021733495e2fe53c8d99184255957c3b122882bcbb10"
+    },
+    {
+      "path": "CORE_VS_CLOUD.md",
+      "bytes": 5996,
+      "sha256": "6e323a8952e5778c94eb15a010dc1f8d7f838cf162b0e87139c04411165dc3b0"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 34524,
+      "sha256": "e9df4c4e4e64b8168a71c3c67668dcffabbe8fca11d4ac4a7d5482562cd1679c"
+    },
+    {
+      "path": "LICENSE.md",
+      "bytes": 1884,
+      "sha256": "262fc8dda71919f59fa58942e0e54aa24a162eaf04f88ab7732e922d64cddad4"
+    },
+    {
+      "path": "LICENSE_STRATEGY.md",
+      "bytes": 6757,
+      "sha256": "c817720a8a75f2ab19c06c265ae4a5949a3244611e3e2448b3450c314008e5d5"
+    },
+    {
+      "path": "METHOD.md",
+      "bytes": 12421,
+      "sha256": "9011697f5995c0a5884637c8440de1365ae9bf33a98cf44941c3f8de04a1343b"
+    },
+    {
+      "path": "NOTICE.md",
+      "bytes": 1534,
+      "sha256": "ede729c9219cf596776c8bcea0bb1022cf49aa3436b5c580a18ad5e676d87550"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6782,
+      "sha256": "ca007b70d6745e7439957abb11e3f0e7e9eaf4214358ad19058cce51a7cbaa68"
+    },
+    {
+      "path": "SECURITY.md",
+      "bytes": 1218,
+      "sha256": "adabe3cf4e668ec2927e076c055915ecf715868bcc99b37aff99f948e4245497"
+    },
+    {
+      "path": "WHAT_IS_NUBBLE.md",
+      "bytes": 4162,
+      "sha256": "b3a2d846229856c969e2cd4360fbb301bc5814f6865e79a9796a3fef7af5140b"
+    },
+    {
+      "path": "evaluation/PROTOCOL.md",
+      "bytes": 8043,
+      "sha256": "52bbe28cd6ecbbc58ecab8e254efe9ddbcd2f93980f71c955208f50dee2a915d"
+    },
+    {
+      "path": "evaluation/annotation-rubric.csv",
+      "bytes": 3777,
+      "sha256": "a9db8fb1b805a1f8ac1077069fd7cbc48ff86896ee416d7df7ef8fe82a134855"
+    },
+    {
+      "path": "examples/competitor-update.md",
+      "bytes": 6253,
+      "sha256": "e9ece5255dda0a6be62f9bb07d337c902e70cad569cfb88f264c76d1090dbcba"
+    },
+    {
+      "path": "examples/nubble-example.json",
+      "bytes": 12715,
+      "sha256": "1ca2666b4b3e881eaacb571be356b12e9ed2c794148570712790dbb8100c070a"
+    },
+    {
+      "path": "figures/README.md",
+      "bytes": 5896,
+      "sha256": "5f0a3a18c60a579be53314f69af0a7b7a89db62eac4ef605beb0184a2e8a8f62"
+    },
+    {
+      "path": "figures/nubble-evidence-graph.png",
+      "bytes": 506839,
+      "sha256": "81824ba37dd817f7d1a02837c1bb3fd3326f53f3e637c7e334b78ce9f5d537e7"
+    },
+    {
+      "path": "figures/nubble-evidence-graph.svg",
+      "bytes": 17366,
+      "sha256": "ec8c0480a45ba67bfa86088e34d87fe8f972d8bd677569c9f559a9568c5eb5c7"
+    },
+    {
+      "path": "figures/nubble-framework.png",
+      "bytes": 411314,
+      "sha256": "7430abcedc390e2e0eed363bd0c34f55b761777a6d11b0dc4986340050c37827"
+    },
+    {
+      "path": "figures/nubble-framework.svg",
+      "bytes": 12468,
+      "sha256": "203ce9eded7ecba389d43d5d9ddfd12f6612fe09bd4c64dc9e23a39d9b479565"
+    },
+    {
+      "path": "figures/nubble-open-core-cloud.png",
+      "bytes": 260913,
+      "sha256": "ee3c88e5deb0ce16f3c8f9bd20076510498bb1c0a42aee15481305c66015d334"
+    },
+    {
+      "path": "figures/nubble-open-core-cloud.svg",
+      "bytes": 10713,
+      "sha256": "33709b918d2758bc30949524784134d4615b601f654564d3b4ce989a1df89d92"
+    },
+    {
+      "path": "figures/nubble-study-design.png",
+      "bytes": 398860,
+      "sha256": "194f986d395b1062db2f8c1beac50a0841cbdea899c2218804c1225c55ab53c6"
+    },
+    {
+      "path": "figures/nubble-study-design.svg",
+      "bytes": 17023,
+      "sha256": "b4d19ccfb4f919c0ccc89b84fa187f82353ba36e7ca19172221bab7ffa9126ac"
+    },
+    {
+      "path": "output/pdf/nubble-method-paper.pdf",
+      "bytes": 1439912,
+      "sha256": "1ddd46f1ffb12ba602cda060391947f6990b50a64f967a5d2e48d2f8733d2db0"
+    },
+    {
+      "path": "paper/REFERENCES.md",
+      "bytes": 4686,
+      "sha256": "74cf79ed71d3da40730d35ef664f59ecfb30fe9043f9c27c2181b64646406919"
+    },
+    {
+      "path": "paper/manuscript.md",
+      "bytes": 30718,
+      "sha256": "87b747b229ed2e7d20e4edbb48a904e19e687748e4b2443926840ad86eed5ef5"
+    },
+    {
+      "path": "paper/references.bib",
+      "bytes": 7884,
+      "sha256": "3c0584bdaee0e304a142ebc10253eef288b2085e9d77ca219dcd5153c71ee9a2"
+    },
+    {
+      "path": "prompts/nubble.md",
+      "bytes": 2179,
+      "sha256": "9c5bda8d94b4700ad3de7e5fc8195706f627b15bea74244b71ff04e9a8da47be"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 151,
+      "sha256": "9aac71b26113485169f913aa5219f99938e09de69784fc03e75f6f24a6b8196f"
+    },
+    {
+      "path": "research/LITERATURE_REVIEW.md",
+      "bytes": 7458,
+      "sha256": "98f3a3989875631ed83efd2cc3b7e12789c65622071379f23b5ad3a4633e938c"
+    },
+    {
+      "path": "research/evaluation-notes.md",
+      "bytes": 17676,
+      "sha256": "8fb04e76cd039b3e224fdbdedf4e4fb1bd0218020417c431a813f15a6a5dff4f"
+    },
+    {
+      "path": "research/evaluation-sources.json",
+      "bytes": 22528,
+      "sha256": "098e9c754a7b746573c42a0d756776a5c82a54f42de557ebfee41daf6363435f"
+    },
+    {
+      "path": "research/related-work-notes.md",
+      "bytes": 14355,
+      "sha256": "a692f37264a65332e4ec95f331ed8aa1e72bd2a7be4f60364932cda7cdaa894b"
+    },
+    {
+      "path": "research/related-work-sources.json",
+      "bytes": 26011,
+      "sha256": "bdf860ee672d2c7f8248e59b037f7410cd23c38344740123b0bc92f0bf22a692"
+    },
+    {
+      "path": "research/sources.json",
+      "bytes": 12469,
+      "sha256": "5442d7498c712e8e584c2c401d0b807dd766e35efcd11db8af66a65798797887"
+    },
+    {
+      "path": "schemas/nubble.schema.json",
+      "bytes": 12132,
+      "sha256": "ca69c5e825adbfdd26314c0758df7770055dcf02f19de8dae6456fbc6b7079e5"
+    },
+    {
+      "path": "scripts/build_bibliography.py",
+      "bytes": 3161,
+      "sha256": "2394bbd92f9927f7c87bcc800ec61aca73ca2542b3ccb8dc6ff02cc2d855304b"
+    },
+    {
+      "path": "scripts/build_paper.py",
+      "bytes": 19943,
+      "sha256": "ba3efb8f1e04f8e8fce39d8ec9648f6aaedabd2f168ac7bba534f6a2987afc3c"
+    },
+    {
+      "path": "scripts/make_business_boundary.py",
+      "bytes": 3044,
+      "sha256": "a839ce1b6e7e6d9cab65aef3860dbf1d95e129e50d87ad9e61520436afc7820c"
+    },
+    {
+      "path": "scripts/make_figures.py",
+      "bytes": 19545,
+      "sha256": "b65fbf9a196c15264a8982bc77e77a872535dd51cecd0f3248161f9ca9131230"
+    },
+    {
+      "path": "scripts/package_release.py",
+      "bytes": 3187,
+      "sha256": "78836b627d6b604f02ab4b6cf4fcb7c49ad4b1712f36bdf68485689cc2122125"
+    },
+    {
+      "path": "scripts/validate_release.py",
+      "bytes": 10462,
+      "sha256": "c4d75fb96425dd49433bad7eeb8d5120584c7437cb1ed3802fb8742d829dae9b"
+    },
+    {
+      "path": "tests/test_release_validation.py",
+      "bytes": 4807,
+      "sha256": "82ae8e6cfc04d208447518124da3fa2e8ad805a15c9dd640b2511e178809de86"
+    }
+  ]
+}

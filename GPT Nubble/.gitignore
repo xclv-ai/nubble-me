@@ -4,5 +4,8 @@ __pycache__/
 .env
 .env.*
 tmp/
-dist/
+!dist/
+dist/*
+!dist/nubble-method-v0.2.zip
+!dist/release-manifest.json
 .DS_Store
