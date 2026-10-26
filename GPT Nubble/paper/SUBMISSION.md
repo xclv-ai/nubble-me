@@ -1,6 +1,6 @@
 # Submission preparation: Nubble v0.3
 
-**Target assumed: arXiv. Status: compiled author-review draft; not ready to submit until author and venue details are confirmed.** “avox” was interpreted as arXiv; this assumption still needs the author's confirmation. No upload or submission has been performed.
+**Confirmed target: arXiv. Status: author-review draft with complete author identity and contact details.** Sole author: Viktor Konovalov, Independent Researcher; corresponding email: ceo@pokpok.ai. His CEO role at PokPok.ai is disclosed under competing interests. No upload or submission has been performed.
 
 The scientific manuscript is [manuscript.md](manuscript.md), built as a [PDF](../output/pdf/nubble-method-paper.pdf). The portable [LaTeX project](arxiv/main.tex) uses standard article, math, graphics, table, citation, and hyperlink packages. It has compiled both with Tectonic 0.17.0 and the desktop editor's compiler. The [draft upload archive](../dist/nubble-arxiv-draft-v0.3.zip) contains exactly seven inputs at its root: `main.tex`, `references.bib`, `main.bbl`, and four PNG figures in `figures/`. The pre-generated bibliography matches the manuscript. No build logs, generated PDF, promotional graphics, private notes, or Git history are included.
 
@@ -10,17 +10,19 @@ The paper defines an inspectable Full / Short / So what? contract, proves two el
 
 The contribution should be presented as a methods manuscript with explicit analytical and descriptive results. arXiv can decline research proposals or work it considers insufficiently substantive; adding formal sections does not guarantee acceptance. Review the [moderation policy](https://info.arxiv.org/help/moderation/index.html) before submission. The paper's two propositions are deliberately described as elementary properties, not a claim to new general decision theory.
 
-## Details the authors must supply
+## Confirmed author details and remaining review
 
-Edit [submission/metadata.json](submission/metadata.json). Provide real author names in the intended order, exact affiliations (or Independent Researcher where accurate), a corresponding email if it is to be printed, and optional ORCIDs. Do not infer these from account names or Git configuration. Confirm the intended venue and category; `cs.HC` is a suggested primary category and `cs.CL` a possible cross-list, subject to the authors' judgment and arXiv moderation.
-
-Each author record has the form:
+The [submission metadata](submission/metadata.json) records one author:
 
 ```json
-{"name": "Confirmed full name", "affiliation": "Confirmed affiliation"}
+{"name": "Viktor Konovalov", "affiliation": "Independent Researcher"}
 ```
 
-The current empty author list is intentional. It prevents a misleading anonymous or fabricated submission. Once the authors have reviewed the complete text, references, calculations, figure captions, AI disclosure, funding/conflict disclosures, and rights, set `author_review_complete` and `all_authors_consented` to true. Set `venue_confirmed` to true only after confirming arXiv. These fields record real confirmations; the build does not supply them.
+The author provided `ceo@pokpok.ai` for public correspondence. The title page uses his personal publication name and research affiliation; his CEO role at PokPok.ai is disclosed in the manuscript's competing-interests statement. Nubble remains the method and project name. A generic “Nubble Author” byline would obscure the identifiable researcher. arXiv requires complete, accurate author information and standard personal-name formatting; see its [author guidance](https://info.arxiv.org/help/prep.html#author).
+
+arXiv is confirmed as the venue. `cs.HC` is the suggested primary category and `cs.CL` a possible cross-list, subject to the author's judgment and arXiv moderation.
+
+The remaining step is the sole author's review of the complete manuscript, references, calculations, figures, AI disclosure, funding/conflict disclosures, and rights. After that review and confirmation of submission consent, set `author_review_complete` and `all_authors_consented` to true. `venue_confirmed` is already true. These fields record actual confirmations; author metadata alone does not assert that the manuscript has been reviewed.
 
 ## Rebuild and verify
 
@@ -39,7 +41,7 @@ The analytical outputs and plot can be regenerated without network access or a m
 
 The source generator preserves existing author fields in the JSON metadata, refreshes the abstract and title from the manuscript, and copies only the four referenced scientific figures. `--engine /path/to/tectonic` accepts an explicit compiler path; `--engine latexmk` uses pdfLaTeX. `--source-only` generates sources without compiling. The compiler rejects unresolved citations and overfull boxes. Render and inspect all PDF pages after substantive changes.
 
-After genuine author/venue confirmations, use:
+After final author review/consent are confirmed, use:
 
 ```sh
 python3 scripts/build_paper.py --engine tectonic --final

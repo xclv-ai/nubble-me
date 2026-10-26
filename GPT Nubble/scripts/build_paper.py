@@ -172,8 +172,17 @@ def prepare_sources():
     known = set(re.findall(r'@\w+\{([^,]+),', bib))
     cited = validate_citations(markdown, known)
     errors = metadata_errors(metadata)
-    author_text = r'\textit{Author metadata pending confirmation}' if errors else r' \and '.join(escape(a['name']) + r'\\{\small ' + escape(a['affiliation']) + '}' for a in metadata['authors'])
-    draft = r'\par\smallskip{\small\textbf{Pre-submission draft: author metadata and author review required.}}' if errors or not metadata.get('author_review_complete') else ''
+    author_text = r' \and '.join(
+        escape(a.get('name') or 'Author name pending confirmation')
+        + r'\\{\small ' + escape(a.get('affiliation') or 'Affiliation pending confirmation') + '}'
+        for a in metadata['authors']
+    ) or r'\textit{Author metadata pending confirmation}'
+    email = metadata.get('corresponding_email', '').strip()
+    if email:
+        author_text += r'\\{\small\href{mailto:' + escape(email) + '}{' + escape(email) + '}}'
+    draft_requirement = 'author metadata and author review required' if errors else 'author review required'
+    draft = r'\par\smallskip{\small\textbf{Pre-submission draft: ' + draft_requirement + '.}}' if errors or not metadata.get('author_review_complete') else ''
+    pdf_author = ', '.join(a.get('name', '') for a in metadata['authors'])
     body = markdown.split('## 1. Introduction', 1)[1]
     body = '## 1. Introduction' + body
     source = r'''% Generated from paper/manuscript.md by scripts/build_paper.py.
@@ -195,7 +204,7 @@ def prepare_sources():
 \renewcommand{\bottomfraction}{0.9}
 \renewcommand{\textfraction}{0.1}
 \renewcommand{\floatpagefraction}{0.85}
-\hypersetup{pdftitle={''' + escape(title) + r'''},pdfsubject={Methods manuscript, version 0.3}}
+\hypersetup{pdftitle={''' + escape(title) + r'''},pdfauthor={''' + escape(pdf_author) + r'''},pdfsubject={Methods manuscript, version 0.3}}
 \title{''' + escape(title) + r'''\\[0.5em]{\large ''' + escape(subtitle) + '}' + draft + r'''}
 \author{''' + author_text + r'''}
 \date{October 25, 2026}
@@ -223,7 +232,8 @@ def prepare_sources():
     for name in FIGURES:
         shutil.copyfile(ROOT / 'figures' / name, SOURCE / 'figures' / name)
     # Metadata is outside the upload archive; no fabricated author or publication identifier.
-    fields = ['Title: ' + title, 'Authors: ' + ('; '.join(a['name'] for a in metadata['authors']) or '[REQUIRED: confirmed names in order]'), 'Primary category (author to confirm): ' + metadata['primary_category'], 'Suggested cross-list (author to confirm): ' + ', '.join(metadata['cross_list']), 'License: CC BY 4.0', '', 'Abstract:', abstract]
+    authors_field = '; '.join(a['name'] + ' (' + a['affiliation'] + ')' for a in metadata['authors'] if a.get('name'))
+    fields = ['Title: ' + title, 'Authors: ' + (authors_field or '[REQUIRED: confirmed names in order]'), 'Corresponding email: ' + (email or '[not supplied]'), 'Primary category (author to confirm): ' + metadata['primary_category'], 'Suggested cross-list (author to confirm): ' + ', '.join(metadata['cross_list']), 'License: CC BY 4.0', '', 'Abstract:', abstract]
     (METADATA.parent / 'arxiv-metadata.txt').write_text('\n'.join(fields) + '\n')
     print(f'Prepared LaTeX: {len(cited)} cited primary sources; abstract {len(abstract)}/1920 characters.')
     return metadata

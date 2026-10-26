@@ -13,11 +13,13 @@ A **nubble** connects the available original to what matters for your focus and 
 **Beyond the Summary: Nubble and the So-What Layer**
 *Evidence-linked, context-dependent decision support under limited attention*
 
+Viktor Konovalov · Independent Researcher
+
 [Paper PDF](output/pdf/nubble-method-paper.pdf) · [Manuscript source](paper/manuscript.md) · [Literature review: 17 studies + 2 foundations](research/LITERATURE_REVIEW.md) · [BibTeX](paper/references.bib)
 
 The paper defines an inspectable contract, characterizes decision-sufficient compression and an ideal-observer limit, calculates verification tradeoffs, and audits 50 archived records. Whether the So-What layer improves human decisions remains an open empirical question. Close prior work already addresses decision-focused and personalized action-oriented summaries.
 
-For arXiv preparation, use the [submission guide](paper/SUBMISSION.md) and [portable source ZIP](dist/nubble-arxiv-draft-v0.3.zip). The PDF and source compile; confirmed authors, affiliations, venue, and author review are still required before submission.
+For arXiv preparation, use the [submission guide](paper/SUBMISSION.md) and [portable source ZIP](dist/nubble-arxiv-draft-v0.3.zip). The PDF and source compile; arXiv and the sole author's identity/contact details are confirmed; final author review remains required before submission.
 
 ## Three representations, three jobs
 

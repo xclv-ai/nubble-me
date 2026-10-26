@@ -219,9 +219,9 @@ The formal observations assume finite, specified feasible options and a declared
 
 No human participants were recruited and no behavioral outcomes were collected for the reported calculations or metadata audit. Source assertions, private strategy, and customer documents need appropriate access, retention, and redistribution controls in a deployed system. Instructions embedded in source content are data, not authority. Recommended consequential actions remain proposals for human decision-making.
 
-Nubble is under development as a product. This manuscript reports a representation contract, analytical observations, computational illustrations, and a descriptive audit; it makes no commercial-performance or independent-validation claim. Commercial packaging and promotional graphics are outside the scientific argument.
+**Competing interests.** The sole author is CEO of PokPok.ai. Nubble is under development as a product. This manuscript reports a representation contract, analytical observations, computational illustrations, and a descriptive audit; it makes no commercial-performance or independent-validation claim. Commercial packaging and promotional graphics are outside the scientific argument.
 
-**Use of generative AI.** OpenAI Codex was used substantially for drafting, literature organization, mathematical exposition, code, and figure preparation. The cited source records, assumptions, calculations, and scripts are made inspectable. Generative AI is not an author. Named authors remain responsible for the manuscript's contents and must complete their review before submission.
+**Use of generative AI.** OpenAI Codex was used substantially for drafting, literature organization, mathematical exposition, code, and figure preparation. The cited source records, assumptions, calculations, and scripts are made inspectable. Generative AI is not an author. The sole author remains responsible for the manuscript's contents and must complete the review before submission.
 
 ## 10. Conclusion
 
@@ -243,7 +243,7 @@ The same source assertions remain stable while reader premises differ. The examp
 
 The [public research toolkit](https://github.com/xclv-ai/nubble-me/tree/main/GPT%20Nubble) supplies the analytical script, numerical outputs, snapshot manifest, typed fixture, schema, reference prompts, and study protocol in the version 0.3 research export. The analysis script reproduces the hypothetical model without API calls. The optional audit command reads the five public JSON files from the pinned Git revision and publishes only metadata/counts/hashes. Figure generation uses Matplotlib 3.10.9; the source package uses standard LaTeX packages and a fixed date. Software is licensed AGPL-3.0-only and original research text/figures are CC BY 4.0; cited works retain their respective terms.
 
-The submission source includes only manuscript inputs, bibliography, and referenced scientific figures. Promotional assets, private implementation notes, caches, credentials, and repository history are excluded. Exact author and affiliation metadata must be supplied by the authors; no identity, DOI, acceptance, or peer-review status is inferred.
+The submission source includes only manuscript inputs, bibliography, and referenced scientific figures. Promotional assets, private implementation notes, caches, credentials, and repository history are excluded. The author provided the publication name, affiliation, correspondence address, and CEO disclosure. No DOI, acceptance, or peer-review status is inferred.
 
 <!-- GENERATED-REFERENCES -->
 

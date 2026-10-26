@@ -2,14 +2,12 @@
   "version": "0.3",
   "submission_ready": false,
   "blockers": [
-    "Confirmed author names and affiliations are missing.",
     "author review complete has not been confirmed.",
-    "all authors consented has not been confirmed.",
-    "The requested venue is assumed to be arXiv and needs confirmation."
+    "all authors consented has not been confirmed."
   ],
   "archive": "nubble-arxiv-draft-v0.3.zip",
-  "sha256": "3ff0bb7aac977b6143a4c1d452a3a99e2eea4852b7173b2c8db9f2ca0917d000",
-  "pdf_sha256": "3e0a6c8cdefc9131f63c810e47f1e481e6c91eaca9ee61698d1fb6cc1b8545ed",
+  "sha256": "8f433071c169e54336d01f68d67d9f5d86fae9c40c18a4a434eaec804c84ac81",
+  "pdf_sha256": "a084dc73d036c8ffadede23438679e2f8bae21461e6a37058e4b4acea4bcaf65",
   "files": [
     {
       "path": "figures/nubble-evidence-graph.png",
@@ -38,8 +36,8 @@
     },
     {
       "path": "main.tex",
-      "sha256": "901114934124217b642ae562951e9e1944b1a10e1989711498a52089d72b57dd",
-      "bytes": 31988
+      "sha256": "eea832054e65bb6aec27c9baa5906b570dab3c0b208e8e846111fd353445aa82",
+      "bytes": 32139
     },
     {
       "path": "references.bib",

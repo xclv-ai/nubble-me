@@ -1,5 +1,6 @@
 Title: Beyond the Summary: Nubble and the So-What Layer
-Authors: [REQUIRED: confirmed names in order]
+Authors: Viktor Konovalov (Independent Researcher)
+Corresponding email: ceo@pokpok.ai
 Primary category (author to confirm): cs.HC
 Suggested cross-list (author to confirm): cs.CL
 License: CC BY 4.0

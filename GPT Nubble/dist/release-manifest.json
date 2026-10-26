@@ -23,13 +23,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 2020,
-      "sha256": "6e0ac63051c54c3ce27d549b4b76989021394cd10828e4f340994cfa0d1c8db6"
+      "bytes": 2244,
+      "sha256": "7c1f44b92797da7270fded19547ac3034b0c5216a2a069597eca6e1554575285"
     },
     {
       "path": "CITATION.md",
-      "bytes": 883,
-      "sha256": "1194fd4faaf5e300212e71dc9bac622be253bbed62ecaaa26dc6f563b4abab05"
+      "bytes": 912,
+      "sha256": "0ed082b386a5e5d84054a1c88d6cfbe83faba3e3774237ef5842a41340521557"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -68,8 +68,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 7423,
-      "sha256": "930c85bc806fb39232c04f08fa19d73b37038e2989fe27e3998615bbe34c4973"
+      "bytes": 7495,
+      "sha256": "0791b8692de6d8dabd3d401c5e4d0161cc7bd83acf42c407a65b78ea18d78603"
     },
     {
       "path": "SECURITY.md",
@@ -83,8 +83,8 @@
     },
     {
       "path": "dist/nubble-arxiv-draft-v0.3.zip",
-      "bytes": 1651301,
-      "sha256": "3ff0bb7aac977b6143a4c1d452a3a99e2eea4852b7173b2c8db9f2ca0917d000"
+      "bytes": 1651378,
+      "sha256": "8f433071c169e54336d01f68d67d9f5d86fae9c40c18a4a434eaec804c84ac81"
     },
     {
       "path": "evaluation/PROTOCOL.md",
@@ -173,8 +173,8 @@
     },
     {
       "path": "output/pdf/nubble-method-paper.pdf",
-      "bytes": 1767046,
-      "sha256": "3e0a6c8cdefc9131f63c810e47f1e481e6c91eaca9ee61698d1fb6cc1b8545ed"
+      "bytes": 1765511,
+      "sha256": "a084dc73d036c8ffadede23438679e2f8bae21461e6a37058e4b4acea4bcaf65"
     },
     {
       "path": "paper/REFERENCES.md",
@@ -183,8 +183,8 @@
     },
     {
       "path": "paper/SUBMISSION.md",
-      "bytes": 6296,
-      "sha256": "0403cf7849d3312e2778f957628abc57244203798018d55ab42dd4fbec5c494a"
+      "bytes": 6602,
+      "sha256": "cbf9cdb8e3299edc3c854b49f37cc924ae61e95fd2a5b9ff202106cf1f09fd4b"
     },
     {
       "path": "paper/analysis/metadata_audit.csv",
@@ -233,8 +233,8 @@
     },
     {
       "path": "paper/arxiv/main.tex",
-      "bytes": 31988,
-      "sha256": "901114934124217b642ae562951e9e1944b1a10e1989711498a52089d72b57dd"
+      "bytes": 32139,
+      "sha256": "eea832054e65bb6aec27c9baa5906b570dab3c0b208e8e846111fd353445aa82"
     },
     {
       "path": "paper/arxiv/references.bib",
@@ -243,8 +243,8 @@
     },
     {
       "path": "paper/manuscript.md",
-      "bytes": 35342,
-      "sha256": "682a08c5fcfd66a23fc146079a4bc16ec7009634ad2dbed90899034bff5d9e10"
+      "bytes": 35423,
+      "sha256": "d9b11fce14a2c3f13919c531327467a88aa0d962859e24fadeacc7a3a7d78234"
     },
     {
       "path": "paper/references.bib",
@@ -253,18 +253,18 @@
     },
     {
       "path": "paper/submission/arxiv-metadata.txt",
-      "bytes": 1548,
-      "sha256": "fe3e9096ecc72b45cd98eed60cec7ec600bf1c458397d6e0a19cd7193e0db257"
+      "bytes": 1588,
+      "sha256": "0f57ac99d0caf2f3d2c4291decd27c72760706a324bbe29726d3d33b2bb2ce6d"
     },
     {
       "path": "paper/submission/metadata.json",
-      "bytes": 1779,
-      "sha256": "0afb7f02d85fb3c2fb24be9425f39b8c6e2a49692973f3d5cf5d304db0c8b314"
+      "bytes": 1993,
+      "sha256": "b2b8b8146cd31ff56ec8f45d31d6d74da1ce3e4452f0d5c54b90203e369bb235"
     },
     {
       "path": "paper/submission/package-report.json",
-      "bytes": 1651,
-      "sha256": "47100ac0a43e7e9e8fd3b0b9e5f815a3b800387b79987d2d8915b40df310714c"
+      "bytes": 1517,
+      "sha256": "ce4963fdd4dafb2b3d3f7a9e69a5ed39e0a4d61e1c0f4fddaa09d01436265ef1"
     },
     {
       "path": "prompts/nubble.md",
@@ -328,8 +328,8 @@
     },
     {
       "path": "scripts/build_paper.py",
-      "bytes": 15703,
-      "sha256": "7d769598f80e7b478fa24872ccae4483f6eb65b4c4f41f5367fc034f92fb741c"
+      "bytes": 16323,
+      "sha256": "c909c36b40bf92246486d9c80cde6c8ff203ab97cc3472ac2b3c3845fd176b60"
     },
     {
       "path": "scripts/make_business_boundary.py",

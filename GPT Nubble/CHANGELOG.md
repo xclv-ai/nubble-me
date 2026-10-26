@@ -2,6 +2,8 @@
 
 ## 0.3 - 2026-10-25
 
+- Author metadata updated 2026-10-26: confirmed arXiv, sole author Viktor Konovalov, Independent Researcher, and ceo@pokpok.ai. Added a separate disclosure of his CEO role at PokPok.ai; final author review remains pending.
+
 - Reworked the proposal into a self-contained methods manuscript with two elementary formal properties, proofs, a reproducible verification-cost calculation, and a metadata audit of 50 pinned prototype records.
 - Added a calculated decision-model figure, numerical exports, audit hashes, and analytical regression tests. No controlled human or LLM efficacy result is claimed.
 - Added two foundational sources and corrected FRAME/SCOPE to its verified Findings of EMNLP 2025 publication.
