@@ -9,6 +9,13 @@
 
 <!-- Current focus. Max 3-5 items. -->
 
+- [ ] **Personalized News Curation** (see docs/PERSONALIZATION_BRIEF.md)
+  - [ ] Phase 1: Merge 4 feeds → 1 "AI Startup Intelligence" pool (25-30 stories)
+  - [ ] Phase 2: User profile + onboarding (Supabase Anonymous Auth + `/onboard` page)
+  - [ ] Phase 3: Curation API — LLM picks 6-8 relevant stories per user
+  - [ ] Phase 4: Depth 3 personalized insights — streamed "What This Means For Your Startup"
+  - [ ] Phase 5: Email retention loop (Monday briefing via Resend)
+- [ ] **BLOCKER**: Run `npx tsx test-personalization.ts` locally to validate LLM quality before building
 - [ ] User testing with 20+ people (Phase 1 validation)
 - [ ] Shareable link to specific section+depth
 ---
@@ -30,7 +37,7 @@
 ### Web
 - [ ] [web] URL paste → nubbled article (content pipeline for web)
 - [ ] [web] Share sheet / bookmarklet for browser
-- [ ] [web] User accounts + saved library
+- [x] [web] User accounts + saved library → replaced by Supabase Anonymous Auth + email upgrade (Phase 2 of Personalization)
 
 ### iOS
 - [ ] [ios] SwiftData persistence — library view, survive restarts (Phase 3)
@@ -56,7 +63,7 @@
 - [ ] Highlights export to Readwise
 - [ ] Android app
 - [ ] API access (Power tier)
-- [ ] News feed: topic customization (custom research queries)
+- [x] News feed: topic customization → replaced by personalized curation (Active Sprint)
 - [x] News feed: daily cron automation (launchd, 06:00 AM, all 4 categories)
 - [ ] News feed: date picker / archive navigation
 
