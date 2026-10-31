@@ -17,6 +17,7 @@ import {
   ListChecks,
   Target,
   Hourglass,
+  X,
   House,
   Mail,
   Megaphone,
@@ -163,7 +164,7 @@ function EmailForm({ id, button, dark = false }: { id: string; button: string; d
       className="flex w-full max-w-[520px] flex-col gap-2 sm:flex-row sm:flex-wrap"
       onSubmit={(e) => {
         e.preventDefault();
-        if (!url.trim()) {
+        if (!/^(https?:\/\/)?[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i.test(url.trim())) {
           setErr(true);
           document.getElementById(id)?.focus();
           return;
@@ -178,8 +179,8 @@ function EmailForm({ id, button, dark = false }: { id: string; button: string; d
       </label>
       <div
         className={`flex h-12 w-full min-w-0 items-center rounded-md border px-3 transition-shadow focus-within:shadow-[0_0_0_3px_rgba(0,112,243,0.35)] sm:w-auto sm:flex-1 ${
-          dark ? "border-[#3D3D3D] bg-[#0A0A0A]" : "border-[#D4D4D4] bg-white"
-        }`}
+          err ? "border-[#E5484D]" : dark ? "border-[#3D3D3D]" : "border-[#D4D4D4]"
+        } ${dark ? "bg-[#0A0A0A]" : "bg-white"}`}
       >
         <span aria-hidden className={`mr-1 font-mono text-[14px] ${dark ? "text-[#A1A1A1]" : "text-mute"}`}>
           https://
@@ -211,14 +212,24 @@ function EmailForm({ id, button, dark = false }: { id: string; button: string; d
       </button>
       {err && (
         <p role="alert" className={`w-full text-[13px] sm:basis-full ${dark ? "text-[#FF6166]" : "text-[#C4262C]"}`}>
-          Paste your website first, so the brief is about your company.
+          Paste your website, like yourstartup.com, so the brief is about your company.
         </p>
       )}
       {sent && (
-        <p role="status" className={`w-full text-[13px] sm:basis-full ${dark ? "text-[#EDEDED]" : "text-fg"}`}>
-          Got it. Your email app opens with your site in it: hit send and we reply with your first brief. If it does not open, write to{" "}
-          <span className="select-all font-mono">{CONTACT}</span>.
-        </p>
+        <motion.div
+          role="status"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full overflow-hidden rounded-md border border-[#2E2E2E] bg-[#0A0A0A] px-4 py-3 font-mono text-[13px] leading-[1.6] text-[#EDEDED] sm:basis-full"
+        >
+          <p>
+            <span className="text-[#62C073]">$ </span>nubble brief {url.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "")}
+          </p>
+          <p className="text-[#A1A1A1]">queued. Your email app opens with your site in it: hit send and we reply with your first brief.</p>
+          <p className="text-[#A1A1A1]">
+            No email app? Write to <span className="select-all text-[#EDEDED]">{CONTACT}</span>
+          </p>
+        </motion.div>
       )}
     </form>
   );
@@ -540,15 +551,15 @@ function PicStale() {
           <motion.span
             key={i}
             {...fade(step >= i + 1)}
-            className="rounded-full border border-[#D4D4D4] bg-white px-2.5 py-1 font-sans text-[11px] text-fg"
+            className="rounded-full border border-[#8F8F8F] bg-white px-2.5 py-1 font-sans text-[11px] font-medium text-fg"
           >
             Rival {i}
           </motion.span>
         ))}
       </div>
       <div className="flex items-center justify-between">
-        <span>a year ago: only you</span>
-        <motion.span {...fade(step >= 4)} className="rounded bg-[#FFF4D5] px-1.5 text-[#9A4A00]">
+        <span className="text-fg">a year ago: only you</span>
+        <motion.span {...fade(step >= 4)} className="rounded bg-[#FFE7A8] px-1.5 font-medium text-[#7A3A00]">
           today: you and three rivals
         </motion.span>
       </div>
@@ -686,24 +697,75 @@ const FLOOD = [
 /** The daily flood, scrolling past. None of it says whether it matters to you. */
 function DailyFlood() {
   const reduce = useReducedMotion();
-  const items = [...FLOOD, ...FLOOD];
+  const rows = [FLOOD, [...FLOOD.slice(3), ...FLOOD.slice(0, 3)]];
   return (
-    <div className="relative overflow-hidden border-t border-line bg-[#FAFAFA] py-4" aria-hidden>
-      <motion.div
-        className="flex w-max gap-2 px-2"
-        animate={reduce ? undefined : { x: ["0%", "-50%"] }}
-        transition={{ duration: 36, ease: "linear", repeat: Infinity }}
-      >
-        {items.map((t, i) => (
-          <span key={i} className="flex shrink-0 items-center gap-2 rounded-full border border-line bg-white px-3 py-1.5 font-mono text-[12px] text-fg">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#A8A8A8]" />
+    <div className="relative flex flex-col gap-2 overflow-hidden bg-[#FAFAFA] py-5" aria-hidden>
+      {rows.map((row, r) => {
+        const items = [...row, ...row];
+        return (
+          <motion.div
+            key={r}
+            className="flex w-max gap-2 px-2"
+            animate={reduce ? undefined : { x: r === 0 ? ["0%", "-50%"] : ["-50%", "0%"] }}
+            transition={{ duration: r === 0 ? 40 : 46, ease: "linear", repeat: Infinity }}
+          >
+            {items.map((t, i) => {
+              const lab = /OpenAI|Anthropic|Google/.test(t);
+              const hit = t.includes("copied");
+              return (
+                <span
+                  key={i}
+                  className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-[12px] ${
+                    hit ? "border-[#FFD1D1] bg-[#FFEBEB] text-[#C4262C]" : "border-line bg-white text-fg"
+                  }`}
+                >
+                  {lab ? <Cpu size={13} aria-hidden /> : hit ? <Copy size={13} aria-hidden /> : <Globe size={13} aria-hidden />}
+                  {t}
+                  <span className="rounded bg-[#FFF4D5] px-1 text-[#9A4A00]">matters to you?</span>
+                </span>
+              );
+            })}
+          </motion.div>
+        );
+      })}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#FAFAFA] to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#FAFAFA] to-transparent" />
+    </div>
+  );
+}
+
+/** The reading it would take, against the time you have. */
+function TwoHours() {
+  const { ref, step } = usePlay(200);
+  const on = step >= 1;
+  return (
+    <div ref={ref} aria-hidden className="flex min-w-0 flex-col gap-4 rounded-lg border border-line bg-white p-5 font-mono text-[12px] text-mute">
+      <p className="text-fg">Reading rivals' websites and release notes</p>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex justify-between">
+          <span>it takes</span>
+          <span className="text-fg">2 hours a day</span>
+        </div>
+        <div className="h-2.5 overflow-hidden rounded-full bg-[#F2F2F2]">
+          <motion.div className="h-full rounded-full bg-[#171717]" initial={false} animate={{ width: on ? "100%" : "0%" }} transition={{ duration: 1.4, ease: "easeInOut" }} />
+        </div>
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex justify-between">
+          <span>you have</span>
+          <span className="text-[#C4262C]">none of it</span>
+        </div>
+        <div className="h-2.5 overflow-hidden rounded-full bg-[#F2F2F2]">
+          <motion.div className="h-full rounded-full bg-[#C4262C]" initial={false} animate={{ width: on ? "4%" : "0%" }} transition={{ duration: 0.6, delay: 1.2 }} />
+        </div>
+      </div>
+      <motion.div {...fade(step >= 4)} className="flex flex-wrap gap-1.5">
+        {["a dead plan", "a copied claim", "an investor question"].map((t) => (
+          <span key={t} className="rounded bg-[#FFEBEB] px-1.5 py-0.5 text-[#C4262C]">
             {t}
-            <span className="rounded bg-[#FFF4D5] px-1 text-[#9A4A00]">matters to you?</span>
           </span>
         ))}
       </motion.div>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#FAFAFA] to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#FAFAFA] to-transparent" />
     </div>
   );
 }
@@ -713,17 +775,24 @@ function TodayTools() {
   const { ref, step } = usePlay();
   const tools = ["X", "newsletters", "investor group chats", "a ChatGPT window"];
   return (
-    <div ref={ref} className="flex flex-wrap gap-2" aria-hidden>
+    <div ref={ref} className="flex min-w-0 flex-col gap-2" aria-hidden>
       {tools.map((t, i) => (
-        <motion.span
+        <motion.div
           key={t}
-          {...fade(step >= i + 1)}
-          className="flex items-center gap-2 rounded-md border border-[#2E2E2E] bg-[#141414] px-3 py-2 font-mono text-[12px] text-[#EDEDED]"
+          {...fade(step >= 1)}
+          className="flex items-center justify-between gap-3 rounded-md border border-[#2E2E2E] bg-[#141414] px-3 py-2.5 font-mono text-[13px]"
         >
-          {t}
-          <span className="text-[#8F8F8F]">= everyone's news</span>
-        </motion.span>
+          <span className={`transition-colors duration-500 ${step >= i + 2 ? "text-[#8F8F8F] line-through decoration-[#FF6166]" : "text-[#EDEDED]"}`}>{t}</span>
+          <span className="shrink-0 text-[#A1A1A1]">everyone's news</span>
+        </motion.div>
       ))}
+      <motion.div
+        {...fade(step >= 5)}
+        className="flex items-center justify-between gap-3 rounded-md border border-[#FFB224] bg-[#1A1408] px-3 py-2.5 font-mono text-[13px]"
+      >
+        <span className="font-semibold text-[#FFB224]">Nubble</span>
+        <span className="text-[#EDEDED]">only what touches your company</span>
+      </motion.div>
     </div>
   );
 }
@@ -731,7 +800,9 @@ function TodayTools() {
 function Why() {
   return (
     <Section>
-      <Pad className="flex flex-col gap-5 py-14 md:py-20">
+      <DailyFlood />
+      <Pad className="grid grid-cols-1 items-center gap-8 border-t border-line py-14 md:py-20 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-12">
+        <div className="flex min-w-0 flex-col gap-5">
         <Lead className="text-fg">
           Every day your competitors ship, raise, change prices, or copy that line from your homepage. Every day OpenAI, Anthropic and
           Google release something that may cover what you sell. Nobody tells you which of it matters to you. You find out late, on
@@ -741,8 +812,9 @@ function Why() {
           You do not have two hours a day to read rivals' websites and release notes. So you skip it, and you pay for it later: a
           dead plan, a copied claim, an investor question you cannot answer with proof.
         </Lead>
+        </div>
+        <TwoHours />
       </Pad>
-      <DailyFlood />
       <Pad className="border-t border-line py-14 md:py-20">
         <H2>Six things that happen to you (and to us at pokpok.ai).</H2>
       </Pad>
@@ -752,9 +824,8 @@ function Why() {
         ))}
       </div>
       <div className="border-t border-line bg-[#0A0A0A] text-[#EDEDED]">
-        <Pad className="flex flex-col gap-6 py-10 md:py-14">
-          <TodayTools />
-          <p className="max-w-[60ch] text-[19px] leading-[1.6] tracking-[-0.01em] md:text-[22px]">
+        <Pad className="grid grid-cols-1 items-center gap-8 py-12 md:py-16 lg:grid-cols-2 lg:gap-12">
+          <p className="max-w-[44ch] text-[19px] leading-[1.6] tracking-[-0.01em] md:text-[20px]">
             <span className="font-semibold text-white">What you have today:</span>{" "}
             <span className="text-[#C7C7C7]">
               X, newsletters, investor group chats, a ChatGPT window. All of it tells you what happened to everyone. None of it tells
@@ -762,6 +833,7 @@ function Why() {
               it. So you read for two hours a day you do not have, or you skip it and get caught.
             </span>
           </p>
+          <TodayTools />
         </Pad>
       </div>
     </Section>
@@ -1069,41 +1141,96 @@ function ProfileDemo() {
 }
 
 function CompetitorsDemo() {
-  const [note, setNote] = useState(false);
+  const [mode, setMode] = useState<"view" | "edit" | "done">("view");
+  const [list, setList] = useState(PROFILE.competitors.map((c) => ({ ...c, mine: false })));
+  const [draft, setDraft] = useState("");
+  const add = () => {
+    const name = draft.trim();
+    if (!name) return;
+    setList((l) => [...l, { name, foundAt: "added by you", url: "", mine: true }]);
+    setDraft("");
+  };
   return (
     <Panel title="Competitors and big players, each with the link where it was found">
-      <div className="grid grid-cols-1 gap-2 p-4 sm:grid-cols-2">
-        {PROFILE.competitors.map((c) => (
-          <a
-            key={c.name}
-            href={c.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex min-w-0 flex-col gap-0.5 rounded-md border border-line px-3 py-2 transition-colors hover:border-[#A8A8A8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0070F3]"
-          >
-            <span className="text-[14px] font-medium text-fg">{c.name}</span>
-            <span className="font-mono text-[11px] text-mute group-hover:underline">found at {c.foundAt}</span>
-          </a>
-        ))}
-      </div>
+      <motion.div layout className="grid grid-cols-1 gap-2 p-4 sm:grid-cols-2">
+        <AnimatePresence initial={false}>
+          {list.map((c) => (
+            <motion.div
+              key={c.name}
+              layout
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.2 }}
+              className={`flex min-w-0 items-center justify-between gap-2 rounded-md border px-3 py-2 ${c.mine ? "border-[#0070F3] bg-[#F5FAFF]" : "border-line"}`}
+            >
+              {c.url ? (
+                <a href={c.url} target="_blank" rel="noopener noreferrer" className="group flex min-w-0 flex-col gap-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0070F3]">
+                  <span className="text-[14px] font-medium text-fg">{c.name}</span>
+                  <span className="font-mono text-[11px] text-mute group-hover:underline">found at {c.foundAt}</span>
+                </a>
+              ) : (
+                <span className="flex min-w-0 flex-col gap-0.5">
+                  <span className="truncate text-[14px] font-medium text-fg">{c.name}</span>
+                  <span className="font-mono text-[11px] text-[#0062C4]">{c.foundAt}</span>
+                </span>
+              )}
+              {mode === "edit" && (
+                <button
+                  type="button"
+                  aria-label={`Delete ${c.name}`}
+                  onClick={() => setList((l) => l.filter((x) => x.name !== c.name))}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-mute hover:bg-[#FFEBEB] hover:text-[#C4262C] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0070F3]"
+                >
+                  <X size={16} aria-hidden />
+                </button>
+              )}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+      {mode === "edit" && (
+        <form
+          className="flex gap-2 border-t border-line px-4 py-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            add();
+          }}
+        >
+          <label htmlFor="add-rival" className="sr-only">
+            Add a competitor it missed
+          </label>
+          <input
+            id="add-rival"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder="Add one it missed"
+            className="h-11 min-w-0 flex-1 rounded-md border border-[#D4D4D4] px-3 text-[15px] text-fg outline-none focus:shadow-[0_0_0_3px_rgba(0,112,243,0.35)]"
+          />
+          <button type="submit" className="h-11 rounded-md border border-[#D4D4D4] bg-white px-4 text-[15px] font-medium text-fg hover:bg-[#F2F2F2]">
+            Add
+          </button>
+        </form>
+      )}
       <div className="flex flex-wrap items-center gap-2 border-t border-line px-4 py-3">
         <button
           type="button"
-          onClick={() => setNote(true)}
+          onClick={() => setMode("done")}
           className="h-11 rounded-md bg-[#171717] px-5 text-[15px] font-medium text-white hover:bg-[#383838] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3]"
         >
           Looks right
         </button>
         <button
           type="button"
-          onClick={() => setNote(true)}
+          onClick={() => setMode(mode === "edit" ? "view" : "edit")}
+          aria-pressed={mode === "edit"}
           className="h-11 rounded-md border border-[#D4D4D4] bg-white px-5 text-[15px] font-medium text-fg hover:bg-[#F2F2F2] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3]"
         >
-          Fix something
+          {mode === "edit" ? "Done fixing" : "Fix something"}
         </button>
-        {note && (
-          <p role="status" className="w-full pt-1 text-[14px] text-mute">
-            This is the pokpok.ai example. Paste your own site above to get yours.
+        {mode === "done" && (
+          <p role="status" className="w-full pt-1 text-[14px] text-fg">
+            <span className="text-[#297A3A]">✓ Saved for this example.</span> Paste your own site at the top to get your list.
           </p>
         )}
       </div>
@@ -1399,7 +1526,7 @@ function HowItWorks() {
 
   return (
     <Section>
-      <Pad className="py-10 md:py-14">
+      <Pad className="pb-2 pt-12 md:pt-16">
         <H2>How it works</H2>
       </Pad>
 
@@ -1518,17 +1645,17 @@ function LiveReader() {
             <span className="mx-auto rounded-md bg-[#F2F2F2] px-3 py-0.5 font-mono text-[12px] text-mute">nubble.me</span>
             <span className="w-[52px]" />
           </div>
-          <div className="h-[540px] md:h-[620px]">
+          <div className="h-[480px] md:h-[620px]">
             {isLoading && <div className="flex h-full items-center justify-center font-mono text-[13px] text-mute">Loading the edition…</div>}
             {isError && (
               <div className="flex h-full items-center justify-center px-6 text-center text-[14px] text-mute">
                 The edition did not load. Open nubble.me to read it.
               </div>
             )}
-            {data && data.stories?.length > 0 && <NubbleReader document={feedToDocument(data)} />}
+            {data && data.stories?.length > 0 && <NubbleReader document={feedToDocument(data)} embedded />}
           </div>
         </div>
-        <p className="mt-3 font-mono text-[12px] text-mute">Swipe a story left or right to change its size. Scroll inside the frame to read on.</p>
+        <p className="mt-3 font-mono text-[12px] text-mute">Swipe a story left or right to make it shorter or longer. Use − and + at the top to change every story at once.</p>
       </div>
     </Section>
   );
@@ -1974,9 +2101,24 @@ function EarlyAccess() {
   return (
     <section className="relative border-t border-[#2E2E2E] bg-[#0A0A0A] text-[#EDEDED]">
       <Pad className="grid grid-cols-1 items-end gap-8 py-16 md:py-24 lg:grid-cols-2 lg:gap-12">
-        <h2 className="max-w-[18ch] text-[36px] font-semibold leading-[1.05] tracking-[-0.045em] text-white [text-wrap:balance] md:text-[56px]">
-          Paste your site, we send the first brief.
-        </h2>
+        <div className="flex min-w-0 flex-col gap-6">
+          <h2 className="max-w-[18ch] text-[36px] font-semibold leading-[1.05] tracking-[-0.045em] text-white [text-wrap:balance] md:text-[56px]">
+            Paste your site, we send the first brief.
+          </h2>
+          <div aria-hidden className="max-w-[440px] rounded-md border border-[#2E2E2E] bg-[#141414] px-4 py-3 font-mono text-[13px] leading-[1.7] text-[#A1A1A1]">
+            <p>
+              <span className="text-[#62C073]">$ </span>
+              <span className="text-[#EDEDED]">nubble brief yourstartup.com</span>
+            </p>
+            <p>reads your site, finds your rivals, reads them</p>
+            <p>
+              throws away what does not concern you
+            </p>
+            <p className="flex flex-wrap gap-2 pt-1">
+              <Badge label="code-red" dark /> <Badge label="weakened" dark /> <Badge label="worth-knowing" dark />
+            </p>
+          </div>
+        </div>
         <div className="flex min-w-0 flex-col gap-3">
           <EmailForm id="site-bottom" button="Send me my brief" dark />
           <p className="text-[14px] text-[#A1A1A1]">
@@ -1993,6 +2135,15 @@ function EarlyAccess() {
 export default function FoundersLanding() {
   useEffect(() => {
     document.title = "Nubble for AI founders";
+  }, []);
+  const [formOnScreen, setFormOnScreen] = useState(true);
+  useEffect(() => {
+    const el = document.getElementById("site-top");
+    const root = document.querySelector(".founders");
+    if (!el || !root) return;
+    const io = new IntersectionObserver(([e]) => setFormOnScreen(e.isIntersecting), { root, threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   const toTop = (e: React.MouseEvent) => {
@@ -2024,7 +2175,11 @@ export default function FoundersLanding() {
           <a
             href="#site-top"
             onClick={toTop}
-            className="inline-flex h-9 items-center rounded-md bg-[#171717] px-3 text-[14px] font-medium text-white hover:bg-[#383838] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3] sm:px-4"
+            className={`inline-flex h-9 items-center rounded-md bg-[#171717] px-3 text-[14px] font-medium text-white transition-opacity duration-300 hover:bg-[#383838] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3] sm:px-4 ${
+              formOnScreen ? "pointer-events-none opacity-0" : "opacity-100"
+            }`}
+            aria-hidden={formOnScreen}
+            tabIndex={formOnScreen ? -1 : 0}
           >
             Get my first brief
           </a>
