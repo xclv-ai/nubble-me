@@ -1,6 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { animate, motion, useInView, useReducedMotion, type PanInfo } from "framer-motion";
+import { AnimatePresence, animate, motion, useInView, useReducedMotion, type PanInfo } from "framer-motion";
+import {
+  Banknote,
+  BookOpen,
+  Bot,
+  Castle,
+  ChevronDown,
+  Copy,
+  Cpu,
+  Globe,
+  Hourglass,
+  House,
+  Mail,
+  Megaphone,
+  MessageSquare,
+  Newspaper,
+  Phone,
+  Presentation,
+  Send,
+  Shield,
+  TrendingUp,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import { NubbleReader } from "@/components/NubbleReader";
 import type { ContentDocument } from "@/lib/sample-content";
 import {
@@ -312,7 +335,306 @@ function Opening() {
   );
 }
 
-/* ─── 2. Why: six pains in a shared grid ─── */
+/* ─── 2. Why: six pains, each a small picture of the real story ─── */
+
+/** Plays once when the picture scrolls into view; at rest (or with reduced motion) it shows the end state. */
+function usePlay(delayMs = 0) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  const reduce = useReducedMotion();
+  const [step, setStep] = useState(99);
+  useEffect(() => {
+    if (!inView || reduce) return;
+    setStep(0);
+    const timers = [1, 2, 3, 4, 5].map((n) => window.setTimeout(() => setStep(n), delayMs + n * 420));
+    return () => timers.forEach(clearTimeout);
+  }, [inView, reduce, delayMs]);
+  return { ref, step };
+}
+
+const fade = (on: boolean) => ({
+  initial: false as const,
+  animate: on ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 4, scale: 0.96 },
+  transition: { duration: 0.3, ease: "easeOut" as const },
+});
+
+function Stage({ children, innerRef }: { children: React.ReactNode; innerRef: React.RefObject<HTMLDivElement> }) {
+  return (
+    <div
+      ref={innerRef}
+      aria-hidden
+      className="relative flex h-[150px] flex-col justify-center gap-2 overflow-hidden rounded-md border border-line bg-[#FAFAFA] px-4 font-mono text-[11px] text-mute"
+    >
+      {children}
+    </div>
+  );
+}
+
+function Dots() {
+  return (
+    <span className="inline-flex gap-1">
+      {[0, 1, 2].map((d) => (
+        <motion.span
+          key={d}
+          className="h-1.5 w-1.5 rounded-full bg-[#A8A8A8]"
+          animate={{ opacity: [0.3, 1, 0.3] }}
+          transition={{ duration: 0.9, repeat: Infinity, delay: d * 0.15 }}
+        />
+      ))}
+    </span>
+  );
+}
+
+/** 1. Asked about competitors: you answer, but with no dates and no links. */
+function PicProtected() {
+  const { ref, step } = usePlay();
+  return (
+    <Stage innerRef={ref}>
+      <motion.div {...fade(step >= 1)} className="max-w-[85%] self-start rounded-lg rounded-bl-sm bg-white px-3 py-2 font-sans text-[12px] text-fg shadow-[0_0_0_1px_#EAEAEA]">
+        How are you protected from competitors?
+      </motion.div>
+      <motion.div {...fade(step >= 2)} className="flex w-[62%] flex-col gap-1.5 self-end rounded-lg rounded-br-sm bg-[#171717] px-3 py-2.5">
+        {step >= 2 && step < 3 ? (
+          <Dots />
+        ) : (
+          <>
+            <span className="h-1.5 w-full rounded-full bg-[#5C5C5C]" />
+            <span className="h-1.5 w-3/4 rounded-full bg-[#5C5C5C]" />
+          </>
+        )}
+      </motion.div>
+      <motion.div {...fade(step >= 4)} className="flex gap-2 self-end">
+        <span className="rounded-full bg-[#FFEBEB] px-2 py-0.5 text-[#C4262C]">dates: 0</span>
+        <span className="rounded-full bg-[#FFEBEB] px-2 py-0.5 text-[#C4262C]">links: 0</span>
+      </motion.div>
+    </Stage>
+  );
+}
+
+/** 2. The moat slide: the list of rivals who tried and failed is empty. */
+function PicMoat() {
+  const { ref, step } = usePlay(150);
+  return (
+    <Stage innerRef={ref}>
+      <p className="text-fg">Rivals who tried and failed</p>
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          {...fade(step >= i + 1)}
+          className="flex h-6 items-center rounded border border-dashed border-[#C9C9C9] bg-white px-2 text-[#A8A8A8]"
+        >
+          {i === 0 && step >= 4 ? "nobody kept that list" : ""}
+        </motion.div>
+      ))}
+    </Stage>
+  );
+}
+
+/** 3. The "why now" slide: launches, rounds and price changes, with no dates. */
+function PicIndustry() {
+  const { ref, step } = usePlay(300);
+  const marks = ["launched", "raised", "changed prices"];
+  return (
+    <Stage innerRef={ref}>
+      <div className="relative mx-1 mt-3 h-[2px] bg-[#D4D4D4]">
+        <motion.div
+          className="absolute inset-y-0 left-0 bg-[#171717]"
+          initial={false}
+          animate={{ width: step >= 1 ? "100%" : "0%" }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
+        />
+      </div>
+      <div className="mx-1 grid grid-cols-3">
+        {marks.map((m, i) => (
+          <motion.div key={m} {...fade(step >= i + 2)} className="-mt-[13px] flex flex-col items-start gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full border-2 border-[#171717] bg-white" />
+            <span className="text-fg">{m}</span>
+            <span className="rounded bg-[#FFF4D5] px-1.5 text-[#9A4A00]">date: ?</span>
+          </motion.div>
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
+/** 4. Peec puts POKPOK's main claim on its own page. */
+function PicCopy() {
+  const { ref, step } = usePlay();
+  return (
+    <Stage innerRef={ref}>
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          { site: "pokpok.ai", line: "Brand Perception Truth", hit: false },
+          { site: "peec.ai", line: "Introducing brand perception", hit: true },
+        ].map((b, i) => (
+          <motion.div key={b.site} {...fade(step >= i + 1)} className="overflow-hidden rounded border border-line bg-white">
+            <div className="flex items-center gap-1 border-b border-line px-2 py-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#D4D4D4]" />
+              <span className="truncate">{b.site}</span>
+            </div>
+            <div className="flex flex-col gap-1 px-2 py-2">
+              <span
+                className={`rounded px-1 py-0.5 font-sans text-[11px] font-medium leading-tight transition-colors duration-500 ${
+                  step >= 3 ? (b.hit ? "bg-[#FFEBEB] text-[#C4262C]" : "bg-[#F2F2F2] text-fg") : "text-fg"
+                }`}
+              >
+                {b.line}
+              </span>
+              <span className="h-1 w-4/5 rounded-full bg-[#EAEAEA]" />
+              <span className="h-1 w-3/5 rounded-full bg-[#EAEAEA]" />
+            </div>
+          </motion.div>
+        ))}
+      </div>
+      <motion.p {...fade(step >= 4)} className="text-center">
+        two companies saying the same sentence
+      </motion.p>
+    </Stage>
+  );
+}
+
+/** 5. A year ago only you said it. Today three rivals say it too. */
+function PicStale() {
+  const { ref, step } = usePlay(150);
+  return (
+    <Stage innerRef={ref}>
+      <div className="flex items-center gap-2">
+        <span className="rounded-full bg-[#171717] px-2.5 py-1 font-sans text-[11px] font-medium text-white">You</span>
+        {[1, 2, 3].map((i) => (
+          <motion.span
+            key={i}
+            {...fade(step >= i + 1)}
+            className="rounded-full border border-[#D4D4D4] bg-white px-2.5 py-1 font-sans text-[11px] text-fg"
+          >
+            Rival {i}
+          </motion.span>
+        ))}
+      </div>
+      <div className="flex items-center justify-between">
+        <span>a year ago: only you</span>
+        <motion.span {...fade(step >= 4)} className="rounded bg-[#FFF4D5] px-1.5 text-[#9A4A00]">
+          today: you and three rivals
+        </motion.span>
+      </div>
+    </Stage>
+  );
+}
+
+/** 6. A lab ships your paid feature for free, in one afternoon. */
+function PicLab() {
+  const { ref, step } = usePlay(300);
+  return (
+    <Stage innerRef={ref}>
+      <div className="flex items-center justify-between rounded border border-line bg-white px-3 py-2.5">
+        <span className="font-sans text-[12px] font-medium text-fg">Your paid feature</span>
+        <span className="relative font-sans text-[13px] font-semibold text-fg">
+          <span className={step >= 2 ? "text-[#A8A8A8] line-through" : ""}>paid</span>
+          <motion.span
+            {...fade(step >= 3)}
+            className="absolute -right-2 -top-4 rotate-[-8deg] rounded border-2 border-[#C4262C] px-1.5 text-[12px] font-bold uppercase text-[#C4262C]"
+          >
+            free
+          </motion.span>
+        </span>
+      </div>
+      <motion.div {...fade(step >= 1)} className="flex items-center justify-between">
+        <span>a lab release</span>
+        <span>one afternoon</span>
+      </motion.div>
+      <div className="h-1 overflow-hidden rounded-full bg-[#EAEAEA]">
+        <motion.div
+          className="h-full bg-[#C4262C]"
+          initial={false}
+          animate={{ width: step >= 1 ? "100%" : "0%" }}
+          transition={{ duration: 1.4, ease: "easeInOut" }}
+        />
+      </div>
+    </Stage>
+  );
+}
+
+const PAIN_ART: { icon: LucideIcon; pic: () => JSX.Element }[] = [
+  { icon: Shield, pic: PicProtected },
+  { icon: Castle, pic: PicMoat },
+  { icon: TrendingUp, pic: PicIndustry },
+  { icon: Copy, pic: PicCopy },
+  { icon: Hourglass, pic: PicStale },
+  { icon: Zap, pic: PicLab },
+];
+
+function IconTile({ icon: Icon, tone = "light" }: { icon: LucideIcon; tone?: "light" | "dark" | "red" }) {
+  const cls =
+    tone === "dark"
+      ? "border-[#2E2E2E] bg-[#1A1A1A] text-[#EDEDED]"
+      : tone === "red"
+        ? "border-[#FFD1D1] bg-[#FFEBEB] text-[#C4262C]"
+        : "border-line bg-white text-fg";
+  return (
+    <span className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border ${cls}`}>
+      <Icon size={18} strokeWidth={1.75} aria-hidden />
+    </span>
+  );
+}
+
+function PainCard({ p, i }: { p: (typeof PAINS)[number]; i: number }) {
+  const [open, setOpen] = useState(false);
+  const reduce = useReducedMotion();
+  const art = PAIN_ART[i];
+  const Pic = art.pic;
+  const red = "label" in p && p.label === "code-red";
+  const bodyId = `pain-${i}`;
+  return (
+    <article className="flex min-w-0 flex-col gap-4 bg-white p-6 md:p-8">
+      <div className="flex items-center justify-between gap-3">
+        <IconTile icon={art.icon} tone={red ? "red" : "light"} />
+        {"label" in p && p.label ? (
+          <Badge label={p.label} />
+        ) : "group" in p && p.group ? (
+          <span className="font-mono text-[11px] uppercase tracking-[0.04em] text-mute">{p.group}</span>
+        ) : null}
+      </div>
+      <h3 className="text-[20px] font-semibold leading-[1.3] tracking-[-0.02em] text-fg [text-wrap:balance]">{p.head}</h3>
+      <Pic />
+      <div className="mt-auto flex flex-col gap-2">
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={bodyId}
+          onClick={() => setOpen((o) => !o)}
+          className="inline-flex items-center gap-1.5 self-start rounded-sm font-mono text-[12px] text-fg underline decoration-[#C9C9C9] underline-offset-[3px] hover:decoration-[#171717] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3]"
+        >
+          {open ? "Hide the story" : "Read the story"}
+          <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }} className="inline-flex">
+            <ChevronDown size={14} aria-hidden />
+          </motion.span>
+        </button>
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              id={bodyId}
+              key="body"
+              initial={reduce ? false : { height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+              className="overflow-hidden"
+            >
+              <p className="pt-1 text-[15px] leading-[1.6] text-mute">{p.body}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {"proof" in p && p.proof && (
+          <p className="font-mono text-[12px] leading-[1.6] text-mute">
+            Proof:{" "}
+            <Ext href={p.proof.url} className="text-fg">
+              {p.proof.text}
+            </Ext>
+          </p>
+        )}
+      </div>
+    </article>
+  );
+}
 
 function Why() {
   return (
@@ -320,27 +642,9 @@ function Why() {
       <Pad className="py-14 md:py-20">
         <H2>Six things that happen to you (and to us at pokpok.ai).</H2>
       </Pad>
-      <div className="grid grid-cols-1 gap-px border-t border-line bg-line md:grid-cols-3">
-        {PAINS.map((p) => (
-          <article key={p.head} className="flex min-w-0 flex-col gap-3 bg-white p-6 md:p-8">
-            {"label" in p && p.label ? (
-              <div>
-                <Badge label={p.label} />
-              </div>
-            ) : "group" in p && p.group ? (
-              <p className="font-mono text-[12px] uppercase tracking-[0.04em] text-mute">{p.group}</p>
-            ) : null}
-            <h3 className="text-[20px] font-semibold leading-[1.3] tracking-[-0.02em] text-fg [text-wrap:balance]">{p.head}</h3>
-            <p className="text-[16px] leading-[1.6] text-mute">{p.body}</p>
-            {"proof" in p && p.proof && (
-              <p className="mt-auto pt-2 font-mono text-[12px] leading-[1.6] text-mute">
-                Proof:{" "}
-                <Ext href={p.proof.url} className="text-fg">
-                  {p.proof.text}
-                </Ext>
-              </p>
-            )}
-          </article>
+      <div className="grid grid-cols-1 gap-px border-t border-line bg-line md:grid-cols-2 lg:grid-cols-3">
+        {PAINS.map((p, i) => (
+          <PainCard key={p.head} p={p} i={i} />
         ))}
       </div>
       <div className="border-t border-line bg-[#0A0A0A] text-[#EDEDED]">
@@ -478,12 +782,15 @@ function LabelsDemo() {
   );
 }
 
+const SOURCE_ICONS: LucideIcon[] = [Cpu, Globe, Megaphone, Banknote];
+
 function SourcesDemo() {
   return (
     <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
-      {SOURCES.map((s) => (
-        <div key={s.name} className="flex min-w-0 flex-col gap-1.5 bg-white p-5">
-          <h4 className="text-[16px] font-semibold tracking-[-0.01em] text-fg">{s.name}</h4>
+      {SOURCES.map((s, i) => (
+        <div key={s.name} className="flex min-w-0 flex-col gap-2 bg-white p-5">
+          <IconTile icon={SOURCE_ICONS[i]} />
+          <h4 className="mt-1 text-[16px] font-semibold tracking-[-0.01em] text-fg">{s.name}</h4>
           <p className="text-[15px] leading-[1.55] text-mute">{s.body}</p>
         </div>
       ))}
@@ -804,17 +1111,19 @@ function GetBack() {
         </Lead>
       </Pad>
       <div className="grid grid-cols-1 gap-px border-t border-line bg-[#2E2E2E] md:grid-cols-3">
-        {INVESTOR_ANSWERS.map((a) => (
+        {INVESTOR_ANSWERS.map((a, i) => (
           <div key={a.who} className="flex min-w-0 flex-col gap-3 bg-[#0A0A0A] p-6 md:p-8">
+            <IconTile icon={[Shield, Castle, TrendingUp][i]} tone="dark" />
             <p className="font-mono text-[12px] leading-[1.6] text-[#FFB224]">{a.who}</p>
             <p className="text-[19px] font-medium leading-[1.45] tracking-[-0.01em] text-[#EDEDED]">{a.what}</p>
           </div>
         ))}
       </div>
       <div className="grid grid-cols-1 gap-px border-t border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
-        {OTHER_ANSWERS.map((a) => (
+        {OTHER_ANSWERS.map((a, i) => (
           <div key={a.who} className="flex min-w-0 flex-col gap-2 bg-white p-6 md:p-8">
-            <p className="font-mono text-[12px] text-mute">{a.who}</p>
+            <IconTile icon={[Zap, House, Mail, Presentation, Newspaper, Phone][i]} />
+            <p className="mt-2 font-mono text-[12px] text-mute">{a.who}</p>
             <p className="text-[16px] leading-[1.55] text-fg">{a.what}</p>
           </div>
         ))}
@@ -876,10 +1185,13 @@ function WhereItLives() {
         <Lead>Today only the reader is live. The rest is being built, and the page says so.</Lead>
       </Pad>
       <div className="grid grid-cols-1 gap-px border-t border-line bg-line sm:grid-cols-2">
-        {PLACES.map((p) => (
+        {PLACES.map((p, i) => (
           <div key={p.name} className="flex min-w-0 flex-col gap-2 bg-white p-6 md:p-8">
             <div className="flex items-center justify-between gap-3">
-              <h3 className="text-[18px] font-semibold tracking-[-0.02em] text-fg">{p.name}</h3>
+              <span className="flex min-w-0 items-center gap-3">
+                <IconTile icon={[MessageSquare, Send, Bot, BookOpen][i]} />
+                <h3 className="text-[18px] font-semibold tracking-[-0.02em] text-fg">{p.name}</h3>
+              </span>
               {p.live ? (
                 <span className="inline-flex h-[22px] shrink-0 items-center gap-1.5 rounded-full bg-[#EBFAED] px-2 font-mono text-[11px] font-medium uppercase tracking-[0.04em] text-[#297A3A]">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#45A557]" /> Live
