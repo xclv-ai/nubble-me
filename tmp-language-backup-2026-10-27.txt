@@ -1,0 +1,7 @@
+AppleLanguages:
+(
+    "en-PL",
+    "ru-PL",
+    "pl-PL"
+)
+AppleLocale: en_PL
