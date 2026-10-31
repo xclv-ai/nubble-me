@@ -443,7 +443,7 @@ function Footer() {
 
 export default function FoundersLanding() {
   return (
-    <div className="min-h-screen bg-white text-black antialiased dark:bg-black dark:text-white" style={{ fontFamily: "Geist, 'Satoshi', Inter, sans-serif" }}>
+    <div className="fixed inset-0 overflow-y-auto overflow-x-hidden overscroll-y-contain bg-white text-black antialiased [-webkit-overflow-scrolling:touch] dark:bg-black dark:text-white" style={{ fontFamily: "Geist, 'Satoshi', Inter, sans-serif" }}>
       <Nav />
       <main>
         <Hero />
