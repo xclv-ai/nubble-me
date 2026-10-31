@@ -158,13 +158,14 @@ function EmailForm({ id, button, dark = false }: { id: string; button: string; d
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState(false);
   const subject = encodeURIComponent("Nubble: my first brief");
-  const body = encodeURIComponent(`My website: ${url || "(paste it here)"}\n\nSend me my first Nubble brief.`);
+  const domain = url.trim().replace(/\/+$/, "");
+  const body = encodeURIComponent(`My website: ${domain || "(paste it here)"}\n\nSend me my first Nubble brief.`);
   return (
     <form
       className="flex w-full max-w-[520px] flex-col gap-2 sm:flex-row sm:flex-wrap"
       onSubmit={(e) => {
         e.preventDefault();
-        if (!/^(https?:\/\/)?[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i.test(url.trim())) {
+        if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i.test(domain)) {
           setErr(true);
           document.getElementById(id)?.focus();
           return;
@@ -178,7 +179,8 @@ function EmailForm({ id, button, dark = false }: { id: string; button: string; d
         Your website
       </label>
       <div
-        className={`flex h-12 w-full min-w-0 items-center rounded-md border px-3 transition-shadow focus-within:shadow-[0_0_0_3px_rgba(0,112,243,0.35)] sm:w-auto sm:flex-1 ${
+        className={`flex h-12 w-full min-w-0 items-center rounded-md border px-3 transition-shadow sm:w-auto sm:flex-1 ${
+          err ? "border-[#E5484D] shadow-[0_0_0_3px_rgba(229,72,77,0.35)]" : "focus-within:shadow-[0_0_0_3px_rgba(0,112,243,0.35)]"} ${
           err ? "border-[#E5484D]" : dark ? "border-[#3D3D3D]" : "border-[#D4D4D4]"
         } ${dark ? "bg-[#0A0A0A]" : "bg-white"}`}
       >
@@ -193,7 +195,7 @@ function EmailForm({ id, button, dark = false }: { id: string; button: string; d
           placeholder="yourstartup.com"
           value={url}
           onChange={(e) => {
-            setUrl(e.target.value);
+            setUrl(e.target.value.replace(/^\s*(https?:\/\/)?(www\.)?/i, ""));
             if (err) setErr(false);
           }}
           aria-invalid={err}
@@ -215,6 +217,19 @@ function EmailForm({ id, button, dark = false }: { id: string; button: string; d
           Paste your website, like yourstartup.com, so the brief is about your company.
         </p>
       )}
+      {dark && !sent && (
+        <div aria-hidden className="w-full rounded-md border border-[#2E2E2E] bg-[#141414] px-4 py-3 font-mono text-[13px] leading-[1.7] text-[#A1A1A1] sm:basis-full">
+          <p>
+            <span className="text-[#62C073]">$ </span>
+            <span className="text-[#EDEDED]">nubble brief {domain.replace(/\/.*$/, "") || "yourstartup.com"}</span>
+          </p>
+          <p>reads your site, finds your rivals, reads them</p>
+          <p>throws away what does not concern you</p>
+          <p className="flex flex-wrap gap-2 pt-1">
+            <Badge label="code-red" dark /> <Badge label="weakened" dark /> <Badge label="worth-knowing" dark />
+          </p>
+        </div>
+      )}
       {sent && (
         <motion.div
           role="status"
@@ -223,9 +238,9 @@ function EmailForm({ id, button, dark = false }: { id: string; button: string; d
           className="w-full overflow-hidden rounded-md border border-[#2E2E2E] bg-[#0A0A0A] px-4 py-3 font-mono text-[13px] leading-[1.6] text-[#EDEDED] sm:basis-full"
         >
           <p>
-            <span className="text-[#62C073]">$ </span>nubble brief {url.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "")}
+            <span className="text-[#62C073]">$ </span>nubble brief {domain.replace(/\/.*$/, "")}
           </p>
-          <p className="text-[#A1A1A1]">queued. Your email app opens with your site in it: hit send and we reply with your first brief.</p>
+          <p className="text-[#A1A1A1]">Your email app opens with your site in it. Hit send and we reply with your first brief.</p>
           <p className="text-[#A1A1A1]">
             No email app? Write to <span className="select-all text-[#EDEDED]">{CONTACT}</span>
           </p>
@@ -775,7 +790,7 @@ function TodayTools() {
   const { ref, step } = usePlay();
   const tools = ["X", "newsletters", "investor group chats", "a ChatGPT window"];
   return (
-    <div ref={ref} className="flex min-w-0 flex-col gap-2" aria-hidden>
+    <div ref={ref} className="order-first flex min-w-0 flex-col gap-2 lg:order-none" aria-hidden>
       {tools.map((t, i) => (
         <motion.div
           key={t}
@@ -1180,7 +1195,7 @@ function CompetitorsDemo() {
                   type="button"
                   aria-label={`Delete ${c.name}`}
                   onClick={() => setList((l) => l.filter((x) => x.name !== c.name))}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-mute hover:bg-[#FFEBEB] hover:text-[#C4262C] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0070F3]"
+                  className="-my-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-mute hover:bg-[#FFEBEB] hover:text-[#C4262C] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0070F3]"
                 >
                   <X size={16} aria-hidden />
                 </button>
@@ -1655,7 +1670,7 @@ function LiveReader() {
             {data && data.stories?.length > 0 && <NubbleReader document={feedToDocument(data)} embedded />}
           </div>
         </div>
-        <p className="mt-3 font-mono text-[12px] text-mute">Swipe a story left or right to make it shorter or longer. Use − and + at the top to change every story at once.</p>
+        <p className="mt-3 font-mono text-[12px] text-mute">Swipe a story sideways to make it shorter or longer.</p>
       </div>
     </Section>
   );
@@ -2105,19 +2120,6 @@ function EarlyAccess() {
           <h2 className="max-w-[18ch] text-[36px] font-semibold leading-[1.05] tracking-[-0.045em] text-white [text-wrap:balance] md:text-[56px]">
             Paste your site, we send the first brief.
           </h2>
-          <div aria-hidden className="max-w-[440px] rounded-md border border-[#2E2E2E] bg-[#141414] px-4 py-3 font-mono text-[13px] leading-[1.7] text-[#A1A1A1]">
-            <p>
-              <span className="text-[#62C073]">$ </span>
-              <span className="text-[#EDEDED]">nubble brief yourstartup.com</span>
-            </p>
-            <p>reads your site, finds your rivals, reads them</p>
-            <p>
-              throws away what does not concern you
-            </p>
-            <p className="flex flex-wrap gap-2 pt-1">
-              <Badge label="code-red" dark /> <Badge label="weakened" dark /> <Badge label="worth-knowing" dark />
-            </p>
-          </div>
         </div>
         <div className="flex min-w-0 flex-col gap-3">
           <EmailForm id="site-bottom" button="Send me my brief" dark />
