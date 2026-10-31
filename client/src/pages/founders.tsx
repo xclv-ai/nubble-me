@@ -140,13 +140,17 @@ function Hero() {
     <div id="top">
       <Container className="grid grid-cols-1 gap-12 py-20 md:grid-cols-12 md:py-28">
         <div className="md:col-span-7">
-          <Eyebrow>For founders</Eyebrow>
+          <Eyebrow>We run an AI company. This is the brief we wanted and nobody sold us.</Eyebrow>
           <h1 className="mt-4 text-[44px] font-semibold leading-[1.04] tracking-[-0.04em] text-black dark:text-white md:text-[64px]">
-            You don't have time to read the news.
+            OpenAI shipped your feature on Tuesday.
           </h1>
+          <p className="mt-4 text-[22px] font-medium leading-[1.3] tracking-[-0.02em] text-black dark:text-white md:text-[26px]">
+            Here's what it covers, what it doesn't, and whether you should care.
+          </p>
           <p className="mt-6 max-w-[560px] text-[19px] leading-[1.55] text-[#666] dark:text-[#a1a1a1]">
-            Nubble reads it for you, keeps only what touches your company, and tells you what changed and what to do.
-            In one line, in a short version, or in full. Your choice, every story.
+            Every week a lab ships something that might be your roadmap, and three competitors raise. You can't read it all
+            and still ship. Nubble reads it, bins everything that doesn't touch your company, and gives you one line: what
+            changed and what it means for your plan.
           </p>
 
           <form
@@ -162,7 +166,7 @@ function Hero() {
               id="site"
               type="url"
               inputMode="url"
-              placeholder="https://yourstartup.com"
+              placeholder="https://your-ai-startup.com"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="h-12 flex-1 rounded-md border border-[#eaeaea] bg-white px-4 text-[15px] text-black outline-none placeholder:text-[#999] focus:border-black dark:border-[#333] dark:bg-black dark:text-white dark:focus:border-white"
@@ -171,38 +175,41 @@ function Hero() {
               type="submit"
               className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-black px-5 text-[15px] font-medium text-white transition-colors hover:bg-[#383838] dark:bg-white dark:text-black dark:hover:bg-[#ccc]"
             >
-              Paste your link <ArrowRight size={16} />
+              Read my market <ArrowRight size={16} />
             </button>
           </form>
           <p className="mt-3 text-[13px] text-[#888]">
-            That's the whole setup. Nubble reads your site, works out what you sell and who you're up against. You only correct it.
+            That's the setup. We read your site and work out what you ship, who pays for it, and who's coming for you. You fix
+            what we got wrong, usually one thing. No call, no forms.
           </p>
         </div>
 
         <div className="md:col-span-5">
           <div className="rounded-lg border border-[#eaeaea] bg-[#fafafa] p-6 dark:border-[#333] dark:bg-[#0a0a0a]">
-            <Eyebrow>One story, three depths</Eyebrow>
+            <Eyebrow>One story. Three depths. Your call.</Eyebrow>
             <ol className="mt-4 space-y-4">
               <li className="rounded-md border border-[#eaeaea] bg-white p-4 dark:border-[#333] dark:bg-black">
                 <p className="[font-family:'Geist_Mono',monospace] text-[11px] uppercase tracking-[0.08em] text-[#888]">So what?</p>
                 <p className="mt-1 text-[15px] font-medium leading-snug text-black dark:text-white">
-                  A rival now says your main claim in your words. Verify their page, then change one sentence on yours.
+                  OpenAI just shipped the feature you charge $200 a month for, as a free tier. Your wedge is now your demo.
+                  Check their limits before you touch pricing.
                 </p>
               </li>
               <li className="rounded-md border border-[#eaeaea] bg-white p-4 dark:border-[#333] dark:bg-black">
                 <p className="[font-family:'Geist_Mono',monospace] text-[11px] uppercase tracking-[0.08em] text-[#888]">Short</p>
                 <p className="mt-1 text-[14px] leading-relaxed text-[#444] dark:text-[#ccc]">
-                  The release describes ranked fixes with evidence behind each one. It says nothing about how people read the brand, which is still your difference.
+                  The release covers single-document extraction, no API access, a 10-file cap. Your multi-document, API-first
+                  pipeline is not covered. Not yet.
                 </p>
               </li>
               <li className="rounded-md border border-[#eaeaea] bg-white p-4 dark:border-[#333] dark:bg-black">
                 <p className="[font-family:'Geist_Mono',monospace] text-[11px] uppercase tracking-[0.08em] text-[#888]">Full</p>
                 <p className="mt-1 text-[14px] leading-relaxed text-[#666] dark:text-[#a1a1a1]">
-                  The original announcement, with its date, source and the sentences each claim rests on.
+                  The original post, with its date, its source, and the sentences each claim above rests on.
                 </p>
               </li>
             </ol>
-            <p className="mt-4 text-[12px] text-[#888]">Illustration. The demo below is real.</p>
+            <p className="mt-4 text-[12px] text-[#888]">Illustration. The demo below is real. The reader is built; the rest is being built, and we say so.</p>
           </div>
         </div>
       </Container>
@@ -226,10 +233,10 @@ function Demo() {
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <Eyebrow>Live demo</Eyebrow>
-            <H2>The same stories, at the depth you want.</H2>
+            <H2>This week's AI news. One line, three sentences, or the whole thing.</H2>
             <Lead>
-              This is the real reader with the latest AI News edition{data ? `, ${formatDate(data.date)}` : ""}. Swipe a story left or right,
-              or use the minus and plus at the top, to go from one line to the full story.
+              You pick, per story. This is the real reader with the latest AI News edition{data ? `, ${formatDate(data.date)}` : ""}.
+              Swipe a story left or right, or use the minus and plus at the top. Nothing here is mocked.
             </Lead>
           </div>
           <div className="flex items-center gap-2 text-[13px] text-[#666] dark:text-[#a1a1a1]">
@@ -267,24 +274,24 @@ function HowItWorks() {
     {
       n: "01",
       title: "Paste your link",
-      body: "Nubble reads your website and works out what you sell, who it's for, which category you play in, and who your rivals are. You confirm or fix it in a minute. No forms.",
+      body: "We read your site and work out what you ship, who pays for it, which category you're in, and who's coming for you. You fix what we got wrong. Usually one thing.",
     },
     {
       n: "02",
-      title: "We read everything, you see almost nothing",
-      body: "Every day Nubble reads the news and your rivals' announcements. Anything that doesn't touch your company is thrown away before you see it. A quiet week is a quiet week.",
+      title: "We read everything. You see what touches you.",
+      body: "Model releases, competitor launches, pricing changes, who just raised. Anything that doesn't touch your company dies before you see it. A quiet week is an empty message. We don't invent news to look busy.",
     },
     {
       n: "03",
-      title: "You get the so what, with proof",
-      body: "For each story that matters: what changed for you and what to do, in one line. Swipe for the short version or the full story. Every claim points at the sentence it came from.",
+      title: "You get the so what, and the sentence it came from",
+      body: "What changed for you, in one line. Swipe for the short version or the full story. Tap a claim and see where it came from. Guesses say \"guess\".",
     },
   ];
   return (
     <Section id="how">
       <Container className="py-20">
         <Eyebrow>How it works</Eyebrow>
-        <H2>Three steps. The first one is the only one you do.</H2>
+        <H2>Three steps. You do one.</H2>
         <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-[#eaeaea] bg-[#eaeaea] dark:border-[#333] dark:bg-[#333] md:grid-cols-3">
           {steps.map((s) => (
             <div key={s.n} className="bg-white p-8 dark:bg-black">
@@ -302,30 +309,30 @@ function HowItWorks() {
 function Outputs() {
   const items = [
     {
-      title: "Investor update paragraph",
-      example: "“Three things moved in our market this month. One rival now offers ranked fixes with evidence; we verified their page and sharpened one line on ours. Nothing else changes our plan.”",
+      title: "The answer to “isn't this just a wrapper?”",
+      example: "Their sentence, your sentence, the exact difference. For the sales call, the partner meeting, and the comment under your launch post.",
     },
     {
-      title: "Deck slide: why now",
-      example: "A dated timeline of category moves, each with its source. The market-timing slide, written from what actually happened.",
+      title: "This month's investor update paragraph",
+      example: "“Two model releases touched our category. One makes our data layer more valuable, one makes our chat layer a commodity. We're moving pricing to the data layer.”",
     },
     {
-      title: "LinkedIn post, in your voice",
-      example: "Your take on the week's news with the angle that sets you apart built in, and the rival's own words as the proof.",
+      title: "The why-now slide",
+      example: "A dated timeline of the moves in your category, each with its source. The slide every seed deck has and most seed decks fake.",
     },
     {
-      title: "The answer to “isn't X the same?”",
-      example: "Their sentence, your sentence, and the exact difference. Ready before the sales call, not after it.",
+      title: "A take your rival can't make",
+      example: "Your angle on this week's release, with their own pricing page as the proof. Post it or don't. It's yours.",
     },
   ];
   return (
     <Section id="outputs" className="bg-[#fafafa] dark:bg-[#0a0a0a]">
       <Container className="py-20">
         <Eyebrow>What you get back</Eyebrow>
-        <H2>Not a summary. Something you can send today.</H2>
+        <H2>The answer to “isn't this just ChatGPT?”, ready before the partner meeting.</H2>
         <Lead>
-          Reading is the input. The output is a piece you paste somewhere without rewriting it. Every piece starts from your
-          company, not from the article, so the angle is always why this makes you different.
+          Nubble doesn't stop at reading. For every story that matters, it hands you the piece you'd otherwise write at
+          midnight. Each one starts from your company, not from the article.
         </Lead>
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
           {items.map((it) => (
@@ -342,20 +349,25 @@ function Outputs() {
 
 function Where() {
   const places = [
-    { name: "Slack", body: "A short brief in the channel you already read. Ask it questions in a thread." },
-    { name: "Telegram", body: "The same brief and the same agent, on your phone." },
-    { name: "Inside Claude and ChatGPT", body: "Connect Nubble as a tool and ask “what changed for us this week?” from where you already work." },
-    { name: "The reader", body: "This website, for when you want to go deep on a story at your own pace." },
+    { name: "Slack", status: "coming", body: "A brief in the channel you already argue in. Ask it questions in a thread." },
+    { name: "Telegram", status: "coming", body: "Same brief, same agent, on your phone at 11pm." },
+    { name: "Inside Claude and ChatGPT", status: "coming", body: "Connect Nubble as a tool and ask “what changed for us this week?” from the window you already have open." },
+    { name: "This reader", status: "live", body: "For the day you want to go deep on one story at your own pace." },
   ];
   return (
     <Section id="where">
       <Container className="py-20">
         <Eyebrow>Where it lives</Eyebrow>
-        <H2>You don't open another app. It comes to you.</H2>
+        <H2>You will not open another dashboard. Neither would we.</H2>
         <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-[#eaeaea] bg-[#eaeaea] dark:border-[#333] dark:bg-[#333] sm:grid-cols-2 md:grid-cols-4">
           {places.map((p) => (
             <div key={p.name} className="bg-white p-6 dark:bg-black">
-              <h3 className="text-[16px] font-semibold text-black dark:text-white">{p.name}</h3>
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-[16px] font-semibold text-black dark:text-white">{p.name}</h3>
+                <span className={`[font-family:'Geist_Mono',monospace] rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] ${p.status === "live" ? "border-black text-black dark:border-white dark:text-white" : "border-[#eaeaea] text-[#888] dark:border-[#333]"}`}>
+                  {p.status}
+                </span>
+              </div>
               <p className="mt-2 text-[14px] leading-[1.6] text-[#666] dark:text-[#a1a1a1]">{p.body}</p>
             </div>
           ))}
@@ -367,17 +379,17 @@ function Where() {
 
 function Promise() {
   const rules = [
-    "Nothing irrelevant is ever shown. If a week is quiet, we say nothing.",
-    "Every claim links to the sentence it rests on. Guesses are marked as guesses.",
-    "Nubble never invents urgency. “Keep your plan” is a real answer.",
-    "Say “ignore this” once and it stays ignored.",
+    "Nothing irrelevant is ever shown. A quiet week is a quiet week.",
+    "Every claim links to the sentence it rests on. Guesses are labelled.",
+    "We never invent urgency. “Keep your plan” is a real answer, and sometimes the right one.",
+    "Say “ignore this” once. It stays ignored.",
   ];
   return (
     <Section className="bg-[#fafafa] dark:bg-[#0a0a0a]">
       <Container className="grid grid-cols-1 gap-12 py-20 md:grid-cols-12">
         <div className="md:col-span-5">
           <Eyebrow>Four rules</Eyebrow>
-          <H2>Information should earn your attention.</H2>
+          <H2>We built this because we were drowning too.</H2>
         </div>
         <ul className="md:col-span-7 divide-y divide-[#eaeaea] rounded-lg border border-[#eaeaea] bg-white dark:divide-[#333] dark:border-[#333] dark:bg-black">
           {rules.map((r, i) => (
@@ -396,9 +408,9 @@ function FinalCall() {
   return (
     <Section>
       <Container className="py-24 text-center">
-        <H2>Read less. Miss nothing. Send something.</H2>
+        <H2>Paste your site. We'll send the first brief.</H2>
         <Lead>
-          <span className="mx-auto block">Paste your website and we'll set Nubble up for your company.</span>
+          <span className="mx-auto block">If it's wrong, tell us and it gets less wrong. Early access is free while we build, and we'll tell you before it costs anything.</span>
         </Lead>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <ButtonPrimary href="#start">Get early access</ButtonPrimary>
@@ -414,8 +426,8 @@ function Footer() {
     <footer className="border-t border-[#eaeaea] dark:border-[#333]">
       <Container className="flex flex-col gap-4 py-10 text-[13px] text-[#888] md:flex-row md:items-center md:justify-between">
         <p>
-          nubble.me · The method behind Nubble is open and described in a research paper. Nothing here promises a measured
-          result yet; the reading experience is real, the rest is being built.
+          nubble.me · The method behind Nubble is open and published as a research paper. The reader is real. The rest is
+          being built, and we say so.
         </p>
         <p>
           By{" "}
