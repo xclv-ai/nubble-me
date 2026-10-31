@@ -9,7 +9,13 @@ import {
   ChevronDown,
   Copy,
   Cpu,
+  Filter,
+  Flag,
   Globe,
+  History,
+  Link,
+  ListChecks,
+  Target,
   Hourglass,
   House,
   Mail,
@@ -385,7 +391,7 @@ function Dots() {
   );
 }
 
-/** 1. Asked about competitors: you answer, but with no dates and no links. */
+/** 1. Asked about competitors: you answer from memory, with no dates and no links. */
 function PicProtected() {
   const { ref, step } = usePlay();
   return (
@@ -393,15 +399,8 @@ function PicProtected() {
       <motion.div {...fade(step >= 1)} className="max-w-[85%] self-start rounded-lg rounded-bl-sm bg-white px-3 py-2 font-sans text-[12px] text-fg shadow-[0_0_0_1px_#EAEAEA]">
         How are you protected from competitors?
       </motion.div>
-      <motion.div {...fade(step >= 2)} className="flex w-[62%] flex-col gap-1.5 self-end rounded-lg rounded-br-sm bg-[#171717] px-3 py-2.5">
-        {step >= 2 && step < 3 ? (
-          <Dots />
-        ) : (
-          <>
-            <span className="h-1.5 w-full rounded-full bg-[#5C5C5C]" />
-            <span className="h-1.5 w-3/4 rounded-full bg-[#5C5C5C]" />
-          </>
-        )}
+      <motion.div {...fade(step >= 2)} className="max-w-[80%] self-end rounded-lg rounded-br-sm bg-[#171717] px-3 py-2 font-sans text-[12px] text-white">
+        {step >= 2 && step < 3 ? <Dots /> : "We're different. They mostly just track, I think…"}
       </motion.div>
       <motion.div {...fade(step >= 4)} className="flex gap-2 self-end">
         <span className="rounded-full bg-[#FFEBEB] px-2 py-0.5 text-[#C4262C]">dates: 0</span>
@@ -411,32 +410,46 @@ function PicProtected() {
   );
 }
 
-/** 2. The moat slide: the list of rivals who tried and failed is empty. */
+/** 2. The moat slide: the proof would be a list of rivals who tried and failed. Nobody kept it. */
 function PicMoat() {
   const { ref, step } = usePlay(150);
   return (
     <Stage innerRef={ref}>
-      <p className="text-fg">Rivals who tried and failed</p>
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          {...fade(step >= i + 1)}
-          className="flex h-6 items-center rounded border border-dashed border-[#C9C9C9] bg-white px-2 text-[#A8A8A8]"
-        >
-          {i === 0 && step >= 4 ? "nobody kept that list" : ""}
+      <div className="flex flex-col gap-1.5 rounded border border-line bg-white p-2.5">
+        <div className="flex items-center justify-between">
+          <span className="font-sans text-[12px] font-semibold text-fg">Our moat</span>
+          <span>your deck</span>
+        </div>
+        <motion.div {...fade(step >= 1)} className="flex items-center justify-between gap-2 border-t border-line pt-1.5">
+          <span className="text-fg">rivals who tried and failed</span>
+          <span className="text-[#A8A8A8]">—</span>
         </motion.div>
-      ))}
+        <motion.div {...fade(step >= 2)} className="flex items-center justify-between gap-2 border-t border-line pt-1.5">
+          <span className="text-fg">when they tried</span>
+          <span className="text-[#A8A8A8]">—</span>
+        </motion.div>
+      </div>
+      <motion.div {...fade(step >= 3)} className="flex items-center justify-between">
+        <span className="rounded bg-[#FFEBEB] px-1.5 text-[#C4262C]">nobody kept that list</span>
+        <span className="text-fg">the slide is a guess</span>
+      </motion.div>
     </Stage>
   );
 }
 
-/** 3. The "why now" slide: launches, rounds and price changes, with no dates. */
+/** 3. The "why now" slide, written from memory the night before: events with no dates. */
 function PicIndustry() {
   const { ref, step } = usePlay(300);
-  const marks = ["launched", "raised", "changed prices"];
+  const marks = ["a rival launched", "a rival raised", "prices changed"];
   return (
     <Stage innerRef={ref}>
-      <div className="relative mx-1 mt-3 h-[2px] bg-[#D4D4D4]">
+      <div className="flex items-center justify-between">
+        <span className="font-sans text-[12px] font-semibold text-fg">Why now</span>
+        <motion.span {...fade(step >= 1)} className="rounded bg-[#171717] px-1.5 text-white">
+          written the night before
+        </motion.span>
+      </div>
+      <div className="relative mx-1 mt-2 h-[2px] bg-[#D4D4D4]">
         <motion.div
           className="absolute inset-y-0 left-0 bg-[#171717]"
           initial={false}
@@ -444,11 +457,11 @@ function PicIndustry() {
           transition={{ duration: 1.2, ease: "easeInOut" }}
         />
       </div>
-      <div className="mx-1 grid grid-cols-3">
+      <div className="mx-1 grid grid-cols-3 gap-1">
         {marks.map((m, i) => (
           <motion.div key={m} {...fade(step >= i + 2)} className="-mt-[13px] flex flex-col items-start gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full border-2 border-[#171717] bg-white" />
-            <span className="text-fg">{m}</span>
+            <span className="leading-tight text-fg">{m}</span>
             <span className="rounded bg-[#FFF4D5] px-1.5 text-[#9A4A00]">date: ?</span>
           </motion.div>
         ))}
@@ -457,15 +470,15 @@ function PicIndustry() {
   );
 }
 
-/** 4. Peec puts POKPOK's main claim on its own page. */
+/** 4. Peec puts POKPOK's main difference on its own page. */
 function PicCopy() {
   const { ref, step } = usePlay();
   return (
     <Stage innerRef={ref}>
       <div className="grid grid-cols-2 gap-2">
         {[
-          { site: "pokpok.ai", line: "Brand Perception Truth", hit: false },
-          { site: "peec.ai", line: "Introducing brand perception", hit: true },
+          { site: "pokpok.ai", line: "Brand Perception Truth", sub: "our main difference", hit: false },
+          { site: "peec.ai", line: "Introducing brand perception", sub: "16 Sep 2026", hit: true },
         ].map((b, i) => (
           <motion.div key={b.site} {...fade(step >= i + 1)} className="overflow-hidden rounded border border-line bg-white">
             <div className="flex items-center gap-1 border-b border-line px-2 py-1">
@@ -480,14 +493,13 @@ function PicCopy() {
               >
                 {b.line}
               </span>
-              <span className="h-1 w-4/5 rounded-full bg-[#EAEAEA]" />
-              <span className="h-1 w-3/5 rounded-full bg-[#EAEAEA]" />
+              <span className="px-1 leading-tight">{b.sub}</span>
             </div>
           </motion.div>
         ))}
       </div>
-      <motion.p {...fade(step >= 4)} className="text-center">
-        two companies saying the same sentence
+      <motion.p {...fade(step >= 4)} className="text-center text-fg">
+        overnight: two companies, the same sentence
       </motion.p>
     </Stage>
   );
@@ -636,10 +648,78 @@ function PainCard({ p, i }: { p: (typeof PAINS)[number]; i: number }) {
   );
 }
 
+
+const FLOOD = [
+  "a competitor shipped",
+  "OpenAI released",
+  "a competitor raised",
+  "Anthropic released",
+  "a rival changed prices",
+  "Google released",
+  "a rival copied a line from your homepage",
+];
+
+/** The daily flood, scrolling past. None of it says whether it matters to you. */
+function DailyFlood() {
+  const reduce = useReducedMotion();
+  const items = [...FLOOD, ...FLOOD];
+  return (
+    <div className="relative overflow-hidden border-t border-line bg-[#FAFAFA] py-4" aria-hidden>
+      <motion.div
+        className="flex w-max gap-2 px-2"
+        animate={reduce ? undefined : { x: ["0%", "-50%"] }}
+        transition={{ duration: 36, ease: "linear", repeat: Infinity }}
+      >
+        {items.map((t, i) => (
+          <span key={i} className="flex shrink-0 items-center gap-2 rounded-full border border-line bg-white px-3 py-1.5 font-mono text-[12px] text-fg">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#A8A8A8]" />
+            {t}
+            <span className="rounded bg-[#FFF4D5] px-1 text-[#9A4A00]">matters to you?</span>
+          </span>
+        ))}
+      </motion.div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#FAFAFA] to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#FAFAFA] to-transparent" />
+    </div>
+  );
+}
+
+/** What founders use today: four places, all about everyone. */
+function TodayTools() {
+  const { ref, step } = usePlay();
+  const tools = ["X", "newsletters", "investor group chats", "a ChatGPT window"];
+  return (
+    <div ref={ref} className="flex flex-wrap gap-2" aria-hidden>
+      {tools.map((t, i) => (
+        <motion.span
+          key={t}
+          {...fade(step >= i + 1)}
+          className="flex items-center gap-2 rounded-md border border-[#2E2E2E] bg-[#141414] px-3 py-2 font-mono text-[12px] text-[#EDEDED]"
+        >
+          {t}
+          <span className="text-[#8F8F8F]">= everyone's news</span>
+        </motion.span>
+      ))}
+    </div>
+  );
+}
+
 function Why() {
   return (
     <Section>
-      <Pad className="py-14 md:py-20">
+      <Pad className="flex flex-col gap-5 py-14 md:py-20">
+        <Lead className="text-fg">
+          Every day your competitors ship, raise, change prices, or copy that line from your homepage. Every day OpenAI, Anthropic and
+          Google release something that may cover what you sell. Nobody tells you which of it matters to you. You find out late, on
+          X, or when an investor asks how you are different.
+        </Lead>
+        <Lead>
+          You do not have two hours a day to read rivals' websites and release notes. So you skip it, and you pay for it later: a
+          dead plan, a copied claim, an investor question you cannot answer with proof.
+        </Lead>
+      </Pad>
+      <DailyFlood />
+      <Pad className="border-t border-line py-14 md:py-20">
         <H2>Six things that happen to you (and to us at pokpok.ai).</H2>
       </Pad>
       <div className="grid grid-cols-1 gap-px border-t border-line bg-line md:grid-cols-2 lg:grid-cols-3">
@@ -648,7 +728,8 @@ function Why() {
         ))}
       </div>
       <div className="border-t border-line bg-[#0A0A0A] text-[#EDEDED]">
-        <Pad className="py-10 md:py-14">
+        <Pad className="flex flex-col gap-6 py-10 md:py-14">
+          <TodayTools />
           <p className="max-w-[60ch] text-[19px] leading-[1.6] tracking-[-0.01em] md:text-[22px]">
             <span className="font-semibold text-white">What you have today:</span>{" "}
             <span className="text-[#C7C7C7]">
@@ -658,6 +739,198 @@ function Why() {
             </span>
           </p>
         </Pad>
+      </div>
+    </Section>
+  );
+}
+
+/* ─── 2b. The promise: what founders receive ─── */
+
+const PROMISE: { icon: LucideIcon; bold: string; rest: string }[] = [
+  {
+    icon: Filter,
+    bold: "Every day it reads what the big labs and your competitors publish.",
+    rest: " It throws away everything that has nothing to do with you.",
+  },
+  {
+    icon: ListChecks,
+    bold: "For every story left, it tells you what changed, what it means for you,",
+    rest: " and whether you need to do something.",
+  },
+  { icon: Link, bold: "Every claim links to the sentence it came from.", rest: "" },
+  {
+    icon: Flag,
+    bold: "And every brief ends with your position:",
+    rest: " the claim that is still only yours, and the line you should stop using because a rival now says it too.",
+  },
+  {
+    icon: Target,
+    bold: "Because Nubble reads every rival's promises side by side, it can also show you the promise none of them make.",
+    rest: " That is your niche, and it is found, not guessed.",
+  },
+  {
+    icon: History,
+    bold: "After a few months you have something nobody else has:",
+    rest: " the dated record of every move in your market, what each one did to you, and what you said back. That is your answer on competitors, on your moat, and on where the industry is going.",
+  },
+];
+
+/** One part of the example brief, numbered to match the promise it keeps. */
+function Part({ n, active, children, className = "" }: { n: number; active: number; children: React.ReactNode; className?: string }) {
+  const on = active === n;
+  return (
+    <div
+      className={`relative rounded-md border px-3 py-2.5 transition-[border-color,background-color,opacity] duration-300 ${
+        on ? "border-[#FFB224] bg-[#1A1408]" : "border-[#2E2E2E] bg-transparent"
+      } ${active >= 0 && !on ? "opacity-55" : "opacity-100"} ${className}`}
+    >
+      <span
+        className={`absolute -left-2.5 -top-2.5 flex h-5 w-5 items-center justify-center rounded-full font-mono text-[11px] font-semibold transition-colors duration-300 ${
+          on ? "bg-[#FFB224] text-[#0A0A0A]" : "bg-[#2E2E2E] text-[#EDEDED]"
+        }`}
+      >
+        {n + 1}
+      </span>
+      {children}
+    </div>
+  );
+}
+
+function AnatomyBrief({ active }: { active: number }) {
+  const s = BRIEF[1];
+  return (
+    <div className="overflow-hidden rounded-xl border border-[#2E2E2E] bg-[#0A0A0A] text-[#EDEDED] shadow-[0_24px_48px_-24px_rgba(0,0,0,0.45)]">
+      <div className="flex items-center gap-2 border-b border-[#2E2E2E] px-4 py-2.5">
+        <span className="flex gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#3D3D3D]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#3D3D3D]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#3D3D3D]" />
+        </span>
+        <span className="font-mono text-[12px] text-[#A1A1A1]">Brief for pokpok.ai, 31 Oct 2026</span>
+      </div>
+      <div className="flex flex-col gap-4 p-5 font-mono text-[12px] leading-[1.55]">
+        <Part n={0} active={active}>
+          <div className="flex flex-wrap gap-x-5 gap-y-1 text-[#A1A1A1]">
+            <span>
+              read <span className="text-[#EDEDED]">12</span>
+            </span>
+            <span>
+              thrown <span className="text-[#EDEDED]">9</span>
+            </span>
+            <span>
+              kept <span className="text-[#EDEDED]">3</span>
+            </span>
+          </div>
+        </Part>
+        <Part n={1} active={active}>
+          <div className="flex items-center gap-2">
+            <Badge label={s.label} dark />
+            <span className="text-[#A1A1A1]">{s.date}</span>
+          </div>
+          <p className="mt-1.5 font-sans text-[15px] font-semibold leading-snug text-white">{s.title}</p>
+          <p className="mt-2 text-[#FFB224]">so what</p>
+          <p className="font-sans text-[13px] leading-[1.5] text-[#EDEDED]">{s.soWhat}</p>
+          <p className="mt-2 text-[#FFB224]">do something?</p>
+          <p className="font-sans text-[13px] leading-[1.5] text-[#EDEDED]">Yes. Fix that row before a buyer checks it.</p>
+        </Part>
+        <Part n={2} active={active}>
+          <p className="font-sans text-[13px] italic leading-[1.5] text-[#C7C7C7]">“{s.quote}”</p>
+          <Ext href={s.url} className="mt-1 inline-block text-[#52A8FF]">
+            GlobeNewswire, {s.date} ↗
+          </Ext>
+        </Part>
+        <Part n={3} active={active}>
+          <p className="text-[#62C073]">still only yours</p>
+          <p className="font-sans text-[13px] text-[#EDEDED]">{PROFILE.rows[3].v}</p>
+          <p className="mt-2 text-[#FF6166]">stop saying</p>
+          <p className="font-sans text-[13px] text-[#A1A1A1] line-through decoration-[#FF6166]">Trackers only partly tell you what to fix first</p>
+        </Part>
+        <Part n={4} active={active}>
+          <p className="text-[#52A8FF]">the promise no rival makes</p>
+          <p className="font-sans text-[13px] text-[#EDEDED]">People and AI read on the same 17 markers</p>
+        </Part>
+        <Part n={5} active={active}>
+          <p className="text-[#A1A1A1]">your record</p>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            {[
+              { d: RUN[0].date, t: "Profound raised $180M" },
+              { d: RUN[2].date, t: "Peec took your line" },
+              { d: RUN[10].date, t: "Peec launched Actions" },
+            ].map((r) => (
+              <span key={r.t} className="rounded border border-[#2E2E2E] px-1.5 py-0.5 text-[11px] text-[#EDEDED]">
+                <span className="text-[#FFB224]">{r.d}</span> {r.t}
+              </span>
+            ))}
+          </div>
+        </Part>
+      </div>
+    </div>
+  );
+}
+
+function Promise() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { margin: "-120px" });
+  const reduce = useReducedMotion();
+  const [active, setActive] = useState(-1);
+  const [held, setHeld] = useState(false);
+  useEffect(() => {
+    if (!inView || reduce || held) return;
+    setActive((a) => (a < 0 ? 0 : a));
+    const t = window.setInterval(() => setActive((a) => (a + 1) % PROMISE.length), 2600);
+    return () => clearInterval(t);
+  }, [inView, reduce, held]);
+  return (
+    <Section>
+      <Pad className="flex flex-col gap-5 py-14 md:py-20">
+        <H2>Nubble watches your market for one company: yours.</H2>
+        <Lead>
+          Nubble is for you. It watches your competitors and the labs every day and tells you only what touches your company. Then it
+          helps you hit back: what to say now, which claim is still only yours, and the promise no rival makes yet.
+        </Lead>
+      </Pad>
+      <div ref={ref} className="grid grid-cols-1 gap-px border-t border-line bg-line lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+        <div className="min-w-0 bg-[#FAFAFA] p-5 md:p-8 lg:order-2">
+          <div className="lg:sticky lg:top-24">
+            <AnatomyBrief active={active} />
+            <p className="mt-3 font-mono text-[12px] text-mute">A real brief, from the example run below. Tap a line to see its part.</p>
+          </div>
+        </div>
+        <ol className="flex min-w-0 flex-col gap-px bg-line lg:order-1">
+          {PROMISE.map((b, i) => {
+            const on = active === i;
+            return (
+              <li key={b.bold} className="bg-white">
+                <button
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => {
+                    setHeld(true);
+                    setActive(i);
+                  }}
+                  className={`flex w-full items-start gap-4 p-5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#0070F3] md:p-6 ${
+                    on ? "bg-[#FFFBEB]" : "hover:bg-[#FAFAFA]"
+                  }`}
+                >
+                  <span
+                    className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[12px] font-semibold transition-colors duration-300 ${
+                      on ? "bg-[#FFB224] text-[#0A0A0A]" : "bg-[#F2F2F2] text-fg"
+                    }`}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="flex min-w-0 flex-col gap-2">
+                    <b.icon size={18} strokeWidth={1.75} aria-hidden className={on ? "text-[#9A4A00]" : "text-mute"} />
+                    <span className="text-[16px] leading-[1.55] text-mute md:text-[17px]">
+                      <span className="font-semibold text-fg">{b.bold}</span>
+                      {b.rest}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </Section>
   );
@@ -784,16 +1057,71 @@ function LabelsDemo() {
 
 const SOURCE_ICONS: LucideIcon[] = [Cpu, Globe, Megaphone, Banknote];
 
+function hostOf(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+/** The real rival posts from the example run, read one after another, then the four kinds of source. */
 function SourcesDemo() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { margin: "-80px" });
+  const reduce = useReducedMotion();
+  const [head, setHead] = useState(0);
+  useEffect(() => {
+    if (!inView || reduce) return;
+    const t = window.setInterval(() => setHead((h) => (h + 1) % RUN.length), 1400);
+    return () => clearInterval(t);
+  }, [inView, reduce]);
+  const rows = [0, 1, 2, 3].map((k) => RUN[(head + k) % RUN.length]);
   return (
-    <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
-      {SOURCES.map((s, i) => (
-        <div key={s.name} className="flex min-w-0 flex-col gap-2 bg-white p-5">
-          <IconTile icon={SOURCE_ICONS[i]} />
-          <h4 className="mt-1 text-[16px] font-semibold tracking-[-0.01em] text-fg">{s.name}</h4>
-          <p className="text-[15px] leading-[1.55] text-mute">{s.body}</p>
+    <div ref={ref} className="flex flex-col gap-4">
+      <Panel title="Reading for pokpok.ai, every day">
+        <div className="relative h-[176px] overflow-hidden" aria-label="Rival posts read in the example run">
+          <AnimatePresence initial={false} mode="popLayout">
+            {rows.map((r, k) => (
+              <motion.div
+                key={r.title}
+                layout={!reduce}
+                initial={reduce ? false : { opacity: 0, y: 24 }}
+                animate={{ opacity: k === 0 ? 1 : 0.75 - k * 0.15, y: 0 }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -24 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="grid grid-cols-[18px_44px_minmax(0,1fr)] items-center gap-3 border-b border-line px-4 py-3"
+              >
+                {k === 0 ? (
+                  <motion.span
+                    className="h-2 w-2 rounded-full bg-[#0070F3]"
+                    animate={reduce ? undefined : { opacity: [1, 0.3, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  />
+                ) : (
+                  <span className="h-2 w-2 rounded-full bg-[#D4D4D4]" />
+                )}
+                <span className="font-mono text-[12px] tabular-nums text-mute">{r.date}</span>
+                <span className="flex min-w-0 flex-col">
+                  <span className="truncate text-[14px] text-fg">{r.title}</span>
+                  <span className="truncate font-mono text-[11px] text-mute">{hostOf(r.url)}</span>
+                </span>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
-      ))}
+      </Panel>
+      <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+        {SOURCES.map((s, i) => (
+          <div key={s.name} className="flex min-w-0 gap-3 bg-white p-4">
+            <IconTile icon={SOURCE_ICONS[i]} />
+            <div className="flex min-w-0 flex-col gap-1">
+              <h4 className="text-[15px] font-semibold tracking-[-0.01em] text-fg">{s.name}</h4>
+              <p className="text-[14px] leading-[1.5] text-mute">{s.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -1100,40 +1428,271 @@ function LiveReader() {
 
 /* ─── 5. What you get back ─── */
 
+/* Previews of what Nubble hands you, built only from the real pokpok.ai example. */
+
+function Mini({ children, innerRef, dark = false }: { children: React.ReactNode; innerRef: React.RefObject<HTMLDivElement>; dark?: boolean }) {
+  return (
+    <div
+      ref={innerRef}
+      aria-hidden
+      className={`relative flex min-h-[168px] flex-col gap-2 overflow-hidden rounded-md border p-3 font-mono text-[11px] ${
+        dark ? "border-[#2E2E2E] bg-[#141414] text-[#A1A1A1]" : "border-line bg-[#FAFAFA] text-mute"
+      }`}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* Investor: competitors. A dated table of who moved, with links. */
+function PrevCompetitors() {
+  const { ref, step } = usePlay();
+  const rows = [RUN[2], RUN[10], RUN[0]];
+  return (
+    <Mini innerRef={ref} dark>
+      <p className="text-[#EDEDED]">who moved</p>
+      {rows.map((r, i) => (
+        <motion.div key={r.title} {...fade(step >= i + 1)} className="grid grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 border-t border-[#2E2E2E] pt-2">
+          <span>{r.date}</span>
+          <span className="truncate font-sans text-[12px] text-[#EDEDED]">{r.title}</span>
+          <span className="text-[#52A8FF]">link</span>
+        </motion.div>
+      ))}
+    </Mini>
+  );
+}
+
+/* Investor: moat. What is still only yours, and the rivals who tried, with dates. */
+function PrevMoat() {
+  const { ref, step } = usePlay(150);
+  return (
+    <Mini innerRef={ref} dark>
+      <p className="text-[#EDEDED]">still only yours</p>
+      <motion.div {...fade(step >= 1)} className="rounded border border-[#1F4D2B] bg-[#0F1F14] px-2 py-1.5 font-sans text-[12px] text-[#EDEDED]">
+        People and AI read on the same 17 markers
+      </motion.div>
+      <p className="mt-1 text-[#EDEDED]">rivals who tried</p>
+      {[
+        { d: "16 Sep", t: "Peec: “brand perception”" },
+        { d: "22 Oct", t: "Peec: ranks what to fix first" },
+      ].map((r, i) => (
+        <motion.div key={r.d} {...fade(step >= i + 2)} className="grid grid-cols-[44px_minmax(0,1fr)] items-center gap-2 rounded border border-[#2E2E2E] px-2 py-1.5">
+          <span className="text-[#FF6166]">{r.d}</span>
+          <span className="truncate font-sans text-[12px] text-[#EDEDED]">{r.t}</span>
+        </motion.div>
+      ))}
+    </Mini>
+  );
+}
+
+/* Investor: industry. The "why now" timeline with real dates. */
+function PrevIndustry() {
+  const { ref, step } = usePlay(300);
+  const pts = [RUN[0], RUN[2], RUN[10]];
+  return (
+    <Mini innerRef={ref} dark>
+      <p className="text-[#EDEDED]">why now</p>
+      <div className="relative ml-1 mt-1 flex flex-col gap-3 border-l border-[#3D3D3D] pl-3">
+        {pts.map((r, i) => (
+          <motion.div key={r.title} {...fade(step >= i + 1)} className="relative">
+            <span className="absolute -left-[17px] top-1 h-2 w-2 rounded-full bg-[#FFB224]" />
+            <span className="text-[#FFB224]">{r.date} 2026</span>
+            <p className="truncate font-sans text-[12px] text-[#EDEDED]">{r.title}</p>
+          </motion.div>
+        ))}
+      </div>
+    </Mini>
+  );
+}
+
+/* A rival just launched: the alert, then your answer drafted and ready. */
+function PrevLaunch() {
+  const { ref, step } = usePlay();
+  return (
+    <Mini innerRef={ref}>
+      <motion.div {...fade(step >= 1)} className="flex items-center gap-2 rounded border border-line bg-white px-2 py-1.5">
+        <Badge label="weakened" />
+        <span className="truncate font-sans text-[12px] text-fg">Peec launches Peec Agent and Actions</span>
+      </motion.div>
+      <motion.div {...fade(step >= 2)} className="ml-6 rounded-lg rounded-tl-sm bg-[#171717] px-2.5 py-2 font-sans text-[12px] leading-snug text-white">
+        {step >= 2 && step < 3 ? <Dots /> : "Peec now ranks what to fix first. We still do what no tracker does: people and AI read on the same 17 markers."}
+      </motion.div>
+      <motion.div {...fade(step >= 4)} className="ml-6 flex flex-wrap gap-2">
+        <span className="rounded-full bg-[#EBFAED] px-2 py-0.5 text-[#297A3A]">ready to post</span>
+        <span className="rounded-full bg-[#EBF5FF] px-2 py-0.5 text-[#0062C4]">send to a customer</span>
+      </motion.div>
+    </Mini>
+  );
+}
+
+/* Your homepage: keep, drop, add. */
+function PrevHomepage() {
+  const { ref, step } = usePlay(150);
+  const rows = [
+    { t: "keep", c: "bg-[#EBFAED] text-[#297A3A]", line: "Every brand is now read twice. By people and by AI." },
+    { t: "drop", c: "bg-[#FFEBEB] text-[#C4262C]", line: "Trackers only partly tell you what to fix first", strike: true },
+    { t: "add", c: "bg-[#EBF5FF] text-[#0062C4]", line: "People and AI read on the same 17 markers" },
+  ];
+  return (
+    <Mini innerRef={ref}>
+      <div className="flex items-center gap-1 rounded-t border border-b-0 border-line bg-white px-2 py-1">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#D4D4D4]" />
+        <span>pokpok.ai</span>
+      </div>
+      <div className="-mt-2 flex flex-col gap-2 rounded-b border border-line bg-white p-2">
+        {rows.map((r, i) => (
+          <motion.div key={r.t} {...fade(step >= i + 1)} className="flex items-start gap-2">
+            <span className={`w-10 shrink-0 rounded px-1 text-center ${r.c}`}>{r.t}</span>
+            <span
+              className={`font-sans text-[11.5px] leading-snug text-fg transition-opacity duration-500 ${
+                r.strike && step >= 4 ? "line-through opacity-50" : ""
+              }`}
+            >
+              {r.line}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </Mini>
+  );
+}
+
+/* Investors every month: the update email, the market paragraph written from what happened. */
+function PrevInvestorUpdate() {
+  const { ref, step } = usePlay(300);
+  const lines = [
+    "15 Sep: Profound raised $180M at a $1.8B valuation.",
+    "16 Sep: Peec started saying “brand perception”, our line.",
+    "22 Oct: Peec launched Actions. Still only ours: the 17 markers.",
+  ];
+  return (
+    <Mini innerRef={ref}>
+      <div className="rounded border border-line bg-white">
+        <div className="flex flex-col gap-0.5 border-b border-line px-2 py-1.5">
+          <span>to: investors</span>
+          <span className="font-sans text-[12px] font-medium text-fg">subject: October update</span>
+        </div>
+        <div className="flex flex-col gap-1 p-2">
+          <span className="font-sans text-[11px] font-semibold text-fg">Market</span>
+          {lines.map((l, i) => (
+            <motion.span key={l} {...fade(step >= i + 1)} className="font-sans text-[11px] leading-snug text-fg">
+              {l}
+            </motion.span>
+          ))}
+        </div>
+      </div>
+    </Mini>
+  );
+}
+
+/* Your deck: a "why now" slide built from what happened. */
+function PrevDeck() {
+  const { ref, step } = usePlay();
+  return (
+    <Mini innerRef={ref}>
+      <div className="flex aspect-[16/9] w-full flex-col gap-1.5 rounded border border-line bg-white p-2.5">
+        <span className="font-sans text-[13px] font-semibold text-fg">Why now</span>
+        {[RUN[0], RUN[2], RUN[10]].map((r, i) => (
+          <motion.div key={r.title} {...fade(step >= i + 1)} className="flex items-center gap-2">
+            <span className="w-11 shrink-0 text-[#9A4A00]">{r.date}</span>
+            <span className="truncate font-sans text-[11px] text-fg">{r.title}</span>
+          </motion.div>
+        ))}
+        <motion.span {...fade(step >= 4)} className="mt-auto self-end rounded bg-[#F2F2F2] px-1.5">
+          3 sources linked
+        </motion.span>
+      </div>
+    </Mini>
+  );
+}
+
+/* Your audience: a LinkedIn post with the rival's own words as proof. */
+function PrevPost() {
+  const { ref, step } = usePlay(150);
+  return (
+    <Mini innerRef={ref}>
+      <div className="flex flex-col gap-2 rounded border border-line bg-white p-2.5">
+        <div className="flex items-center gap-2">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#171717] font-sans text-[11px] font-semibold text-white">P</span>
+          <span className="flex-1 font-sans text-[12px] font-medium text-fg">POKPOK</span>
+          <span>LinkedIn draft</span>
+        </div>
+        <motion.p {...fade(step >= 1)} className="font-sans text-[12px] leading-snug text-fg">
+          A rival now says what we said first. Good. Here is the part they still don't do.
+        </motion.p>
+        <motion.blockquote {...fade(step >= 2)} className="border-l-2 border-[#C4262C] pl-2 font-sans text-[11px] italic text-fg">
+          “{BRIEF[0].quote}” Peec AI, 16 Sep 2026
+        </motion.blockquote>
+      </div>
+    </Mini>
+  );
+}
+
+/* Your sales call: their sentence, your sentence. */
+function PrevSales() {
+  const { ref, step } = usePlay(300);
+  return (
+    <Mini innerRef={ref}>
+      <div className="grid grid-cols-2 gap-2">
+        <motion.div {...fade(step >= 1)} className="flex flex-col gap-1 rounded border border-line bg-white p-2">
+          <span>their sentence</span>
+          <span className="font-sans text-[11px] leading-snug text-fg">“{BRIEF[1].quote}”</span>
+        </motion.div>
+        <motion.div {...fade(step >= 2)} className="flex flex-col gap-1 rounded border border-[#171717] bg-white p-2">
+          <span>your sentence</span>
+          <span className="font-sans text-[11px] leading-snug text-fg">{PROFILE.rows[3].v}</span>
+        </motion.div>
+      </div>
+      <motion.p {...fade(step >= 3)} className="text-center text-fg">
+        the exact difference
+      </motion.p>
+    </Mini>
+  );
+}
+
+const INVESTOR_PREVIEWS = [PrevCompetitors, PrevMoat, PrevIndustry];
+const OUTPUT_PREVIEWS = [PrevLaunch, PrevHomepage, PrevInvestorUpdate, PrevDeck, PrevPost, PrevSales];
+
 function GetBack() {
   return (
     <Section>
       <Pad className="flex flex-col gap-5 py-14 md:py-20">
         <H2>Every brief turns into something you can send, and into a sharper way to talk about your product.</H2>
         <Lead>
-          After a few months you have something nobody else has: the dated record of every move in your market, what each one did to
-          you, and what you said back. That is your answer on competitors, on your moat, and on where the industry is going.
+          Each piece starts from your company, not from the article. We already do this at POKPOK with the tool we built for
+          ourselves.
         </Lead>
       </Pad>
       <div className="grid grid-cols-1 gap-px border-t border-line bg-[#2E2E2E] md:grid-cols-3">
-        {INVESTOR_ANSWERS.map((a, i) => (
-          <div key={a.who} className="flex min-w-0 flex-col gap-3 bg-[#0A0A0A] p-6 md:p-8">
-            <IconTile icon={[Shield, Castle, TrendingUp][i]} tone="dark" />
-            <p className="font-mono text-[12px] leading-[1.6] text-[#FFB224]">{a.who}</p>
-            <p className="text-[19px] font-medium leading-[1.45] tracking-[-0.01em] text-[#EDEDED]">{a.what}</p>
-          </div>
-        ))}
+        {INVESTOR_ANSWERS.map((a, i) => {
+          const Prev = INVESTOR_PREVIEWS[i];
+          return (
+            <div key={a.who} className="flex min-w-0 flex-col gap-3 bg-[#0A0A0A] p-6 md:p-8">
+              <div className="flex items-center gap-3">
+                <IconTile icon={[Shield, Castle, TrendingUp][i]} tone="dark" />
+                <p className="font-mono text-[12px] leading-[1.5] text-[#FFB224]">{a.who}</p>
+              </div>
+              <Prev />
+              <p className="text-[17px] font-medium leading-[1.45] tracking-[-0.01em] text-[#EDEDED]">{a.what}</p>
+            </div>
+          );
+        })}
       </div>
       <div className="grid grid-cols-1 gap-px border-t border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
-        {OTHER_ANSWERS.map((a, i) => (
-          <div key={a.who} className="flex min-w-0 flex-col gap-2 bg-white p-6 md:p-8">
-            <IconTile icon={[Zap, House, Mail, Presentation, Newspaper, Phone][i]} />
-            <p className="mt-2 font-mono text-[12px] text-mute">{a.who}</p>
-            <p className="text-[16px] leading-[1.55] text-fg">{a.what}</p>
-          </div>
-        ))}
+        {OTHER_ANSWERS.map((a, i) => {
+          const Prev = OUTPUT_PREVIEWS[i];
+          return (
+            <div key={a.who} className="flex min-w-0 flex-col gap-3 bg-white p-6 md:p-8">
+              <div className="flex items-center gap-3">
+                <IconTile icon={[Zap, House, Mail, Presentation, Newspaper, Phone][i]} />
+                <p className="font-mono text-[12px] text-mute">{a.who}</p>
+              </div>
+              <Prev />
+              <p className="text-[15px] leading-[1.55] text-fg">{a.what}</p>
+            </div>
+          );
+        })}
       </div>
-      <Pad className="border-t border-line py-6">
-        <p className="max-w-[62ch] text-[15px] leading-[1.6] text-mute">
-          Each piece starts from your company, not from the article. We already do this at POKPOK with the tool we built for
-          ourselves.
-        </p>
-      </Pad>
     </Section>
   );
 }
@@ -1177,6 +1736,81 @@ function SlackBubble() {
   );
 }
 
+function PlaceMock({ i }: { i: number }) {
+  const { ref, step } = usePlay(i * 120);
+  const s = BRIEF[0];
+  if (i === 0)
+    return (
+      <Mini innerRef={ref}>
+        <span className="text-fg"># market</span>
+        <motion.div {...fade(step >= 1)} className="flex gap-2">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-[#171717] font-sans text-[11px] font-semibold text-white">n</span>
+          <div className="flex min-w-0 flex-col gap-1">
+            <span className="font-sans text-[12px] font-semibold text-fg">Nubble</span>
+            <span className="flex flex-wrap items-center gap-1.5">
+              <Badge label={s.label} />
+              <span className="font-sans text-[12px] text-fg">{s.title}</span>
+            </span>
+            <span className="font-sans text-[12px] text-fg">{s.soWhat}</span>
+          </div>
+        </motion.div>
+        <motion.div {...fade(step >= 3)} className="ml-8">
+          <SlackBubble />
+        </motion.div>
+      </Mini>
+    );
+  if (i === 1)
+    return (
+      <Mini innerRef={ref}>
+        <span className="self-center rounded-full bg-[#E9E9E9] px-2 py-0.5">Nubble</span>
+        <motion.div {...fade(step >= 1)} className="max-w-[88%] self-start rounded-2xl rounded-bl-sm bg-white px-3 py-2 font-sans text-[12px] leading-snug text-fg shadow-[0_0_0_1px_#EAEAEA]">
+          Brief for pokpok.ai: 12 read, 3 kept, 2 need a move.
+        </motion.div>
+        <motion.div {...fade(step >= 2)} className="max-w-[88%] self-start rounded-2xl rounded-bl-sm bg-white px-3 py-2 font-sans text-[12px] leading-snug text-fg shadow-[0_0_0_1px_#EAEAEA]">
+          <Badge label="weakened" /> <span className="ml-1">Peec launches Peec Agent and Actions</span>
+        </motion.div>
+        <motion.div {...fade(step >= 3)} className="self-end rounded-2xl rounded-br-sm bg-[#0070F3] px-3 py-2 font-sans text-[12px] text-white">
+          what do I say to buyers?
+        </motion.div>
+      </Mini>
+    );
+  if (i === 2)
+    return (
+      <Mini innerRef={ref}>
+        <motion.div {...fade(step >= 1)} className="self-end rounded-lg bg-[#F0EEE6] px-3 py-2 font-sans text-[12px] text-fg">
+          what changed for us this week?
+        </motion.div>
+        <motion.div {...fade(step >= 2)} className="flex items-center gap-1.5 self-start rounded border border-line bg-white px-2 py-1">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#45A557]" />
+          used tool: nubble brief
+        </motion.div>
+        <motion.div {...fade(step >= 3)} className="self-start font-sans text-[12px] leading-snug text-fg">
+          On 22 Oct Peec launched Actions. One row of your comparison table is now less true.
+        </motion.div>
+      </Mini>
+    );
+  return (
+    <Mini innerRef={ref}>
+      <div className="grid grid-cols-3 gap-1 rounded-md bg-[#F2F2F2] p-1 font-sans text-[11px]">
+        {["So what", "Summary", "Original"].map((t, k) => (
+          <span key={t} className={`rounded px-1 py-1 text-center ${(step >= 99 ? 0 : (step + 1) % 3) === k ? "bg-white text-fg shadow-sm" : "text-mute"}`}>
+            {t}
+          </span>
+        ))}
+      </div>
+      <motion.p {...fade(step >= 1)} className="font-sans text-[13px] font-semibold leading-snug text-fg">
+        {SIZES.title}
+      </motion.p>
+      <motion.p {...fade(step >= 2)} className="font-sans text-[12px] leading-snug text-fg">
+        {SIZES.summary}
+      </motion.p>
+      <a href="#reader" className="mt-auto self-start font-sans text-[12px] text-[#0062C4] underline underline-offset-2">
+        Try it below
+      </a>
+    </Mini>
+  );
+}
+
 function WhereItLives() {
   return (
     <Section>
@@ -1184,13 +1818,13 @@ function WhereItLives() {
         <H2>You will not open another dashboard. Nubble comes to where you already are.</H2>
         <Lead>Today only the reader is live. The rest is being built, and the page says so.</Lead>
       </Pad>
-      <div className="grid grid-cols-1 gap-px border-t border-line bg-line sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-px border-t border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
         {PLACES.map((p, i) => (
-          <div key={p.name} className="flex min-w-0 flex-col gap-2 bg-white p-6 md:p-8">
+          <div key={p.name} className="flex min-w-0 flex-col gap-3 bg-white p-6">
             <div className="flex items-center justify-between gap-3">
               <span className="flex min-w-0 items-center gap-3">
                 <IconTile icon={[MessageSquare, Send, Bot, BookOpen][i]} />
-                <h3 className="text-[18px] font-semibold tracking-[-0.02em] text-fg">{p.name}</h3>
+                <h3 className="text-[17px] font-semibold leading-tight tracking-[-0.02em] text-fg">{p.name}</h3>
               </span>
               {p.live ? (
                 <span className="inline-flex h-[22px] shrink-0 items-center gap-1.5 rounded-full bg-[#EBFAED] px-2 font-mono text-[11px] font-medium uppercase tracking-[0.04em] text-[#297A3A]">
@@ -1202,8 +1836,8 @@ function WhereItLives() {
                 </span>
               )}
             </div>
-            <p className="text-[16px] leading-[1.55] text-mute">{p.body}</p>
-            {p.name === "Slack" && <SlackBubble />}
+            <PlaceMock i={i} />
+            <p className="text-[15px] leading-[1.55] text-mute">{p.body}</p>
           </div>
         ))}
       </div>
@@ -1278,6 +1912,7 @@ export default function FoundersLanding() {
       <main className="mx-auto max-w-[1200px] border-line bg-white md:border-x">
         <Opening />
         <Why />
+        <Promise />
         <HowItWorks />
         <LiveReader />
         <GetBack />
