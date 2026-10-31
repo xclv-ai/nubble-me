@@ -43,9 +43,11 @@ interface NubbleReaderProps {
   subHeader?: React.ReactNode;
   /** Optional element rendered inside scrollable content, before the title */
   contentHeader?: React.ReactNode;
+  /** Embedded in another page: hide the footer and the swipe overlay. */
+  embedded?: boolean;
 }
 
-export function NubbleReader({ document: doc, subHeader, contentHeader }: NubbleReaderProps) {
+export function NubbleReader({ document: doc, subHeader, contentHeader, embedded = false }: NubbleReaderProps) {
   const [, setLocation] = useLocation();
   const [globalDepth, setGlobalDepth] = useState<DepthLevel>(2);
   const [sectionOverrides, setSectionOverrides] = useState<Record<string, DepthLevel>>({});
@@ -458,7 +460,7 @@ export function NubbleReader({ document: doc, subHeader, contentHeader }: Nubble
                 isOverridden={section.id in sectionOverrides}
                 isActive={section.id === activeSectionId}
                 isFirst={i === 0}
-                hasSwipedOnce={hasSwipedOnce}
+                hasSwipedOnce={hasSwipedOnce || embedded}
                 scrollRoot={scrollRef}
                 onChangeDepth={(delta) => changeSectionDepth(section.id, delta)}
                 onResetToGlobal={() => setSectionOverrides(prev => {
@@ -475,7 +477,7 @@ export function NubbleReader({ document: doc, subHeader, contentHeader }: Nubble
       </div>
 
       {/* Footer */}
-      <footer className="flex-shrink-0 h-9 px-3 sm:px-5 flex items-center justify-between border-t border-border/40" data-testid="footer">
+      {!embedded && <footer className="flex-shrink-0 h-9 px-3 sm:px-5 flex items-center justify-between border-t border-border/40" data-testid="footer">
         {/* Mobile hints */}
         <div className="flex sm:hidden items-center gap-2 text-[9px] text-muted-foreground/40 tracking-wide overflow-hidden">
           <span className="whitespace-nowrap">scroll to read</span>
@@ -512,7 +514,7 @@ export function NubbleReader({ document: doc, subHeader, contentHeader }: Nubble
         >
           &copy; Viktor Konovalov XCLV.COM
         </a>
-      </footer>
+      </footer>}
     </div>
   );
 }
