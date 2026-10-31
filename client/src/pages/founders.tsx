@@ -154,13 +154,22 @@ function Count({ from, to, delay = 0 }: { from: number; to: number; delay?: numb
 
 function EmailForm({ id, button, dark = false }: { id: string; button: string; dark?: boolean }) {
   const [url, setUrl] = useState("");
+  const [sent, setSent] = useState(false);
+  const [err, setErr] = useState(false);
   const subject = encodeURIComponent("Nubble: my first brief");
   const body = encodeURIComponent(`My website: ${url || "(paste it here)"}\n\nSend me my first Nubble brief.`);
   return (
     <form
-      className="flex w-full max-w-[520px] flex-col gap-2 sm:flex-row"
+      className="flex w-full max-w-[520px] flex-col gap-2 sm:flex-row sm:flex-wrap"
       onSubmit={(e) => {
         e.preventDefault();
+        if (!url.trim()) {
+          setErr(true);
+          document.getElementById(id)?.focus();
+          return;
+        }
+        setErr(false);
+        setSent(true);
         window.location.href = `mailto:${CONTACT}?subject=${subject}&body=${body}`;
       }}
     >
@@ -182,7 +191,11 @@ function EmailForm({ id, button, dark = false }: { id: string; button: string; d
           autoComplete="url"
           placeholder="yourstartup.com"
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          onChange={(e) => {
+            setUrl(e.target.value);
+            if (err) setErr(false);
+          }}
+          aria-invalid={err}
           className={`h-full min-w-0 flex-1 bg-transparent font-mono text-[15px] outline-none ${
             dark ? "text-[#EDEDED] placeholder:text-[#8F8F8F]" : "text-fg placeholder:text-[#8F8F8F]"
           }`}
@@ -196,13 +209,24 @@ function EmailForm({ id, button, dark = false }: { id: string; button: string; d
       >
         {button}
       </button>
+      {err && (
+        <p role="alert" className={`w-full text-[13px] sm:basis-full ${dark ? "text-[#FF6166]" : "text-[#C4262C]"}`}>
+          Paste your website first, so the brief is about your company.
+        </p>
+      )}
+      {sent && (
+        <p role="status" className={`w-full text-[13px] sm:basis-full ${dark ? "text-[#EDEDED]" : "text-fg"}`}>
+          Got it. Your email app opens with your site in it: hit send and we reply with your first brief. If it does not open, write to{" "}
+          <span className="select-all font-mono">{CONTACT}</span>.
+        </p>
+      )}
     </form>
   );
 }
 
 /* ─── 1. Opening: headline + the brief as a terminal ─── */
 
-const CMD = "nubble brief pokpok.ai --from 15-sep --to 31-oct";
+const CMD = "nubble brief pokpok.ai \u2011\u2011from 15\u2011sep \u2011\u2011to 31\u2011oct";
 
 function TerminalBrief() {
   const ref = useRef<HTMLDivElement>(null);
@@ -613,7 +637,7 @@ function PainCard({ p, i }: { p: (typeof PAINS)[number]; i: number }) {
           aria-expanded={open}
           aria-controls={bodyId}
           onClick={() => setOpen((o) => !o)}
-          className="inline-flex items-center gap-1.5 self-start rounded-sm font-mono text-[12px] text-fg underline decoration-[#C9C9C9] underline-offset-[3px] hover:decoration-[#171717] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3]"
+          className="inline-flex min-h-11 items-center gap-1.5 self-start rounded-sm font-mono text-[13px] text-fg underline decoration-[#C9C9C9] underline-offset-[3px] hover:decoration-[#171717] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3]"
         >
           {open ? "Hide the story" : "Read the story"}
           <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }} className="inline-flex">
@@ -796,20 +820,11 @@ function Part({ n, active, children, className = "" }: { n: number; active: numb
   );
 }
 
-function AnatomyBrief({ active }: { active: number }) {
+function BriefPart({ n }: { n: number }) {
   const s = BRIEF[1];
-  return (
-    <div className="overflow-hidden rounded-xl border border-[#2E2E2E] bg-[#0A0A0A] text-[#EDEDED] shadow-[0_24px_48px_-24px_rgba(0,0,0,0.45)]">
-      <div className="flex items-center gap-2 border-b border-[#2E2E2E] px-4 py-2.5">
-        <span className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#3D3D3D]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#3D3D3D]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#3D3D3D]" />
-        </span>
-        <span className="font-mono text-[12px] text-[#A1A1A1]">Brief for pokpok.ai, 31 Oct 2026</span>
-      </div>
-      <div className="flex flex-col gap-4 p-5 font-mono text-[12px] leading-[1.55]">
-        <Part n={0} active={active}>
+  if (n === 0)
+    return (
+      <>
           <div className="flex flex-wrap gap-x-5 gap-y-1 text-[#A1A1A1]">
             <span>
               read <span className="text-[#EDEDED]">12</span>
@@ -821,8 +836,11 @@ function AnatomyBrief({ active }: { active: number }) {
               kept <span className="text-[#EDEDED]">3</span>
             </span>
           </div>
-        </Part>
-        <Part n={1} active={active}>
+      </>
+    );
+  if (n === 1)
+    return (
+      <>
           <div className="flex items-center gap-2">
             <Badge label={s.label} dark />
             <span className="text-[#A1A1A1]">{s.date}</span>
@@ -832,24 +850,36 @@ function AnatomyBrief({ active }: { active: number }) {
           <p className="font-sans text-[13px] leading-[1.5] text-[#EDEDED]">{s.soWhat}</p>
           <p className="mt-2 text-[#FFB224]">do something?</p>
           <p className="font-sans text-[13px] leading-[1.5] text-[#EDEDED]">Yes. Fix that row before a buyer checks it.</p>
-        </Part>
-        <Part n={2} active={active}>
+      </>
+    );
+  if (n === 2)
+    return (
+      <>
           <p className="font-sans text-[13px] italic leading-[1.5] text-[#C7C7C7]">“{s.quote}”</p>
           <Ext href={s.url} className="mt-1 inline-block text-[#52A8FF]">
             GlobeNewswire, {s.date} ↗
           </Ext>
-        </Part>
-        <Part n={3} active={active}>
+      </>
+    );
+  if (n === 3)
+    return (
+      <>
           <p className="text-[#62C073]">still only yours</p>
           <p className="font-sans text-[13px] text-[#EDEDED]">{PROFILE.rows[3].v}</p>
           <p className="mt-2 text-[#FF6166]">stop saying</p>
           <p className="font-sans text-[13px] text-[#A1A1A1] line-through decoration-[#FF6166]">Trackers only partly tell you what to fix first</p>
-        </Part>
-        <Part n={4} active={active}>
+      </>
+    );
+  if (n === 4)
+    return (
+      <>
           <p className="text-[#52A8FF]">the promise no rival makes</p>
           <p className="font-sans text-[13px] text-[#EDEDED]">People and AI read on the same 17 markers</p>
-        </Part>
-        <Part n={5} active={active}>
+      </>
+    );
+  if (n === 5)
+    return (
+      <>
           <p className="text-[#A1A1A1]">your record</p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {[
@@ -862,6 +892,40 @@ function AnatomyBrief({ active }: { active: number }) {
               </span>
             ))}
           </div>
+      </>
+    );
+  return null;
+}
+
+function AnatomyBrief({ active }: { active: number }) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-[#2E2E2E] bg-[#0A0A0A] text-[#EDEDED] shadow-[0_24px_48px_-24px_rgba(0,0,0,0.45)]">
+      <div className="flex items-center gap-2 border-b border-[#2E2E2E] px-4 py-2.5">
+        <span className="flex gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#3D3D3D]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#3D3D3D]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#3D3D3D]" />
+        </span>
+        <span className="font-mono text-[12px] text-[#A1A1A1]">Brief for pokpok.ai, 31 Oct 2026</span>
+      </div>
+      <div className="flex flex-col gap-4 p-5 font-mono text-[12px] leading-[1.55]">
+        <Part n={0} active={active}>
+          <BriefPart n={0} />
+        </Part>
+        <Part n={1} active={active}>
+          <BriefPart n={1} />
+        </Part>
+        <Part n={2} active={active}>
+          <BriefPart n={2} />
+        </Part>
+        <Part n={3} active={active}>
+          <BriefPart n={3} />
+        </Part>
+        <Part n={4} active={active}>
+          <BriefPart n={4} />
+        </Part>
+        <Part n={5} active={active}>
+          <BriefPart n={5} />
         </Part>
       </div>
     </div>
@@ -890,7 +954,7 @@ function Promise() {
         </Lead>
       </Pad>
       <div ref={ref} className="grid grid-cols-1 gap-px border-t border-line bg-line lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-        <div className="min-w-0 bg-[#FAFAFA] p-5 md:p-8 lg:order-2">
+        <div className="hidden min-w-0 bg-[#FAFAFA] p-5 md:p-8 lg:order-2 lg:block">
           <div className="lg:sticky lg:top-24">
             <AnatomyBrief active={active} />
             <p className="mt-3 font-mono text-[12px] text-mute">A real brief, from the example run below. Tap a line to see its part.</p>
@@ -927,6 +991,11 @@ function Promise() {
                     </span>
                   </span>
                 </button>
+                <div className="px-5 pb-5 lg:hidden">
+                  <div className="rounded-lg border border-[#2E2E2E] bg-[#0A0A0A] px-3 py-3 font-mono text-[12px] leading-[1.55] text-[#EDEDED]">
+                    <BriefPart n={i} />
+                  </div>
+                </div>
               </li>
             );
           })}
@@ -1021,14 +1090,14 @@ function CompetitorsDemo() {
         <button
           type="button"
           onClick={() => setNote(true)}
-          className="h-9 rounded-md bg-[#171717] px-4 text-[14px] font-medium text-white hover:bg-[#383838] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3]"
+          className="h-11 rounded-md bg-[#171717] px-5 text-[15px] font-medium text-white hover:bg-[#383838] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3]"
         >
           Looks right
         </button>
         <button
           type="button"
           onClick={() => setNote(true)}
-          className="h-9 rounded-md border border-[#D4D4D4] bg-white px-4 text-[14px] font-medium text-fg hover:bg-[#F2F2F2] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3]"
+          className="h-11 rounded-md border border-[#D4D4D4] bg-white px-5 text-[15px] font-medium text-fg hover:bg-[#F2F2F2] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3]"
         >
           Fix something
         </button>
@@ -1043,7 +1112,9 @@ function CompetitorsDemo() {
 }
 
 function LabelsDemo() {
+  const s = BRIEF[0];
   return (
+    <div className="flex flex-col gap-4">
     <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-line bg-line">
       {(Object.keys(LABELS) as Label[]).map((l) => (
         <div key={l} className="flex min-w-0 flex-col items-start gap-2 bg-white p-5">
@@ -1051,6 +1122,29 @@ function LabelsDemo() {
           <p className="text-[16px] leading-[1.5] text-fg">{LABELS[l].meaning}</p>
         </div>
       ))}
+    </div>
+    <div className="overflow-hidden rounded-lg border border-[#FFD1D1] bg-white">
+      <div className="flex items-center gap-2 border-b border-[#FFD1D1] bg-[#FFF5F5] px-4 py-2.5">
+        <Badge label="code-red" />
+        <span className="text-[14px] font-semibold text-fg">A real code red, from our own company.</span>
+      </div>
+      <div className="flex flex-col gap-3 p-4">
+        <p className="text-[15px] leading-[1.55] text-fg">
+          Peec AI added “brand perception” to its tracker.{" "}
+          <Ext href={s.url} className="font-mono text-[12px] text-mute">
+            {s.source}, {s.date}
+          </Ext>
+        </p>
+        <div>
+          <p className="font-mono text-[12px] text-[#9A4A00]">so what</p>
+          <p className="text-[15px] leading-[1.55] text-fg">{s.soWhat}</p>
+        </div>
+        <div>
+          <p className="font-mono text-[12px] text-mute">your move</p>
+          <p className="text-[15px] leading-[1.55] text-fg">{s.move}</p>
+        </div>
+      </div>
+    </div>
     </div>
   );
 }
@@ -1131,49 +1225,62 @@ function RunDemo() {
   const inView = useInView(ref, { once: true, margin: "-120px" });
   const reduce = useReducedMotion();
   const [sorted, setSorted] = useState(true);
+  const [showThrown, setShowThrown] = useState(false);
   useEffect(() => {
     if (!inView || reduce) return;
     setSorted(false);
-    const t = window.setTimeout(() => setSorted(true), 800);
+    const t = window.setTimeout(() => setSorted(true), 900);
     return () => clearTimeout(t);
   }, [inView, reduce]);
+  const thrown = RUN.filter((r) => !r.kept);
+  const visible = sorted && !showThrown ? RUN.filter((r) => r.kept) : RUN;
 
   return (
     <div ref={ref}>
       <Panel title="Example run for pokpok.ai: rival posts, 15 Sep to 31 Oct 2026">
-        <ol className="flex flex-col">
-          {RUN.map((r, i) => {
-            const dim = sorted && !r.kept;
-            return (
+        <motion.ol layout={!reduce} className="flex flex-col">
+          <AnimatePresence initial={false}>
+            {visible.map((r) => (
               <motion.li
                 key={r.title}
-                initial={false}
-                animate={{ opacity: dim ? 0.5 : 1 }}
-                transition={{ duration: 0.3, delay: reduce ? 0 : i * 0.035 }}
-                className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 border-t border-line px-4 py-2.5 first:border-t-0"
+                layout={!reduce}
+                initial={reduce ? false : { opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={reduce ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="overflow-hidden border-t border-line first:border-t-0"
               >
-                <span className="font-mono text-[12px] tabular-nums text-mute">{r.date}</span>
-                <Ext href={r.url} className={`text-[14px] leading-[1.4] text-fg ${dim ? "line-through" : ""}`}>
-                  {r.title}
-                </Ext>
-                <span className="justify-self-end">
-                  {r.kept ? (
-                    <motion.span
-                      initial={false}
-                      animate={{ opacity: sorted ? 1 : 0, x: sorted ? 0 : 6 }}
-                      transition={{ duration: 0.25 }}
-                      className="inline-block"
-                    >
+                <div className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 px-4 py-3">
+                  <span className="font-mono text-[12px] tabular-nums text-mute">{r.date}</span>
+                  <Ext href={r.url} className={`text-[14px] leading-[1.4] ${r.kept ? "font-medium text-fg" : "text-mute line-through"}`}>
+                    {r.title}
+                  </Ext>
+                  <span className="justify-self-end">
+                    {r.kept ? (
                       <Badge label={r.kept} />
-                    </motion.span>
-                  ) : (
-                    <span className="font-mono text-[11px] uppercase tracking-[0.04em] text-mute">thrown</span>
-                  )}
-                </span>
+                    ) : (
+                      <span className="font-mono text-[11px] uppercase tracking-[0.04em] text-mute">thrown</span>
+                    )}
+                  </span>
+                </div>
               </motion.li>
-            );
-          })}
-        </ol>
+            ))}
+          </AnimatePresence>
+        </motion.ol>
+        <button
+          type="button"
+          aria-expanded={showThrown}
+          onClick={() => setShowThrown((v) => !v)}
+          className="flex min-h-12 w-full items-center justify-between gap-3 border-t border-line bg-[#FAFAFA] px-4 py-3 text-left hover:bg-[#F2F2F2] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#0070F3]"
+        >
+          <span className="flex items-center gap-2 font-mono text-[13px] text-fg">
+            <span className="rounded bg-[#171717] px-1.5 text-white">{thrown.length}</span> thrown, never shown to you
+          </span>
+          <span className="inline-flex items-center gap-1 font-mono text-[12px] text-mute">
+            {showThrown ? "hide" : "see them"}
+            <ChevronDown size={14} aria-hidden className={showThrown ? "rotate-180 transition-transform" : "transition-transform"} />
+          </span>
+        </button>
         <p className="border-t border-line px-4 py-3 text-[13px] leading-[1.5] text-mute">
           This example read rivals' posts and press releases only, by headline and first paragraph. Not the labs, not X, not
           LinkedIn. Every row links its source.
@@ -1292,7 +1399,7 @@ function HowItWorks() {
 
   return (
     <Section>
-      <Pad className="py-14 md:py-20">
+      <Pad className="py-10 md:py-14">
         <H2>How it works</H2>
       </Pad>
 
@@ -1389,7 +1496,7 @@ function LiveReader() {
   const { data, isLoading, isError } = useQuery<FeedResponse>({
     queryKey: ["founders-reader-feed"],
     queryFn: async () => {
-      const res = await fetch("/data/feed/ai-news/latest.json");
+      const res = await fetch(`${import.meta.env.BASE_URL}data/feed/ai-news/latest.json`);
       if (!res.ok) throw new Error("feed");
       return res.json();
     },
@@ -1421,6 +1528,7 @@ function LiveReader() {
             {data && data.stories?.length > 0 && <NubbleReader document={feedToDocument(data)} />}
           </div>
         </div>
+        <p className="mt-3 font-mono text-[12px] text-mute">Swipe a story left or right to change its size. Scroll inside the frame to read on.</p>
       </div>
     </Section>
   );
@@ -1618,7 +1726,7 @@ function PrevPost() {
           <span>LinkedIn draft</span>
         </div>
         <motion.p {...fade(step >= 1)} className="font-sans text-[12px] leading-snug text-fg">
-          A rival now says what we said first. Good. Here is the part they still don't do.
+          A rival now uses our main claim, word for word. Good. Here is the part they still don't do.
         </motion.p>
         <motion.blockquote {...fade(step >= 2)} className="border-l-2 border-[#C4262C] pl-2 font-sans text-[11px] italic text-fg">
           “{BRIEF[0].quote}” Peec AI, 16 Sep 2026
@@ -1663,32 +1771,40 @@ function GetBack() {
           ourselves.
         </Lead>
       </Pad>
-      <div className="grid grid-cols-1 gap-px border-t border-line bg-[#2E2E2E] md:grid-cols-3">
+<p className="flex items-center justify-between border-t border-[#2E2E2E] bg-[#0A0A0A] text-[#A1A1A1] px-5 py-2 font-mono text-[12px] md:hidden">
+        <span>swipe for more</span>
+        <span aria-hidden>→</span>
+      </p>
+      <div className="snaprow flex snap-x snap-mandatory gap-px overflow-x-auto border-t border-[#2E2E2E] bg-[#2E2E2E] md:grid md:grid-cols-3 md:overflow-visible">
         {INVESTOR_ANSWERS.map((a, i) => {
           const Prev = INVESTOR_PREVIEWS[i];
           return (
-            <div key={a.who} className="flex min-w-0 flex-col gap-3 bg-[#0A0A0A] p-6 md:p-8">
+            <div key={a.who} className="flex w-[86%] min-w-0 shrink-0 snap-start flex-col gap-3 bg-[#0A0A0A] p-6 md:w-auto md:p-8">
               <div className="flex items-center gap-3">
                 <IconTile icon={[Shield, Castle, TrendingUp][i]} tone="dark" />
-                <p className="font-mono text-[12px] leading-[1.5] text-[#FFB224]">{a.who}</p>
+                <h3 className="text-[19px] font-semibold leading-[1.25] tracking-[-0.02em] text-white [text-wrap:balance]">{a.who}</h3>
               </div>
               <Prev />
-              <p className="text-[17px] font-medium leading-[1.45] tracking-[-0.01em] text-[#EDEDED]">{a.what}</p>
+              <p className="text-[16px] leading-[1.55] text-[#A1A1A1]">{a.what}</p>
             </div>
           );
         })}
       </div>
-      <div className="grid grid-cols-1 gap-px border-t border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+<p className="flex items-center justify-between border-t border-line bg-white text-mute px-5 py-2 font-mono text-[12px] sm:hidden">
+        <span>swipe for more</span>
+        <span aria-hidden>→</span>
+      </p>
+      <div className="snaprow flex snap-x snap-mandatory gap-px overflow-x-auto border-t border-line bg-line sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
         {OTHER_ANSWERS.map((a, i) => {
           const Prev = OUTPUT_PREVIEWS[i];
           return (
-            <div key={a.who} className="flex min-w-0 flex-col gap-3 bg-white p-6 md:p-8">
+            <div key={a.who} className="flex w-[86%] min-w-0 shrink-0 snap-start flex-col gap-3 bg-white p-6 sm:w-auto md:p-8">
               <div className="flex items-center gap-3">
                 <IconTile icon={[Zap, House, Mail, Presentation, Newspaper, Phone][i]} />
-                <p className="font-mono text-[12px] text-mute">{a.who}</p>
+                <h3 className="text-[19px] font-semibold leading-[1.25] tracking-[-0.02em] text-fg [text-wrap:balance]">{a.who}</h3>
               </div>
               <Prev />
-              <p className="text-[15px] leading-[1.55] text-fg">{a.what}</p>
+              <p className="text-[15px] leading-[1.55] text-mute">{a.what}</p>
             </div>
           );
         })}
@@ -1792,7 +1908,7 @@ function PlaceMock({ i }: { i: number }) {
   return (
     <Mini innerRef={ref}>
       <div className="grid grid-cols-3 gap-1 rounded-md bg-[#F2F2F2] p-1 font-sans text-[11px]">
-        {["So what", "Summary", "Original"].map((t, k) => (
+        {["So what", "Executive summary", "Original"].map((t, k) => (
           <span key={t} className={`rounded px-1 py-1 text-center ${(step >= 99 ? 0 : (step + 1) % 3) === k ? "bg-white text-fg shadow-sm" : "text-mute"}`}>
             {t}
           </span>
@@ -1818,9 +1934,13 @@ function WhereItLives() {
         <H2>You will not open another dashboard. Nubble comes to where you already are.</H2>
         <Lead>Today only the reader is live. The rest is being built, and the page says so.</Lead>
       </Pad>
-      <div className="grid grid-cols-1 gap-px border-t border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+<p className="flex items-center justify-between border-t border-line bg-white text-mute px-5 py-2 font-mono text-[12px] sm:hidden">
+        <span>swipe for more</span>
+        <span aria-hidden>→</span>
+      </p>
+      <div className="snaprow flex snap-x snap-mandatory gap-px overflow-x-auto border-t border-line bg-line sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-4">
         {PLACES.map((p, i) => (
-          <div key={p.name} className="flex min-w-0 flex-col gap-3 bg-white p-6">
+          <div key={p.name} className="flex w-[86%] min-w-0 shrink-0 snap-start flex-col gap-3 bg-white p-6 sm:w-auto">
             <div className="flex items-center justify-between gap-3">
               <span className="flex min-w-0 items-center gap-3">
                 <IconTile icon={[MessageSquare, Send, Bot, BookOpen][i]} />
@@ -1891,8 +2011,9 @@ export default function FoundersLanding() {
         .founders .font-mono{font-family:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
         .founders .text-fg{color:#171717} .founders .text-mute{color:#666666}
         .founders .border-line{border-color:#EAEAEA} .founders .bg-line{background-color:#EAEAEA}
+        .founders .snaprow{scrollbar-width:none;-webkit-overflow-scrolling:touch} .founders .snaprow::-webkit-scrollbar{display:none}
       `}</style>
-      <header className="sticky top-0 z-20 border-b border-line bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-20 border-b border-line bg-white">
         <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-5 md:px-12">
           <a href="/" className="flex items-center gap-2 text-[18px] font-semibold tracking-[-0.03em] text-fg">
             nubble
@@ -1903,7 +2024,7 @@ export default function FoundersLanding() {
           <a
             href="#site-top"
             onClick={toTop}
-            className="hidden h-9 items-center rounded-md bg-[#171717] px-4 text-[14px] font-medium text-white hover:bg-[#383838] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3] sm:inline-flex"
+            className="inline-flex h-9 items-center rounded-md bg-[#171717] px-3 text-[14px] font-medium text-white hover:bg-[#383838] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3] sm:px-4"
           >
             Get my first brief
           </a>
