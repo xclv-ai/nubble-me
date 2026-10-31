@@ -277,31 +277,33 @@ function TerminalBrief() {
 function Opening() {
   return (
     <section className="relative">
-      <Pad className="flex flex-col items-start gap-5 pb-12 pt-12 md:items-center md:pb-16 md:pt-24 md:text-center">
-        <p className="text-[15px] leading-[1.5] text-mute md:text-[16px]">
-          You run an AI startup. Small team, one product, a homepage that says why you.
-        </p>
-        <h1 className="max-w-[20ch] text-[38px] font-semibold leading-[1.04] tracking-[-0.045em] text-fg [text-wrap:balance] md:text-[68px]">
-          Stop reading the news, competitors' blogs, and other founders' self-promoting B.S. posts on LinkedIn.
-        </h1>
-        <p className="max-w-[46ch] text-[18px] leading-[1.5] text-mute md:text-[20px]">
-          Nubble tells you what the news means for your company, shows you the proof, and gives you something you can send.
-        </p>
-        <div className="mt-2 flex w-full flex-col gap-3 md:items-center">
-          <EmailForm id="site-top" button="Get my first brief" />
-          <p className="text-[14px] text-mute">
-            Free while we build. Today the reader at nubble.me is live. Slack, Telegram and Claude are being built.
+      <Pad className="grid grid-cols-1 gap-10 pb-12 pt-12 md:pb-16 md:pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">
+        <div className="flex min-w-0 flex-col items-start gap-5 lg:pt-4">
+          <p className="text-[15px] leading-[1.5] text-mute md:text-[16px]">
+            You run an AI startup. Small team, one product, a homepage that says why you.
           </p>
+          <h1 className="text-[38px] font-semibold leading-[1.04] tracking-[-0.045em] text-fg [text-wrap:balance] md:text-[54px]">
+            Stop reading the news, competitors' blogs, and other founders' self-promoting B.S. posts on LinkedIn.
+          </h1>
+          <p className="max-w-[46ch] text-[18px] leading-[1.5] text-mute md:text-[20px]">
+            Nubble tells you what the news means for your company, shows you the proof, and gives you something you can send.
+          </p>
+          <div className="mt-2 flex w-full flex-col gap-3">
+            <EmailForm id="site-top" button="Get my first brief" />
+            <p className="text-[14px] text-mute">
+              Free while we build. Today the reader at nubble.me is live. Slack, Telegram and Claude are being built.
+            </p>
+          </div>
+        </div>
+        <div className="min-w-0">
+          <TerminalBrief />
         </div>
       </Pad>
-      <div className="relative border-t border-line bg-[#FAFAFA]">
+      <div className="relative border-t border-line">
         <Plus side="left" />
         <Plus side="right" />
-        <Pad className="py-8 md:py-12">
-          <div className="mx-auto max-w-[860px]">
-            <TerminalBrief />
-          </div>
-          <p className="mx-auto mt-8 max-w-[860px] text-[17px] leading-[1.6] text-fg">
+        <Pad className="py-8">
+          <p className="max-w-[62ch] text-[17px] leading-[1.6] text-fg">
             We built it because we are that founder. POKPOK is our company. Everything below happened to us.
           </p>
         </Pad>
@@ -399,8 +401,7 @@ function Panel({ title, children, className = "" }: { title: string; children: R
   );
 }
 
-function SetupDemo() {
-  const [note, setNote] = useState(false);
+function ProfileDemo() {
   return (
     <Panel title={`What Nubble read from ${PROFILE.site}`}>
       <div className="px-4 pt-4">
@@ -409,31 +410,36 @@ function SetupDemo() {
           <span className="text-fg">{PROFILE.site}</span>
         </div>
       </div>
-      <dl className="mt-3 flex flex-col px-4">
+      <dl className="mt-3 flex flex-col px-4 pb-1">
         {PROFILE.rows.map((r) => (
           <div key={r.k} className="grid grid-cols-[92px_minmax(0,1fr)] gap-3 border-t border-line py-3 md:grid-cols-[110px_minmax(0,1fr)]">
             <dt className="font-mono text-[12px] leading-[1.9] text-mute">{r.k}</dt>
             <dd className="text-[15px] leading-[1.5] text-fg">{r.v}</dd>
           </div>
         ))}
-        <div className="border-t border-line py-3">
-          <dt className="font-mono text-[12px] text-mute">Competitors and big players</dt>
-          <dd className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {PROFILE.competitors.map((c) => (
-              <a
-                key={c.name}
-                href={c.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex min-w-0 flex-col gap-0.5 rounded-md border border-line px-3 py-2 transition-colors hover:border-[#A8A8A8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0070F3]"
-              >
-                <span className="text-[14px] font-medium text-fg">{c.name}</span>
-                <span className="font-mono text-[11px] text-mute group-hover:underline">found at {c.foundAt}</span>
-              </a>
-            ))}
-          </dd>
-        </div>
       </dl>
+    </Panel>
+  );
+}
+
+function CompetitorsDemo() {
+  const [note, setNote] = useState(false);
+  return (
+    <Panel title="Competitors and big players, each with the link where it was found">
+      <div className="grid grid-cols-1 gap-2 p-4 sm:grid-cols-2">
+        {PROFILE.competitors.map((c) => (
+          <a
+            key={c.name}
+            href={c.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex min-w-0 flex-col gap-0.5 rounded-md border border-line px-3 py-2 transition-colors hover:border-[#A8A8A8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0070F3]"
+          >
+            <span className="text-[14px] font-medium text-fg">{c.name}</span>
+            <span className="font-mono text-[11px] text-mute group-hover:underline">found at {c.foundAt}</span>
+          </a>
+        ))}
+      </div>
       <div className="flex flex-wrap items-center gap-2 border-t border-line px-4 py-3">
         <button
           type="button"
@@ -456,6 +462,19 @@ function SetupDemo() {
         )}
       </div>
     </Panel>
+  );
+}
+
+function LabelsDemo() {
+  return (
+    <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-line bg-line">
+      {(Object.keys(LABELS) as Label[]).map((l) => (
+        <div key={l} className="flex min-w-0 flex-col items-start gap-2 bg-white p-5">
+          <Badge label={l} />
+          <p className="text-[16px] leading-[1.5] text-fg">{LABELS[l].meaning}</p>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -639,21 +658,27 @@ function HowItWorks() {
   return (
     <Section>
       <Pad className="py-14 md:py-20">
-        <H2>How it works.</H2>
+        <H2>How it works</H2>
       </Pad>
 
-      <Step n="01" title="Paste your website. That is the whole setup." demo={<SetupDemo />}>
+      <Step n="01" title="Paste your website." demo={<ProfileDemo />}>
         <Lead>
-          Nubble reads it and works out what you sell, who buys it, what market you are in, and your main claim. Then it finds your
-          competitors and the big players. It searches the web live. It does not answer from memory. Every company comes with the
-          link where it was found.
+          That is the whole setup. Nubble reads it and works out what you sell, who buys it, what market you are in, and your main
+          claim.
+        </Lead>
+      </Step>
+
+      <Step n="02" title="Nubble finds your competitors and the big players." demo={<CompetitorsDemo />}>
+        <Lead>
+          It searches the web live. It does not answer from memory. Every company comes with the link where it was found. You add
+          the ones it missed and delete the ones that do not matter.
         </Lead>
         <p className="text-[20px] font-semibold tracking-[-0.02em] text-fg">You correct. You never fill in a form.</p>
       </Step>
 
-      <Step n="02" title="Every day it reads the sources." demo={<SourcesDemo />} />
+      <Step n="03" title="Every day it reads the sources." demo={<SourcesDemo />} />
 
-      <Step n="03" id="filter" title="It throws away what does not concern you." demo={<RunDemo />}>
+      <Step n="04" id="filter" title="It throws away what does not concern you." demo={<RunDemo />}>
         <Lead>Silently. You never see it. There is no “nothing relevant today” message either. A quiet week is a quiet week.</Lead>
         <div className="grid grid-cols-3 overflow-hidden rounded-lg border border-line">
           {[
@@ -669,31 +694,21 @@ function HowItWorks() {
             </div>
           ))}
         </div>
-        <div className="flex flex-col gap-3 pt-2">
-          <p className="text-[17px] font-semibold tracking-[-0.01em] text-fg">Stories carry labels.</p>
-          <ul className="flex flex-col gap-2.5">
-            {(Object.keys(LABELS) as Label[]).map((l) => (
-              <li key={l} className="grid grid-cols-[124px_minmax(0,1fr)] items-start gap-3">
-                <span>
-                  <Badge label={l} />
-                </span>
-                <span className="text-[15px] leading-[1.5] text-fg">{LABELS[l].meaning}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-[15px] leading-[1.6] text-mute">
-            A label is always tied to the rival's own sentence, which you can see. If we got one wrong, say so once and it stays
-            ignored.
-          </p>
-        </div>
       </Step>
 
-      <Step n="04" title="Every story that stays comes in three sizes." demo={<SizesDemo />}>
+      <Step n="05" title="Every story that stays comes in three sizes." demo={<SizesDemo />}>
         <Lead>
           Original (the full story), Executive summary (the short one), and So what (the Nubble signal, made for one company only:
-          yours). Swipe to switch. The So what is the story retold for your company: what changed and what it means for you.
+          yours). Swipe to switch. The So what is the story retold for your company: what changed and what it means for you. Some
+          stories need a move. Some are just worth knowing, and then the So what says “no change needed” and means it.
         </Lead>
-        <Lead>Some stories need a move. Some are just worth knowing, and then the So what says “no change needed” and means it.</Lead>
+      </Step>
+
+      <Step n="06" title="Stories carry labels." demo={<LabelsDemo />}>
+        <Lead>
+          A label is always tied to the rival's own sentence, which you can see. If we got one wrong, say so once and it stays
+          ignored.
+        </Lead>
       </Step>
     </Section>
   );
