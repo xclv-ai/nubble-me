@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import FoundersLandingV3, { LINE, Wrap } from "./founders-v3";
 import { Heatmap, WarRoom } from "./founders-fx";
-import { IntelFolder, Sendables } from "./founders-v5-parts";
+import { FormNote, IntelFolder, Plans, Sendables } from "./founders-v5-parts";
 import { RUN, RUN_MORE } from "./founders-data";
 import { buildMoves, dateOf, MovesCtx } from "./founders-fx-data";
 
@@ -32,7 +32,7 @@ function Pressure() {
 export default function FoundersLandingV5() {
   return (
     <MovesCtx.Provider value={MOVES}>
-      <FoundersLandingV3 mono fx={{ map: <WarRoom />, folder: <IntelFolder />, afterDesk: <Pressure />, investor: <Sendables /> }} />
+      <FoundersLandingV3 mono fx={{ map: <WarRoom />, folder: <IntelFolder />, afterDesk: <Pressure />, investor: <Sendables />, formNote: <FormNote />, plans: <Plans />, closeStamp: "Two ways in" }} />
     </MovesCtx.Provider>
   );
 }

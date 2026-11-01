@@ -72,7 +72,7 @@ export function IntelFolder() {
             <p className="font-mono text-[12px]" style={{ color: AMBER }}>
               So what
             </p>
-            <p className="mt-1 text-[20px] font-semibold leading-[1.3] text-white">{PEEC.soWhat}</p>
+            <p className="mt-1 text-[20px] font-semibold leading-[1.3] text-white">A rival now sells your main term: brand perception.</p>
             <p className="mt-4 font-mono text-[12px]" style={{ color: AMBER }}>
               Your move
             </p>
@@ -224,14 +224,14 @@ export function Sendables() {
         {/* Industry: the deck slide */}
         <article className="flex min-w-0 flex-col gap-4 rounded-xl border bg-[#0B0E0F] p-5 md:p-6" style={{ borderColor: LINE }}>
           <Ask q={QS[2]} kind="the “why now” slide for your deck" />
-          <div className="flex flex-1 flex-col justify-center">
+          <div className="flex flex-col">
             <div className="flex min-h-[230px] w-full max-w-full flex-col justify-between gap-4 rounded-lg border bg-[#050505] p-4 md:p-5" style={{ borderColor: "#2A3338" }}>
               <div>
                 <p className="font-mono text-[11px] tracking-[0.12em]" style={{ color: AMBER }}>
                   WHY NOW
                 </p>
                 <p data-mono className="mt-1.5 !text-[17px] font-semibold !leading-[1.2] !tracking-[-0.02em] text-white md:!text-[18px]">
-                  In six weeks, money and rivals rushed into how AI describes brands.
+                  In five weeks: $180M into AI marketing, and a rival took our main phrase.
                 </p>
               </div>
               <ol className="relative mt-3 flex flex-col gap-2 border-l pl-3" style={{ borderColor: "#3A4449" }}>
@@ -247,9 +247,61 @@ export function Sendables() {
               </ol>
             </div>
           </div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <CopyBtn text={`Why now\n\nIn five weeks: $180M into AI marketing, and a rival took our main phrase.\n\n${SLIDE.map((x) => `${x.date}: ${x.what}`).join("\n")}`} />
+          </div>
           <Built items={SLIDE.map((s) => ({ date: s.date, url: s.url, what: s.what.split(" ")[0] }))} />
         </article>
       </div>
+    </div>
+  );
+}
+
+/* ─── 3. Two ways in ─── */
+
+const PLANS = [
+  {
+    name: "Run it yourself",
+    price: "Free",
+    tag: "Open source",
+    status: "Code coming",
+    body: "You give it a story and your company. It writes the So what, with the proof. Your machine, your AI model.",
+  },
+  {
+    name: "Nubble Cloud",
+    price: "$10 a month",
+    tag: "We do the reading",
+    status: "Early access",
+    body: "Paste your site once. We read your rivals every day and send you the folders in Slack, Telegram or Claude.",
+  },
+];
+
+export function FormNote() {
+  return (
+    <p className="text-[14px]" style={{ color: MUTE }}>
+      Nubble Cloud: $10 a month. Or run it yourself, free and open source.
+    </p>
+  );
+}
+
+export function Plans() {
+  return (
+    <div className="grid grid-cols-1 gap-2.5 pt-2 sm:grid-cols-2">
+      {PLANS.map((p, i) => (
+        <div key={p.name} className="flex min-w-0 flex-col gap-2 rounded-lg border p-4" style={{ borderColor: i ? AMBER : "#2A3338", background: i ? "#1A150B" : "#0B0E0F" }}>
+          <div className="flex items-baseline justify-between gap-2">
+            <p className="font-mono text-[13px] text-white">{p.name}</p>
+            <p className="font-mono text-[11.5px]" style={{ color: i ? AMBER : MUTE }}>
+              {p.status}
+            </p>
+          </div>
+          <p className="text-[28px] font-semibold leading-none tracking-[-0.03em] text-white">{p.price}</p>
+          <p className="font-mono text-[12px]" style={{ color: i ? AMBER : "#A9B1B5" }}>
+            {p.tag}
+          </p>
+          <p className="text-[14px] leading-[1.5] text-[#C9CFD2]">{p.body}</p>
+        </div>
+      ))}
     </div>
   );
 }

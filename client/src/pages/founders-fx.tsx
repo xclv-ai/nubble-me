@@ -52,7 +52,7 @@ function MoveList({ items, empty }: { items: RunItem[]; empty: string }) {
               {m.date}
             </span>
             <span className="min-w-0">
-              <Ext href={m.url} className="text-[#E8EAEA]">
+              <Ext href={m.url} className="inline-block py-1 text-[#E8EAEA]">
                 {m.title}
               </Ext>
               {l && (
@@ -245,7 +245,8 @@ export function XRayHunt({ embedded = false, onFound }: { embedded?: boolean; on
       if (el) {
         const k = (t - t0) / 1000;
         const w = el.clientWidth;
-        setLens({ x: w * (0.5 + 0.38 * Math.sin(k * 0.9)), y: 70 + 55 * Math.sin(k * 1.7) });
+        const hh = el.clientHeight;
+        setLens({ x: Math.min(w - LENS, Math.max(LENS, w * (0.5 + 0.38 * Math.sin(k * 0.9)))), y: Math.min(hh - LENS, Math.max(LENS, 70 + 55 * Math.sin(k * 1.7))) });
       }
       raf = requestAnimationFrame(tick);
     };
@@ -401,7 +402,7 @@ export function Heatmap() {
                   initial={false}
                   animate={inView || reduce ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
                   transition={{ delay: reduce ? 0 : (wi * 6 + ri) * 0.025, duration: 0.25 }}
-                  className="aspect-square w-full rounded-[4px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                  className="aspect-square min-h-[40px] w-full rounded-[4px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
                   style={{ ...cellColor(items), outline: on ? "2px solid #FFFFFF" : undefined, outlineOffset: 1 }}
                 >
                   {items.length > 1 && <span className="font-mono text-[11px] font-medium text-black">{items.length}</span>}

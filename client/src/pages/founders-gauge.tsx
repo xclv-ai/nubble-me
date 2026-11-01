@@ -410,7 +410,8 @@ export function PressureGauge() {
 
   const valueOf = (i: number) => (i < 0 ? total : weeks[i]);
   const deltaOf = (i: number): [string | null, string] => {
-    if (i <= 0) return [i < 0 ? "15 Sep to 31 Oct" : null, "#9A9A9A"];
+    if (i < 0) return ["15 Sep to 31 Oct", "#9A9A9A"];
+    if (i === 0) return ["first week we read", "#9A9A9A"];
     const d = weeks[i] - weeks[i - 1];
     return [`${d > 0 ? "▲" : d < 0 ? "▼" : "="} ${Math.abs(d)} vs week before`, d > 0 ? "#FF3B4E" : d < 0 ? "#2FD36B" : "#9A9A9A"];
   };
@@ -452,15 +453,24 @@ export function PressureGauge() {
     api.current?.set(valueOf(i), d, c);
   };
 
-  const label = (i: number) => (i < 0 ? "All 7 weeks" : WEEKS[i].label);
+  const label = (i: number) => (i < 0 ? "All" : WEEKS[i].label);
   const chips = [-1, ...WEEKS.map((_, i) => i)];
+  const inScope = run.filter((m) => sel < 0 || weekOf(m) === sel);
+  const scored = inScope.filter((m) => m.kept);
+  const quiet = inScope.length - scored.length;
+  const KIND = { "code-red": "copied you", weakened: "weakened a claim", "worth-knowing": "worth knowing" } as const;
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="font-mono text-[13px] text-white">Pressure on pokpok.ai</p>
-        <p className="font-mono text-[12px]" style={{ color: MUTE }}>
-          {sel < 0 ? "15 Sep to 31 Oct" : `week of ${WEEKS[sel].label}`}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-baseline justify-between gap-3">
+          <p className="font-mono text-[13px] text-white">Pressure on pokpok.ai</p>
+          <p className="font-mono text-[12px]" style={{ color: MUTE }}>
+            {sel < 0 ? "15 Sep to 31 Oct" : `week of ${WEEKS[sel].label}`}
+          </p>
+        </div>
+        <p className="text-[14px] leading-[1.5]" style={{ color: "#C9CFD2" }}>
+          How hard your rivals pushed on you. 0 is a quiet week. 100 means drop everything.
         </p>
       </div>
       {gl ? (
@@ -468,19 +478,19 @@ export function PressureGauge() {
           ref={host}
           role="img"
           aria-label={`Pressure gauge reading ${valueOf(sel)} out of 100`}
-          className="mx-auto aspect-square w-full max-w-[380px] cursor-pointer overflow-hidden rounded-xl"
+          className="mx-auto aspect-square w-full max-w-[340px] cursor-pointer overflow-hidden rounded-xl"
           style={{ background: "#050505" }}
           onClick={() => pick(sel)}
         />
       ) : (
-        <div className="mx-auto flex aspect-square w-full max-w-[380px] flex-col items-center justify-center rounded-full border-[10px] border-[#1b1b1c] bg-[#050505]">
+        <div className="mx-auto flex aspect-square w-full max-w-[340px] flex-col items-center justify-center rounded-full border-[10px] border-[#1b1b1c] bg-[#050505]">
           <span className="text-[72px] font-medium text-white">{valueOf(sel)}</span>
           <span className="font-mono text-[13px] tracking-[0.1em]" style={{ color: "#C8C8C8" }}>
             PRESSURE
           </span>
         </div>
       )}
-      <div className="flex flex-wrap justify-center gap-1.5">
+      <div className="grid grid-cols-4 gap-1.5">
         {chips.map((i) => {
           const on = i === sel;
           const v = valueOf(i);
@@ -489,21 +499,52 @@ export function PressureGauge() {
               key={i}
               onClick={() => pick(i)}
               aria-pressed={on}
-              className="min-h-[36px] rounded-md border px-2.5 font-mono text-[12px]"
-              style={{
-                borderColor: on ? AMBER : "#2A3338",
-                background: on ? "#2A2210" : "transparent",
-                color: on ? "#FFFFFF" : v >= 40 ? RED : v > 0 ? AMBER : MUTE,
-              }}
+              className="flex min-h-[48px] flex-col items-center justify-center rounded-md border font-mono leading-tight"
+              style={{ borderColor: on ? AMBER : "#2A3338", background: on ? "#2A2210" : "transparent" }}
             >
-              {label(i)} · {v}
+              <span className="text-[11.5px]" style={{ color: on ? "#FFFFFF" : "#A9B1B5" }}>
+                {label(i)}
+              </span>
+              <span className="text-[16px] font-medium" style={{ color: v >= 40 ? RED : v > 0 ? AMBER : MUTE }}>
+                {v}
+              </span>
             </button>
           );
         })}
       </div>
-      <p className="text-[14px] leading-[1.5]" style={{ color: MUTE }}>
-        How hard your rivals pushed on you. A rival copied you: 40. Weakened one of your claims: 20. Worth knowing: 5. Tap a week.
-      </p>
+      <div className="rounded-lg border px-4 py-3" style={{ borderColor: "#1E2529", background: "#0B0E0F" }}>
+        <p className="mb-2 font-mono text-[12px]" style={{ color: MUTE }}>
+          How {sel < 0 ? "the total" : "this week"} adds up
+        </p>
+        <ul className="flex flex-col gap-1.5">
+          {scored.map((m) => (
+            <li key={m.url + m.date} className="grid grid-cols-[44px_minmax(0,1fr)] gap-2 text-[14px] leading-[1.4]">
+              <span className="font-mono font-medium" style={{ color: m.kept === "code-red" ? RED : m.kept === "weakened" ? "#FF8B3E" : AMBER }}>
+                +{POINTS[m.kept!]}
+              </span>
+              <span className="min-w-0 text-[#D9DDDF]">
+                <a href={m.url} target="_blank" rel="noopener noreferrer" className="underline decoration-[#3A4449] underline-offset-2 hover:text-white">
+                  {m.title}
+                </a>{" "}
+                <span className="font-mono text-[12px]" style={{ color: MUTE }}>
+                  {m.date}, {KIND[m.kept!]}
+                </span>
+              </span>
+            </li>
+          ))}
+          <li className="grid grid-cols-[44px_minmax(0,1fr)] gap-2 text-[14px] leading-[1.4]">
+            <span className="font-mono font-medium" style={{ color: MUTE }}>
+              0
+            </span>
+            <span className="min-w-0" style={{ color: MUTE }}>
+              {quiet ? `${quiet} more rival move${quiet === 1 ? "" : "s"} read, not about you.` : "Nothing else read."}
+            </span>
+          </li>
+        </ul>
+        <p className="mt-2 text-[12.5px] leading-[1.5]" style={{ color: MUTE }}>
+          Copied you: 40. Weakened one of your claims: 20. Worth knowing: 5. Capped at 100.
+        </p>
+      </div>
     </div>
   );
 }
