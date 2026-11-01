@@ -155,13 +155,34 @@ export function Count({ from, to, delay = 0 }: { from: number; to: number; delay
   );
 }
 
-export function EmailForm({ id, button, dark = false }: { id: string; button: string; dark?: boolean }) {
+export type FormCopy = { subject: string; ask: string; err: string; cmd: string; done: string };
+const BRIEF_COPY: FormCopy = {
+  subject: "Nubble: my first brief",
+  ask: "Send me my first Nubble brief.",
+  err: "Paste your website, like yourstartup.com, so the brief is about your company.",
+  cmd: "nubble brief",
+  done: "Your email app opens with your site in it. Hit send and we reply with your first brief.",
+};
+
+export function EmailForm({
+  id,
+  button,
+  dark = false,
+  copy = BRIEF_COPY,
+  preview = true,
+}: {
+  id: string;
+  button: string;
+  dark?: boolean;
+  copy?: FormCopy;
+  preview?: boolean;
+}) {
   const [url, setUrl] = useState("");
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState(false);
-  const subject = encodeURIComponent("Nubble: my first brief");
+  const subject = encodeURIComponent(copy.subject);
   const domain = url.trim().replace(/\/+$/, "");
-  const body = encodeURIComponent(`My website: ${domain || "(paste it here)"}\n\nSend me my first Nubble brief.`);
+  const body = encodeURIComponent(`My website: ${domain || "(paste it here)"}\n\n${copy.ask}`);
   return (
     <form
       className="flex w-full max-w-[520px] flex-col gap-2 sm:flex-row sm:flex-wrap"
@@ -216,14 +237,14 @@ export function EmailForm({ id, button, dark = false }: { id: string; button: st
       </button>
       {err && (
         <p role="alert" className={`w-full text-[13px] sm:basis-full ${dark ? "text-[#FF6166]" : "text-[#C4262C]"}`}>
-          Paste your website, like yourstartup.com, so the brief is about your company.
+          {copy.err}
         </p>
       )}
-      {dark && !sent && (
+      {dark && preview && !sent && (
         <div aria-hidden className="w-full rounded-md border border-[#2E2E2E] bg-[#141414] px-4 py-3 font-mono text-[13px] leading-[1.7] text-[#A1A1A1] sm:basis-full">
           <p>
             <span className="text-[#62C073]">$ </span>
-            <span className="text-[#EDEDED]">nubble brief {domain.replace(/\/.*$/, "") || "yourstartup.com"}</span>
+            <span className="text-[#EDEDED]">{copy.cmd} {domain.replace(/\/.*$/, "") || "yourstartup.com"}</span>
           </p>
           <p>reads your site, finds your rivals, reads them</p>
           <p>throws away what does not concern you</p>
@@ -240,9 +261,9 @@ export function EmailForm({ id, button, dark = false }: { id: string; button: st
           className="w-full overflow-hidden rounded-md border border-[#2E2E2E] bg-[#0A0A0A] px-4 py-3 font-mono text-[13px] leading-[1.6] text-[#EDEDED] sm:basis-full"
         >
           <p>
-            <span className="text-[#62C073]">$ </span>nubble brief {domain.replace(/\/.*$/, "")}
+            <span className="text-[#62C073]">$ </span>{copy.cmd} {domain.replace(/\/.*$/, "")}
           </p>
-          <p className="text-[#A1A1A1]">Your email app opens with your site in it. Hit send and we reply with your first brief.</p>
+          <p className="text-[#A1A1A1]">{copy.done}</p>
           <p className="text-[#A1A1A1]">
             No email app? Write to <span className="select-all text-[#EDEDED]">{CONTACT}</span>
           </p>
@@ -1699,15 +1720,17 @@ function Mini({ children, innerRef, dark = false }: { children: React.ReactNode;
 /* Investor: competitors. A dated table of who moved, with links. */
 function PrevCompetitors() {
   const { ref, step } = usePlay();
-  const rows = [RUN[2], RUN[10], RUN[0]];
+  const rows = [RUN[0], RUN[2], RUN[10]];
   return (
     <Mini innerRef={ref} dark>
       <p className="text-[#EDEDED]">who moved</p>
       {rows.map((r, i) => (
-        <motion.div key={r.title} {...fade(step >= i + 1)} className="grid grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 border-t border-[#2E2E2E] pt-2">
+        <motion.div key={r.title} {...fade(step >= i + 1)} className="grid grid-cols-[44px_minmax(0,1fr)_auto] items-start gap-2 border-t border-[#2E2E2E] pt-2">
           <span>{r.date}</span>
-          <span className="truncate font-sans text-[12px] text-[#EDEDED]">{r.title}</span>
-          <span className="text-[#52A8FF]">link</span>
+          <span className="font-sans text-[12px] leading-[1.35] text-[#EDEDED]">{r.title.replace(/ (\S+)$/, "\u00a0$1")}</span>
+          <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-[#52A8FF] underline-offset-2 hover:underline">
+            link
+          </a>
         </motion.div>
       ))}
     </Mini>
@@ -1725,12 +1748,14 @@ function PrevMoat() {
       </motion.div>
       <p className="mt-1 text-[#EDEDED]">rivals who tried</p>
       {[
-        { d: "16 Sep", t: "Peec: “brand perception”" },
-        { d: "22 Oct", t: "Peec: ranks what to fix first" },
+        { d: "16 Sep", t: "Peec: “brand perception”", u: RUN[2].url },
+        { d: "22 Oct", t: "Peec: ranks what to fix first", u: RUN[10].url },
       ].map((r, i) => (
         <motion.div key={r.d} {...fade(step >= i + 2)} className="grid grid-cols-[44px_minmax(0,1fr)] items-center gap-2 rounded border border-[#2E2E2E] px-2 py-1.5">
           <span className="text-[#FF6166]">{r.d}</span>
-          <span className="truncate font-sans text-[12px] text-[#EDEDED]">{r.t}</span>
+          <a href={r.u} target="_blank" rel="noopener noreferrer" className="font-sans text-[12px] leading-[1.35] text-[#EDEDED] underline decoration-[#5A5A5A] underline-offset-2 hover:decoration-current">
+            {r.t}
+          </a>
         </motion.div>
       ))}
     </Mini>
@@ -1749,7 +1774,9 @@ function PrevIndustry() {
           <motion.div key={r.title} {...fade(step >= i + 1)} className="relative">
             <span className="absolute -left-[17px] top-1 h-2 w-2 rounded-full bg-[#FFB224]" />
             <span className="text-[#FFB224]">{r.date} 2026</span>
-            <p className="truncate font-sans text-[12px] text-[#EDEDED]">{r.title}</p>
+            <a href={r.url} target="_blank" rel="noopener noreferrer" className="block font-sans text-[12px] leading-[1.35] text-[#EDEDED] underline decoration-[#5A5A5A] underline-offset-2 hover:decoration-current">
+              {r.title}
+            </a>
           </motion.div>
         ))}
       </div>

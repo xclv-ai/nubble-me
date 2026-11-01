@@ -44,11 +44,11 @@ const AMBER = "#FFB224";
 
 /* ─── Building blocks ─── */
 
-function Wrap({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function Wrap({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-[1200px] px-5 md:px-12 ${className}`}>{children}</div>;
 }
 
-function Band({
+export function Band({
   children,
   tone = "white",
   id,
@@ -67,7 +67,7 @@ function Band({
   );
 }
 
-function H2({ children, dark = false, className = "" }: { children: React.ReactNode; dark?: boolean; className?: string }) {
+export function H2({ children, dark = false, className = "" }: { children: React.ReactNode; dark?: boolean; className?: string }) {
   return (
     <h2
       className={`max-w-[20ch] text-[34px] font-semibold leading-[1.04] tracking-[-0.045em] [text-wrap:balance] md:text-[60px] ${
@@ -79,7 +79,7 @@ function H2({ children, dark = false, className = "" }: { children: React.ReactN
   );
 }
 
-function Lead({ children, dark = false, className = "" }: { children: React.ReactNode; dark?: boolean; className?: string }) {
+export function Lead({ children, dark = false, className = "" }: { children: React.ReactNode; dark?: boolean; className?: string }) {
   return (
     <p className={`max-w-[58ch] text-[16px] leading-[1.55] md:text-[19px] md:leading-[1.6] ${dark ? "text-[#A1A1A1]" : "text-mute"} ${className}`}>
       {children}
@@ -93,7 +93,7 @@ function StepNo({ n, dark = false }: { n: string; dark?: boolean }) {
 }
 
 /** Scales a small preview up so it reads as the main picture of its block. */
-function Big({ children, scale = 1.35, className = "" }: { children: React.ReactNode; scale?: number; className?: string }) {
+export function Big({ children, scale = 1.35, className = "" }: { children: React.ReactNode; scale?: number; className?: string }) {
   return (
     <div className={className} style={{ zoom: scale }}>
       {children}
@@ -595,7 +595,7 @@ function isHeading(p: string) {
 }
 
 /** Accent moment: the three sizes, with the So what as large as a headline. */
-function SizesBig() {
+export function SizesBig() {
   const [size, setSize] = useState(0);
   const reduce = useReducedMotion();
   const [dir, setDir] = useState(1);
