@@ -24,7 +24,7 @@ function AppRouter() {
       <Route path="/" component={Home} />
       <Route path="/founders" component={FoundersLanding} />
       <Route path="/founders-v2" component={FoundersLandingV2} />
-      <Route path="/founders-v3" component={FoundersLandingV3} />
+      <Route path="/founders-v3">{() => <FoundersLandingV3 />}</Route>
       <Route path="/founders-v4" component={FoundersLandingV4} />
       <Route path="/ai-branding" component={Home} />
       <Route path="/ai-ecommerce" component={Home} />
