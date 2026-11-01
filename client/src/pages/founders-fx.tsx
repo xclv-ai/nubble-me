@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-mot
 import { Count, Ext } from "./founders";
 import { AMBER, CompetitorMap, LINE, MUTE, RED } from "./founders-v3";
 import { BRIEF, PROFILE, type RunItem } from "./founders-data";
-import { FX_RIVALS, MovesCtx, WEEKS, rivalOf, weekOf, type FxRival } from "./founders-fx-data";
+import { FX_RIVALS, LuceCtx, MovesCtx, WEEKS, rivalOf, weekOf, type FxRival } from "./founders-fx-data";
 import type { Sensor } from "./founders-war-table";
 
 /*
@@ -41,6 +41,7 @@ export function labelOf(m: RunItem) {
 }
 
 export function MoveList({ items, empty }: { items: RunItem[]; empty: string }) {
+  const luce = useContext(LuceCtx);
   if (!items.length) return <p className="text-[14px]" style={{ color: MUTE }}>{empty}</p>;
   return (
     <ul className="flex flex-col gap-1.5">
@@ -48,11 +49,11 @@ export function MoveList({ items, empty }: { items: RunItem[]; empty: string }) 
         const l = labelOf(m);
         return (
           <li key={m.url + m.title} className="grid grid-cols-[52px_minmax(0,1fr)] gap-2 text-[14px] leading-[1.4]">
-            <span className="font-mono text-[12px] leading-[1.6]" style={{ color: MUTE }}>
+            <span className={`font-mono text-[12px] leading-[1.6] ${luce ? "pt-[8px]" : ""}`} style={{ color: MUTE }}>
               {m.date}
             </span>
             <span className="min-w-0">
-              <Ext href={m.url} className="inline-block py-1 text-[#E8EAEA]">
+              <Ext href={m.url} className={luce ? "-my-[8px] inline-block py-[16px] text-[#E8EAEA]" : "inline-block py-1 text-[#E8EAEA]"}>
                 {m.title}
               </Ext>
               {l && (
@@ -72,6 +73,7 @@ export function MoveList({ items, empty }: { items: RunItem[]; empty: string }) 
 
 export function WarRoom() {
   const moves = useContext(MovesCtx);
+  const luce = useContext(LuceCtx);
   const MOVES_BY_RIVAL = moves.byRival;
   const [gl, setGl] = useState<boolean | null>(null);
   const [sel, setSel] = useState<FxRival>("Peec AI");
@@ -92,8 +94,8 @@ export function WarRoom() {
   useEffect(() => setGl(hasWebGL()), []);
   const sources = Array.from(new Map(PROFILE.competitors.map((c) => [c.foundAt, c.url])).entries());
   if (gl === false) return <CompetitorMap />;
-  return (
-    <div className="overflow-hidden rounded-xl border bg-[#07090A]" style={{ borderColor: LINE }}>
+  const panel = (
+    <div className={luce ? "overflow-hidden rounded-[20px] bg-[#050505]" : "overflow-hidden rounded-xl border bg-[#07090A]"} style={luce ? { boxShadow: "inset 0 0 0 1px #17181A" } : { borderColor: LINE }}>
       <div className="flex flex-col gap-0.5 border-b px-4 py-2.5 font-mono text-[12px] sm:flex-row sm:items-center sm:justify-between sm:gap-3" style={{ borderColor: LINE, color: MUTE }}>
         <span className="whitespace-nowrap">
           <span className="mr-2 inline-block h-2 w-2 rounded-full" style={{ background: RED }} />
@@ -101,6 +103,28 @@ export function WarRoom() {
         </span>
         <span>15 Sep to 31 Oct 2026</span>
       </div>
+      {luce ? (
+        <div className="flex justify-center border-b px-3 py-3" style={{ borderColor: "#17181A" }}>
+          <div role="group" aria-label="Sensor" className="grid w-full max-w-[420px] grid-cols-3 rounded-full p-1 font-mono text-[12.5px]" style={{ background: "#141517", boxShadow: "inset 0 0 0 1px #24262A" }}>
+            {SENSORS.map((x) => (
+              <button
+                key={x.k}
+                type="button"
+                aria-pressed={sensor === x.k}
+                onClick={() => setSensor(x.k)}
+                className="min-h-11 whitespace-nowrap rounded-full px-1 text-[12px] transition-colors"
+                style={{
+                  color: sensor === x.k ? (x.k === "night" ? "#9CFFB3" : x.k === "thermal" ? "#FFD166" : "#FFFFFF") : "#7A8085",
+                  background: sensor === x.k ? "linear-gradient(180deg,#34363A,#232528)" : "transparent",
+                  boxShadow: sensor === x.k ? "0 2px 6px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08)" : "none",
+                }}
+              >
+                {x.t}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
       <div role="group" aria-label="Sensor" className="grid grid-cols-3 border-b font-mono text-[12.5px]" style={{ borderColor: LINE }}>
         {SENSORS.map((x, i) => (
           <button
@@ -119,6 +143,7 @@ export function WarRoom() {
           </button>
         ))}
       </div>
+      )}
       <div
         className="nb-war relative h-[330px] md:h-[400px]"
         style={{
@@ -133,7 +158,7 @@ export function WarRoom() {
         {gl && (
           <Guard fallback={<CompetitorMap />}>
             <Suspense fallback={<div className="grid h-full place-items-center font-mono text-[12px]" style={{ color: MUTE }}>loading the map…</div>}>
-              <WarTable selected={sel} tracking onSelect={setSel} sensor={sensor} byRival={MOVES_BY_RIVAL} />
+              <WarTable selected={sel} tracking onSelect={setSel} sensor={sensor} byRival={MOVES_BY_RIVAL} big={luce} />
             </Suspense>
           </Guard>
         )}
@@ -147,11 +172,11 @@ export function WarRoom() {
             }}
           />
         )}
-        <div className="pointer-events-none absolute left-3 right-3 top-2 flex justify-between font-mono text-[11px]" style={{ color: hud }}>
+        <div className={`pointer-events-none absolute left-3 right-3 top-2 flex justify-between font-mono ${luce ? "text-[12px]" : "text-[11px]"}`} style={{ color: hud }}>
           <span>sensor: {SENSORS.find((x) => x.k === sensor)!.t.toLowerCase()}</span>
           <span>{clock}</span>
         </div>
-        <div className="pointer-events-none absolute bottom-2 left-3 right-3 flex flex-col gap-0.5 font-mono text-[11px] leading-snug" style={{ color: hud }}>
+        <div className={`pointer-events-none absolute bottom-2 left-3 right-3 flex flex-col gap-0.5 font-mono leading-snug ${luce ? "text-[12px]" : "text-[11px]"}`} style={{ color: hud }}>
           <span>tracking: {sel}</span>
           <span style={{ opacity: 0.75 }}>{sensor === "thermal" ? "Hotter = more moves." : "Tower height = moves we read."} Tap a tower.</span>
         </div>
@@ -166,6 +191,25 @@ export function WarRoom() {
           </motion.div>
         </AnimatePresence>
       </div>
+      {luce ? (
+        <div className="grid grid-cols-3 gap-2 border-t px-4 py-4" style={{ borderColor: "#17181A" }}>
+          {[
+            { n: moves.read, t: "rival moves read", tag: "SCANNED", c: "#86D9A9" },
+            { n: moves.matter, t: "matter to you", tag: "FOR YOU", c: "#E9D27A" },
+            { n: moves.act, t: "need your move", tag: "ACT", c: RED },
+          ].map((x) => (
+            <div key={x.t} className="flex min-w-0 flex-col items-start gap-1.5">
+              <span className="rounded-[3px] border px-1.5 font-mono text-[12px] leading-[1.6] tracking-[0.06em]" style={{ color: x.c, borderColor: x.c }}>
+                {x.tag}
+              </span>
+              <p className="text-[34px] font-light leading-none tracking-[-0.02em] md:text-[40px]" style={{ color: x.tag === "ACT" ? RED : "#FFFFFF" }}>
+                <Count from={0} to={x.n} />
+              </p>
+              <p className="text-[13px] leading-tight text-[#A9B1B5]">{x.t}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
       <div className="grid grid-cols-3 border-t font-mono" style={{ borderColor: LINE }}>
         {[
           { n: moves.read, t: "rival moves read" },
@@ -180,15 +224,22 @@ export function WarRoom() {
           </div>
         ))}
       </div>
-      <p className="border-t px-4 py-2.5 font-mono text-[11.5px] leading-[1.6]" style={{ borderColor: LINE, color: MUTE }}>
+      )}
+      <p className={`border-t px-4 py-2.5 font-mono leading-[1.6] ${luce ? "text-[12px]" : "text-[11.5px]"}`} style={{ borderColor: luce ? "#17181A" : LINE, color: MUTE }}>
         Each rival was found by a live web search, on these public lists of AI visibility tools:{" "}
         {sources.map(([host, url], i) => (
           <span key={host}>
-            <Ext href={url}>{host}</Ext>
+            <Ext href={url} className={luce ? "-my-[14px] inline-block py-[14px]" : ""}>{host}</Ext>
             {i < sources.length - 1 ? ", " : ""}
           </span>
         ))}
       </p>
+    </div>
+  );
+  if (!luce) return panel;
+  return (
+    <div className="rounded-[26px] p-[6px]" style={{ background: "linear-gradient(180deg,#2A2B2E,#141517 45%,#0B0B0C)", boxShadow: "0 24px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08)" }}>
+      {panel}
     </div>
   );
 }
