@@ -16,6 +16,7 @@ import ReadFeedPage from "@/pages/read-feed";
 import FoundersLanding from "@/pages/founders";
 import FoundersLandingV2 from "@/pages/founders-v2";
 import FoundersLandingV3 from "@/pages/founders-v3";
+import FoundersLandingV4 from "@/pages/founders-v4";
 
 function AppRouter() {
   return (
@@ -23,7 +24,8 @@ function AppRouter() {
       <Route path="/" component={Home} />
       <Route path="/founders" component={FoundersLanding} />
       <Route path="/founders-v2" component={FoundersLandingV2} />
-      <Route path="/founders-v3" component={FoundersLandingV3} />
+      <Route path="/founders-v3">{() => <FoundersLandingV3 />}</Route>
+      <Route path="/founders-v4" component={FoundersLandingV4} />
       <Route path="/ai-branding" component={Home} />
       <Route path="/ai-ecommerce" component={Home} />
       <Route path="/a16z-portfolio" component={Home} />
