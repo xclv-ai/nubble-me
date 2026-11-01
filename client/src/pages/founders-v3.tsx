@@ -306,7 +306,7 @@ function InvestorFile() {
   return (
     <section className="border-t" style={{ borderColor: LINE }}>
       <Wrap className="flex flex-col gap-4 pb-8 pt-12 md:pb-10 md:pt-20">
-        <p className="max-w-[30ch] text-[28px] font-semibold leading-[1.12] tracking-[-0.035em] text-white [text-wrap:balance] md:text-[44px]">
+        <p data-mono className="max-w-[30ch] text-[28px] font-semibold leading-[1.12] tracking-[-0.035em] text-white [text-wrap:balance] md:text-[44px]">
           After a few months you have something nobody else has:{" "}
           <span style={{ color: MUTE }}>the dated record of every move in your market, what each one did to you, and what you said back.</span>
         </p>
@@ -401,12 +401,14 @@ const MONO_CSS = `
   .founders.nb-mono h1,.founders.nb-mono h2,.founders.nb-mono h3,.founders.nb-mono button,.founders.nb-mono .font-mono,.founders.nb-mono [data-mono]{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
   .founders.nb-mono h1,.founders.nb-mono h2,.founders.nb-mono h3{letter-spacing:-0.035em}
   .founders.nb-mono h1{font-size:27px;line-height:1.1}
+  .founders.nb-mono [data-mono]{font-size:24px;line-height:1.15;letter-spacing:-0.035em}
   .founders.nb-mono h2{font-size:28px;line-height:1.1}
   .founders.nb-mono h3{font-size:19px}
   @media (min-width:768px){
     .founders.nb-mono h1{font-size:48px}
     .founders.nb-mono h2{font-size:42px}
     .founders.nb-mono h3{font-size:20px}
+    .founders.nb-mono [data-mono]{font-size:38px}
   }
 `;
 
@@ -446,7 +448,10 @@ export default function FoundersLandingV3({ mono = false, fx = {} }: { mono?: bo
         .founders .nb-sweep{animation:nb-sweep 6s linear infinite}
         @keyframes nb-ping{0%{transform:scale(1);opacity:.9}100%{transform:scale(3.2);opacity:0}}
         .founders .nb-ping{animation:nb-ping 1.6s ease-out infinite}
-        @media (prefers-reduced-motion: reduce){.founders .nb-sweep,.founders .nb-ping{animation:none}}
+        @keyframes nb-hint{50%{text-decoration-color:transparent}}
+        .founders .nb-hint{animation:nb-hint 1.2s ease-in-out infinite}
+        .founders .nb-war, .founders .nb-war *{touch-action:pan-y!important}
+        @media (prefers-reduced-motion: reduce){.founders .nb-sweep,.founders .nb-ping,.founders .nb-hint{animation:none}}
       `}</style>
       <header className="sticky top-0 z-20 border-b bg-[#050607]/95 backdrop-blur" style={{ borderColor: LINE }}>
         <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-5 md:px-12">

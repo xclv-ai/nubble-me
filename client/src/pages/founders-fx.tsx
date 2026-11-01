@@ -4,6 +4,7 @@ import { Count, Ext } from "./founders";
 import { AMBER, CompetitorMap, LINE, MUTE, RED } from "./founders-v3";
 import { BRIEF, PROFILE, RUN, type RunItem } from "./founders-data";
 import { FX_RIVALS, MOVES_BY_RIVAL, WEEKS, rivalOf, weekOf, type FxRival } from "./founders-fx-data";
+import type { Sensor } from "./founders-war-table";
 
 /*
  * Interactive pieces for /founders-v4: the 3D war table, the x-ray hunt, and the heat map.
@@ -39,8 +40,8 @@ function labelOf(m: RunItem) {
   return null;
 }
 
-function MoveList({ items }: { items: RunItem[] }) {
-  if (!items.length) return <p className="text-[14px]" style={{ color: MUTE }}>Quiet. Nothing it published in these six weeks touched you.</p>;
+function MoveList({ items, empty }: { items: RunItem[]; empty: string }) {
+  if (!items.length) return <p className="text-[14px]" style={{ color: MUTE }}>{empty}</p>;
   return (
     <ul className="flex flex-col gap-1.5">
       {items.map((m) => {
@@ -72,6 +73,20 @@ function MoveList({ items }: { items: RunItem[] }) {
 export function WarRoom() {
   const [gl, setGl] = useState<boolean | null>(null);
   const [sel, setSel] = useState<FxRival>("Peec AI");
+  const [sensor, setSensor] = useState<Sensor>("normal");
+  const [clock, setClock] = useState("");
+  useEffect(() => {
+    const t = () => setClock(new Date().toISOString().slice(11, 19) + " UTC");
+    t();
+    const id = window.setInterval(t, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  const SENSORS: { k: Sensor; t: string }[] = [
+    { k: "normal", t: "Normal" },
+    { k: "night", t: "Night vision" },
+    { k: "thermal", t: "Thermal" },
+  ];
+  const hud = sensor === "night" ? "#9CFFB3" : sensor === "thermal" ? "#FFD166" : "#C9CFD2";
   useEffect(() => setGl(hasWebGL()), []);
   const sources = Array.from(new Map(PROFILE.competitors.map((c) => [c.foundAt, c.url])).entries());
   if (gl === false) return <CompetitorMap />;
@@ -84,17 +99,60 @@ export function WarRoom() {
         </span>
         <span>15 Sep to 31 Oct 2026</span>
       </div>
-      <div className="relative h-[330px] md:h-[400px]" style={{ background: "radial-gradient(ellipse at 50% 60%, #0D1A14 0%, #07090A 65%)" }}>
+      <div role="group" aria-label="Sensor" className="grid grid-cols-3 border-b font-mono text-[12.5px]" style={{ borderColor: LINE }}>
+        {SENSORS.map((x, i) => (
+          <button
+            key={x.k}
+            type="button"
+            aria-pressed={sensor === x.k}
+            onClick={() => setSensor(x.k)}
+            className={`min-h-11 px-2 transition-colors ${i ? "border-l" : ""}`}
+            style={{
+              borderColor: LINE,
+              color: sensor === x.k ? "#050607" : "#C9CFD2",
+              background: sensor === x.k ? (x.k === "night" ? "#7CFF9B" : x.k === "thermal" ? "#FFB224" : "#E8EAEA") : "transparent",
+            }}
+          >
+            {x.t}
+          </button>
+        ))}
+      </div>
+      <div
+        className="nb-war relative h-[330px] md:h-[400px]"
+        style={{
+          background:
+            sensor === "night"
+              ? "radial-gradient(ellipse at 50% 60%, #06240F 0%, #010A04 70%)"
+              : sensor === "thermal"
+                ? "radial-gradient(ellipse at 50% 60%, #0B0B4A 0%, #020214 70%)"
+                : "radial-gradient(ellipse at 50% 60%, #0D1A14 0%, #07090A 65%)",
+        }}
+      >
         {gl && (
           <Guard fallback={<CompetitorMap />}>
             <Suspense fallback={<div className="grid h-full place-items-center font-mono text-[12px]" style={{ color: MUTE }}>loading the map…</div>}>
-              <WarTable selected={sel} onSelect={setSel} />
+              <WarTable selected={sel} tracking onSelect={setSel} sensor={sensor} />
             </Suspense>
           </Guard>
         )}
-        <p className="pointer-events-none absolute bottom-2 left-3 right-3 font-mono text-[11.5px] leading-snug" style={{ color: MUTE }}>
-          Tower height = moves we read. Tap a tower.
-        </p>
+        {sensor !== "normal" && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "repeating-linear-gradient(0deg, rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 1px, transparent 1px, transparent 3px), radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.65) 100%)",
+            }}
+          />
+        )}
+        <div className="pointer-events-none absolute left-3 right-3 top-2 flex justify-between font-mono text-[11px]" style={{ color: hud }}>
+          <span>sensor: {SENSORS.find((x) => x.k === sensor)!.t.toLowerCase()}</span>
+          <span>{clock}</span>
+        </div>
+        <div className="pointer-events-none absolute bottom-2 left-3 right-3 flex flex-col gap-0.5 font-mono text-[11px] leading-snug" style={{ color: hud }}>
+          <span>tracking: {sel}</span>
+          <span style={{ opacity: 0.75 }}>{sensor === "thermal" ? "Hotter = more moves." : "Tower height = moves we read."} Tap a tower.</span>
+        </div>
       </div>
       <div className="border-t px-4 py-3" style={{ borderColor: LINE }}>
         <AnimatePresence mode="wait">
@@ -102,7 +160,7 @@ export function WarRoom() {
             <p className="mb-2 font-mono text-[13px] font-medium" style={{ color: sel === "Peec AI" ? RED : sel === "Profound" ? AMBER : "#E8EAEA" }}>
               {sel}: {MOVES_BY_RIVAL[sel].length} move{MOVES_BY_RIVAL[sel].length === 1 ? "" : "s"}
             </p>
-            <MoveList items={MOVES_BY_RIVAL[sel]} />
+            <MoveList items={MOVES_BY_RIVAL[sel]} empty="Quiet. We read no moves from it between 15 Sep and 31 Oct." />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -147,8 +205,14 @@ function PostText({ xray }: { xray: boolean }) {
       <p className="font-mono text-[12px]" style={{ color: xray ? "#2F8F5C" : "#6B6B6B" }}>
         peec.ai/blog, {s.date}
       </p>
-      <p className="text-[26px] font-semibold leading-[1.15] tracking-[-0.03em] md:text-[30px]" style={{ color: xray ? "#3DD68C" : "#171717" }}>
-        Introducing <span data-target style={hit}>brand perception</span>
+      <p data-target={xray ? undefined : ""} className="text-[26px] font-semibold leading-[1.15] tracking-[-0.03em] md:text-[30px]" style={{ color: xray ? "#3DD68C" : "#171717" }}>
+        Introducing{" "}
+        <span
+          className={xray ? "" : "nb-hint"}
+          style={xray ? hit : { padding: "0 4px", textDecoration: `underline wavy ${RED}`, textUnderlineOffset: 6, textDecorationThickness: 2 }}
+        >
+          brand perception
+        </span>
       </p>
       <p className="font-mono text-[12.5px] leading-[1.5]" style={{ color: xray ? RED : "transparent" }}>
         ↑ your main difference: Brand Perception Truth
@@ -281,20 +345,20 @@ export function Heatmap() {
     if (!items.length) return { background: "#0C1113", border: `1px solid ${LINE}` };
     if (items.some((m) => m.kept === "code-red")) return { background: RED, boxShadow: `0 0 14px ${RED}88` };
     if (items.some((m) => m.kept === "weakened")) return { background: ORANGE, boxShadow: `0 0 12px ${ORANGE}66` };
-    return { background: items.length > 1 ? "#C98A1C" : "#6B5418" };
+    return { background: "#C98A1C" };
   };
   const picked = grid[`${sel.r}|${sel.w}`] ?? [];
   return (
     <div ref={ref} className="rounded-xl border bg-[#07090A] p-4 md:p-6" style={{ borderColor: LINE }}>
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
         <p className="font-mono text-[13px] text-white">Every move, week by week. Tap a square.</p>
-        <p className="flex flex-wrap items-center gap-3 font-mono text-[11.5px]" style={{ color: MUTE }}>
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px]" style={{ color: MUTE }}>
           <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: RED }} />copied you</span>
           <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: ORANGE }} />weakened a claim</span>
-          <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: "#C98A1C" }} />other moves</span>
+          <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: "#C98A1C" }} />other</span>
         </p>
       </div>
-      <div className="grid gap-1 md:gap-1.5" style={{ gridTemplateColumns: `minmax(78px, 132px) repeat(${WEEKS.length}, minmax(0, 1fr)) 28px` }}>
+      <div className="grid gap-1 md:gap-1.5" style={{ gridTemplateColumns: `64px repeat(${WEEKS.length}, minmax(0, 1fr)) 22px` }}>
         <span />
         {WEEKS.map((w) => (
           <span key={w.label} className="text-center font-mono text-[10px] leading-tight md:text-[11px]" style={{ color: MUTE }}>
@@ -309,7 +373,7 @@ export function Heatmap() {
         {FX_RIVALS.map((r, ri) => (
           <div key={r} className="contents">
             <span className="truncate self-center font-mono text-[11.5px] md:text-[13px]" style={{ color: r === "Peec AI" ? RED : "#C9CFD2" }} title={r}>
-              {r === "Ahrefs Brand Radar" ? "Ahrefs" : r}
+              {r.split(" ")[0].replace(".AI", "")}
             </span>
             {WEEKS.map((_, wi) => {
               const items = grid[`${r}|${wi}`] ?? [];
@@ -338,7 +402,7 @@ export function Heatmap() {
         <p className="mb-2 font-mono text-[12px]" style={{ color: MUTE }}>
           {sel.r}, week of {WEEKS[sel.w].label}
         </p>
-        <MoveList items={picked} />
+        <MoveList items={picked} empty={`No moves from ${sel.r} that week.`} />
       </div>
     </div>
   );
