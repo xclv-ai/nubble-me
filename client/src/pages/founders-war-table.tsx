@@ -8,6 +8,7 @@ import type { RunItem } from "./founders-data";
 /* Set by the WarTable props before each render: v4 and v5 pass different runs. */
 let MOVES_BY_RIVAL: Record<FxRival, RunItem[]> = DEFAULT_BY_RIVAL;
 let MAX = 1;
+let BIG = false;
 
 /*
  * The war table: a 3D map of pokpok.ai's market.
@@ -119,16 +120,16 @@ function Tower({ i, name, selected, onPick, still, sensor }: { i: number; name: 
           className="whitespace-nowrap font-mono leading-tight"
           style={{
             color: labelColor,
-            fontSize: 12,
+            fontSize: BIG ? 13.5 : 12,
             padding: "2px 6px",
             border: `1px solid ${selected ? labelColor : "transparent"}`,
             background: selected ? "rgba(0,0,0,0.55)" : "transparent",
             textShadow: "0 0 6px #000, 0 0 2px #000",
           }}
         >
-          <div style={{ fontSize: 9.5, opacity: 0.75 }}>TGT-0{i + 1}</div>
+          <div style={{ fontSize: BIG ? 12 : 9.5, opacity: 0.75 }}>TGT-0{i + 1}</div>
           <div style={{ fontWeight: selected ? 600 : 400 }}>{name}</div>
-          <div style={{ fontSize: 10.5, opacity: 0.85 }}>{moves ? `${moves} move${moves > 1 ? "s" : ""}` : "quiet"}</div>
+          <div style={{ fontSize: BIG ? 12.5 : 10.5, opacity: 0.85 }}>{moves ? `${moves} move${moves > 1 ? "s" : ""}` : "quiet"}</div>
         </div>
       </Html>
     </group>
@@ -202,14 +203,17 @@ export default function WarTable({
   onSelect,
   sensor,
   byRival = DEFAULT_BY_RIVAL,
+  big = false,
 }: {
   selected: FxRival;
   tracking: boolean;
   onSelect: (r: FxRival) => void;
   sensor: Sensor;
   byRival?: Record<FxRival, RunItem[]>;
+  big?: boolean;
 }) {
   MOVES_BY_RIVAL = byRival;
+  BIG = big;
   MAX = Math.max(1, ...FX_RIVALS.map((r) => byRival[r].length));
   const still = useMemo(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
   const p = palette(sensor);

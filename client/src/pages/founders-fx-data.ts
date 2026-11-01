@@ -58,3 +58,6 @@ export function weekOf(item: RunItem) {
   });
   return w;
 }
+
+/** v7: v5 with Luce style touches (graphite frame, pill switch, outlined tags, light numbers). Off for v4 and v5. */
+export const LuceCtx = createContext(false);
