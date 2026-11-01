@@ -485,7 +485,7 @@ export default function FoundersLandingV3({ mono = false, fx = {} }: { mono?: bo
       </FxCtx.Provider>
       <footer className="mx-auto max-w-[1200px] border-t px-5 py-8 md:px-12" style={{ borderColor: LINE }}>
         <p className="font-mono text-[12px]" style={{ color: MUTE }}>
-          nubble.me, made by POKPOK. <span className="select-all">{CONTACT}</span>
+          nubble.me, made by Viktor Konovalov, PokPok.ai CEO. <span className="select-all">{CONTACT}</span>
         </p>
       </footer>
     </div>
