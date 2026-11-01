@@ -14,12 +14,14 @@ import ReadDocPage from "@/pages/read-doc";
 import FeedPage from "@/pages/feed";
 import ReadFeedPage from "@/pages/read-feed";
 import FoundersLanding from "@/pages/founders";
+import FoundersLandingV2 from "@/pages/founders-v2";
 
 function AppRouter() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/founders" component={FoundersLanding} />
+      <Route path="/founders-v2" component={FoundersLandingV2} />
       <Route path="/ai-branding" component={Home} />
       <Route path="/ai-ecommerce" component={Home} />
       <Route path="/a16z-portfolio" component={Home} />
