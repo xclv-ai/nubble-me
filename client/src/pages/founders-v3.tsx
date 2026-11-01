@@ -17,7 +17,7 @@ export const LINE = "#1E2529";
 export const MUTE = "#8A9398";
 
 /** Optional interactive pieces another version can plug in (see founders-v4). */
-export type Fx = { map?: ReactNode; beforeFolder?: ReactNode; record?: ReactNode; folder?: ReactNode; investor?: ReactNode; afterDesk?: ReactNode; formNote?: ReactNode; plans?: ReactNode; closeStamp?: ReactNode };
+export type Fx = { map?: ReactNode; beforeFolder?: ReactNode; record?: ReactNode; folder?: ReactNode; investor?: ReactNode; afterDesk?: ReactNode; formNote?: ReactNode; plans?: ReactNode; closeStamp?: ReactNode; heroWide?: ReactNode };
 const FxCtx = createContext<Fx>({});
 
 const INTEL: FormCopy = {
@@ -177,6 +177,31 @@ export function CompetitorMap() {
 
 function Hero() {
   const fx = useContext(FxCtx);
+  if (fx.heroWide)
+    return (
+      <section className="relative">
+        <Wrap className="grid grid-cols-1 gap-6 pb-8 pt-6 md:pt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-x-12">
+          <div className="flex min-w-0 flex-col items-start gap-4 lg:gap-6">
+            <p className="text-[16px] leading-[1.5] md:text-[18px]" style={{ color: MUTE }}>
+              You run an AI startup. Small team, one product, a homepage that says why you.
+            </p>
+            <h1 className="text-[30px] font-semibold leading-[1.04] tracking-[-0.045em] text-white [text-wrap:balance] md:text-[58px]">
+              Stop reading the news, competitors' blogs, and other founders' self-promoting B.S. posts on LinkedIn.
+            </h1>
+          </div>
+          <div className="flex min-w-0 flex-col items-start gap-5 lg:justify-end">
+            <p className="max-w-[40ch] text-[19px] leading-[1.45] text-[#D9DDDF] md:text-[22px]">
+              Nubble tells you what the news means for your company, shows you the proof, and gives you something you can send.
+            </p>
+            <div className="flex w-full flex-col gap-3">
+              <EmailForm id="site-top" button="Send me the intel" dark preview={false} copy={INTEL} />
+              {fx.formNote}
+            </div>
+          </div>
+        </Wrap>
+        <div className="mx-auto w-full max-w-[1280px] px-3 pb-12 md:px-8 md:pb-20">{fx.heroWide}</div>
+      </section>
+    );
   return (
     <section className="relative">
       <Wrap className="grid grid-cols-1 gap-6 pb-12 pt-6 md:pb-20 md:pt-14 lg:grid-cols-[minmax(0,6fr)_minmax(0,6fr)] lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-6">
