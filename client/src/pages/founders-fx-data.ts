@@ -61,3 +61,6 @@ export function weekOf(item: RunItem) {
 
 /** v7: v5 with Luce style touches (graphite frame, pill switch, outlined tags, light numbers). Off for v4 and v5. */
 export const LuceCtx = createContext(false);
+
+/** v8: Luce materials applied boldly to every block. */
+export const LuceBoldCtx = createContext(false);

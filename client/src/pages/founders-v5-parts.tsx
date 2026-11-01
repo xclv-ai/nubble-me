@@ -1,8 +1,9 @@
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { Ext } from "./founders";
 import { BRIEF, PAINS } from "./founders-data";
 import { XRayHunt } from "./founders-fx";
+import { LuceBoldCtx } from "./founders-fx-data";
 import { AMBER, LINE, MUTE, RED, Stamp } from "./founders-v3";
 
 /*
@@ -26,6 +27,7 @@ export function IntelFolder() {
       {[PROFOUND, AGENT].map((f) => (
         <div
           key={f.url}
+          data-l="glasscard"
           className="flex items-start justify-between gap-3 rounded-md border px-4 py-2 font-mono text-[12px] leading-[1.5]"
           style={{ borderColor: "#3A3326", background: "#16130D", color: "#BFB59F" }}
         >
@@ -125,7 +127,8 @@ function CopyBtn({ text }: { text: string }) {
         }
         setTimeout(() => setState("idle"), 2200);
       }}
-      className="min-h-[36px] rounded-md border px-3 font-mono text-[12px] text-white hover:border-white"
+      data-l="glass"
+      className="min-h-[44px] rounded-md border px-5 font-mono text-[12.5px] text-white hover:border-white"
       style={{ borderColor: "#3A4449" }}
     >
       {state === "done" ? "Copied" : state === "fail" ? "Select the text to copy" : "Copy"}
@@ -171,12 +174,38 @@ const QS = PAINS.slice(0, 3).map((p) => {
 export function Sendables() {
   const updateText = `${UPDATE.subject}\n\n${UPDATE.body.join("\n\n")}`;
   const postText = POST.join("\n\n");
+  const bold = useContext(LuceBoldCtx);
+  const [lit, setLit] = useState<number | null>(null);
+  const pull = (i: number) => {
+    setLit(i);
+    document.getElementById(`nb-send-${i}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    window.setTimeout(() => setLit((x) => (x === i ? null : x)), 1600);
+  };
+  const ring = (i: number) => (bold && lit === i ? { outline: "2px solid #E9D27A", outlineOffset: "13px" } : undefined);
   return (
     <div className="flex flex-col gap-5">
       <p className="text-[17px] leading-[1.55] text-[#D9DDDF] md:text-[19px]">Every folder turns into something you send. Here are three, written from the moves above.</p>
+      {bold && (
+        <div role="group" aria-label="Pull up a sendable" className="flex flex-wrap justify-start gap-5 sm:gap-8">
+          {[
+            { t: "Investor update", d: "M4 6h16v12H4z M4 7l8 6 8-6" },
+            { t: "LinkedIn post", d: "M5 4h14v16H5z M8 9h8 M8 13h8 M8 17h5" },
+            { t: "Deck slide", d: "M3 5h18v11H3z M12 16v4 M8 20h8" },
+          ].map((x, i) => (
+            <button key={x.t} type="button" onClick={() => pull(i)} className="flex w-[84px] flex-col items-center gap-2 font-mono text-[12px] text-[#C9CFD2]">
+              <span data-l="glass" className="grid h-[60px] w-[60px] place-items-center" style={lit === i ? { outline: "2px solid #E9D27A", outlineOffset: "3px" } : undefined}>
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke={lit === i ? "#E9D27A" : "#C9CFD2"} strokeWidth="1.7" strokeLinejoin="round" aria-hidden>
+                  <path d={x.d} />
+                </svg>
+              </span>
+              <span className="text-center leading-tight">{x.t}</span>
+            </button>
+          ))}
+        </div>
+      )}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-5">
         {/* Competitors: the investor update */}
-        <article className="flex min-w-0 flex-col gap-4 rounded-xl border bg-[#0B0E0F] p-5 md:p-6" style={{ borderColor: LINE }}>
+        <article id="nb-send-0" data-l="bezel" className="flex min-w-0 scroll-mt-[90px] flex-col gap-4 rounded-xl border bg-[#0B0E0F] p-5 transition-shadow md:p-6" style={{ borderColor: LINE, ...ring(0) }}>
           <Ask q={QS[0]} kind="a paragraph for your investor update" />
           <div className="flex flex-1 flex-col gap-3 rounded-lg bg-[#F4F4F2] p-4 text-[#1A1A1A]">
             <p className="border-b border-[#D8D8D4] pb-2 text-[13px]">
@@ -196,7 +225,7 @@ export function Sendables() {
         </article>
 
         {/* Moat: the LinkedIn post */}
-        <article className="flex min-w-0 flex-col gap-4 rounded-xl border bg-[#0B0E0F] p-5 md:p-6" style={{ borderColor: LINE }}>
+        <article id="nb-send-1" data-l="bezel" className="flex min-w-0 scroll-mt-[90px] flex-col gap-4 rounded-xl border bg-[#0B0E0F] p-5 transition-shadow md:p-6" style={{ borderColor: LINE, ...ring(1) }}>
           <Ask q={QS[1]} kind="a post for LinkedIn, with the rival's own words as proof" />
           <div className="flex flex-1 flex-col gap-3 rounded-lg bg-[#F4F4F2] p-4 text-[#1A1A1A]">
             <div className="flex items-center gap-3">
@@ -222,12 +251,12 @@ export function Sendables() {
         </article>
 
         {/* Industry: the deck slide */}
-        <article className="flex min-w-0 flex-col gap-4 rounded-xl border bg-[#0B0E0F] p-5 md:p-6" style={{ borderColor: LINE }}>
+        <article id="nb-send-2" data-l="bezel" className="flex min-w-0 scroll-mt-[90px] flex-col gap-4 rounded-xl border bg-[#0B0E0F] p-5 transition-shadow md:p-6" style={{ borderColor: LINE, ...ring(2) }}>
           <Ask q={QS[2]} kind="the “why now” slide for your deck" />
           <div className="flex flex-col">
-            <div className="flex min-h-[230px] w-full max-w-full flex-col justify-between gap-4 rounded-lg border bg-[#050505] p-4 md:p-5" style={{ borderColor: "#2A3338" }}>
+            <div data-l="glasscard" className="flex min-h-[230px] w-full max-w-full flex-col justify-between gap-4 rounded-lg border bg-[#050505] p-4 md:p-5" style={{ borderColor: "#2A3338" }}>
               <div>
-                <p className="font-mono text-[11px] tracking-[0.12em]" style={{ color: AMBER }}>
+                <p className="font-mono text-[12px] tracking-[0.12em]" style={{ color: AMBER }}>
                   WHY NOW
                 </p>
                 <p data-mono className="mt-1.5 !text-[17px] font-semibold !leading-[1.2] !tracking-[-0.02em] text-white md:!text-[18px]">
@@ -288,7 +317,7 @@ export function Plans() {
   return (
     <div className="grid grid-cols-1 gap-2.5 pt-2 sm:grid-cols-2">
       {PLANS.map((p, i) => (
-        <div key={p.name} className="flex min-w-0 flex-col gap-2 rounded-lg border p-4" style={{ borderColor: i ? AMBER : "#2A3338", background: i ? "#1A150B" : "#0B0E0F" }}>
+        <div key={p.name} data-l="glasscard" className="flex min-w-0 flex-col gap-2 rounded-lg border p-4" style={{ borderColor: i ? AMBER : "#2A3338", background: i ? "#1A150B" : "#0B0E0F" }}>
           <div className="flex items-baseline justify-between gap-2">
             <p className="font-mono text-[13px] text-white">{p.name}</p>
             <p className="font-mono text-[11.5px]" style={{ color: i ? AMBER : MUTE }}>
