@@ -102,19 +102,21 @@ function Lead({ children, className = "" }: { children: React.ReactNode; classNa
 
 const BADGE: Record<Label, string> = {
   "code-red": "bg-[#FFEBEB] text-[#C4262C]",
-  weakened: "bg-[#FFEFE3] text-[#BD4B00]",
+  weakened: "bg-[#FFF4D5] text-[#9A4A00]",
   "worth-knowing": "bg-[#EBF5FF] text-[#0062C4]",
 };
 const BADGE_DARK: Record<Label, string> = {
   "code-red": "bg-[#3C1618] text-[#FF6166]",
-  weakened: "bg-[#3A1C0A] text-[#FF8B3E]",
+  weakened: "bg-[#331B00] text-[#FFB224]",
   "worth-knowing": "bg-[#0D2847] text-[#52A8FF]",
 };
 
 export function Badge({ label, dark = false }: { label: Label; dark?: boolean }) {
   return (
     <span
-      className={`inline-flex h-[22px] shrink-0 items-center whitespace-nowrap rounded-full px-2 font-mono text-[12px] font-medium uppercase tracking-[0.04em] ${dark ? BADGE_DARK[label] : BADGE[label]}`}
+      data-label={label}
+      data-dark={dark ? "1" : undefined}
+      className={`nb-badge inline-flex h-[22px] shrink-0 items-center whitespace-nowrap rounded-full px-2 font-mono text-[11px] font-medium uppercase tracking-[0.04em] ${dark ? BADGE_DARK[label] : BADGE[label]}`}
     >
       {LABELS[label].name}
     </span>

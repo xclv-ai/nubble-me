@@ -1128,6 +1128,9 @@ export default function FoundersLandingV2() {
         .founders .font-mono{font-family:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
         .founders .text-fg{color:#171717} .founders .text-mute{color:#666666}
         .founders .border-line{border-color:#EAEAEA} .founders .bg-line{background-color:#EAEAEA}
+        .founders .nb-badge{font-size:12px}
+        .founders .nb-badge[data-label="weakened"]{background:#FFEFE3;color:#BD4B00}
+        .founders .nb-badge[data-label="weakened"][data-dark]{background:#3A1C0A;color:#FF8B3E}
       `}</style>
       <header className="sticky top-0 z-20 border-b border-[#EAEAEA] bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-5 md:px-12">
