@@ -1168,7 +1168,7 @@ export default function FoundersLandingV2() {
       </main>
       <footer className="mx-auto max-w-[1200px] px-5 py-8 md:px-12">
         <p className="font-mono text-[12px] text-mute">
-          nubble.me, made by POKPOK. <span className="select-all">{CONTACT}</span>
+          nubble.me, made by Viktor Konovalov, PokPok.ai CEO. <span className="select-all">{CONTACT}</span>
         </p>
       </footer>
     </div>
