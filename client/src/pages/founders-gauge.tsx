@@ -88,7 +88,7 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
   // panel
   const panel = new THREE.Mesh(
     new THREE.PlaneGeometry(6, 6),
-    new THREE.MeshPhysicalMaterial({ color: 0x0b0b0c, roughness: 0.62, roughnessMap: grain, metalness: 0, clearcoat: 0.15, clearcoatRoughness: 0.5 }),
+    new THREE.MeshPhysicalMaterial({ color: 0x050505, roughness: 0.8, roughnessMap: grain, metalness: 0 }),
   );
   panel.position.z = 0;
   panel.receiveShadow = true;
@@ -215,21 +215,22 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
   const gc = document.createElement("canvas");
   gc.width = gc.height = 1024;
   const gg = gc.getContext("2d")!;
-  const grd = gg.createLinearGradient(446, 256, 768, 696);
-  grd.addColorStop(0, "rgba(255,255,255,0.20)");
-  grd.addColorStop(0.5, "rgba(255,255,255,0.10)");
-  grd.addColorStop(1, "rgba(255,255,255,0.03)");
+  // The Luce glass: a crisp diagonal edge from the top-left of the scale down to the lower right,
+  // an even pale sheet over the upper-right half. No blurred hotspot.
+  const grd = gg.createLinearGradient(560, 420, 900, 80);
+  grd.addColorStop(0, "rgba(255,255,255,0.26)");
+  grd.addColorStop(0.55, "rgba(255,255,255,0.20)");
+  grd.addColorStop(1, "rgba(255,255,255,0.14)");
   gg.fillStyle = grd;
   gg.beginPath();
-  gg.moveTo(144, -124);
-  gg.lineTo(1080, 1016);
+  gg.moveTo(156, -70);
+  gg.lineTo(1114, 848);
   gg.lineTo(1300, -300);
   gg.closePath();
   gg.fill();
   const glareTex = new THREE.CanvasTexture(gc);
   glareTex.colorSpace = THREE.SRGBColorSpace;
-  glareTex.repeat.set(0.5, 0.5);
-  glareTex.offset.set(0.25, 0.25);
+  glareTex.wrapS = glareTex.wrapT = THREE.ClampToEdgeWrapping;
   const mk = document.createElement("canvas");
   mk.width = mk.height = 256;
   {
@@ -247,7 +248,7 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
   );
   glare.position.z = 0.2;
   glare.renderOrder = 10;
-  // glare left out for readability (owner, 1 Nov)
+  rig.add(glare);
 
   // centre number on its own printed disc, counts with the needle
   const nc = document.createElement("canvas");
@@ -347,7 +348,7 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
     gy += (ty - gy) * 0.08;
     rig.rotation.set(-gy * 0.06, gx * 0.06, 0);
     key.position.set(-1.2 + gx * 0.5, 2.4 - gy * 0.5, 3.2);
-    glareTex.offset.set(0.25 - gx * 0.12, 0.25 + gy * 0.12);
+    glareTex.offset.set(-gx * 0.03, gy * 0.03);
     const p = reduce ? 1 : Math.min(1, Math.max(0, (performance.now() - start) / 1500));
     val = from + (target - from) * sweep(p);
     const n = Math.max(0, Math.min(100, Math.round(val * 100)));
