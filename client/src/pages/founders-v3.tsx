@@ -42,9 +42,9 @@ function Stamp({ children, color, className = "" }: { children: React.ReactNode;
 /* ─── The wall screen: the map of your competitors ─── */
 
 const RIVALS = [
-  { name: "Peec AI", x: 272, y: 92, tag: "16 Sep: copied your|main difference", color: RED, url: BRIEF[0].url },
+  { name: "Peec AI", x: 290, y: 112, above: true, tag: "16 Sep: copied your|main difference", color: RED, url: BRIEF[0].url },
   { name: "Profound", x: 98, y: 96, tag: "15 Sep: raised $180M", color: AMBER, url: BRIEF[2].url },
-  { name: "Semrush AI Visibility Toolkit", x: 200, y: 40 },
+  { name: "Semrush AI Visibility Toolkit", x: 120, y: 40 },
   { name: "Otterly.AI", x: 330, y: 214 },
   { name: "Scrunch AI", x: 74, y: 220 },
   { name: "Ahrefs Brand Radar", x: 214, y: 282 },
@@ -56,8 +56,8 @@ function CompetitorMap() {
   const sources = Array.from(new Map(PROFILE.competitors.map((c) => [c.foundAt, c.url])).entries());
   return (
     <div ref={ref} className="overflow-hidden rounded-xl border bg-[#07090A]" style={{ borderColor: LINE }}>
-      <div className="flex items-center justify-between gap-3 border-b px-4 py-2.5 font-mono text-[12px]" style={{ borderColor: LINE, color: MUTE }}>
-        <span>
+      <div className="flex flex-col gap-0.5 border-b px-4 py-2.5 font-mono text-[12px] sm:flex-row sm:items-center sm:justify-between sm:gap-3" style={{ borderColor: LINE, color: MUTE }}>
+        <span className="whitespace-nowrap">
           <span className="mr-2 inline-block h-2 w-2 rounded-full" style={{ background: RED }} />
           pokpok.ai and its rivals
         </span>
@@ -124,12 +124,12 @@ function CompetitorMap() {
                   strokeWidth="1.5"
                 />
               )}
-              <text x={r.x} y={r.y + (on ? 30 : 18)} textAnchor="middle" className="font-mono" stroke="#07090A" strokeWidth="5" paintOrder="stroke" strokeLinejoin="round" fontSize="12" fill={on ? r.color : "#A9B1B5"}>
+              <text x={r.x} y={r.above && on ? r.y - 24 : r.y + (on ? 30 : 18)} textAnchor="middle" className="font-mono" stroke="#07090A" strokeWidth="5" paintOrder="stroke" strokeLinejoin="round" fontSize="12" fill={on ? r.color : "#A9B1B5"}>
                 {r.name}
               </text>
               {on && r.url && (
                 <a href={r.url} target="_blank" rel="noopener noreferrer">
-                <text x={r.x} y={r.y + 45} textAnchor="middle" className="font-mono" stroke="#07090A" strokeWidth="5" paintOrder="stroke" strokeLinejoin="round" fontSize="10.5" fill={r.color}>
+                <text x={r.x} y={r.above ? r.y - 64 : r.y + 45} textAnchor="middle" className="font-mono" stroke="#07090A" strokeWidth="5" paintOrder="stroke" strokeLinejoin="round" fontSize="10.5" fill={r.color}>
                   {r.tag.split("|").map((line, k) => (
                     <tspan key={k} x={r.x} dy={k ? 13 : 0}>
                       {line}
@@ -213,13 +213,15 @@ function OpenFolder() {
         {[BRIEF[2], BRIEF[1]].map((f) => (
           <div
             key={f.url}
-            className="flex items-start justify-between gap-3 rounded-t-md border border-b-0 px-4 py-2 font-mono text-[12px] leading-[1.5]"
+            className="flex items-start justify-between gap-3 rounded-md border px-4 py-2 font-mono text-[12px] leading-[1.5]"
             style={{ borderColor: "#3A3326", background: "#16130D", color: "#BFB59F" }}
           >
-            <a href={f.url} target="_blank" rel="noopener noreferrer" className="min-w-0 underline decoration-[#5C4C2E] underline-offset-[3px] hover:decoration-current">
+            <a href={f.url} target="_blank" rel="noopener noreferrer" className="min-w-0 hover:text-white">
               {f.date}: {f.title}
             </a>
-            <span aria-hidden className="mt-1.5 h-2 w-2 shrink-0 rounded-full" style={{ background: f.label === "weakened" ? "#FF8B3E" : MUTE }} />
+            <span className="shrink-0" style={{ color: f.label === "weakened" ? "#FF8B3E" : MUTE }}>
+              {f.label === "weakened" ? "weakened" : "worth knowing"}
+            </span>
           </div>
         ))}
       </div>
@@ -359,7 +361,7 @@ function Close() {
         </div>
         <div className="flex min-w-0 flex-col gap-3">
           <p className="text-[17px] leading-[1.55] text-[#D9DDDF]">
-            Paste your website. That is the whole setup. Nubble finds your competitors and the big players. You correct. You never fill in a form.
+            Nubble finds your competitors and the big players. You correct. You never fill in a form.
           </p>
           <EmailForm id="site-bottom" button="Send me the intel" dark preview={false} copy={INTEL} />
           <ul className="flex flex-wrap gap-2 pt-1">

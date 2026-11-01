@@ -1720,14 +1720,14 @@ function Mini({ children, innerRef, dark = false }: { children: React.ReactNode;
 /* Investor: competitors. A dated table of who moved, with links. */
 function PrevCompetitors() {
   const { ref, step } = usePlay();
-  const rows = [RUN[2], RUN[10], RUN[0]];
+  const rows = [RUN[0], RUN[2], RUN[10]];
   return (
     <Mini innerRef={ref} dark>
       <p className="text-[#EDEDED]">who moved</p>
       {rows.map((r, i) => (
         <motion.div key={r.title} {...fade(step >= i + 1)} className="grid grid-cols-[44px_minmax(0,1fr)_auto] items-start gap-2 border-t border-[#2E2E2E] pt-2">
           <span>{r.date}</span>
-          <span className="font-sans text-[12px] leading-[1.35] text-[#EDEDED]">{r.title}</span>
+          <span className="font-sans text-[12px] leading-[1.35] text-[#EDEDED]">{r.title.replace(/ (\S+)$/, "\u00a0$1")}</span>
           <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-[#52A8FF] underline-offset-2 hover:underline">
             link
           </a>
@@ -1748,12 +1748,14 @@ function PrevMoat() {
       </motion.div>
       <p className="mt-1 text-[#EDEDED]">rivals who tried</p>
       {[
-        { d: "16 Sep", t: "Peec: “brand perception”" },
-        { d: "22 Oct", t: "Peec: ranks what to fix first" },
+        { d: "16 Sep", t: "Peec: “brand perception”", u: RUN[2].url },
+        { d: "22 Oct", t: "Peec: ranks what to fix first", u: RUN[10].url },
       ].map((r, i) => (
         <motion.div key={r.d} {...fade(step >= i + 2)} className="grid grid-cols-[44px_minmax(0,1fr)] items-center gap-2 rounded border border-[#2E2E2E] px-2 py-1.5">
           <span className="text-[#FF6166]">{r.d}</span>
-          <span className="truncate font-sans text-[12px] text-[#EDEDED]">{r.t}</span>
+          <a href={r.u} target="_blank" rel="noopener noreferrer" className="font-sans text-[12px] leading-[1.35] text-[#EDEDED] underline decoration-[#5A5A5A] underline-offset-2 hover:decoration-current">
+            {r.t}
+          </a>
         </motion.div>
       ))}
     </Mini>
@@ -1772,7 +1774,9 @@ function PrevIndustry() {
           <motion.div key={r.title} {...fade(step >= i + 1)} className="relative">
             <span className="absolute -left-[17px] top-1 h-2 w-2 rounded-full bg-[#FFB224]" />
             <span className="text-[#FFB224]">{r.date} 2026</span>
-            <p className="truncate font-sans text-[12px] text-[#EDEDED]">{r.title}</p>
+            <a href={r.url} target="_blank" rel="noopener noreferrer" className="block font-sans text-[12px] leading-[1.35] text-[#EDEDED] underline decoration-[#5A5A5A] underline-offset-2 hover:decoration-current">
+              {r.title}
+            </a>
           </motion.div>
         ))}
       </div>
