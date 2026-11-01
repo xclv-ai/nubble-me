@@ -95,7 +95,8 @@ export const LUCE_CSS_2 = `
   /* v8 sceptic fixes: 12px minimum text, 44px tap areas, one-line depth tabs */
   .nb-luce .text-\\[10px\\],.nb-luce .text-\\[11px\\],.nb-luce .text-\\[11\\.5px\\]{font-size:12px!important}
   .nb-luce a.underline:not([class*="py-"]):not([class*="block"]){padding-block:14px}
-  .nb-luce [data-l=pill] button{white-space:nowrap}
+  .nb-luce [data-l=pill]{grid-template-columns:auto minmax(0,1fr) auto!important}
+  .nb-luce [data-l=pill] button{white-space:nowrap;font-size:13px!important;padding-inline:9px!important}
   .nb-luce a.min-w-0[href*="globenewswire"]{display:inline-block;padding-block:5px}
   .nb-luce header [data-l=cta]{min-height:44px}
   .nb-luce [data-l=glasscard] button.aspect-square{min-height:44px!important}
