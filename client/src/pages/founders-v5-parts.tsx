@@ -193,7 +193,7 @@ export function Sendables() {
             { t: "Deck slide", d: "M3 5h18v11H3z M12 16v4 M8 20h8" },
           ].map((x, i) => (
             <button key={x.t} type="button" onClick={() => pull(i)} className="flex w-[84px] flex-col items-center gap-2 font-mono text-[12px] text-[#C9CFD2]">
-              <span data-l="glass" className="grid h-[60px] w-[60px] place-items-center" style={lit === i ? { boxShadow: "0 0 0 1.5px #E9D27A,0 0 18px rgba(233,210,122,.4),0 10px 20px rgba(0,0,0,.9)" } : undefined}>
+              <span data-l="glass" className="grid h-[60px] w-[60px] place-items-center" style={lit === i ? { outline: "2px solid #E9D27A", outlineOffset: "3px" } : undefined}>
                 <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke={lit === i ? "#E9D27A" : "#C9CFD2"} strokeWidth="1.7" strokeLinejoin="round" aria-hidden>
                   <path d={x.d} />
                 </svg>
@@ -256,7 +256,7 @@ export function Sendables() {
           <div className="flex flex-col">
             <div data-l="glasscard" className="flex min-h-[230px] w-full max-w-full flex-col justify-between gap-4 rounded-lg border bg-[#050505] p-4 md:p-5" style={{ borderColor: "#2A3338" }}>
               <div>
-                <p className="font-mono text-[11px] tracking-[0.12em]" style={{ color: AMBER }}>
+                <p className="font-mono text-[12px] tracking-[0.12em]" style={{ color: AMBER }}>
                   WHY NOW
                 </p>
                 <p data-mono className="mt-1.5 !text-[17px] font-semibold !leading-[1.2] !tracking-[-0.02em] text-white md:!text-[18px]">
