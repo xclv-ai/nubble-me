@@ -111,17 +111,19 @@ const BADGE_DARK: Record<Label, string> = {
   "worth-knowing": "bg-[#0D2847] text-[#52A8FF]",
 };
 
-function Badge({ label, dark = false }: { label: Label; dark?: boolean }) {
+export function Badge({ label, dark = false }: { label: Label; dark?: boolean }) {
   return (
     <span
-      className={`inline-flex h-[22px] shrink-0 items-center whitespace-nowrap rounded-full px-2 font-mono text-[11px] font-medium uppercase tracking-[0.04em] ${dark ? BADGE_DARK[label] : BADGE[label]}`}
+      data-label={label}
+      data-dark={dark ? "1" : undefined}
+      className={`nb-badge inline-flex h-[22px] shrink-0 items-center whitespace-nowrap rounded-full px-2 font-mono text-[11px] font-medium uppercase tracking-[0.04em] ${dark ? BADGE_DARK[label] : BADGE[label]}`}
     >
       {LABELS[label].name}
     </span>
   );
 }
 
-function Ext({ href, children, className = "" }: { href: string; children: React.ReactNode; className?: string }) {
+export function Ext({ href, children, className = "" }: { href: string; children: React.ReactNode; className?: string }) {
   const internal = href.startsWith("#");
   return (
     <a
@@ -135,7 +137,7 @@ function Ext({ href, children, className = "" }: { href: string; children: React
 }
 
 /** Counts from `from` to `to` once, when visible. Shows the final number at rest. */
-function Count({ from, to, delay = 0 }: { from: number; to: number; delay?: number }) {
+export function Count({ from, to, delay = 0 }: { from: number; to: number; delay?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
   const reduce = useReducedMotion();
@@ -153,7 +155,7 @@ function Count({ from, to, delay = 0 }: { from: number; to: number; delay?: numb
   );
 }
 
-function EmailForm({ id, button, dark = false }: { id: string; button: string; dark?: boolean }) {
+export function EmailForm({ id, button, dark = false }: { id: string; button: string; dark?: boolean }) {
   const [url, setUrl] = useState("");
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState(false);
@@ -394,7 +396,7 @@ function Opening() {
 /* ─── 2. Why: six pains, each a small picture of the real story ─── */
 
 /** Plays once when the picture scrolls into view; at rest (or with reduced motion) it shows the end state. */
-function usePlay(delayMs = 0) {
+export function usePlay(delayMs = 0) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
   const reduce = useReducedMotion();
@@ -408,7 +410,7 @@ function usePlay(delayMs = 0) {
   return { ref, step };
 }
 
-const fade = (on: boolean) => ({
+export const fade = (on: boolean) => ({
   initial: false as const,
   animate: on ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 4, scale: 0.96 },
   transition: { duration: 0.3, ease: "easeOut" as const },
@@ -426,7 +428,7 @@ function Stage({ children, innerRef }: { children: React.ReactNode; innerRef: Re
   );
 }
 
-function Dots() {
+export function Dots() {
   return (
     <span className="inline-flex gap-1">
       {[0, 1, 2].map((d) => (
@@ -442,7 +444,7 @@ function Dots() {
 }
 
 /** 1. Asked about competitors: you answer from memory, with no dates and no links. */
-function PicProtected() {
+export function PicProtected() {
   const { ref, step } = usePlay();
   return (
     <Stage innerRef={ref}>
@@ -461,7 +463,7 @@ function PicProtected() {
 }
 
 /** 2. The moat slide: the proof would be a list of rivals who tried and failed. Nobody kept it. */
-function PicMoat() {
+export function PicMoat() {
   const { ref, step } = usePlay(150);
   return (
     <Stage innerRef={ref}>
@@ -488,7 +490,7 @@ function PicMoat() {
 }
 
 /** 3. The "why now" slide, written from memory the night before: events with no dates. */
-function PicIndustry() {
+export function PicIndustry() {
   const { ref, step } = usePlay(300);
   const marks = ["a rival launched", "a rival raised", "prices changed"];
   return (
@@ -556,7 +558,7 @@ function PicCopy() {
 }
 
 /** 5. A year ago only you said it. Today three rivals say it too. */
-function PicStale() {
+export function PicStale() {
   const { ref, step } = usePlay(150);
   return (
     <Stage innerRef={ref}>
@@ -583,7 +585,7 @@ function PicStale() {
 }
 
 /** 6. A lab ships your paid feature for free, in one afternoon. */
-function PicLab() {
+export function PicLab() {
   const { ref, step } = usePlay(300);
   return (
     <Stage innerRef={ref}>
@@ -710,7 +712,7 @@ const FLOOD = [
 ];
 
 /** The daily flood, scrolling past. None of it says whether it matters to you. */
-function DailyFlood() {
+export function DailyFlood({ plain = false }: { plain?: boolean } = {}) {
   const reduce = useReducedMotion();
   const rows = [FLOOD, [...FLOOD.slice(3), ...FLOOD.slice(0, 3)]];
   return (
@@ -734,7 +736,7 @@ function DailyFlood() {
                     hit ? "border-[#FFD1D1] bg-[#FFEBEB] text-[#C4262C]" : "border-line bg-white text-fg"
                   }`}
                 >
-                  {lab ? <Cpu size={13} aria-hidden /> : hit ? <Copy size={13} aria-hidden /> : <Globe size={13} aria-hidden />}
+                  {!plain && (lab ? <Cpu size={13} aria-hidden /> : hit ? <Copy size={13} aria-hidden /> : <Globe size={13} aria-hidden />)}
                   {t}
                   <span className="rounded bg-[#FFF4D5] px-1 text-[#9A4A00]">matters to you?</span>
                 </span>
@@ -786,7 +788,7 @@ function TwoHours() {
 }
 
 /** What founders use today: four places, all about everyone. */
-function TodayTools() {
+export function TodayTools() {
   const { ref, step } = usePlay();
   const tools = ["X", "newsletters", "investor group chats", "a ChatGPT window"];
   return (
@@ -857,7 +859,7 @@ function Why() {
 
 /* ─── 2b. The promise: what founders receive ─── */
 
-const PROMISE: { icon: LucideIcon; bold: string; rest: string }[] = [
+export const PROMISE: { icon: LucideIcon; bold: string; rest: string }[] = [
   {
     icon: Filter,
     bold: "Every day it reads what the big labs and your competitors publish.",
@@ -907,7 +909,7 @@ function Part({ n, active, children, className = "" }: { n: number; active: numb
   );
 }
 
-function BriefPart({ n }: { n: number }) {
+export function BriefPart({ n }: { n: number }) {
   const s = BRIEF[1];
   if (n === 0)
     return (
@@ -984,7 +986,7 @@ function BriefPart({ n }: { n: number }) {
   return null;
 }
 
-function AnatomyBrief({ active }: { active: number }) {
+export function AnatomyBrief({ active }: { active: number }) {
   return (
     <div className="overflow-hidden rounded-xl border border-[#2E2E2E] bg-[#0A0A0A] text-[#EDEDED] shadow-[0_24px_48px_-24px_rgba(0,0,0,0.45)]">
       <div className="flex items-center gap-2 border-b border-[#2E2E2E] px-4 py-2.5">
@@ -1134,7 +1136,7 @@ function Panel({ title, children, className = "" }: { title: string; children: R
   );
 }
 
-function ProfileDemo() {
+export function ProfileDemo() {
   return (
     <Panel title={`What Nubble read from ${PROFILE.site}`}>
       <div className="px-4 pt-4">
@@ -1155,7 +1157,7 @@ function ProfileDemo() {
   );
 }
 
-function CompetitorsDemo() {
+export function CompetitorsDemo({ twoUp = false }: { twoUp?: boolean } = {}) {
   const [mode, setMode] = useState<"view" | "edit" | "done">("view");
   const [list, setList] = useState(PROFILE.competitors.map((c) => ({ ...c, mine: false })));
   const [draft, setDraft] = useState("");
@@ -1167,7 +1169,7 @@ function CompetitorsDemo() {
   };
   return (
     <Panel title="Competitors and big players, each with the link where it was found">
-      <motion.div layout className="grid grid-cols-1 gap-2 p-4 sm:grid-cols-2">
+      <motion.div layout className={`grid gap-2 p-4 sm:grid-cols-2 ${twoUp ? "grid-cols-2" : "grid-cols-1"}`}>
         <AnimatePresence initial={false}>
           {list.map((c) => (
             <motion.div
@@ -1302,7 +1304,7 @@ function hostOf(url: string) {
 }
 
 /** The real rival posts from the example run, read one after another, then the four kinds of source. */
-function SourcesDemo() {
+export function SourcesDemo({ plain = false }: { plain?: boolean } = {}) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { margin: "-80px" });
   const reduce = useReducedMotion();
@@ -1315,7 +1317,7 @@ function SourcesDemo() {
   const rows = [0, 1, 2, 3].map((k) => RUN[(head + k) % RUN.length]);
   return (
     <div ref={ref} className="flex flex-col gap-4">
-      <Panel title="Reading for pokpok.ai, every day">
+      <Panel title="Reading for pokpok.ai, every day" className={plain ? "hidden md:block" : ""}>
         <div className="relative h-[176px] overflow-hidden" aria-label="Rival posts read in the example run">
           <AnimatePresence initial={false} mode="popLayout">
             {rows.map((r, k) => (
@@ -1347,10 +1349,10 @@ function SourcesDemo() {
           </AnimatePresence>
         </div>
       </Panel>
-      <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+      <div className={`grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2 ${plain ? "grid-cols-2" : "grid-cols-1"}`}>
         {SOURCES.map((s, i) => (
-          <div key={s.name} className="flex min-w-0 gap-3 bg-white p-4">
-            <IconTile icon={SOURCE_ICONS[i]} />
+          <div key={s.name} className={`flex min-w-0 gap-3 bg-white ${plain ? "p-3 sm:p-4" : "p-4"}`}>
+            {!plain && <IconTile icon={SOURCE_ICONS[i]} />}
             <div className="flex min-w-0 flex-col gap-1">
               <h4 className="text-[15px] font-semibold tracking-[-0.01em] text-fg">{s.name}</h4>
               <p className="text-[14px] leading-[1.5] text-mute">{s.body}</p>
@@ -1362,7 +1364,7 @@ function SourcesDemo() {
   );
 }
 
-function RunDemo() {
+export function RunDemo() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-120px" });
   const reduce = useReducedMotion();
@@ -1900,8 +1902,8 @@ function PrevSales() {
   );
 }
 
-const INVESTOR_PREVIEWS = [PrevCompetitors, PrevMoat, PrevIndustry];
-const OUTPUT_PREVIEWS = [PrevLaunch, PrevHomepage, PrevInvestorUpdate, PrevDeck, PrevPost, PrevSales];
+export const INVESTOR_PREVIEWS = [PrevCompetitors, PrevMoat, PrevIndustry];
+export const OUTPUT_PREVIEWS = [PrevLaunch, PrevHomepage, PrevInvestorUpdate, PrevDeck, PrevPost, PrevSales];
 
 function GetBack() {
   return (
@@ -1994,7 +1996,7 @@ function SlackBubble() {
   );
 }
 
-function PlaceMock({ i }: { i: number }) {
+export function PlaceMock({ i }: { i: number }) {
   const { ref, step } = usePlay(i * 120);
   const s = BRIEF[0];
   if (i === 0)
