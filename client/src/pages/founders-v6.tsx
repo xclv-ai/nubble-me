@@ -232,10 +232,10 @@ function Diagram({ byRival, sel, onSel }: { byRival: Record<FxRival, RunItem[]>;
       <rect x="110" y={pY} width="140" height={pH} rx="14" fill="url(#plate)" stroke="#55595E" />
       <rect x="118" y={pY + 8} width="124" height={pH - 16} rx="8" fill="url(#cells)" opacity="0.9" />
       <rect x="124" y={pY + pH / 2 - 19} width="112" height="38" rx="4" fill="#050505" opacity="0.85" />
-      <text x="180" y={pY + pH / 2 - 3} textAnchor="middle" fontSize="13" fontFamily="var(--font-mono)" fill={GREEN} letterSpacing="0.06em">
+      <text x="180" y={pY + pH / 2 - 4} textAnchor="middle" fontSize="15" fontFamily="var(--font-mono)" fill={GREEN} letterSpacing="0.06em">
         YOU
       </text>
-      <text x="180" y={pY + pH / 2 + 13} textAnchor="middle" fontSize="13" fontFamily="var(--font-mono)" fill="#E8EAEA">
+      <text x="180" y={pY + pH / 2 + 14} textAnchor="middle" fontSize="15" fontFamily="var(--font-mono)" fill="#E8EAEA">
         pokpok.ai
       </text>
       {spots.map(({ r, x, top }) => {
@@ -284,7 +284,7 @@ function Diagram({ byRival, sel, onSel }: { byRival: Record<FxRival, RunItem[]>;
                 {l}
               </text>
             ))}
-            {on && <rect x={x - 62} y={top ? 1 : 232} width="124" height={top ? 56 : 66} rx="4" fill="none" stroke="#FFFFFF" strokeOpacity="0.5" />}
+            {on && <rect x={x - 67} y={top ? 1 : 232} width="134" height={top ? 56 : 66} rx="4" fill="none" stroke="#FFFFFF" strokeOpacity="0.5" />}
           </g>
         );
       })}
@@ -521,7 +521,7 @@ function Cockpit() {
               {d} days
             </p>
             <p className="text-[12.5px] leading-[1.35]" style={{ color: "#A9B1B5" }}>
-              since Peec took your main term, <Ext href={BRIEF[0].url} className="-my-[11px] inline-block py-[11px]">16 Sep</Ext>
+              since Peec took your main term, <Ext href={BRIEF[0].url} className="-my-[14px] inline-block py-[14px]">16 Sep</Ext>
             </p>
           </div>
           <div className="mx-auto w-full max-w-[180px] lg:max-w-[200px]">
@@ -542,7 +542,7 @@ function Cockpit() {
               Rivals found by a live web search, on these lists:{" "}
               {FOUND_AT.map(([host, url], i) => (
                 <span key={host}>
-                  <Ext href={url} className="-my-[11px] inline-block py-[11px]">{host}</Ext>
+                  <Ext href={url} className="-my-[14px] inline-block py-[14px]">{host}</Ext>
                   {i < FOUND_AT.length - 1 ? ", " : ""}
                 </span>
               ))}
