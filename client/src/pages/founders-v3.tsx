@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Count, EmailForm, Ext, INVESTOR_PREVIEWS, usePlay, fade, type FormCopy } from "./founders";
 import { Big, SizesBig } from "./founders-v2";
@@ -11,10 +11,14 @@ import { BRIEF, CONTACT, INVESTOR_ANSWERS, PAINS, PLACES, PROFILE } from "./foun
  * Five screens, nothing hidden behind a tap. Every fact comes from founders-data.ts (real, linked).
  */
 
-const RED = "#FF4D4F";
-const AMBER = "#FFB224";
-const LINE = "#1E2529";
-const MUTE = "#8A9398";
+export const RED = "#FF4D4F";
+export const AMBER = "#FFB224";
+export const LINE = "#1E2529";
+export const MUTE = "#8A9398";
+
+/** Optional interactive pieces another version can plug in (see founders-v4). */
+export type Fx = { map?: ReactNode; beforeFolder?: ReactNode; record?: ReactNode };
+const FxCtx = createContext<Fx>({});
 
 const INTEL: FormCopy = {
   subject: "Nubble: my first intel folder",
@@ -50,7 +54,7 @@ const RIVALS = [
   { name: "Ahrefs Brand Radar", x: 214, y: 282 },
 ];
 
-function CompetitorMap() {
+export function CompetitorMap() {
   const { ref, step } = usePlay(200);
   const reduce = useReducedMotion();
   const sources = Array.from(new Map(PROFILE.competitors.map((c) => [c.foundAt, c.url])).entries());
@@ -172,6 +176,7 @@ function CompetitorMap() {
 }
 
 function Hero() {
+  const fx = useContext(FxCtx);
   return (
     <section className="relative">
       <Wrap className="grid grid-cols-1 gap-6 pb-12 pt-6 md:pb-20 md:pt-14 lg:grid-cols-[minmax(0,6fr)_minmax(0,6fr)] lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-6">
@@ -184,7 +189,7 @@ function Hero() {
           </h1>
         </div>
         <div className="min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:pt-2">
-          <CompetitorMap />
+          {fx.map ?? <CompetitorMap />}
         </div>
         <div className="flex min-w-0 flex-col items-start gap-6 lg:col-start-1 lg:row-start-2">
           <p className="max-w-[40ch] text-[19px] leading-[1.45] text-[#D9DDDF] md:text-[22px]">
@@ -273,6 +278,7 @@ function OpenFolder() {
 
 function Desk() {
   const p = PAINS[3];
+  const fx = useContext(FxCtx);
   return (
     <section className="border-t" style={{ borderColor: LINE }}>
       <Wrap className="grid grid-cols-1 gap-8 py-12 md:py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
@@ -283,7 +289,10 @@ function Desk() {
           </p>
           <p className="text-[17px] font-medium text-white md:text-[19px]">We built it because we are that founder. POKPOK is our company. Everything below happened to us.</p>
         </div>
-        <OpenFolder />
+        <div className="flex min-w-0 flex-col gap-6">
+          {fx.beforeFolder}
+          <OpenFolder />
+        </div>
       </Wrap>
     </section>
   );
@@ -292,6 +301,7 @@ function Desk() {
 /* ─── What you hand the investor ─── */
 
 function InvestorFile() {
+  const fx = useContext(FxCtx);
   const qs = PAINS.slice(0, 3).map((p) => p.head.replace("An investor asks: ", ""));
   return (
     <section className="border-t" style={{ borderColor: LINE }}>
@@ -301,6 +311,7 @@ function InvestorFile() {
           <span style={{ color: MUTE }}>the dated record of every move in your market, what each one did to you, and what you said back.</span>
         </p>
       </Wrap>
+      {fx.record && <Wrap className="pb-8 md:pb-10">{fx.record}</Wrap>}
       <Wrap className="grid grid-cols-1 gap-4 pb-12 md:pb-20 lg:grid-cols-3 lg:gap-5">
         {INVESTOR_ANSWERS.map((a, i) => {
           const Prev = INVESTOR_PREVIEWS[i];
@@ -386,7 +397,20 @@ function Close() {
   );
 }
 
-export default function FoundersLandingV3() {
+const MONO_CSS = `
+  .founders.nb-mono h1,.founders.nb-mono h2,.founders.nb-mono h3,.founders.nb-mono button,.founders.nb-mono .font-mono,.founders.nb-mono [data-mono]{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
+  .founders.nb-mono h1,.founders.nb-mono h2,.founders.nb-mono h3{letter-spacing:-0.035em}
+  .founders.nb-mono h1{font-size:27px;line-height:1.1}
+  .founders.nb-mono h2{font-size:28px;line-height:1.1}
+  .founders.nb-mono h3{font-size:19px}
+  @media (min-width:768px){
+    .founders.nb-mono h1{font-size:48px}
+    .founders.nb-mono h2{font-size:42px}
+    .founders.nb-mono h3{font-size:20px}
+  }
+`;
+
+export default function FoundersLandingV3({ mono = false, fx = {} }: { mono?: boolean; fx?: Fx } = {}) {
   useEffect(() => {
     document.title = "Nubble for AI founders";
   }, []);
@@ -407,9 +431,11 @@ export default function FoundersLandingV3() {
   };
   return (
     <div
-      className="founders fixed inset-0 overflow-y-auto overflow-x-hidden overscroll-y-contain bg-[#050607] text-[#E8EAEA] antialiased [-webkit-overflow-scrolling:touch]"
+      className={`founders ${mono ? "nb-mono" : ""} fixed inset-0 overflow-y-auto overflow-x-hidden overscroll-y-contain bg-[#050607] text-[#E8EAEA] antialiased [-webkit-overflow-scrolling:touch]`}
       style={{ fontFamily: "'Geist', ui-sans-serif, system-ui, sans-serif", colorScheme: "dark" }}
     >
+      {mono && <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />}
+      {mono && <style>{MONO_CSS}</style>}
       <style>{`
         .founders .font-mono{font-family:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
         .founders .text-fg{color:#171717} .founders .text-mute{color:#666666}
@@ -443,6 +469,7 @@ export default function FoundersLandingV3() {
           </a>
         </div>
       </header>
+      <FxCtx.Provider value={fx}>
       <main>
         <Hero />
         <Desk />
@@ -450,6 +477,7 @@ export default function FoundersLandingV3() {
         <SoWhat />
         <Close />
       </main>
+      </FxCtx.Provider>
       <footer className="mx-auto max-w-[1200px] border-t px-5 py-8 md:px-12" style={{ borderColor: LINE }}>
         <p className="font-mono text-[12px]" style={{ color: MUTE }}>
           nubble.me, made by POKPOK. <span className="select-all">{CONTACT}</span>
