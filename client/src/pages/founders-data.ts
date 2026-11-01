@@ -257,3 +257,23 @@ export const PLACES = [
     body: "For the day you want to go deep on one story and swipe between the three sizes. Live today.",
   },
 ];
+
+/**
+ * The second pass for /founders-v5 (1 Nov 2026): the same window, 15 Sep to 31 Oct, now also reading
+ * Otterly.AI, Scrunch AI and Ahrefs Brand Radar: their blogs, changelogs and posts on X.
+ * Every date was checked on the page. LinkedIn could not be read without a login, so no LinkedIn post is here.
+ */
+export const RUN_MORE: RunItem[] = [
+  { date: "22 Sep", title: "Scrunch: launches Agent Pages", url: "https://scrunch.com/blog/agent-pages-deliver-a-first-class-site-experience-to-ai-agents/" },
+  { date: "25 Sep", title: "Scrunch: study on self-ranking listicles in AI (X)", url: "https://x.com/ScrunchAI/status/2103522074757398878" },
+  { date: "28 Sep", title: "Ahrefs: Brand Radar filters for entities and ads", url: "https://docs.ahrefs.com/en/api/docs/changelog#sep-28-2026" },
+  { date: "29 Sep", title: "Ahrefs: Brand Radar Web Pages API", url: "https://docs.ahrefs.com/en/api/docs/changelog#sep-29-2026" },
+  { date: "1 Oct", title: "Scrunch: ships inside SitecoreAI", url: "https://scrunch.com/blog/scrunch-sitecoreai-observe-optimize-ship-in-one-place/" },
+  { date: "4 Oct", title: "Otterly: Brand Reports add sentiment and position", url: "https://otterly.ai/blog/brand-reports-update-sentiment-position-annotations/" },
+  { date: "8 Oct", title: "Otterly: partners with Getfluence", url: "https://otterly.ai/blog/otterlyai-getfluence-partnership/" },
+  { date: "13 Oct", title: "Scrunch: survey says a dashboard isn't a strategy", url: "https://scrunch.com/blog/a-dashboard-isnt-a-strategy/" },
+  { date: "14 Oct", title: "Ahrefs: Brand Radar labels funnel stage and intent", url: "https://docs.ahrefs.com/en/api/docs/changelog#oct-14-2026" },
+  { date: "21 Oct", title: "Otterly: launches Brand Profiling", url: "https://otterly.ai/blog/brand-profiling/", kept: "weakened" },
+  { date: "27 Oct", title: "Scrunch: Zapier integration", url: "https://scrunch.com/blog/zapier-turn-ai-insights-into-automated-workflows/" },
+  { date: "27 Oct", title: "Ahrefs: Traffic Analytics shows AI traffic (X)", url: "https://x.com/ahrefs/status/2115047942440534520" },
+];

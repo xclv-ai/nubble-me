@@ -2,7 +2,12 @@ import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, QuadraticBezierLine } from "@react-three/drei";
 import * as THREE from "three";
-import { FX_RIVALS, MOVES_BY_RIVAL, type FxRival } from "./founders-fx-data";
+import { FX_RIVALS, MOVES_BY_RIVAL as DEFAULT_BY_RIVAL, type FxRival } from "./founders-fx-data";
+import type { RunItem } from "./founders-data";
+
+/* Set by the WarTable props before each render: v4 and v5 pass different runs. */
+let MOVES_BY_RIVAL: Record<FxRival, RunItem[]> = DEFAULT_BY_RIVAL;
+let MAX = 1;
 
 /*
  * The war table: a 3D map of pokpok.ai's market.
@@ -15,7 +20,6 @@ export type Sensor = "normal" | "night" | "thermal";
 
 const RED = "#FF4D4F";
 const AMBER = "#FFB224";
-const MAX = Math.max(...FX_RIVALS.map((r) => MOVES_BY_RIVAL[r].length));
 
 const HEAT = ["#2B1C8F", "#7A2BD6", "#D9366B", "#FF8C00", "#FFD166", "#FFF6D5"];
 function heat(moves: number) {
@@ -197,12 +201,16 @@ export default function WarTable({
   tracking,
   onSelect,
   sensor,
+  byRival = DEFAULT_BY_RIVAL,
 }: {
   selected: FxRival;
   tracking: boolean;
   onSelect: (r: FxRival) => void;
   sensor: Sensor;
+  byRival?: Record<FxRival, RunItem[]>;
 }) {
+  MOVES_BY_RIVAL = byRival;
+  MAX = Math.max(1, ...FX_RIVALS.map((r) => byRival[r].length));
   const still = useMemo(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches, []);
   const p = palette(sensor);
   return (

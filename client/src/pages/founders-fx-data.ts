@@ -1,3 +1,4 @@
+import { createContext } from "react";
 import { RUN, type RunItem } from "./founders-data";
 
 /** The six rivals Nubble found for pokpok.ai, with the moves we read from each (from RUN, 15 Sep to 31 Oct 2026). */
@@ -8,13 +9,29 @@ export function rivalOf(item: RunItem): FxRival | null {
   if (item.title.startsWith("Peec")) return "Peec AI";
   if (item.title.startsWith("Profound")) return "Profound";
   if (item.title.startsWith("Semrush")) return "Semrush";
+  if (item.title.startsWith("Otterly")) return "Otterly.AI";
+  if (item.title.startsWith("Scrunch")) return "Scrunch AI";
+  if (item.title.startsWith("Ahrefs")) return "Ahrefs Brand Radar";
   return null;
 }
 
-export const MOVES_BY_RIVAL: Record<FxRival, RunItem[]> = FX_RIVALS.reduce(
-  (acc, r) => ({ ...acc, [r]: RUN.filter((m) => rivalOf(m) === r) }),
-  {} as Record<FxRival, RunItem[]>,
-);
+export type Moves = { run: RunItem[]; byRival: Record<FxRival, RunItem[]>; read: number; matter: number; act: number };
+
+export function buildMoves(run: RunItem[]): Moves {
+  const byRival = FX_RIVALS.reduce((acc, r) => ({ ...acc, [r]: run.filter((m) => rivalOf(m) === r) }), {} as Record<FxRival, RunItem[]>);
+  return {
+    run,
+    byRival,
+    read: run.length,
+    matter: run.filter((m) => m.kept).length,
+    act: run.filter((m) => m.kept === "code-red" || m.kept === "weakened").length,
+  };
+}
+
+/** v4 reads the first run (12 posts). v5 passes a longer run through MovesCtx. */
+export const DEFAULT_MOVES = buildMoves(RUN);
+export const MovesCtx = createContext<Moves>(DEFAULT_MOVES);
+export const MOVES_BY_RIVAL = DEFAULT_MOVES.byRival;
 
 /** Seven weeks, each starting on the date shown. */
 export const WEEKS = [

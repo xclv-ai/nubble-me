@@ -1,9 +1,9 @@
-import { Component, lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Component, lazy, Suspense, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { Count, Ext } from "./founders";
 import { AMBER, CompetitorMap, LINE, MUTE, RED } from "./founders-v3";
-import { BRIEF, PROFILE, RUN, type RunItem } from "./founders-data";
-import { FX_RIVALS, MOVES_BY_RIVAL, WEEKS, rivalOf, weekOf, type FxRival } from "./founders-fx-data";
+import { BRIEF, PROFILE, type RunItem } from "./founders-data";
+import { FX_RIVALS, MovesCtx, WEEKS, rivalOf, weekOf, type FxRival } from "./founders-fx-data";
 import type { Sensor } from "./founders-war-table";
 
 /*
@@ -71,6 +71,8 @@ function MoveList({ items, empty }: { items: RunItem[]; empty: string }) {
 /* ─── 1. The war table (3D) ─── */
 
 export function WarRoom() {
+  const moves = useContext(MovesCtx);
+  const MOVES_BY_RIVAL = moves.byRival;
   const [gl, setGl] = useState<boolean | null>(null);
   const [sel, setSel] = useState<FxRival>("Peec AI");
   const [sensor, setSensor] = useState<Sensor>("normal");
@@ -131,7 +133,7 @@ export function WarRoom() {
         {gl && (
           <Guard fallback={<CompetitorMap />}>
             <Suspense fallback={<div className="grid h-full place-items-center font-mono text-[12px]" style={{ color: MUTE }}>loading the map…</div>}>
-              <WarTable selected={sel} tracking onSelect={setSel} sensor={sensor} />
+              <WarTable selected={sel} tracking onSelect={setSel} sensor={sensor} byRival={MOVES_BY_RIVAL} />
             </Suspense>
           </Guard>
         )}
@@ -166,9 +168,9 @@ export function WarRoom() {
       </div>
       <div className="grid grid-cols-3 border-t font-mono" style={{ borderColor: LINE }}>
         {[
-          { n: 12, t: "rival moves read" },
-          { n: 3, t: "matter to you" },
-          { n: 2, t: "need your move", c: RED },
+          { n: moves.read, t: "rival moves read" },
+          { n: moves.matter, t: "matter to you" },
+          { n: moves.act, t: "need your move", c: RED },
         ].map((x, i) => (
           <div key={x.t} className={`px-3 py-3 md:px-4 ${i ? "border-l" : ""}`} style={{ borderColor: LINE }}>
             <p className="text-[26px] font-medium leading-none tracking-[-0.02em] md:text-[30px]" style={{ color: x.c ?? "#FFFFFF" }}>
@@ -224,7 +226,7 @@ function PostText({ xray }: { xray: boolean }) {
   );
 }
 
-export function XRayHunt() {
+export function XRayHunt({ embedded = false, onFound }: { embedded?: boolean; onFound?: () => void } = {}) {
   const box = useRef<HTMLDivElement>(null);
   const inView = useInView(box, { margin: "-80px" });
   const reduce = useReducedMotion();
@@ -251,6 +253,17 @@ export function XRayHunt() {
     return () => cancelAnimationFrame(raf);
   }, [inView, touched, found, reduce]);
 
+  // Nothing may depend on a tap: if nobody finds it, the lens finds it by itself.
+  useEffect(() => {
+    if (!embedded || !inView || found) return;
+    const t = setTimeout(() => setFound(true), touched ? 9000 : 6000);
+    return () => clearTimeout(t);
+  }, [embedded, inView, found, touched]);
+
+  useEffect(() => {
+    if (found) onFound?.();
+  }, [found, onFound]);
+
   const aim = (clientX: number, clientY: number) => {
     const el = box.current;
     if (!el || found) return;
@@ -267,12 +280,12 @@ export function XRayHunt() {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-baseline justify-between gap-3">
+      {!embedded && <div className="flex items-baseline justify-between gap-3">
         <p className="font-mono text-[13px] text-white">X-ray a rival's post</p>
         <p className="font-mono text-[12px]" style={{ color: found ? RED : MUTE }}>
           {found ? "threat found: 1 of 1" : "threats found: 0 of 1"}
         </p>
-      </div>
+      </div>}
       <div
         ref={box}
         className="relative cursor-crosshair select-none overflow-hidden rounded-md"
@@ -301,7 +314,7 @@ export function XRayHunt() {
             style={{ width: LENS * 2, height: LENS * 2, left: lens.x - LENS, top: lens.y - LENS, borderColor: "#3DD68C", boxShadow: "0 0 24px rgba(61,214,140,0.45)" }}
           />
         )}
-        {found && (
+        {found && !embedded && (
           <motion.span
             initial={{ scale: 2.4, opacity: 0, rotate: -12 }}
             animate={{ scale: 1, opacity: 1, rotate: -8 }}
@@ -313,13 +326,13 @@ export function XRayHunt() {
           </motion.span>
         )}
       </div>
-      <p className="text-[14px] leading-[1.5]" style={{ color: found ? "#E8EAEA" : MUTE }}>
+      {!embedded && <p className="text-[14px] leading-[1.5]" style={{ color: found ? "#E8EAEA" : MUTE }}>
         {found
           ? "Found it. Peec now uses your main difference. Nubble catches this the day it is published, and the folder below is what lands on your desk."
           : coarse
             ? "Tap the headline to x-ray it. Nubble reads every rival post like this."
             : "Move the lens over the headline. Nubble reads every rival post like this."}
-      </p>
+      </p>}
     </div>
   );
 }
@@ -330,17 +343,18 @@ export function Heatmap() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
   const reduce = useReducedMotion();
+  const { run, byRival: MOVES_BY_RIVAL } = useContext(MovesCtx);
   const [sel, setSel] = useState<{ r: FxRival; w: number }>({ r: "Peec AI", w: 0 });
   const grid = useMemo(() => {
     const g: Record<string, RunItem[]> = {};
-    RUN.forEach((m) => {
+    run.forEach((m) => {
       const r = rivalOf(m);
       if (!r) return;
       const k = `${r}|${weekOf(m)}`;
       (g[k] ??= []).push(m);
     });
     return g;
-  }, []);
+  }, [run]);
   const cellColor = (items: RunItem[]) => {
     if (!items.length) return { background: "#0C1113", border: `1px solid ${LINE}` };
     if (items.some((m) => m.kept === "code-red")) return { background: RED, boxShadow: `0 0 14px ${RED}88` };

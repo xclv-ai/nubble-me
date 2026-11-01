@@ -17,7 +17,7 @@ export const LINE = "#1E2529";
 export const MUTE = "#8A9398";
 
 /** Optional interactive pieces another version can plug in (see founders-v4). */
-export type Fx = { map?: ReactNode; beforeFolder?: ReactNode; record?: ReactNode };
+export type Fx = { map?: ReactNode; beforeFolder?: ReactNode; record?: ReactNode; folder?: ReactNode; investor?: ReactNode; afterDesk?: ReactNode };
 const FxCtx = createContext<Fx>({});
 
 const INTEL: FormCopy = {
@@ -28,11 +28,11 @@ const INTEL: FormCopy = {
   done: "Your email app opens with your site in it. Hit send and we reply with your first intel folder.",
 };
 
-function Wrap({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function Wrap({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-[1200px] px-5 md:px-12 ${className}`}>{children}</div>;
 }
 
-function Stamp({ children, color, className = "" }: { children: React.ReactNode; color: string; className?: string }) {
+export function Stamp({ children, color, className = "" }: { children: React.ReactNode; color: string; className?: string }) {
   return (
     <span
       className={`inline-block rounded-[3px] border-2 px-2 py-0.5 font-mono text-[12px] font-medium uppercase tracking-[0.12em] ${className}`}
@@ -290,8 +290,12 @@ function Desk() {
           <p className="text-[17px] font-medium text-white md:text-[19px]">We built it because we are that founder. POKPOK is our company. Everything below happened to us.</p>
         </div>
         <div className="flex min-w-0 flex-col gap-6">
-          {fx.beforeFolder}
-          <OpenFolder />
+          {fx.folder ?? (
+            <>
+              {fx.beforeFolder}
+              <OpenFolder />
+            </>
+          )}
         </div>
       </Wrap>
     </section>
@@ -312,7 +316,7 @@ function InvestorFile() {
         </p>
       </Wrap>
       {fx.record && <Wrap className="pb-8 md:pb-10">{fx.record}</Wrap>}
-      <Wrap className="grid grid-cols-1 gap-4 pb-12 md:pb-20 lg:grid-cols-3 lg:gap-5">
+      {fx.investor ? <Wrap className="pb-12 md:pb-20">{fx.investor}</Wrap> : <Wrap className="grid grid-cols-1 gap-4 pb-12 md:pb-20 lg:grid-cols-3 lg:gap-5">
         {INVESTOR_ANSWERS.map((a, i) => {
           const Prev = INVESTOR_PREVIEWS[i];
           return (
@@ -330,7 +334,7 @@ function InvestorFile() {
             </article>
           );
         })}
-      </Wrap>
+      </Wrap>}
     </section>
   );
 }
@@ -478,6 +482,7 @@ export default function FoundersLandingV3({ mono = false, fx = {} }: { mono?: bo
       <main>
         <Hero />
         <Desk />
+        {fx.afterDesk}
         <InvestorFile />
         <SoWhat />
         <Close />
