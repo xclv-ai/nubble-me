@@ -81,7 +81,7 @@ function H2({ children, dark = false, className = "" }: { children: React.ReactN
 
 function Lead({ children, dark = false, className = "" }: { children: React.ReactNode; dark?: boolean; className?: string }) {
   return (
-    <p className={`max-w-[58ch] text-[17px] leading-[1.6] md:text-[19px] ${dark ? "text-[#A1A1A1]" : "text-mute"} ${className}`}>
+    <p className={`max-w-[58ch] text-[16px] leading-[1.55] md:text-[19px] md:leading-[1.6] ${dark ? "text-[#A1A1A1]" : "text-mute"} ${className}`}>
       {children}
     </p>
   );
@@ -138,7 +138,65 @@ function StoryToggle({ body, dark = false, id }: { body: string; dark?: boolean;
   );
 }
 
+/** On a phone, a secondary preview opens on tap; from tablet up it is always shown. */
+function PhoneMore({ label, children }: { label: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="flex flex-col gap-3">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className="flex min-h-12 items-center justify-between gap-3 rounded-lg border border-[#D4D4D4] bg-white px-4 text-left text-[15px] font-medium text-fg md:hidden"
+      >
+        {label}
+        <ChevronDown size={18} aria-hidden className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      <div className={open ? "" : "max-md:hidden"}>{children}</div>
+    </div>
+  );
+}
+
 /* ─── 1. Opening ─── */
+
+function HeroStory({ s }: { s: (typeof BRIEF)[number] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <article className="border-b border-[#262626] px-5 py-3.5 md:py-4">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <Badge label={s.label} dark />
+        <span className="font-mono text-[12px] text-[#A1A1A1]">{s.date}</span>
+      </div>
+      <h3 className="mt-1.5 text-[16px] font-semibold leading-[1.3] text-white">{s.title}</h3>
+      <div className={`${open ? "" : "max-sm:hidden"}`}>
+      <p className="mt-2 text-[15px] leading-[1.5] text-[#EDEDED]">
+        <span className="font-mono text-[12px]" style={{ color: AMBER }}>
+          so what{" "}
+        </span>
+        {s.soWhat}
+      </p>
+        <p className="mt-1.5 text-[13px] text-[#8F8F8F]">
+          “{s.quote}” <Ext href={s.url}>{s.source}</Ext>
+        </p>
+        {s.move && (
+          <p className="mt-1.5 text-[14px] leading-[1.5] text-[#A1A1A1]">
+            <span className="font-mono text-[12px] text-[#8F8F8F]">your move </span>
+            {s.move}
+          </p>
+        )}
+      </div>
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className="mt-1 inline-flex min-h-10 items-center gap-1 font-mono text-[12px] text-[#EDEDED] underline decoration-[#5A5A5A] underline-offset-4 sm:hidden"
+      >
+        {open ? "hide" : s.move ? "so what, the rival's sentence, your move" : "so what and the rival's sentence"}
+        <ChevronDown size={14} aria-hidden className={open ? "rotate-180" : ""} />
+      </button>
+    </article>
+  );
+}
 
 function HeroBrief() {
   const ref = useRef<HTMLDivElement>(null);
@@ -161,8 +219,7 @@ function HeroBrief() {
   return (
     <div ref={ref} className="overflow-hidden rounded-2xl bg-[#0A0A0A] text-[#EDEDED] shadow-[0_40px_80px_-40px_rgba(0,0,0,0.6)]">
       <div className="flex items-center justify-between gap-3 border-b border-[#262626] px-5 py-3">
-        <span className="font-mono text-[12px] text-[#A1A1A1]">Brief for pokpok.ai, 15 Sep to 31 Oct 2026</span>
-        <span className="hidden font-mono text-[12px] text-[#8F8F8F] sm:inline">example</span>
+        <span className="font-mono text-[12px] text-[#A1A1A1]">Example brief for pokpok.ai, 15 Sep to 31 Oct 2026</span>
       </div>
 
       <motion.div {...show(1)} className="grid grid-cols-3 border-b border-[#262626]">
@@ -180,7 +237,7 @@ function HeroBrief() {
         ))}
       </motion.div>
 
-      <motion.article {...show(2)} className="relative border-b border-[#262626] px-5 py-5">
+      <motion.article {...show(2)} className="relative border-b border-[#262626] px-5 py-4 md:py-5">
         <span aria-hidden className="absolute inset-y-0 left-0 w-1" style={{ background: RED }} />
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <Badge label={red.label} dark />
@@ -199,28 +256,9 @@ function HeroBrief() {
       </motion.article>
 
       {rest.map((s, i) => (
-        <motion.article key={s.title} {...show(3 + i)} className="border-b border-[#262626] px-5 py-4 last:border-b-0">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <Badge label={s.label} dark />
-            <span className="font-mono text-[12px] text-[#A1A1A1]">{s.date}</span>
-          </div>
-          <h3 className="mt-1.5 text-[16px] font-semibold leading-[1.3] text-white">{s.title}</h3>
-          <p className="mt-1 hidden text-[13px] text-[#8F8F8F] sm:block">
-            “{s.quote}” <Ext href={s.url}>{s.source}</Ext>
-          </p>
-          <p className="mt-2 text-[14px] leading-[1.5] text-[#D4D4D4]">
-            <span className="font-mono text-[12px]" style={{ color: AMBER }}>
-              so what{" "}
-            </span>
-            {s.soWhat}
-          </p>
-          {s.move && (
-            <p className="mt-1 text-[14px] leading-[1.5] text-[#A1A1A1]">
-              <span className="font-mono text-[12px] text-[#8F8F8F]">your move </span>
-              {s.move}
-            </p>
-          )}
-        </motion.article>
+        <motion.div key={s.title} {...show(3 + i)}>
+          <HeroStory s={s} />
+        </motion.div>
       ))}
       <p className="border-t border-[#262626] px-5 py-3 font-mono text-[12px] text-[#8F8F8F]">
         Run by hand today, the way Nubble does it.{" "}
@@ -235,10 +273,10 @@ function HeroBrief() {
 function Opening() {
   return (
     <Band>
-      <Wrap className="grid grid-cols-1 gap-10 pb-14 pt-10 md:pb-20 md:pt-16 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-14">
+      <Wrap className="grid grid-cols-1 gap-8 pb-10 pt-8 md:pb-12 md:pt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-14">
         <div className="flex min-w-0 flex-col items-start gap-6">
           <p className="text-[16px] leading-[1.5] text-mute md:text-[18px]">You run an AI startup. Small team, one product, a homepage that says why you.</p>
-          <h1 className="text-[44px] font-semibold leading-[0.98] tracking-[-0.055em] text-fg [text-wrap:balance] md:text-[68px]">
+          <h1 className="text-[38px] font-semibold leading-[1] tracking-[-0.05em] text-fg [text-wrap:balance] md:text-[68px]">
             Stop reading the news, competitors' blogs, and other founders' self-promoting B.S. posts on LinkedIn.
           </h1>
           <p className="max-w-[40ch] text-[20px] leading-[1.45] text-fg md:text-[24px]">
@@ -262,7 +300,7 @@ function Opening() {
 function Founder() {
   return (
     <Band tone="black">
-      <Wrap className="py-14 md:py-24">
+      <Wrap className="py-10 md:py-12">
         <p className="max-w-[24ch] text-[30px] font-semibold leading-[1.12] tracking-[-0.035em] text-white [text-wrap:balance] md:text-[52px]">
           We built it because we are that founder.{" "}
           <span className="text-[#8F8F8F]">POKPOK is our company. Everything below happened to us.</span>
@@ -276,9 +314,9 @@ function TwoHoursBig() {
   const { ref, step } = usePlay(200);
   const on = step >= 1;
   return (
-    <div ref={ref} aria-hidden className="flex min-w-0 flex-col gap-5">
+    <div ref={ref} aria-hidden className="order-first flex min-w-0 flex-col gap-5 lg:order-none">
       <div>
-        <p className="text-[96px] font-semibold leading-[0.85] tracking-[-0.06em] text-fg md:text-[150px]">2h</p>
+        <p className="text-[80px] font-semibold leading-[0.85] tracking-[-0.06em] text-fg md:text-[150px]">2h</p>
         <p className="mt-3 text-[16px] text-mute">a day to read rivals' websites and release notes</p>
         <div className="mt-3 h-3 overflow-hidden rounded-full bg-[#EDEDED]">
           <motion.div className="h-full rounded-full bg-[#171717]" initial={false} animate={{ width: on ? "100%" : "0%" }} transition={{ duration: 1.4, ease: "easeInOut" }} />
@@ -291,6 +329,13 @@ function TwoHoursBig() {
         <p className="mt-2 text-[16px] font-medium" style={{ color: "#C4262C" }}>
           what you have: none of it
         </p>
+        <motion.div {...fade(step >= 3)} className="mt-4 flex flex-wrap gap-2">
+          {["a dead plan", "a copied claim", "an investor question"].map((t) => (
+            <span key={t} className="rounded-md bg-[#FFEBEB] px-2.5 py-1 text-[14px] font-medium text-[#C4262C]">
+              {t}
+            </span>
+          ))}
+        </motion.div>
       </div>
     </div>
   );
@@ -299,8 +344,8 @@ function TwoHoursBig() {
 function Problem() {
   return (
     <Band>
-      <DailyFlood />
-      <Wrap className="grid grid-cols-1 items-center gap-10 py-14 md:py-20 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-16">
+      <DailyFlood plain />
+      <Wrap className="grid grid-cols-1 items-center gap-10 py-10 md:py-14 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-16">
         <div className="flex min-w-0 flex-col gap-5">
           <p className="max-w-[30ch] text-[24px] font-semibold leading-[1.25] tracking-[-0.025em] text-fg md:text-[32px]">
             Every day your competitors ship, raise, change prices, or copy that line from your homepage.
@@ -326,25 +371,25 @@ const INVESTOR_PICS = [PicProtected, PicMoat, PicIndustry];
 function InvestorQuestions() {
   return (
     <Band tone="black">
-      <Wrap className="py-14 md:py-24">
+      <Wrap className="py-10 md:py-12">
         <H2 dark>Six things that happen to you (and to us at pokpok.ai).</H2>
-        <ol className="mt-10 flex flex-col md:mt-16">
+        <ol className="mt-8 grid grid-cols-1 md:mt-12 lg:grid-cols-3 lg:gap-8">
           {PAINS.slice(0, 3).map((p, i) => {
             const Pic = INVESTOR_PICS[i];
             const q = p.head.replace("An investor asks: ", "");
             return (
-              <li key={p.head} className="grid grid-cols-1 gap-5 border-t border-[#262626] py-8 md:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] md:gap-12 md:py-14">
-                <div className="flex min-w-0 flex-col gap-4">
+              <li key={p.head} className="flex min-w-0 flex-col gap-5 border-t border-[#262626] py-7 lg:py-8">
+                <div className="flex min-w-0 flex-col gap-3 lg:min-h-[190px]">
                   <StepNo n={`0${i + 1}`} dark />
-                  <h3 className="text-[28px] font-semibold leading-[1.1] tracking-[-0.035em] text-white [text-wrap:balance] md:text-[44px]">
+                  <h3 className="text-[26px] font-semibold leading-[1.1] tracking-[-0.035em] text-white [text-wrap:balance] md:text-[32px]">
                     <span className="text-[#8F8F8F]">An investor asks: </span>
                     {q}
                   </h3>
-                  <StoryToggle body={p.body} dark id={`inv-${i}`} />
                 </div>
-                <Big scale={1.2} className="min-w-0">
+                <Big scale={1.1} className="min-w-0 max-md:![zoom:0.95]">
                   <Pic />
                 </Big>
+                <StoryToggle body={p.body} dark id={`inv-${i}`} />
               </li>
             );
           })}
@@ -361,7 +406,7 @@ function CopiedClaim() {
   return (
     <Band className="overflow-hidden">
       <div aria-hidden className="h-1.5 w-full" style={{ background: RED }} />
-      <Wrap className="grid grid-cols-1 gap-10 py-14 md:py-24 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-16">
+      <Wrap className="grid grid-cols-1 gap-10 py-10 md:py-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-16">
         <div className="flex min-w-0 flex-col items-start gap-4">
           <div className="flex items-center gap-3">
             <StepNo n="04" />
@@ -413,7 +458,7 @@ function StaleAndLab() {
           <article key={p.head} className="flex min-w-0 flex-col gap-4">
             <StepNo n={n} />
             <h3 className="text-[26px] font-semibold leading-[1.12] tracking-[-0.03em] text-fg [text-wrap:balance] md:text-[34px]">{p.head}</h3>
-            <Big scale={1.25}>
+            <Big scale={1.25} className="max-md:![zoom:1]">
               <Pic />
             </Big>
             <StoryToggle body={p.body} id={`pain-${i + 5}`} />
@@ -431,19 +476,19 @@ function StaleAndLab() {
 
 function Today() {
   return (
-    <Band tone="black">
-      <Wrap className="grid grid-cols-1 items-center gap-10 py-14 md:py-20 lg:grid-cols-2 lg:gap-16">
+    <Band tone="grey">
+      <Wrap className="grid grid-cols-1 items-center gap-10 py-10 md:py-14 lg:grid-cols-2 lg:gap-16">
         <p className="max-w-[40ch] text-[20px] leading-[1.55] tracking-[-0.01em] md:text-[22px]">
-          <span className="font-semibold text-white">What you have today:</span>{" "}
-          <span className="text-[#A1A1A1]">
+          <span className="font-semibold text-fg">What you have today:</span>{" "}
+          <span className="text-mute">
             X, newsletters, investor group chats, a ChatGPT window. All of it tells you what happened to everyone. None of it tells you
             what it means for your company. None of it throws away the part that has nothing to do with you, which is most of it. So
             you read for two hours a day you do not have, or you skip it and get caught.
           </span>
         </p>
-        <Big scale={1.15}>
+        <div className="rounded-xl bg-[#0A0A0A] p-4 md:p-5">
           <TodayTools />
-        </Big>
+        </div>
       </Wrap>
     </Band>
   );
@@ -460,12 +505,13 @@ function Promise() {
   useEffect(() => {
     if (!inView || reduce || held) return;
     setActive((a) => (a < 0 ? 0 : a));
+    if (!window.matchMedia("(min-width: 1024px)").matches) return;
     const t = window.setInterval(() => setActive((a) => (a + 1) % PROMISE.length), 2800);
     return () => clearInterval(t);
   }, [inView, reduce, held]);
   return (
     <Band>
-      <Wrap className="flex flex-col gap-6 pb-10 pt-16 md:pb-14 md:pt-24">
+      <Wrap className="flex flex-col gap-6 pb-8 pt-12 md:pb-10 md:pt-12">
         <h2 className="max-w-[16ch] text-[40px] font-semibold leading-[1] tracking-[-0.05em] text-fg [text-wrap:balance] md:text-[72px]">
           Nubble watches your market for one company: <span className="underline decoration-[6px] underline-offset-[10px]" style={{ textDecorationColor: AMBER }}>yours.</span>
         </h2>
@@ -474,7 +520,7 @@ function Promise() {
           helps you hit back: what to say now, which claim is still only yours, and the promise no rival makes yet.
         </Lead>
       </Wrap>
-      <Wrap className="pb-16 md:pb-24">
+      <Wrap className="pb-12 md:pb-12">
         <div ref={ref} className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-14">
           <ol className="flex min-w-0 flex-col">
             {PROMISE.map((b, i) => {
@@ -488,7 +534,7 @@ function Promise() {
                       setHeld(true);
                       setActive(i);
                     }}
-                    className="flex w-full items-start gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#0070F3]"
+                    className="flex w-full items-start gap-4 py-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#0070F3]"
                   >
                     <span
                       className={`mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-[13px] font-semibold transition-colors duration-300 ${
@@ -498,9 +544,9 @@ function Promise() {
                     >
                       {i + 1}
                     </span>
-                    <span className={`text-[18px] leading-[1.5] transition-colors duration-300 md:text-[20px] ${on ? "text-fg" : "text-[#8F8F8F]"}`}>
+                    <span className={`text-[17px] leading-[1.5] transition-colors duration-300 md:text-[18px] ${on ? "text-fg" : "text-[#8F8F8F]"}`}>
                       <span className={`font-semibold ${on ? "text-fg" : "text-[#5A5A5A]"}`}>{b.bold}</span>
-                      {b.rest}
+                      <span className={on ? "" : "max-lg:hidden"}>{b.rest}</span>
                     </span>
                   </button>
                   <div className={`pb-5 pl-11 lg:hidden ${on || (active < 0 && i === 0) ? "" : "hidden"}`}>
@@ -612,17 +658,19 @@ function SizesBig() {
             {size === 0 && (
               <div>
                 <p className="font-mono text-[12px] text-[#9A4A00]">So what, made for one company only: yours</p>
-                <p className="mt-2 text-[22px] font-semibold leading-[1.35] tracking-[-0.02em] text-fg md:text-[28px]">{SIZES.soWhat}</p>
+                <p className="mt-2 text-[19px] font-semibold leading-[1.35] tracking-[-0.02em] text-fg md:text-[22px]">{BRIEF[1].soWhat}</p>
+                <p className="mt-3 font-mono text-[12px] text-mute">your move</p>
+                <p className="mt-1 text-[15px] leading-[1.5] text-mute">{BRIEF[1].move}</p>
               </div>
             )}
-            {size === 1 && <p className="text-[19px] leading-[1.55] text-fg md:text-[21px]">{SIZES.summary}</p>}
+            {size === 1 && <p className="text-[17px] leading-[1.55] text-fg md:text-[19px]">{SIZES.summary}</p>}
             {size === 2 && (
-              <div className="max-h-[340px] overflow-y-auto pr-2 [overscroll-behavior:contain]">
+              <div>
                 <p className="mb-3 font-mono text-[12px] text-mute">
-                  Peec AI's press release, as published. <Ext href={SIZES.url}>Read it at the source</Ext>.
+                  Peec AI's press release, its opening paragraphs as published.
                 </p>
                 <div className="flex flex-col gap-3">
-                  {SIZES.original.map((p) =>
+                  {SIZES.original.slice(0, 5).map((p) =>
                     isHeading(p) ? (
                       <p key={p} className="pt-1 text-[15px] font-semibold text-fg">
                         {p}
@@ -633,6 +681,9 @@ function SizesBig() {
                       </p>
                     ),
                   )}
+                  <Ext href={SIZES.url} className="text-[15px] font-medium text-fg">
+                    Read the rest of the release at the source
+                  </Ext>
                 </div>
               </div>
             )}
@@ -646,7 +697,7 @@ function SizesBig() {
 
 const LABEL_FILL: Record<Label, { bg: string; fg: string }> = {
   "code-red": { bg: RED, fg: "#FFFFFF" },
-  weakened: { bg: AMBER, fg: "#0A0A0A" },
+  weakened: { bg: "#F76B15", fg: "#FFFFFF" },
   "worth-knowing": { bg: "#0070F3", fg: "#FFFFFF" },
 };
 
@@ -658,8 +709,8 @@ function HowItWorks() {
   return (
     <>
       <Band tone="grey">
-        <Wrap className="pb-6 pt-16 md:pt-24">
-          <h2 className="text-[48px] font-semibold leading-[0.95] tracking-[-0.055em] text-fg md:text-[96px]">How it works</h2>
+        <Wrap className="pb-2 pt-12 md:pt-12">
+          <h2 className="text-[44px] font-semibold leading-[0.95] tracking-[-0.055em] text-fg md:text-[72px]">How it works</h2>
         </Wrap>
         {/* 01 + 02: the setup */}
         <Wrap className="grid grid-cols-1 gap-8 py-10 md:py-14 lg:grid-cols-2 lg:gap-12">
@@ -670,7 +721,9 @@ function HowItWorks() {
                 claim.
               </Lead>
             </StepHead>
-            <ProfileDemo />
+            <PhoneMore label="See what Nubble read from pokpok.ai">
+              <ProfileDemo />
+            </PhoneMore>
           </div>
           <div className="flex min-w-0 flex-col gap-6">
             <StepHead n="02" title="Nubble finds your competitors and the big players.">
@@ -687,7 +740,9 @@ function HowItWorks() {
         <Wrap className="grid grid-cols-1 gap-8 border-t border-[#E5E5E5] py-10 md:py-14 lg:grid-cols-2 lg:gap-12">
           <div className="flex min-w-0 flex-col gap-6">
             <StepHead n="03" title="Every day it reads the sources." />
-            <SourcesDemo plain />
+            <PhoneMore label="See the four kinds of sources">
+              <SourcesDemo plain />
+            </PhoneMore>
           </div>
           <div id="filter" className="flex min-w-0 scroll-mt-16 flex-col gap-6">
             <StepHead n="04" title="It throws away what does not concern you.">
@@ -720,7 +775,7 @@ function HowItWorks() {
 
       {/* 05: the So what, the accent moment */}
       <Band tone="black">
-        <Wrap className="grid grid-cols-1 gap-10 py-16 md:py-24 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
+        <Wrap className="grid grid-cols-1 gap-10 py-12 md:py-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
           <StepHead n="05" title="Every story that stays comes in three sizes." dark>
             <Lead dark>
               Original (the full story), Executive summary (the short one), and So what (the Nubble signal, made for one company only:
@@ -737,25 +792,25 @@ function HowItWorks() {
 
       {/* 06: labels */}
       <Band>
-        <Wrap className="flex flex-col gap-8 py-16 md:py-24">
+        <Wrap className="flex flex-col gap-8 py-12 md:py-12">
           <StepHead n="06" title="Stories carry labels.">
             <Lead>
               A label is always tied to the rival's own sentence, which you can see. If we got one wrong, say so once and it stays
               ignored.
             </Lead>
           </StepHead>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-3">
             {(Object.keys(LABELS) as Label[]).map((l) => (
-              <div key={l} className="flex min-w-0 flex-col gap-3 rounded-xl p-5 md:p-6" style={{ background: LABEL_FILL[l].bg, color: LABEL_FILL[l].fg }}>
-                <p className="text-[24px] font-semibold tracking-[-0.03em] md:text-[28px]">{LABELS[l].name}</p>
-                <p className="text-[16px] leading-[1.5] opacity-90">{LABELS[l].meaning}</p>
+              <div key={l} className="flex min-w-0 flex-col gap-1 rounded-xl px-4 py-3 md:gap-3 md:p-6" style={{ background: LABEL_FILL[l].bg, color: LABEL_FILL[l].fg }}>
+                <p className="text-[20px] font-semibold tracking-[-0.03em] md:text-[28px]">{LABELS[l].name}</p>
+                <p className="text-[15px] leading-[1.45] opacity-90 md:text-[16px]">{LABELS[l].meaning}</p>
               </div>
             ))}
           </div>
-          <div className="grid grid-cols-1 gap-6 rounded-xl border-2 p-5 md:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] md:p-7" style={{ borderColor: RED }}>
-            <div className="flex flex-col items-start gap-3">
+          <div className="grid grid-cols-1 gap-3 rounded-xl border-2 p-4 md:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] md:gap-6 md:p-7" style={{ borderColor: RED }}>
+            <div className="flex flex-col items-start gap-2">
               <Badge label="code-red" />
-              <p className="text-[20px] font-semibold leading-[1.25] tracking-[-0.02em] text-fg md:text-[24px]">A real code red, from our own company.</p>
+              <p className="text-[18px] font-semibold leading-[1.25] tracking-[-0.02em] text-fg md:text-[24px]">A real code red, from our own company.</p>
               <p className="text-[16px] leading-[1.55] text-fg">
                 Peec AI added “brand perception” to its tracker.{" "}
                 <Ext href={s.url} className="font-mono text-[12px] text-mute">
@@ -763,10 +818,10 @@ function HowItWorks() {
                 </Ext>
               </p>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               <div>
                 <p className="font-mono text-[12px] text-[#9A4A00]">so what</p>
-                <p className="mt-1 text-[20px] font-semibold leading-[1.35] tracking-[-0.015em] text-fg md:text-[22px]">{s.soWhat}</p>
+                <p className="mt-1 text-[18px] font-semibold leading-[1.35] tracking-[-0.015em] text-fg md:text-[22px]">{s.soWhat}</p>
               </div>
               <div>
                 <p className="font-mono text-[12px] text-mute">your move</p>
@@ -827,7 +882,7 @@ function LiveReader() {
   });
   return (
     <Band tone="grey" id="reader">
-      <Wrap className="grid grid-cols-1 items-center gap-8 py-16 md:py-24 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-14">
+      <Wrap className="grid grid-cols-1 items-center gap-8 py-12 md:py-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-14">
         <div className="flex min-w-0 flex-col gap-4">
           <span className="inline-flex items-center gap-2 self-start rounded-full bg-[#EBFAED] px-3 py-1 text-[13px] font-medium text-[#297A3A]">
             <span className="h-2 w-2 rounded-full bg-[#45A557]" /> Live today
@@ -837,7 +892,7 @@ function LiveReader() {
           <p className="text-[16px] text-mute">Swipe a story sideways to make it shorter or longer.</p>
         </div>
         <div className="mx-auto w-full max-w-[440px] overflow-hidden rounded-[28px] border-[6px] border-[#0A0A0A] bg-white shadow-[0_40px_80px_-40px_rgba(0,0,0,0.5)]">
-          <div className="h-[540px] md:h-[620px]">
+          <div className="h-[440px] md:h-[600px]">
             {isLoading && <div className="flex h-full items-center justify-center font-mono text-[13px] text-mute">Loading the edition…</div>}
             {isError && (
               <div className="flex h-full items-center justify-center px-6 text-center text-[14px] text-mute">
@@ -873,7 +928,7 @@ function Switcher({
   const [active, setActive] = useState(0);
   const [held, setHeld] = useState(false);
   useEffect(() => {
-    if (!inView || reduce || held) return;
+    if (!inView || reduce || held || !window.matchMedia("(min-width: 1024px)").matches) return;
     const t = window.setInterval(() => setActive((a) => (a + 1) % items.length), 4200);
     return () => clearInterval(t);
   }, [inView, reduce, held, items.length]);
@@ -888,7 +943,7 @@ function Switcher({
           return (
             <li key={a.who} className={`border-t ${line} last:border-b`}>
               <div
-                className="flex cursor-pointer flex-col gap-1.5 py-5"
+                className="flex cursor-pointer flex-col gap-1.5 py-4 lg:py-5"
                 onClick={() => {
                   setHeld(true);
                   setActive(i);
@@ -909,9 +964,16 @@ function Switcher({
                       {a.who}
                     </button>
                   </h3>
-                  {a.tag}
+                  <span className="flex shrink-0 items-center gap-2">
+                    {a.tag}
+                    <ChevronDown
+                      size={20}
+                      aria-hidden
+                      className={`transition-transform duration-200 ${on ? "rotate-180" : ""} ${dark ? "text-[#8F8F8F]" : "text-mute"}`}
+                    />
+                  </span>
                 </div>
-                <p className={`text-[16px] leading-[1.55] ${dark ? "text-[#A1A1A1]" : "text-mute"}`}>{a.what}</p>
+                <p className={`text-[16px] leading-[1.55] ${on ? "" : "hidden"} ${dark ? "text-[#A1A1A1]" : "text-mute"}`}>{a.what}</p>
                 {on && (
                   <motion.span
                     layoutId={`${idPrefix}-bar`}
@@ -957,18 +1019,18 @@ function GetBack() {
   return (
     <>
       <Band tone="black">
-        <Wrap className="flex flex-col gap-6 pb-10 pt-16 md:pb-14 md:pt-24">
+        <Wrap className="flex flex-col gap-6 pb-8 pt-12 md:pb-10 md:pt-12">
           <H2 dark>Every brief turns into something you can send, and into a sharper way to talk about your product.</H2>
           <Lead dark>
             Each piece starts from your company, not from the article. We already do this at POKPOK with the tool we built for ourselves.
           </Lead>
         </Wrap>
-        <Wrap className="pb-16 md:pb-24">
+        <Wrap className="pb-12 md:pb-12">
           <Switcher items={INVESTOR_ANSWERS} previews={INVESTOR_PREVIEWS} dark idPrefix="inv-ans" />
         </Wrap>
       </Band>
       <Band>
-        <Wrap className="py-16 md:py-24">
+        <Wrap className="py-12 md:py-12">
           <Switcher items={OTHER_ANSWERS} previews={OUTPUT_PREVIEWS} idPrefix="out-ans" />
         </Wrap>
       </Band>
@@ -996,7 +1058,7 @@ const PLACE_PREVIEWS = [0, 1, 2, 3].map((i) => {
 function WhereItLives() {
   return (
     <Band tone="grey">
-      <Wrap className="flex flex-col gap-6 pb-10 pt-16 md:pb-14 md:pt-24">
+      <Wrap className="flex flex-col gap-6 pb-8 pt-12 md:pb-10 md:pt-12">
         <H2>You will not open another dashboard. Nubble comes to where you already are.</H2>
         <Lead>Today only the reader is live. The rest is being built, and the page says so.</Lead>
       </Wrap>
@@ -1008,7 +1070,7 @@ function WhereItLives() {
           idPrefix="place"
         />
       </Wrap>
-      <Wrap className="pb-16 md:pb-24">
+      <Wrap className="pb-12 md:pb-12">
         <p className="text-[16px] text-mute">This is how we already deliver our own agent at POKPOK, so we know it works.</p>
       </Wrap>
     </Band>
@@ -1020,7 +1082,7 @@ function WhereItLives() {
 function EarlyAccess() {
   return (
     <Band tone="black">
-      <Wrap className="grid grid-cols-1 items-end gap-10 py-20 md:py-28 lg:grid-cols-2 lg:gap-14">
+      <Wrap className="grid grid-cols-1 items-end gap-10 py-14 md:py-20 lg:grid-cols-2 lg:gap-14">
         <h2 className="max-w-[14ch] text-[44px] font-semibold leading-[0.98] tracking-[-0.055em] text-white [text-wrap:balance] md:text-[76px]">
           Paste your site, we send the first brief.
         </h2>

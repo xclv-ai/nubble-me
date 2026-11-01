@@ -102,19 +102,19 @@ function Lead({ children, className = "" }: { children: React.ReactNode; classNa
 
 const BADGE: Record<Label, string> = {
   "code-red": "bg-[#FFEBEB] text-[#C4262C]",
-  weakened: "bg-[#FFF4D5] text-[#9A4A00]",
+  weakened: "bg-[#FFEFE3] text-[#BD4B00]",
   "worth-knowing": "bg-[#EBF5FF] text-[#0062C4]",
 };
 const BADGE_DARK: Record<Label, string> = {
   "code-red": "bg-[#3C1618] text-[#FF6166]",
-  weakened: "bg-[#331B00] text-[#FFB224]",
+  weakened: "bg-[#3A1C0A] text-[#FF8B3E]",
   "worth-knowing": "bg-[#0D2847] text-[#52A8FF]",
 };
 
 export function Badge({ label, dark = false }: { label: Label; dark?: boolean }) {
   return (
     <span
-      className={`inline-flex h-[22px] shrink-0 items-center whitespace-nowrap rounded-full px-2 font-mono text-[11px] font-medium uppercase tracking-[0.04em] ${dark ? BADGE_DARK[label] : BADGE[label]}`}
+      className={`inline-flex h-[22px] shrink-0 items-center whitespace-nowrap rounded-full px-2 font-mono text-[12px] font-medium uppercase tracking-[0.04em] ${dark ? BADGE_DARK[label] : BADGE[label]}`}
     >
       {LABELS[label].name}
     </span>
@@ -710,7 +710,7 @@ const FLOOD = [
 ];
 
 /** The daily flood, scrolling past. None of it says whether it matters to you. */
-export function DailyFlood() {
+export function DailyFlood({ plain = false }: { plain?: boolean } = {}) {
   const reduce = useReducedMotion();
   const rows = [FLOOD, [...FLOOD.slice(3), ...FLOOD.slice(0, 3)]];
   return (
@@ -734,7 +734,7 @@ export function DailyFlood() {
                     hit ? "border-[#FFD1D1] bg-[#FFEBEB] text-[#C4262C]" : "border-line bg-white text-fg"
                   }`}
                 >
-                  {lab ? <Cpu size={13} aria-hidden /> : hit ? <Copy size={13} aria-hidden /> : <Globe size={13} aria-hidden />}
+                  {!plain && (lab ? <Cpu size={13} aria-hidden /> : hit ? <Copy size={13} aria-hidden /> : <Globe size={13} aria-hidden />)}
                   {t}
                   <span className="rounded bg-[#FFF4D5] px-1 text-[#9A4A00]">matters to you?</span>
                 </span>
@@ -1315,7 +1315,7 @@ export function SourcesDemo({ plain = false }: { plain?: boolean } = {}) {
   const rows = [0, 1, 2, 3].map((k) => RUN[(head + k) % RUN.length]);
   return (
     <div ref={ref} className="flex flex-col gap-4">
-      <Panel title="Reading for pokpok.ai, every day">
+      <Panel title="Reading for pokpok.ai, every day" className={plain ? "hidden md:block" : ""}>
         <div className="relative h-[176px] overflow-hidden" aria-label="Rival posts read in the example run">
           <AnimatePresence initial={false} mode="popLayout">
             {rows.map((r, k) => (
@@ -1347,9 +1347,9 @@ export function SourcesDemo({ plain = false }: { plain?: boolean } = {}) {
           </AnimatePresence>
         </div>
       </Panel>
-      <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+      <div className={`grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2 ${plain ? "grid-cols-2" : "grid-cols-1"}`}>
         {SOURCES.map((s, i) => (
-          <div key={s.name} className="flex min-w-0 gap-3 bg-white p-4">
+          <div key={s.name} className={`flex min-w-0 gap-3 bg-white ${plain ? "p-3 sm:p-4" : "p-4"}`}>
             {!plain && <IconTile icon={SOURCE_ICONS[i]} />}
             <div className="flex min-w-0 flex-col gap-1">
               <h4 className="text-[15px] font-semibold tracking-[-0.01em] text-fg">{s.name}</h4>
