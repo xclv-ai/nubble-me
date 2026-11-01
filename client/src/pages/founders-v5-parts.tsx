@@ -272,7 +272,7 @@ const PLANS = [
     price: "$10 a month",
     tag: "We do the reading",
     status: "Early access",
-    body: "Paste your site once. We read your rivals every day and send you the folders in Slack, Telegram or Claude.",
+    body: "Paste your site once. We read your rivals every day and send you the folders. In Slack, Telegram and Claude as each one launches.",
   },
 ];
 

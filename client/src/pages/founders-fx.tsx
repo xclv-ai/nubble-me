@@ -373,7 +373,7 @@ export function Heatmap() {
           <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: "#C98A1C" }} />other</span>
         </p>
       </div>
-      <div className="grid gap-[3px] md:max-w-[620px] md:gap-1.5" style={{ gridTemplateColumns: `64px repeat(${WEEKS.length}, minmax(0, 1fr)) 22px` }}>
+      <div className="grid gap-[3px] md:max-w-[620px] md:gap-1.5" style={{ gridTemplateColumns: `54px repeat(${WEEKS.length}, minmax(0, 1fr)) 22px` }}>
         <span />
         {WEEKS.map((w) => (
           <span key={w.label} className="text-center font-mono text-[10px] leading-tight md:text-[11px]" style={{ color: MUTE }}>
