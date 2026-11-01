@@ -17,7 +17,7 @@ export const LINE = "#1E2529";
 export const MUTE = "#8A9398";
 
 /** Optional interactive pieces another version can plug in (see founders-v4). */
-export type Fx = { map?: ReactNode; beforeFolder?: ReactNode; record?: ReactNode };
+export type Fx = { map?: ReactNode; beforeFolder?: ReactNode; record?: ReactNode; folder?: ReactNode; investor?: ReactNode; afterDesk?: ReactNode; formNote?: ReactNode; plans?: ReactNode; closeStamp?: ReactNode };
 const FxCtx = createContext<Fx>({});
 
 const INTEL: FormCopy = {
@@ -28,11 +28,11 @@ const INTEL: FormCopy = {
   done: "Your email app opens with your site in it. Hit send and we reply with your first intel folder.",
 };
 
-function Wrap({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function Wrap({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-[1200px] px-5 md:px-12 ${className}`}>{children}</div>;
 }
 
-function Stamp({ children, color, className = "" }: { children: React.ReactNode; color: string; className?: string }) {
+export function Stamp({ children, color, className = "" }: { children: React.ReactNode; color: string; className?: string }) {
   return (
     <span
       className={`inline-block rounded-[3px] border-2 px-2 py-0.5 font-mono text-[12px] font-medium uppercase tracking-[0.12em] ${className}`}
@@ -197,9 +197,9 @@ function Hero() {
           </p>
           <div className="flex w-full flex-col gap-3">
             <EmailForm id="site-top" button="Send me the intel" dark preview={false} copy={INTEL} />
-            <p className="text-[14px]" style={{ color: MUTE }}>
+            {fx.formNote ?? (<p className="text-[14px]" style={{ color: MUTE }}>
               Free while we build. Today the reader at nubble.me is live. Slack, Telegram and Claude are being built.
-            </p>
+            </p>)}
           </div>
         </div>
       </Wrap>
@@ -290,8 +290,12 @@ function Desk() {
           <p className="text-[17px] font-medium text-white md:text-[19px]">We built it because we are that founder. POKPOK is our company. Everything below happened to us.</p>
         </div>
         <div className="flex min-w-0 flex-col gap-6">
-          {fx.beforeFolder}
-          <OpenFolder />
+          {fx.folder ?? (
+            <>
+              {fx.beforeFolder}
+              <OpenFolder />
+            </>
+          )}
         </div>
       </Wrap>
     </section>
@@ -312,7 +316,7 @@ function InvestorFile() {
         </p>
       </Wrap>
       {fx.record && <Wrap className="pb-8 md:pb-10">{fx.record}</Wrap>}
-      <Wrap className="grid grid-cols-1 gap-4 pb-12 md:pb-20 lg:grid-cols-3 lg:gap-5">
+      {fx.investor ? <Wrap className="pb-12 md:pb-20">{fx.investor}</Wrap> : <Wrap className="grid grid-cols-1 gap-4 pb-12 md:pb-20 lg:grid-cols-3 lg:gap-5">
         {INVESTOR_ANSWERS.map((a, i) => {
           const Prev = INVESTOR_PREVIEWS[i];
           return (
@@ -330,7 +334,7 @@ function InvestorFile() {
             </article>
           );
         })}
-      </Wrap>
+      </Wrap>}
     </section>
   );
 }
@@ -359,12 +363,13 @@ function SoWhat() {
 }
 
 function Close() {
+  const fx = useContext(FxCtx);
   return (
     <section className="border-t" style={{ borderColor: LINE }}>
       <Wrap className="grid grid-cols-1 items-end gap-10 py-14 md:py-20 lg:grid-cols-2 lg:gap-14">
         <div className="flex flex-col gap-4">
           <Stamp color={AMBER} className="self-start">
-            For your company only
+            {fx.closeStamp ?? "For your company only"}
           </Stamp>
           <h2 className="max-w-[14ch] text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] text-white [text-wrap:balance] md:text-[68px]">
             Paste your site. Get your first intel folder.
@@ -388,9 +393,9 @@ function Close() {
               </li>
             ))}
           </ul>
-          <p className="text-[14px]" style={{ color: MUTE }}>
+          {fx.plans ?? (<p className="text-[14px]" style={{ color: MUTE }}>
             Free while we build. Or write to <span className="select-all font-mono text-[#EDEDED]">{CONTACT}</span>
-          </p>
+          </p>)}
         </div>
       </Wrap>
     </section>
@@ -455,7 +460,7 @@ export default function FoundersLandingV3({ mono = false, fx = {} }: { mono?: bo
       `}</style>
       <header className="sticky top-0 z-20 border-b bg-[#050607]/95 backdrop-blur" style={{ borderColor: LINE }}>
         <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-5 md:px-12">
-          <a href="/" className="flex items-center gap-2 text-[18px] font-semibold tracking-[-0.03em] text-white">
+          <a href="/" className="flex min-h-[44px] items-center gap-2 text-[18px] font-semibold tracking-[-0.03em] text-white">
             nubble
             <span className="rounded-full border px-2 py-0.5 font-mono text-[11px] font-normal tracking-normal" style={{ borderColor: LINE, color: MUTE }}>
               for founders
@@ -478,6 +483,7 @@ export default function FoundersLandingV3({ mono = false, fx = {} }: { mono?: bo
       <main>
         <Hero />
         <Desk />
+        {fx.afterDesk}
         <InvestorFile />
         <SoWhat />
         <Close />
