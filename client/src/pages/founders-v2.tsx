@@ -486,7 +486,7 @@ function Today() {
             you read for two hours a day you do not have, or you skip it and get caught.
           </span>
         </p>
-        <div className="rounded-xl bg-[#0A0A0A] p-4 md:p-5">
+        <div className="order-first rounded-xl bg-[#0A0A0A] p-4 md:p-5 lg:order-none">
           <TodayTools />
         </div>
       </Wrap>
