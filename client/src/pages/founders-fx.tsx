@@ -49,7 +49,7 @@ export function MoveList({ items, empty }: { items: RunItem[]; empty: string }) 
         const l = labelOf(m);
         return (
           <li key={m.url + m.title} className="grid grid-cols-[52px_minmax(0,1fr)] gap-2 text-[14px] leading-[1.4]">
-            <span className="font-mono text-[12px] leading-[1.6]" style={{ color: MUTE }}>
+            <span className={`font-mono text-[12px] leading-[1.6] ${luce ? "pt-[8px]" : ""}`} style={{ color: MUTE }}>
               {m.date}
             </span>
             <span className="min-w-0">
