@@ -1,9 +1,10 @@
 import { Component, lazy, Suspense, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { Count, Ext } from "./founders";
+import { LGREEN, LTag, LTrace, LYELLOW } from "./founders-luce";
 import { AMBER, CompetitorMap, LINE, MUTE, RED } from "./founders-v3";
 import { BRIEF, PROFILE, type RunItem } from "./founders-data";
-import { FX_RIVALS, LuceCtx, MovesCtx, WEEKS, rivalOf, weekOf, type FxRival } from "./founders-fx-data";
+import { FX_RIVALS, LuceBoldCtx, LuceCtx, MovesCtx, WEEKS, rivalOf, weekOf, type FxRival } from "./founders-fx-data";
 import type { Sensor } from "./founders-war-table";
 
 /*
@@ -74,11 +75,13 @@ export function MoveList({ items, empty }: { items: RunItem[]; empty: string }) 
 export function WarRoom() {
   const moves = useContext(MovesCtx);
   const luce = useContext(LuceCtx);
+  const bold = useContext(LuceBoldCtx);
   const MOVES_BY_RIVAL = moves.byRival;
   const [gl, setGl] = useState<boolean | null>(null);
   const [sel, setSel] = useState<FxRival>("Peec AI");
   const [sensor, setSensor] = useState<Sensor>("normal");
   const [clock, setClock] = useState("");
+  const [flash, setFlash] = useState(0);
   useEffect(() => {
     const t = () => setClock(new Date().toISOString().slice(11, 19) + " UTC");
     t();
@@ -103,7 +106,46 @@ export function WarRoom() {
         </span>
         <span>15 Sep to 31 Oct 2026</span>
       </div>
-      {luce ? (
+      {bold && (
+        <div className="grid grid-cols-1 gap-4 border-b px-4 py-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-center md:px-5" style={{ borderColor: "#17181A" }}>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { n: moves.read, t: "rival moves read", tag: "SCANNED", c: LGREEN },
+              { n: moves.matter, t: "matter to you", tag: "FOR YOU", c: LYELLOW },
+              { n: moves.act, t: "need your move", tag: "ACT", c: RED },
+            ].map((x) => (
+              <div key={x.t} className="flex min-w-0 flex-col items-start gap-1.5">
+                <LTag color={x.c}>{x.tag}</LTag>
+                <p className="text-[34px] font-light leading-none tracking-[-0.02em] md:text-[38px]" style={{ color: x.tag === "ACT" ? RED : "#FFFFFF" }}>
+                  <Count from={0} to={x.n} />
+                </p>
+                <p className="text-[12.5px] leading-tight text-[#A9B1B5]">{x.t}</p>
+              </div>
+            ))}
+          </div>
+          <LTrace values={WEEKS.map((_, i) => moves.run.filter((m) => weekOf(m) === i).length)} color="#E8EAEA" unit="moves a week" labels={["15 Sep", "now"]} />
+        </div>
+      )}
+      {bold ? (
+        <div role="group" aria-label="Sensor" className="flex justify-center gap-6 border-b px-3 py-4 sm:gap-10" style={{ borderColor: "#17181A" }}>
+          {SENSORS.map((x) => {
+            const on = sensor === x.k;
+            const c = x.k === "night" ? "#7CFF9B" : x.k === "thermal" ? "#FFB224" : "#FFFFFF";
+            return (
+              <button key={x.k} type="button" aria-pressed={on} onClick={() => setSensor(x.k)} className="flex flex-col items-center gap-2 font-mono text-[12px]">
+                <span data-l="glass" className="grid h-[60px] w-[60px] place-items-center" style={on ? { boxShadow: `0 0 0 1.5px ${c}, 0 0 18px ${c}55, 0 10px 20px rgba(0,0,0,.9)` } : undefined}>
+                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke={on ? c : "#8A9095"} strokeWidth="1.8" aria-hidden>
+                    {x.k === "normal" && (<><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></>)}
+                    {x.k === "night" && <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />}
+                    {x.k === "thermal" && <path d="M12 3c1 3 4 5 4 9a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-8z" />}
+                  </svg>
+                </span>
+                <span style={{ color: on ? c : "#8A9095" }}>{x.t}</span>
+              </button>
+            );
+          })}
+        </div>
+      ) : luce ? (
         <div className="flex justify-center border-b px-3 py-3" style={{ borderColor: "#17181A" }}>
           <div role="group" aria-label="Sensor" className="grid w-full max-w-[420px] grid-cols-3 rounded-full p-1 font-mono text-[12.5px]" style={{ background: "#141517", boxShadow: "inset 0 0 0 1px #24262A" }}>
             {SENSORS.map((x) => (
@@ -144,6 +186,34 @@ export function WarRoom() {
         ))}
       </div>
       )}
+      {bold && (
+        <div className="flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-center sm:gap-4 md:px-5" style={{ borderColor: "#17181A" }}>
+          <button
+            type="button"
+            onClick={() => {
+              setSel("Peec AI");
+              setSensor("normal");
+              setFlash((n) => n + 1);
+            }}
+            aria-label="Code red: show Peec AI on the radar"
+            className="nb-sos relative inline-flex min-h-[52px] shrink-0 items-center gap-3 self-start rounded-full px-5 font-mono text-[13px] font-semibold tracking-[0.08em] text-white"
+            style={{ background: "radial-gradient(circle at 50% 30%,#FF6B6D 0%,#D11F24 55%,#7A0B0E 100%)", boxShadow: "0 0 0 1px #3A0A0C,0 0 0 6px #161719,0 0 0 7px #34363A,0 0 22px rgba(255,77,79,.45),inset 0 1px 0 rgba(255,255,255,.35)" }}
+          >
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-70" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-white" />
+            </span>
+            CODE RED
+          </button>
+          <p className="min-w-0 text-[15px] leading-[1.45] text-[#E8EAEA]">
+            <span className="font-mono text-[12px]" style={{ color: RED }}>16 Sep </span>
+            Peec AI started selling “brand perception”, your main term.{" "}
+            <a href="#nb-folder" className="-my-[14px] inline-block py-[14px] font-mono text-[12.5px] underline underline-offset-4" style={{ color: RED }}>
+              Open the folder
+            </a>
+          </p>
+        </div>
+      )}
       <div
         className="nb-war relative h-[330px] md:h-[400px]"
         style={{
@@ -161,6 +231,16 @@ export function WarRoom() {
               <WarTable selected={sel} tracking onSelect={setSel} sensor={sensor} byRival={MOVES_BY_RIVAL} big={luce} />
             </Suspense>
           </Guard>
+        )}
+        {bold && flash > 0 && (
+          <motion.div
+            key={flash}
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-10"
+            initial={{ boxShadow: "inset 0 0 0 3px rgba(255,77,79,1), inset 0 0 80px rgba(255,77,79,.45)" }}
+            animate={{ boxShadow: "inset 0 0 0 0px rgba(255,77,79,0), inset 0 0 0px rgba(255,77,79,0)" }}
+            transition={{ duration: 1.6, ease: "easeOut" }}
+          />
         )}
         {sensor !== "normal" && (
           <div
@@ -191,7 +271,7 @@ export function WarRoom() {
           </motion.div>
         </AnimatePresence>
       </div>
-      {luce ? (
+      {bold ? null : luce ? (
         <div className="grid grid-cols-3 gap-2 border-t px-4 py-4" style={{ borderColor: "#17181A" }}>
           {[
             { n: moves.read, t: "rival moves read", tag: "SCANNED", c: "#86D9A9" },
@@ -237,6 +317,12 @@ export function WarRoom() {
     </div>
   );
   if (!luce) return panel;
+  if (bold)
+    return (
+      <div data-l="bezel" className="overflow-hidden">
+        {panel}
+      </div>
+    );
   return (
     <div className="rounded-[26px] p-[6px]" style={{ background: "linear-gradient(180deg,#2A2B2E,#141517 45%,#0B0B0C)", boxShadow: "0 24px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08)" }}>
       {panel}
@@ -415,7 +501,7 @@ export function Heatmap() {
   };
   const picked = grid[`${sel.r}|${sel.w}`] ?? [];
   return (
-    <div ref={ref} className="rounded-xl border bg-[#07090A] p-3 md:p-6" style={{ borderColor: LINE }}>
+    <div ref={ref} data-l="glasscard" className="rounded-xl border bg-[#07090A] p-3 md:p-6" style={{ borderColor: LINE }}>
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
         <p className="font-mono text-[13px] text-white">Every move, week by week. Tap a square.</p>
         <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px]" style={{ color: MUTE }}>

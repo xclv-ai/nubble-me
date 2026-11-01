@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { LUCE_CSS, LUCE_CSS_2 } from "./founders-luce";
 import { motion, useReducedMotion } from "framer-motion";
 import { Count, EmailForm, Ext, INVESTOR_PREVIEWS, usePlay, fade, type FormCopy } from "./founders";
 import { Big, SizesBig } from "./founders-v2";
@@ -409,6 +410,7 @@ function Close() {
             {PLACES.map((p) => (
               <li
                 key={p.name}
+                data-l="chip"
                 className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[13px] font-medium"
                 style={p.live ? { borderColor: "#1F4D33", background: "#0E2419", color: "#5BE39C" } : { borderColor: LINE, color: "#D9DDDF" }}
               >
@@ -442,7 +444,7 @@ const MONO_CSS = `
   }
 `;
 
-export default function FoundersLandingV3({ mono = false, fx = {} }: { mono?: boolean; fx?: Fx } = {}) {
+export default function FoundersLandingV3({ mono = false, fx = {}, luce = false }: { mono?: boolean; fx?: Fx; luce?: boolean } = {}) {
   useEffect(() => {
     document.title = "Nubble for AI founders";
   }, []);
@@ -463,11 +465,12 @@ export default function FoundersLandingV3({ mono = false, fx = {} }: { mono?: bo
   };
   return (
     <div
-      className={`founders ${mono ? "nb-mono" : ""} fixed inset-0 overflow-y-auto overflow-x-hidden overscroll-y-contain bg-[#050607] text-[#E8EAEA] antialiased [-webkit-overflow-scrolling:touch]`}
+      className={`founders ${mono ? "nb-mono" : ""} ${luce ? "nb-luce" : ""} fixed inset-0 overflow-y-auto overflow-x-hidden overscroll-y-contain bg-[#050607] text-[#E8EAEA] antialiased [-webkit-overflow-scrolling:touch]`}
       style={{ fontFamily: "'Geist', ui-sans-serif, system-ui, sans-serif", colorScheme: "dark" }}
     >
       {mono && <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" />}
       {mono && <style>{MONO_CSS}</style>}
+      {luce && <style>{LUCE_CSS + LUCE_CSS_2}</style>}
       <style>{`
         .founders .font-mono{font-family:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace}
         .founders .text-fg{color:#171717} .founders .text-mute{color:#666666}
@@ -493,6 +496,7 @@ export default function FoundersLandingV3({ mono = false, fx = {} }: { mono?: bo
           </a>
           <a
             href="#site-top"
+            data-l="cta"
             onClick={toTop}
             className={`inline-flex h-9 items-center rounded-md bg-white px-3 text-[14px] font-medium text-black transition-opacity duration-300 hover:bg-[#E6E6E6] sm:px-4 ${
               formOnScreen ? "pointer-events-none opacity-0" : "opacity-100"

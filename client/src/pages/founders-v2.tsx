@@ -610,7 +610,7 @@ export function SizesBig() {
   };
   return (
     <div className="flex flex-col gap-3">
-      <div role="tablist" aria-label="Story size" className="grid grid-cols-3 gap-1 rounded-xl bg-[#1A1A1A] p-1">
+      <div role="tablist" aria-label="Story size" data-l="pill" className="grid grid-cols-3 gap-1 rounded-xl bg-[#1A1A1A] p-1">
         {SIZE_TABS.map((t, i) => (
           <button
             key={t}
@@ -624,6 +624,7 @@ export function SizesBig() {
             {size === i && (
               <motion.span
                 layoutId="size-pill-v2"
+                data-l="seg-on"
                 className="absolute inset-0 rounded-lg"
                 style={{ background: i === 0 ? AMBER : "#FFFFFF" }}
                 transition={{ type: "spring", stiffness: 500, damping: 38 }}
@@ -638,6 +639,7 @@ export function SizesBig() {
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.2}
         onDragEnd={onDragEnd}
+        data-l="ring"
         className="cursor-grab touch-pan-y overflow-hidden rounded-xl bg-white text-fg active:cursor-grabbing"
       >
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-[#EAEAEA] px-5 py-3 md:px-7">

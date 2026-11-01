@@ -202,6 +202,7 @@ export function EmailForm({
         Your website
       </label>
       <div
+        data-l="field"
         className={`flex h-12 w-full min-w-0 items-center rounded-md border px-3 transition-shadow sm:w-auto sm:flex-1 ${
           err ? "border-[#E5484D] shadow-[0_0_0_3px_rgba(229,72,77,0.35)]" : "focus-within:shadow-[0_0_0_3px_rgba(0,112,243,0.35)]"} ${
           err ? "border-[#E5484D]" : dark ? "border-[#3D3D3D]" : "border-[#D4D4D4]"
@@ -229,6 +230,7 @@ export function EmailForm({
       </div>
       <button
         type="submit"
+        data-l="cta"
         className={`h-12 whitespace-nowrap rounded-md px-5 text-[15px] font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0070F3] ${
           dark ? "bg-white text-black hover:bg-[#E6E6E6]" : "bg-[#171717] text-white hover:bg-[#383838]"
         }`}

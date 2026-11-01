@@ -507,6 +507,7 @@ export function PressureGauge() {
               key={i}
               onClick={() => pick(i)}
               aria-pressed={on}
+              data-l="key"
               className="flex min-h-[48px] flex-col items-center justify-center rounded-md border font-mono leading-tight"
               style={{ borderColor: on ? AMBER : "#2A3338", background: on ? "#2A2210" : "transparent" }}
             >
@@ -520,7 +521,7 @@ export function PressureGauge() {
           );
         })}
       </div>
-      <div className="rounded-lg border px-4 py-3" style={{ borderColor: "#1E2529", background: "#0B0E0F" }}>
+      <div data-l="glasscard" className="rounded-lg border px-4 py-3" style={{ borderColor: "#1E2529", background: "#0B0E0F" }}>
         <p className="mb-2 font-mono text-[12px]" style={{ color: MUTE }}>
           How {sel < 0 ? "the total" : "this week"} adds up
         </p>
