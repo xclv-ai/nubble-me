@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import type { RunItem } from "./founders-data";
 import { MovesCtx, WEEKS, weekOf } from "./founders-fx-data";
 import { AMBER, MUTE, RED } from "./founders-v3";
@@ -42,8 +42,14 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
   scene.background = new THREE.Color(0x050505);
   const cam = new THREE.PerspectiveCamera(30, 1, 0.5, 40);
   const pm = new THREE.PMREMGenerator(R);
-  scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+  // The studio light from the app prototype: a real photographed studio. Until it loads, no reflections at all.
   scene.environmentIntensity = 0.5;
+  let disposed = false;
+  new RGBELoader().load("/fx/studio_small_09_1k.hdr", (hdr) => {
+    if (disposed) return;
+    scene.environment = pm.fromEquirectangular(hdr).texture;
+    hdr.dispose();
+  });
   const key = new THREE.DirectionalLight(0xffffff, 1.6);
   key.position.set(-1.2, 2.4, 3.2);
   key.castShadow = true;
@@ -203,7 +209,7 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
   );
   glass.rotation.x = Math.PI / 2;
   glass.position.z = 0.112 - 4.0 * Math.cos(Math.asin(0.705 / 4.0));
-  rig.add(glass);
+  // glass dome left out: its hotspot washed out 40 and 60 (owner, 1 Nov)
 
   // glare: crisp diagonal sheen, slides with tilt
   const gc = document.createElement("canvas");
@@ -241,7 +247,7 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
   );
   glare.position.z = 0.2;
   glare.renderOrder = 10;
-  rig.add(glare);
+  // glare left out for readability (owner, 1 Nov)
 
   // centre number on its own printed disc, counts with the needle
   const nc = document.createElement("canvas");
@@ -370,6 +376,7 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
       landed = false;
     },
     dispose() {
+      disposed = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
       io.disconnect();
