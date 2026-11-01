@@ -33,14 +33,14 @@ class Guard extends Component<{ fallback: ReactNode; children: ReactNode }, { fa
   }
 }
 
-function labelOf(m: RunItem) {
+export function labelOf(m: RunItem) {
   if (m.kept === "code-red") return { t: "copied you", c: RED };
   if (m.kept === "weakened") return { t: "weakened a claim", c: ORANGE };
   if (m.kept === "worth-knowing") return { t: "worth knowing", c: AMBER };
   return null;
 }
 
-function MoveList({ items, empty }: { items: RunItem[]; empty: string }) {
+export function MoveList({ items, empty }: { items: RunItem[]; empty: string }) {
   if (!items.length) return <p className="text-[14px]" style={{ color: MUTE }}>{empty}</p>;
   return (
     <ul className="flex flex-col gap-1.5">
