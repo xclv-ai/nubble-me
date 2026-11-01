@@ -110,7 +110,7 @@ function Tower({ i, name, selected, onPick, still, sensor }: { i: number; name: 
           <meshBasicMaterial color={sensor === "normal" ? RED : p.beam} transparent />
         </mesh>
       )}
-      <Html position={[0, h + 0.42, 0]} center distanceFactor={9} zIndexRange={[10, 0]} style={{ pointerEvents: "none" }}>
+      <Html position={[0, h + 0.6, 0]} center distanceFactor={9} zIndexRange={[10, 0]} style={{ pointerEvents: "none" }}>
         <div
           className="whitespace-nowrap font-mono leading-tight"
           style={{
@@ -152,9 +152,9 @@ function You({ still, color }: { still: boolean; color: string }) {
         <octahedronGeometry args={[0.22, 0]} />
         <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.6} />
       </mesh>
-      <Html position={[0, -0.1, 1.0]} center distanceFactor={9} style={{ pointerEvents: "none" }}>
-        <div className="whitespace-nowrap font-mono" style={{ color, fontSize: 13, textShadow: "0 0 6px #000" }}>
-          pokpok.ai (you)
+      <Html position={[0, -0.05, 0.55]} center distanceFactor={9} zIndexRange={[20, 11]} style={{ pointerEvents: "none" }}>
+        <div className="whitespace-nowrap font-mono" style={{ color, fontSize: 12, fontWeight: 600, padding: "1px 5px", background: "rgba(0,0,0,0.6)", textShadow: "0 0 6px #000" }}>
+          YOU
         </div>
       </Html>
     </group>
@@ -166,7 +166,7 @@ function Fit() {
   const { camera, size } = useThree();
   useEffect(() => {
     const aspect = size.width / size.height;
-    const d = aspect < 1.1 ? 11.5 : 9.2;
+    const d = aspect < 1.1 ? 12.5 : 9.2;
     camera.position.set(0, d * 0.72, d * 0.88);
     camera.lookAt(0, 0.4, 0);
     camera.updateProjectionMatrix();
