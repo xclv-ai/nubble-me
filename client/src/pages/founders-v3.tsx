@@ -378,7 +378,7 @@ function SoWhat() {
               yours.
             </span>
           </h2>
-          <a href="/" className="self-start text-[15px] font-medium text-white underline decoration-[#5A5A5A] underline-offset-4 hover:decoration-white">
+          <a href="/ai-news" className="self-start text-[15px] font-medium text-white underline decoration-[#5A5A5A] underline-offset-4 hover:decoration-white">
             The reader at nubble.me is live. Swipe it yourself.
           </a>
         </div>
@@ -444,7 +444,7 @@ const MONO_CSS = `
   }
 `;
 
-export default function FoundersLandingV3({ mono = false, fx = {}, luce = false }: { mono?: boolean; fx?: Fx; luce?: boolean } = {}) {
+export default function FoundersLandingV3({ mono = false, fx = {}, luce = false, rectLogo = false }: { mono?: boolean; fx?: Fx; luce?: boolean; rectLogo?: boolean } = {}) {
   useEffect(() => {
     document.title = "Nubble for AI founders";
   }, []);
@@ -489,10 +489,18 @@ export default function FoundersLandingV3({ mono = false, fx = {}, luce = false 
       <header className="sticky top-0 z-20 border-b bg-[#050607]/95 backdrop-blur" style={{ borderColor: LINE }}>
         <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-5 md:px-12">
           <a href="/" className="flex min-h-[44px] items-center gap-2 text-[18px] font-semibold tracking-[-0.03em] text-white">
+            {rectLogo ? (
+              // the logo is just a rectangle (owner, 2 Nov 2026)
+              <svg width="14" height="18" viewBox="0 0 14 18" fill="none" aria-hidden="true">
+                <rect x="1" y="1" width="12" height="16" stroke="currentColor" strokeWidth="2" />
+              </svg>
+            ) : null}
             nubble
-            <span className="rounded-full border px-2 py-0.5 font-mono text-[11px] font-normal tracking-normal" style={{ borderColor: LINE, color: MUTE }}>
-              for founders
-            </span>
+            {!rectLogo && (
+              <span className="rounded-full border px-2 py-0.5 font-mono text-[11px] font-normal tracking-normal" style={{ borderColor: LINE, color: MUTE }}>
+                for founders
+              </span>
+            )}
           </a>
           <a
             href="#site-top"

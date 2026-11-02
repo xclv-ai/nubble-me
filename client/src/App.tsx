@@ -31,7 +31,9 @@ import FoundersLandingV14 from "@/pages/founders-v14";
 function AppRouter() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      {/* nubble.me is the founders page (owner, 2 Nov 2026); the news reader moved to /ai-news */}
+      <Route path="/">{() => <FoundersLandingV14 rectLogo />}</Route>
+      <Route path="/ai-news" component={Home} />
       <Route path="/founders" component={FoundersLanding} />
       <Route path="/founders-v2" component={FoundersLandingV2} />
       <Route path="/founders-v3">{() => <FoundersLandingV3 />}</Route>
@@ -45,13 +47,13 @@ function AppRouter() {
       <Route path="/founders-v11" component={FoundersLandingV11} />
       <Route path="/founders-v12" component={FoundersLandingV12} />
       <Route path="/founders-v13" component={FoundersLandingV13} />
-      <Route path="/founders-v14" component={FoundersLandingV14} />
+      <Route path="/founders-v14">{() => <FoundersLandingV14 />}</Route>
       <Route path="/ai-branding" component={Home} />
       <Route path="/ai-ecommerce" component={Home} />
       <Route path="/a16z-portfolio" component={Home} />
       <Route path="/pokpok" component={Home} />
-      <Route path="/ai-digest">{() => <Redirect to="/" />}</Route>
-      <Route path="/digest">{() => <Redirect to="/" />}</Route>
+      <Route path="/ai-digest">{() => <Redirect to="/ai-news" />}</Route>
+      <Route path="/digest">{() => <Redirect to="/ai-news" />}</Route>
       <Route path="/v2" component={HomeV2} />
       <Route path="/v3" component={HomeV3} />
       <Route path="/v4" component={HomeV4} />

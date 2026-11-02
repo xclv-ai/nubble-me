@@ -52,7 +52,7 @@ function Pressure() {
   );
 }
 
-export default function FoundersLandingV14() {
+export default function FoundersLandingV14({ rectLogo = false }: { rectLogo?: boolean } = {}) {
   const rivals = useRivalsState();
   return (
     <Luce3DCtx.Provider value={Luce3DLayerV14}>
@@ -65,6 +65,7 @@ export default function FoundersLandingV14() {
           <FoundersLandingV3
             mono
             luce
+            rectLogo={rectLogo}
             fx={{
               map: <WarRoom />,
               folder: (

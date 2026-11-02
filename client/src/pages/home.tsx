@@ -105,7 +105,7 @@ function feedToDocument(feed: FeedResponse, title: string): ContentDocument {
 }
 
 const categoryRoutes: Record<Category, string> = {
-  "ai-news": "/",
+  "ai-news": "/ai-news",
   "ai-branding": "/ai-branding",
   "ai-ecommerce": "/ai-ecommerce",
   "a16z-portfolio": "/a16z-portfolio",
@@ -114,6 +114,7 @@ const categoryRoutes: Record<Category, string> = {
 
 const routeToCategory: Record<string, Category> = {
   "/": "ai-news",
+  "/ai-news": "ai-news",
   "/ai-branding": "ai-branding",
   "/ai-ecommerce": "ai-ecommerce",
   "/a16z-portfolio": "a16z-portfolio",
