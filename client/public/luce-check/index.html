@@ -21,8 +21,8 @@
   figcaption i { color: #E9D27A; font-style: normal; font-weight: 600; }
   img { display: block; width: 100%; height: auto; }
   a.live { display: block; text-align: center; padding: 14px; border-radius: 12px; background: #1a1a1a; border: 1px solid #333; color: #fff; text-decoration: none; font-weight: 600; }
-  .one { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
-  .one figure { flex: none; }
+  .one { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+  .one figure { flex: none; max-width: 100%; overflow-x: auto; }
   .one img { width: auto; max-width: none; image-rendering: auto; }
 </style>
 </head>
@@ -32,10 +32,10 @@
 
   <section>
     <h2>1:1, same pixel size, nothing stretched</h2>
-    <p>Each picture is shown at its real pixel size. Your reference and my render are at the same scale. Swipe sideways if they do not fit.</p>
+    <p>Each picture is shown at its real pixel size, and your reference and my render are at the same scale. The key pictures are wider than a phone, so swipe across them.</p>
     <div class="one">
-      <figure><img src="/luce-check/lever-luce.jpg" width="250" height="344" alt="Luce toggle, 1:1"><figcaption><b>Luce</b></figcaption></figure>
-      <figure><img src="/luce-check/lever-nubble.jpg" width="250" height="344" alt="Nubble toggle, 1:1"><figcaption><i>Nubble</i></figcaption></figure>
+      <figure><img src="/luce-check/lever-luce-1x.jpg" width="170" height="240" alt="Luce toggle, 1:1"><figcaption><b>Luce</b></figcaption></figure>
+      <figure><img src="/luce-check/lever-nubble-1x.jpg" width="170" height="240" alt="Nubble toggle, 1:1"><figcaption><i>Nubble</i></figcaption></figure>
     </div>
     <div class="one">
       <figure><img src="/luce-check/key-luce-1x.jpg" width="450" height="450" alt="Luce key, 1:1"><figcaption><b>Luce</b></figcaption></figure>
