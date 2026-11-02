@@ -38,7 +38,7 @@ function AppRouter() {
   return (
     <Switch>
       {/* nubble.me is the founders page (owner, 2 Nov 2026); the news reader moved to /ai-news */}
-      <Route path="/">{() => <FoundersLandingV18 rectLogo />}</Route>
+      <Route path="/">{() => <FoundersLandingV20 rectLogo />}</Route>
       <Route path="/ai-news" component={Home} />
       <Route path="/founders" component={FoundersLanding} />
       <Route path="/founders-v2" component={FoundersLandingV2} />
