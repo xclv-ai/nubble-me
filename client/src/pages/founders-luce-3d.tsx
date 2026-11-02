@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ComponentType, type ReactNode } from "react";
 import * as THREE from "three";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
@@ -405,11 +405,15 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
   };
 }
 
-export const Luce3DCtx = createContext(false);
+/** true = v10 layer; a component = that page's own layer (v11). */
+export const Luce3DCtx = createContext<boolean | ComponentType<{ children: ReactNode; className?: string }>>(false);
 
 /** Wraps children in a 3D layer when Luce3DCtx is on; otherwise renders them as they are. */
 export function Maybe3D({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return useContext(Luce3DCtx) ? <Luce3DLayer className={className}>{children}</Luce3DLayer> : <>{children}</>;
+  const v = useContext(Luce3DCtx);
+  if (!v) return <>{children}</>;
+  const L = typeof v === "function" ? v : Luce3DLayer;
+  return <L className={className}>{children}</L>;
 }
 
 export function Luce3DLayer({ children, className = "" }: { children: ReactNode; className?: string }) {
