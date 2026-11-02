@@ -39,11 +39,14 @@ export function LeverToggle({ on, onChange, label, sub, color = "#FFFFFF" }: { o
         {label}
       </span>
       <span
-        className="relative block h-[58px] w-[34px] rounded-[17px]"
+        data-3d="lever"
+        data-on={on ? "1" : "0"}
+        className="relative block h-[96px] w-[46px] rounded-[23px]"
         style={{ background: "linear-gradient(180deg,#050505,#141517)", boxShadow: "0 0 0 1px #2A2C30, inset 0 2px 6px #000, 0 1px 0 rgba(255,255,255,.06)" }}
       >
-        <span className="absolute left-1/2 top-1/2 h-[30px] w-[22px] -translate-x-1/2 -translate-y-1/2 rounded-[11px]" style={{ background: "radial-gradient(circle at 50% 40%,#2A2C30,#0A0A0B)" }} />
+        <span data-3d-hide className="absolute left-1/2 top-1/2 h-[30px] w-[22px] -translate-x-1/2 -translate-y-1/2 rounded-[11px]" style={{ background: "radial-gradient(circle at 50% 40%,#2A2C30,#0A0A0B)" }} />
         <motion.span
+          data-3d-hide
           className="absolute left-1/2 h-[13px] w-[44px] -translate-x-1/2 rounded-[7px]"
           initial={false}
           animate={{ top: on ? 9 : 36 }}
@@ -108,15 +111,19 @@ export function RotaryKey({ value, options, onChange, colors }: { value: number;
           if (e.key === "ArrowRight" || e.key === "ArrowUp") onChange(Math.min(n - 1, value + 1));
           if (e.key === "ArrowLeft" || e.key === "ArrowDown") onChange(Math.max(0, value - 1));
         }}
+        data-3d="rotary"
+        data-angle={ANG[value]}
         className="relative grid h-[132px] w-[132px] touch-none place-items-center rounded-full"
         style={{ background: "radial-gradient(circle at 50% 40%,#1D1E21,#050505 70%)", boxShadow: "0 0 0 1px #2E3034, 0 0 0 7px #121315, 0 0 0 8px #34363A, 0 18px 30px rgba(0,0,0,.85)" }}
       >
         <span
+          data-3d-hide
           className="absolute inset-[12px] rounded-full"
           style={{ background: "conic-gradient(from 200deg,#6E7176,#E9EBED,#9A9DA2,#F6F7F8,#7B7E83,#C9CBCE,#6E7176)", boxShadow: "inset 0 2px 6px rgba(0,0,0,.6)" }}
         />
-        <span className="absolute inset-[24px] rounded-full" style={{ background: "radial-gradient(circle at 50% 35%,#2B2D31,#0B0B0C)" }} />
+        <span data-3d-hide className="absolute inset-[24px] rounded-full" style={{ background: "radial-gradient(circle at 50% 35%,#2B2D31,#0B0B0C)" }} />
         <motion.span
+          data-3d-hide
           className="relative block h-[112px] w-[40px] rounded-[20px]"
           initial={false}
           animate={{ rotate: ANG[value] }}
@@ -165,10 +172,13 @@ export function SyncSlider({
       <button
         type="button"
         aria-pressed={sync}
+        data-3d="glass"
+        data-on={sync ? "1" : "0"}
+        data-color="#E9D27A"
         onClick={() => onChange(-1)}
         className="mt-[2px] grid h-[52px] w-[52px] shrink-0 place-items-center rounded-full font-mono text-[12px] font-semibold tracking-[0.04em]"
         style={{
-          color: sync ? "#FFFFFF" : "#8A9095",
+          color: sync ? "#FFFFFF" : "#D9DDDF",
           background: "radial-gradient(circle at 50% 40%,#202124,#09090A)",
           boxShadow: "0 0 0 1px #2E3034, 0 0 0 5px #121315, 0 0 0 6px #34363A",
           outline: sync ? "2px solid #E9D27A" : "none",
@@ -181,6 +191,7 @@ export function SyncSlider({
         <div
           ref={track}
           role="slider"
+          data-3d="track"
           tabIndex={0}
           aria-label="Week"
           aria-valuemin={0}
@@ -204,6 +215,7 @@ export function SyncSlider({
         >
           <motion.span
             aria-hidden
+            data-3d="knob"
             className="absolute top-1/2 grid h-[46px] w-[46px] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full text-[17px] font-semibold"
             initial={false}
             animate={{ left: pos(Math.max(0, value)), opacity: sync ? 0.35 : 1 }}
@@ -244,11 +256,12 @@ export function SyncSlider({
 /** Black glass SOS capsule with a lit legend. */
 export function SosCapsule({ onPress, children, label }: { onPress: () => void; children: React.ReactNode; label: string }) {
   return (
-    <span className="inline-flex shrink-0 self-start rounded-full p-[6px]" style={{ background: "#0B0B0C", boxShadow: "inset 0 2px 6px #000, 0 0 0 1px #26282C" }}>
+    <span data-3d="frame" className="inline-flex shrink-0 self-start rounded-full p-[6px]" style={{ background: "#0B0B0C", boxShadow: "inset 0 2px 6px #000, 0 0 0 1px #26282C" }}>
       <button
         type="button"
         onClick={onPress}
         aria-label={label}
+        data-3d="sos"
         className="relative inline-flex min-h-[52px] items-center gap-3 rounded-full px-6 font-mono text-[14px] font-semibold tracking-[0.12em] active:translate-y-px"
         style={{ color: "#FFFFFF", background: "radial-gradient(ellipse at 50% 30%,#222326,#070708 75%)", boxShadow: "0 0 0 1px #34363A, 0 6px 14px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.1)", textShadow: "0 0 10px rgba(255,255,255,.55)" }}
       >
