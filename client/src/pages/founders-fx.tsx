@@ -1,4 +1,4 @@
-import { Component, lazy, Suspense, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Component, createContext, lazy, Suspense, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { Count, Ext } from "./founders";
 import { LGREEN, LTag, LTrace, LYELLOW } from "./founders-luce";
@@ -517,6 +517,9 @@ export function XRayHunt({ embedded = false, onFound }: { embedded?: boolean; on
 
 /* ─── 3. The heat map: every move, week by week ─── */
 
+/** v17: a tap on a square locks on like a radar target, lights its row and week, and opens the week like a folder. */
+export const HeatFxCtx = createContext(false);
+
 export function Heatmap() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
@@ -525,6 +528,22 @@ export function Heatmap() {
   const phys = useContext(LucePhysCtx);
   const rivals = useRivals();
   const [sel, setSel] = useState<{ r: FxRival; w: number }>({ r: "Peec AI", w: 0 });
+  const fx = useContext(HeatFxCtx);
+  const [taps, setTaps] = useState(0);
+  const detail = useRef<HTMLDivElement>(null);
+  const pick = (r: FxRival, w: number) => {
+    setSel({ r, w });
+    if (!fx) return;
+    setTaps((n) => n + 1);
+    try { navigator.vibrate?.(8); } catch { /* not on iPhone */ }
+    // keep the opened week in sight on a phone
+    requestAnimationFrame(() => {
+      const el = detail.current;
+      if (!el) return;
+      const b = el.getBoundingClientRect();
+      if (b.top > window.innerHeight - 120) window.scrollBy({ top: b.top - window.innerHeight + Math.min(b.height, 260) + 24, behavior: reduce ? "auto" : "smooth" });
+    });
+  };
   const grid = useMemo(() => {
     const g: Record<string, RunItem[]> = {};
     run.forEach((m) => {
@@ -543,6 +562,7 @@ export function Heatmap() {
   };
   const ledOf = (items: RunItem[]) => (!items.length ? null : items.some((m) => m.kept === "code-red") ? RED : items.some((m) => m.kept === "weakened") ? ORANGE : "#E0A43A");
   const picked = grid[`${sel.r}|${sel.w}`] ?? [];
+  const selLed = ledOf(picked) ?? "#E8EAEA";
   return (
     <div ref={ref} data-l="glasscard" className="rounded-xl border bg-[#07090A] p-3 md:p-6" style={{ borderColor: LINE }}>
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
@@ -555,8 +575,8 @@ export function Heatmap() {
       </div>
       <div className="grid gap-[3px] md:max-w-[620px] md:gap-1.5" style={{ gridTemplateColumns: `54px repeat(${WEEKS.length}, minmax(0, 1fr)) 22px` }}>
         <span />
-        {WEEKS.map((w) => (
-          <span key={w.label} className="text-center font-mono text-[10px] leading-tight md:text-[11px]" style={{ color: MUTE }}>
+        {WEEKS.map((w, wi) => (
+          <span key={w.label} className="text-center font-mono text-[10px] leading-tight transition-colors duration-300 md:text-[11px]" style={{ color: fx && wi === sel.w ? "#FFFFFF" : MUTE, textShadow: fx && wi === sel.w ? `0 0 10px ${selLed}` : undefined }}>
             {w.label.split(" ")[0]}
             <br />
             {w.label.split(" ")[1]}
@@ -567,7 +587,7 @@ export function Heatmap() {
         </span>
         {FX_RIVALS.map((r, ri) => (
           <div key={r} className="contents">
-            <span className="truncate self-center font-mono text-[11.5px] md:text-[13px]" style={{ color: r === "Peec AI" ? RED : "#C9CFD2", opacity: phys && rivals.off.has(r) ? 0.3 : 1 }} title={r}>
+            <span className="truncate self-center font-mono text-[11.5px] transition-all duration-300 md:text-[13px]" style={{ color: fx && r === sel.r ? "#FFFFFF" : r === "Peec AI" ? RED : "#C9CFD2", opacity: phys && rivals.off.has(r) ? 0.3 : 1 }} title={r}>
               {r.split(" ")[0].replace(".AI", "")}
             </span>
             {WEEKS.map((_, wi) => {
@@ -578,16 +598,26 @@ export function Heatmap() {
                   key={wi}
                   type="button"
                   aria-label={`${r}, week of ${WEEKS[wi].label}: ${items.length} moves`}
-                  onClick={() => setSel({ r, w: wi })}
+                  onClick={() => pick(r, wi)}
+                  whileTap={fx ? { scale: 0.86 } : undefined}
                   initial={false}
                   animate={inView || reduce ? { opacity: phys && rivals.off.has(r) ? 0.3 : 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
                   transition={{ delay: reduce ? 0 : (wi * 6 + ri) * 0.025, duration: 0.25 }}
                   data-3d={phys ? "key" : undefined}
                   data-color={phys ? ledOf(items) ?? "" : undefined}
                   data-on={on ? "1" : "0"}
-                  className="aspect-square min-h-[40px] w-full rounded-[4px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                  data-dim={fx && !on ? "1" : undefined}
+                  data-tap={fx && on ? String(taps) : undefined}
+                  className="relative aspect-square min-h-[40px] w-full rounded-[4px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
                   style={phys ? glassKey(ledOf(items), on) : { ...cellColor(items), outline: on ? "2px solid #FFFFFF" : undefined, outlineOffset: 1 }}
                 >
+                  {fx && on && (
+                    <motion.span layoutId="heat-lock" aria-hidden className="pointer-events-none absolute -inset-[5px] block" transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 520, damping: 34 }}>
+                      {(["left-0 top-0 border-l-2 border-t-2 rounded-tl-[7px]", "right-0 top-0 border-r-2 border-t-2 rounded-tr-[7px]", "left-0 bottom-0 border-l-2 border-b-2 rounded-bl-[7px]", "right-0 bottom-0 border-r-2 border-b-2 rounded-br-[7px]"] as const).map((c) => (
+                        <i key={c} className={`absolute block h-[11px] w-[11px] ${c}`} style={{ borderColor: selLed, filter: `drop-shadow(0 0 4px ${selLed})` }} />
+                      ))}
+                    </motion.span>
+                  )}
                   {items.length > 1 && <span className={`font-mono text-[11px] font-medium ${phys ? "text-white" : "text-black"}`} style={phys ? { textShadow: "0 0 4px #000, 0 0 2px #000" } : undefined}>{items.length}</span>}
                 </motion.button>
               );
@@ -596,12 +626,47 @@ export function Heatmap() {
           </div>
         ))}
       </div>
+      {fx ? (
+        <div ref={detail} className="relative mt-4 min-h-[118px] overflow-hidden border-t pt-3" style={{ borderColor: LINE }}>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={`${sel.r}|${sel.w}`}
+              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8, filter: "blur(4px)" }}
+              transition={{ duration: 0.26, ease: [0.2, 0.8, 0.2, 1] }}
+              className="relative rounded-[6px] border-l-2 pl-3"
+              style={{ borderColor: selLed }}
+            >
+              {!reduce && (
+                <motion.i
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 block h-[2px]"
+                  style={{ background: `linear-gradient(90deg, transparent, ${selLed}, transparent)`, boxShadow: `0 0 12px ${selLed}` }}
+                  initial={{ top: 0, opacity: 1 }}
+                  animate={{ top: "100%", opacity: 0 }}
+                  transition={{ duration: 0.55, ease: "easeOut" }}
+                />
+              )}
+              <p className="mb-2 flex items-center justify-between gap-3 font-mono text-[12px]">
+                <span className="inline-flex items-center gap-2 text-white">
+                  <motion.i className="inline-block h-2 w-2 rounded-full" style={{ background: selLed, boxShadow: `0 0 8px ${selLed}` }} animate={reduce ? undefined : { opacity: [1, 0.35, 1] }} transition={{ duration: 1.4, repeat: Infinity }} />
+                  {sel.r}, week of {WEEKS[sel.w].label}
+                </span>
+                <span style={{ color: picked.length ? selLed : MUTE }}>{picked.length === 1 ? "1 move" : `${picked.length} moves`}</span>
+              </p>
+              <MoveList items={picked} empty={`No moves from ${sel.r} that week.`} />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      ) : (
       <div className="mt-4 border-t pt-3" style={{ borderColor: LINE }}>
         <p className="mb-2 font-mono text-[12px]" style={{ color: MUTE }}>
           {sel.r}, week of {WEEKS[sel.w].label}
         </p>
         <MoveList items={picked} empty={`No moves from ${sel.r} that week.`} />
       </div>
+      )}
     </div>
   );
 }
