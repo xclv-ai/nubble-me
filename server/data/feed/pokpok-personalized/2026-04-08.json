@@ -185,7 +185,7 @@
       ]
     }
   ],
-  "audioUrl": "/data/feed/pokpok-personalized/podcasts/2026-04-08.mp3",
+  "audioUrl": "https://raw.githubusercontent.com/xclv-ai/nubble-me/main/media/podcasts/pokpok-personalized/2026-04-08.m4a",
   "infographicUrl": "/data/feed/pokpok-personalized/infographics/2026-04-08_landscape.jpg",
   "persona": "pokpok.ai",
   "persona_description": "The House M.D. for Digital Commerce Brands"

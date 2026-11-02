@@ -185,6 +185,6 @@
       ]
     }
   ],
-  "audioUrl": "/data/feed/ai-news/podcasts/2026-05-11.mp3",
+  "audioUrl": "https://raw.githubusercontent.com/xclv-ai/nubble-me/main/media/podcasts/ai-news/2026-05-11.m4a",
   "infographicUrl": "/data/feed/ai-news/infographics/2026-05-11_landscape.jpg"
 }
