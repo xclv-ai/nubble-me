@@ -19,9 +19,9 @@
   .tag { display: inline-block; font: 600 11px/1 ui-monospace, Menlo, monospace; letter-spacing: .08em; padding: 5px 7px; border-radius: 4px; border: 1px solid currentColor; }
 
   /* the new section: map half, intel half */
-  .war { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid var(--line); }
-  .mapside { position: sticky; top: 0; height: 100vh; height: 100svh; border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 18px; gap: 12px; }
-  .mapbox { flex: 1; min-height: 0; border-radius: 14px; border: 1px solid var(--line); background: radial-gradient(circle at 50% 50%, #0f1517 0, #060708 70%); position: relative; overflow: hidden; }
+  .war { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; gap: 0; border-bottom: 1px solid var(--line); }
+  .mapside { border-right: 1px solid var(--line); display: flex; flex-direction: column; padding: 18px; gap: 12px; }
+  .mapbox { width: 100%; aspect-ratio: 1; max-width: calc(100vh - 170px); max-height: calc(100vh - 170px); margin: 0 auto; border-radius: 14px; border: 1px solid var(--line); background: radial-gradient(circle at 50% 50%, #0f1517 0, #060708 70%); position: relative; overflow: hidden; }
   svg.radar { width: 100%; height: 100%; display: block; }
   .blip { cursor: pointer; }
   .blip text { font: 600 13px ui-monospace, Menlo, monospace; fill: #c9cfd2; }
@@ -38,6 +38,8 @@
   .lev.off { opacity: .55; }
 
   .intel { padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .intel .grow { flex: 1; }
+  .cut { max-width: 1180px; margin: 0 auto; padding: 14px max(16px, env(safe-area-inset-left)) 0 max(16px, env(safe-area-inset-right)); }
   .card { border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: #0a0d0e; }
   .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .head h2 { margin: 0; font: 600 22px/1.2 ui-monospace, Menlo, monospace; }
@@ -62,6 +64,7 @@
     .hero { padding-top: 28px; }
     .ghost h1 { font-size: 22px; }
     .war { grid-template-columns: 1fr; }
+    .mapbox { flex: 1; min-height: 0; aspect-ratio: auto; max-height: none; }
     .mapside { position: sticky; top: 0; z-index: 3; height: 50svh; border-right: 0; border-bottom: 1px solid var(--line); background: var(--bg); padding: 10px max(12px, env(safe-area-inset-left)) 10px max(12px, env(safe-area-inset-right)); gap: 8px; }
     .lev i { width: 28px; height: 36px; }
     .lev i::after { height: 14px; top: 5px; }
@@ -83,6 +86,8 @@
     </div>
   </div>
 
+  <div class="cut"><p class="why"><b>Cut from today's panel:</b> Night vision and Thermal (they changed the colours, not the meaning), the 7-line list (now the latest 5, for the rival you tapped), the separate CODE RED strip (it is now the top of Peec's folder), and the READ / FOR YOU / ACT boxes with the chart (now one line under the map).</p></div>
+
   <section class="war" aria-label="War room">
     <div class="mapside">
       <div class="mapbox">
@@ -103,11 +108,11 @@
 
     <div class="intel">
       <div class="card" id="card"></div>
-      <div class="card">
+      <div class="card grow">
         <p class="lbl" style="margin-top:0">Last moves we read</p>
         <ul class="moves" id="moves"></ul>
       </div>
-      <p class="why"><b>Cut from today's panel:</b> Night vision and Thermal (they changed the colours, not the meaning), the 7-line list (now 3, for the rival you tapped), the separate CODE RED strip (it is now the top of Peec's folder), and the READ / FOR YOU / ACT boxes with the chart (now one line under the map).</p>
+
     </div>
   </section>
 
@@ -120,11 +125,11 @@ const R = {
   "Peec AI": { short: "Peec", x: 268, y: 118, moves: 7, status: "CODE RED", color: "var(--red)", hex: "#ff4a4a", press: 85,
     sowhat: "Peec AI started selling “brand perception”, your main term.",
     move: "Check whether they ask real people or only AI answers. If only AI, say so on your comparison page this week.",
-    list: [["22 Oct","Peec launches Peec Agent and Actions","weakened a claim","var(--orange)"],["14 Oct","Peec: Introducing Views dashboards"],["16 Sep","Peec: Introducing brand perception","copied you","var(--red)"]] },
+    list: [["22 Oct","Peec launches Peec Agent and Actions","weakened a claim","var(--orange)"],["14 Oct","Peec: Introducing Views dashboards"],["13 Oct","Peec opens a New York office"],["29 Sep","Peec: The key to prompt tracking"],["16 Sep","Peec: Introducing brand perception","copied you","var(--red)"]] },
   "Profound": { short: "Profound", x: 118, y: 104, moves: 4, status: "WORTH KNOWING", color: "var(--amber)", hex: "#e0a43a", press: 5,
     sowhat: "Big money says AI changes how brands get found. That is your “why now” slide, with a date.",
     move: "No change needed. Put the $180M raise on your why-now slide.",
-    list: [["20 Oct","Profound and Bazaarvoice partnership"],["1 Oct","Profound Partner Kickoff"],["15 Sep","Profound raises $180M Series D","worth knowing","var(--amber)"]] },
+    list: [["20 Oct","Profound and Bazaarvoice partnership"],["1 Oct","Profound Partner Kickoff"],["15 Sep","Profound and Est\u00e9e Lauder partnership"],["15 Sep","Profound raises $180M Series D","worth knowing","var(--amber)"]] },
   "Semrush": { short: "Semrush", x: 86, y: 262, moves: 1, status: "QUIET", color: "var(--mute)", hex: "#7d8589", press: 0,
     sowhat: "One move, and it is not about you.",
     move: "No change needed.",
@@ -136,18 +141,18 @@ const R = {
   "Scrunch AI": { short: "Scrunch", x: 170, y: 330, moves: 5, status: "QUIET", color: "var(--mute)", hex: "#7d8589", press: 0,
     sowhat: "Five moves, none aimed at your claims.",
     move: "No change needed.",
-    list: [["27 Oct","Scrunch: Zapier integration"],["13 Oct","Scrunch: survey says a dashboard isn't a strategy"],["1 Oct","Scrunch: ships inside SitecoreAI"]] },
+    list: [["27 Oct","Scrunch: Zapier integration"],["13 Oct","Scrunch: survey says a dashboard isn't a strategy"],["1 Oct","Scrunch: ships inside SitecoreAI"],["25 Sep","Scrunch: study on self-ranking listicles in AI (X)"],["22 Sep","Scrunch: launches Agent Pages"]] },
   "Ahrefs Brand Radar": { short: "Ahrefs", x: 330, y: 200, moves: 4, status: "QUIET", color: "var(--mute)", hex: "#7d8589", press: 0,
     sowhat: "Four product updates, none aimed at your claims.",
     move: "No change needed.",
-    list: [["27 Oct","Ahrefs: Traffic Analytics shows AI traffic (X)"],["14 Oct","Ahrefs: Brand Radar labels funnel stage and intent"],["29 Sep","Ahrefs: Brand Radar Web Pages API"]] },
+    list: [["27 Oct","Ahrefs: Traffic Analytics shows AI traffic (X)"],["14 Oct","Ahrefs: Brand Radar labels funnel stage and intent"],["29 Sep","Ahrefs: Brand Radar Web Pages API"],["28 Sep","Ahrefs: Brand Radar filters for entities and ads"]] },
 };
 const SENDS = {
   "Investor update": (r) => `Investor update draft: “${r.short} moved this month. ${r.sowhat} Here is what we are doing about it.”`,
   "LinkedIn post": (r) => `LinkedIn draft: a post that answers ${r.short} without naming them, built on the one thing they can't claim.`,
   "Pitch slide": (r) => `Slide draft: “Why we win against ${r.short}”, one line, one proof, one date.`,
 };
-let sel = "Peec AI", off = new Set(), sent = null;
+let sel = "Peec AI", off = new Set(), sent = "Investor update";
 const $ = (id) => document.getElementById(id);
 function render() {
   const live = Object.keys(R).filter((k) => !off.has(k));
@@ -174,7 +179,7 @@ function render() {
 }
 document.addEventListener("click", (e) => {
   const b = e.target.closest("[data-k]"), l = e.target.closest("[data-lev]"), s = e.target.closest("[data-send]");
-  if (b && !off.has(b.dataset.k)) { sel = b.dataset.k; sent = null; render(); }
+  if (b && !off.has(b.dataset.k)) { sel = b.dataset.k; render(); }
   if (l) { const k = l.dataset.lev; off.has(k) ? off.delete(k) : off.add(k); if (off.has(sel)) { sel = Object.keys(R).find((x) => !off.has(x)) || sel; sent = null; } render(); }
   if (s) { sent = sent === s.dataset.send ? null : s.dataset.send; render(); }
 });
