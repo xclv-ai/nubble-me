@@ -178,7 +178,7 @@ export function SyncSlider({
         onClick={() => onChange(-1)}
         className="mt-[2px] grid h-[52px] w-[52px] shrink-0 place-items-center rounded-full font-mono text-[12px] font-semibold tracking-[0.04em]"
         style={{
-          color: sync ? "#FFFFFF" : "#8A9095",
+          color: sync ? "#FFFFFF" : "#D9DDDF",
           background: "radial-gradient(circle at 50% 40%,#202124,#09090A)",
           boxShadow: "0 0 0 1px #2E3034, 0 0 0 5px #121315, 0 0 0 6px #34363A",
           outline: sync ? "2px solid #E9D27A" : "none",

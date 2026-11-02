@@ -589,7 +589,7 @@ export function Heatmap() {
                 </motion.button>
               );
             })}
-            <span className="self-center text-center font-mono text-[12px] text-white">{MOVES_BY_RIVAL[r].length}</span>
+            <span className="self-center text-center font-mono text-[12px] text-white" style={{ opacity: phys && rivals.off.has(r) ? 0.3 : 1 }}>{MOVES_BY_RIVAL[r].length}</span>
           </div>
         ))}
       </div>
