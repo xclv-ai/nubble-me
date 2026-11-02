@@ -23,7 +23,6 @@ if (!NOTEBOOK_ID) { console.error("--notebook <id> required"); process.exit(1); 
 
 const DATA_DIR_SERVER = path.join(process.cwd(), "server/data/feed", CATEGORY);
 const DATA_DIR_PUBLIC = path.join(process.cwd(), "client/public/data/feed", CATEGORY);
-const PODCAST_BASE_URL = "https://raw.githubusercontent.com/xclv-ai/nubble-me/main/media/podcasts";
 
 function log(message: string, source = "feed") {
   const t = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit", hour12: true });
@@ -202,9 +201,7 @@ IMPORTANT: Do NOT include citation numbers like [1], [2], [3] anywhere. Write cl
     log("Creating audio podcast...");
     await runNLM(["audio", "create", notebookId, "-f", "debate", "-l", "short", "-y"], 120000);
     await pollArtifactReady(notebookId, "audio", 15 * 60 * 1000);
-    // Audio lives outside client/public so it is not copied into every Vercel deploy;
-      // the site plays it straight from GitHub.
-      const podcastDir = path.join(process.cwd(), "media/podcasts", CATEGORY);
+    const podcastDir = path.join(DATA_DIR_PUBLIC, "podcasts");
     if (!fs.existsSync(podcastDir)) fs.mkdirSync(podcastDir, { recursive: true });
     const m4aPath = path.join(podcastDir, `${today}_raw.m4a`);
     const wavPath = path.join(podcastDir, `${today}_raw.wav`);
@@ -223,8 +220,7 @@ IMPORTANT: Do NOT include citation numbers like [1], [2], [3] anywhere. Write cl
     }
     if (fs.existsSync(m4aPath)) fs.unlinkSync(m4aPath);
     if (fs.existsSync(wavPath)) fs.unlinkSync(wavPath);
-    const finalPath = fs.existsSync(audioPath) ? audioPath : audioPath.replace(".mp3", ".m4a");
-    output.audioUrl = `${PODCAST_BASE_URL}/${CATEGORY}/${path.basename(finalPath)}`;
+    output.audioUrl = `/data/feed/${CATEGORY}/podcasts/${audioFilename}`;
     for (const dir of [DATA_DIR_SERVER, DATA_DIR_PUBLIC]) {
       fs.writeFileSync(path.join(dir, `${today}.json`), JSON.stringify(output, null, 2));
       fs.writeFileSync(path.join(dir, "latest.json"), JSON.stringify(output, null, 2));

@@ -74,7 +74,7 @@ export function MoveList({ items, empty }: { items: RunItem[]; empty: string }) 
 
 /* ─── 1. The war table (3D) ─── */
 
-export function WarRoom() {
+export function WarRoom({ rivalsBelow = false }: { rivalsBelow?: boolean } = {}) {
   const moves = useContext(MovesCtx);
   const luce = useContext(LuceCtx);
   const bold = useContext(LuceBoldCtx);
@@ -101,6 +101,29 @@ export function WarRoom() {
   useEffect(() => setGl(hasWebGL()), []);
   const sources = Array.from(new Map(PROFILE.competitors.map((c) => [c.foundAt, c.url])).entries());
   if (gl === false) return <CompetitorMap />;
+  // the rival toggles; v15 shows them under the READ / FOR YOU / ACT strip (owner, 2 Nov)
+  const rivalsBlock = phys ? (
+        <div className="border-t px-3 py-4" style={{ borderColor: "#17181A" }}>
+          <p className="mb-3 text-center font-mono text-[12px]" style={{ color: "#8A9095" }}>
+            Rivals you watch. Flip one off and its tower goes dark.
+          </p>
+          <div data-3d="panel" className="mx-auto grid max-w-[520px] grid-cols-3 justify-items-center gap-y-4 rounded-[22px] px-2 py-4 sm:grid-cols-6">
+            {FX_RIVALS.map((r) => {
+              const n = MOVES_BY_RIVAL[r].length;
+              return (
+                <LeverToggle
+                  key={r}
+                  on={!rivals.off.has(r)}
+                  onChange={() => rivals.toggle(r)}
+                  label={r.split(" ")[0].replace(".AI", "")}
+                  sub={`${n} move${n === 1 ? "" : "s"}`}
+                  color={r === "Peec AI" ? RED : r === "Profound" ? AMBER : "#FFFFFF"}
+                />
+              );
+            })}
+          </div>
+        </div>
+  ) : null;
   const panel = (
     <div className={luce ? "overflow-hidden rounded-[20px] bg-[#050505]" : "overflow-hidden rounded-xl border bg-[#07090A]"} style={luce ? { boxShadow: "inset 0 0 0 1px #17181A" } : { borderColor: LINE }}>
       <div className="flex flex-col gap-0.5 border-b px-4 py-2.5 font-mono text-[12px] sm:flex-row sm:items-center sm:justify-between sm:gap-3" style={{ borderColor: LINE, color: MUTE }}>
@@ -218,28 +241,7 @@ export function WarRoom() {
           })}
         </div>
       )}
-      {phys && (
-        <div className="border-t px-3 py-4" style={{ borderColor: "#17181A" }}>
-          <p className="mb-3 text-center font-mono text-[12px]" style={{ color: "#8A9095" }}>
-            Rivals you watch. Flip one off and its tower goes dark.
-          </p>
-          <div data-3d="panel" className="mx-auto grid max-w-[520px] grid-cols-3 justify-items-center gap-y-4 rounded-[22px] px-2 py-4 sm:grid-cols-6">
-            {FX_RIVALS.map((r) => {
-              const n = MOVES_BY_RIVAL[r].length;
-              return (
-                <LeverToggle
-                  key={r}
-                  on={!rivals.off.has(r)}
-                  onChange={() => rivals.toggle(r)}
-                  label={r.split(" ")[0].replace(".AI", "")}
-                  sub={`${n} move${n === 1 ? "" : "s"}`}
-                  color={r === "Peec AI" ? RED : r === "Profound" ? AMBER : "#FFFFFF"}
-                />
-              );
-            })}
-          </div>
-        </div>
-      )}
+      {!rivalsBelow && rivalsBlock}
       {bold && (
         <div className="flex flex-col gap-3 border-t px-4 py-4 sm:flex-row sm:items-center sm:gap-4 md:px-5" style={{ borderColor: "#17181A" }}>
           {phys ? (
@@ -342,6 +344,7 @@ export function WarRoom() {
         ))}
       </div>
       )}
+      {rivalsBelow && rivalsBlock}
       <p className={`border-t px-4 py-2.5 font-mono leading-[1.6] ${luce ? "text-[12px]" : "text-[11.5px]"}`} style={{ borderColor: luce ? "#17181A" : LINE, color: MUTE }}>
         Each rival was found by a live web search, on these public lists of AI visibility tools:{" "}
         {sources.map(([host, url], i) => (

@@ -71,7 +71,7 @@ log "Results: ${SUCCESS} succeeded, ${FAIL} failed"
 # Commit + push if any feeds were generated
 if [ "$SUCCESS" -gt 0 ]; then
   log "Committing and pushing..."
-  git add client/public/data/feed/ server/data/feed/ media/podcasts/
+  git add client/public/data/feed/ server/data/feed/
   git commit -m "Weekly feed ${DATE} (${SUCCESS}/4 categories)" --no-verify 2>> "$LOG" || true
   git push origin main 2>> "$LOG" || log "Push failed — will retry next run"
   log "Deploy triggered"
