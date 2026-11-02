@@ -36,6 +36,11 @@
   .lev i::after { content: ""; position: absolute; left: 6px; right: 6px; height: 18px; top: 6px; border-radius: 9px; background: #c9cdd0; transition: top .2s; }
   .lev.off i::after { top: 20px; background: #555; }
   .lev.off { opacity: .55; }
+  /* rivals that need your move: the switch glows red so the eye goes there first */
+  .lev.hot i { border-color: var(--red); box-shadow: 0 0 0 1px rgba(255,74,74,.55), 0 0 14px rgba(255,74,74,.55); animation: hot 1.8s ease-in-out infinite; }
+  .lev.hot { color: var(--red); }
+  @keyframes hot { 50% { box-shadow: 0 0 0 1px rgba(255,74,74,.8), 0 0 22px rgba(255,74,74,.8); } }
+  @media (prefers-reduced-motion: reduce) { .lev.hot i { animation: none; } }
 
   .intel { padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
   .intel .grow { flex: 1; }
@@ -166,7 +171,7 @@ function render() {
       <circle cx="${r.x}" cy="${r.y}" r="${rad}" fill="${r.hex}" fill-opacity="${dark ? .3 : .85}"/>
       <text x="${r.x}" y="${r.y + rad + 16}" text-anchor="middle">${r.short}</text></g>`;
   }).join("");
-  $("levers").innerHTML = Object.entries(R).map(([k, r]) => `<button class="lev${off.has(k) ? " off" : ""}" data-lev="${k}" aria-pressed="${!off.has(k)}"><i></i>${r.short}</button>`).join("");
+  $("levers").innerHTML = Object.entries(R).map(([k, r]) => `<button class="lev${off.has(k) ? " off" : ["CODE RED", "WEAKENED"].includes(r.status) ? " hot" : ""}" data-lev="${k}" aria-pressed="${!off.has(k)}"><i></i>${r.short}</button>`).join("");
   const r = R[sel];
   $("card").innerHTML = `
     <div class="head"><div><span class="tag" style="color:${r.color}">${r.status}</span><h2 style="margin-top:8px">${sel}</h2></div>
