@@ -680,7 +680,100 @@ const STATUS = {
   "worth-knowing": { t: "WORTH KNOWING", c: AMBER },
 } as const;
 
-export function WarSplit() {
+/* Flat radar seen from above (owner, 2 Nov: "no pseudo 3D, from top, larger targets when larger risks").
+   Risk uses the same points as the pressure gauge: copied your main claim 80, weakened a claim 20,
+   worth knowing 5, capped at 100. Target size grows with risk. */
+const RISK_POINTS = { "code-red": 80, weakened: 20, "worth-knowing": 5 } as const;
+export function riskOf(items: RunItem[]) {
+  return Math.min(100, items.reduce((a, m) => a + (m.kept ? RISK_POINTS[m.kept as keyof typeof RISK_POINTS] ?? 0 : 0), 0));
+}
+function RadarTop({ byRival, selected, onSelect, off, sensor }: { byRival: Record<FxRival, RunItem[]>; selected: FxRival; onSelect: (r: FxRival) => void; off: ReadonlySet<string>; sensor: Sensor }) {
+  const reduce = useReducedMotion();
+  const C = 300;
+  const tone = (risk: number) => {
+    if (sensor === "night") return risk >= 80 ? "#C8FFD4" : risk >= 20 ? "#7CFF9B" : risk > 0 ? "#3FBF66" : "#1F6B36";
+    if (sensor === "thermal") return risk >= 80 ? "#FFF3B0" : risk >= 20 ? "#FFB224" : risk > 0 ? "#E0442B" : "#3B3BC4";
+    return risk >= 80 ? RED : risk >= 20 ? "#FF8B3E" : risk > 0 ? "#E9D27A" : "#8A9095";
+  };
+  const grid = sensor === "night" ? "#1E5A2E" : sensor === "thermal" ? "#2A2A7A" : "#24302A";
+  // long names sit on the right so their labels have room
+  const ANG: Record<string, number> = { "Peec AI": -90, Profound: -30, "Ahrefs Brand Radar": 30, "Otterly.AI": 90, "Scrunch AI": 150, Semrush: 210 };
+  const pts = FX_RIVALS.map((r, i) => {
+    const a = ((ANG[r] ?? i * 60) * Math.PI) / 180;
+    const risk = riskOf(byRival[r]);
+    const R = 190;
+    return { r, risk, n: byRival[r].length, x: C + Math.cos(a) * R, y: C + Math.sin(a) * R, size: risk > 0 ? 16 + 54 * Math.sqrt(risk / 100) : 9, right: Math.cos(a) >= -0.01 };
+  });
+  const sel = pts.find((p) => p.r === selected)!;
+  return (
+    <svg viewBox="-80 -10 760 620" className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Radar of rivals seen from above">
+      <defs>
+        <radialGradient id="nb-sweep" cx="0" cy="0" r="1">
+          <stop offset="0" stopColor={sensor === "thermal" ? "#FFB224" : "#7CFF9B"} stopOpacity="0.22" />
+          <stop offset="1" stopColor={sensor === "thermal" ? "#FFB224" : "#7CFF9B"} stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      {[80, 160, 240, 290].map((r) => (
+        <circle key={r} cx={C} cy={C} r={r} fill="none" stroke={grid} strokeWidth={r === 290 ? 1.5 : 1} />
+      ))}
+      <line x1={C - 290} y1={C} x2={C + 290} y2={C} stroke={grid} />
+      <line x1={C} y1={C - 290} x2={C} y2={C + 290} stroke={grid} />
+      {Array.from({ length: 72 }, (_, i) => {
+        const a = (i * 5 * Math.PI) / 180;
+        const l = i % 6 === 0 ? 10 : 5;
+        return <line key={i} x1={C + Math.cos(a) * 290} y1={C + Math.sin(a) * 290} x2={C + Math.cos(a) * (290 - l)} y2={C + Math.sin(a) * (290 - l)} stroke={grid} />;
+      })}
+      {!reduce && (
+        <g style={{ transformOrigin: "300px 300px", animation: "nb-radar-spin 6s linear infinite" }}>
+          <path d={`M${C},${C} L${C + 290},${C} A290,290 0 0,0 ${C + 290 * Math.cos(-0.6)},${C + 290 * Math.sin(-0.6)} Z`} fill="url(#nb-sweep)" />
+          <line x1={C} y1={C} x2={C + 290} y2={C} stroke={sensor === "thermal" ? "#FFB224" : "#7CFF9B"} strokeOpacity="0.5" />
+        </g>
+      )}
+      {!off.has(selected) && (
+        <line x1={C} y1={C} x2={sel.x} y2={sel.y} stroke={tone(sel.risk)} strokeWidth="1.5" strokeDasharray="5 6" opacity="0.8" />
+      )}
+      <rect x={C - 7} y={C - 7} width="14" height="14" transform={`rotate(45 ${C} ${C})`} fill="#FFFFFF" />
+      <text x={C} y={C + 30} textAnchor="middle" className="font-mono" fontSize="18" fontWeight="600" fill="#FFFFFF">YOU</text>
+      {pts.map((p) => {
+        const isOff = off.has(p.r);
+        const c = isOff ? "#3A3F42" : tone(p.risk);
+        const on = p.r === selected;
+        // a long name goes under its target so it never runs off the radar
+        const below = p.r.length > 12;
+        const lx = below ? p.x : p.right ? p.x + p.size + 12 : p.x - p.size - 12;
+        const anchor = below ? "middle" : p.right ? "start" : "end";
+        const ly = below ? p.y + p.size + 24 : p.y > C + 150 ? p.y - 6 : p.y - 4;
+        return (
+          <g key={p.r} role="button" tabIndex={0} aria-label={`${p.r}, risk ${p.risk}, ${p.n} moves`} onClick={() => onSelect(p.r)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onSelect(p.r)} style={{ cursor: "pointer", outline: "none" }} opacity={isOff ? 0.45 : 1}>
+            <circle cx={p.x} cy={p.y} r={p.size + 16} fill="transparent" />
+            {!isOff && p.risk >= 80 && !reduce && (
+              <circle cx={p.x} cy={p.y} r={p.size} fill="none" stroke={c} strokeWidth="2" style={{ transformOrigin: `${p.x}px ${p.y}px`, animation: "nb-radar-ping 1.8s ease-out infinite" }} />
+            )}
+            <circle cx={p.x} cy={p.y} r={p.size} fill={c} fillOpacity={isOff ? 0.08 : 0.18} stroke={c} strokeWidth={on ? 3 : 2} />
+            <circle cx={p.x} cy={p.y} r={Math.max(4, p.size * 0.45)} fill="none" stroke={c} strokeOpacity="0.7" />
+            <circle cx={p.x} cy={p.y} r="3.5" fill={c} />
+            {on && (
+              <g stroke="#FFFFFF" strokeWidth="2.5" fill="none">
+                {[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([sx, sy]) => {
+                  const e = p.size + 9, k = 10;
+                  const x = p.x + sx * e, y = p.y + sy * e;
+                  return <path key={`${sx}${sy}`} d={`M${x},${y - sy * k} L${x},${y} L${x - sx * k},${y}`} />;
+                })}
+              </g>
+            )}
+            <text x={lx} y={ly} textAnchor={anchor} className="font-mono" fontSize="21" fontWeight={on ? 700 : 500} fill={isOff ? "#5A6065" : on ? "#FFFFFF" : c}>{p.r}</text>
+            <text x={lx} y={ly + 24} textAnchor={anchor} className="font-mono" fontSize="17" fill={isOff ? "#5A6065" : "#A9B1B5"}>
+              {isOff ? "off" : `risk ${p.risk}, ${p.n} move${p.n === 1 ? "" : "s"}`}
+            </text>
+          </g>
+        );
+      })}
+      <style>{`@keyframes nb-radar-spin{to{transform:rotate(360deg)}}@keyframes nb-radar-ping{from{transform:scale(1);opacity:.8}to{transform:scale(1.7);opacity:0}}`}</style>
+    </svg>
+  );
+}
+
+export function WarSplit({ flat = false }: { flat?: boolean } = {}) {
   const moves = useContext(MovesCtx);
   const phys = useContext(LucePhysCtx);
   const rivals = useRivals();
@@ -688,6 +781,22 @@ export function WarSplit() {
   const byRival = moves.byRival;
   const [gl, setGl] = useState<boolean | null>(null);
   const [sel, setSel] = useState<FxRival>("Peec AI");
+  // everything the old control panel had stays here (owner, 2 Nov): sensors, clock, CODE RED, READ / FOR YOU / ACT
+  const [sensor, setSensor] = useState<Sensor>("normal");
+  const [clock, setClock] = useState("");
+  const [flash, setFlash] = useState(0);
+  useEffect(() => {
+    const t = () => setClock(new Date().toISOString().slice(11, 19) + " UTC");
+    t();
+    const id = window.setInterval(t, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  const SENSORS: { k: Sensor; t: string }[] = [
+    { k: "normal", t: "Normal" },
+    { k: "night", t: "Night vision" },
+    { k: "thermal", t: "Thermal" },
+  ];
+  const hud = sensor === "night" ? "#9CFFB3" : sensor === "thermal" ? "#FFD166" : "#C9CFD2";
   useEffect(() => setGl(hasWebGL()), []);
   const sources = Array.from(new Map(PROFILE.competitors.map((c) => [c.foundAt, c.url])).entries());
   const top = (r: FxRival) => byRival[r].filter((m) => m.kept).sort((a, b) => SEVERITY[b.kept!] - SEVERITY[a.kept!])[0];
@@ -705,23 +814,57 @@ export function WarSplit() {
   };
 
   const map = (
-    <div className="nb-war relative h-[340px] overflow-hidden rounded-[18px] sm:h-[420px] lg:h-[460px]" style={{ background: "radial-gradient(ellipse at 50% 60%, #0D1A14 0%, #07090A 65%)", boxShadow: "inset 0 0 0 1px #17181A" }}>
-      {gl ? (
+    <div className="nb-war relative h-[340px] overflow-hidden rounded-[18px] sm:h-[420px] lg:h-[460px]" style={{
+        boxShadow: "inset 0 0 0 1px #17181A",
+        background:
+          sensor === "night"
+            ? "radial-gradient(ellipse at 50% 60%, #06240F 0%, #010A04 70%)"
+            : sensor === "thermal"
+              ? "radial-gradient(ellipse at 50% 60%, #0B0B4A 0%, #020214 70%)"
+              : "radial-gradient(ellipse at 50% 60%, #0D1A14 0%, #07090A 65%)",
+      }}>
+      {flat ? (
+        <RadarTop byRival={byRival} selected={sel} onSelect={pick} off={rivals.off} sensor={sensor} />
+      ) : gl ? (
         <Guard fallback={<CompetitorMap />}>
           <Suspense fallback={<div className="grid h-full place-items-center font-mono text-[12px]" style={{ color: MUTE }}>loading the map…</div>}>
-            <WarTable selected={sel} tracking onSelect={pick} sensor="normal" byRival={byRival} big off={phys ? rivals.off : undefined} />
+            <WarTable selected={sel} tracking onSelect={pick} sensor={sensor} byRival={byRival} big off={phys ? rivals.off : undefined} />
           </Suspense>
         </Guard>
       ) : gl === false ? (
         <CompetitorMap />
       ) : null}
-      <div className="pointer-events-none absolute left-3 right-3 top-2.5 flex justify-between font-mono text-[12px]" style={{ color: "#C9CFD2" }}>
-        <span>pokpok.ai and its rivals</span>
-        <span>15 Sep to 31 Oct</span>
+      {flash > 0 && (
+        <motion.div
+          key={flash}
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-10"
+          initial={{ boxShadow: "inset 0 0 0 3px rgba(255,77,79,1), inset 0 0 80px rgba(255,77,79,.45)" }}
+          animate={{ boxShadow: "inset 0 0 0 0px rgba(255,77,79,0), inset 0 0 0px rgba(255,77,79,0)" }}
+          transition={{ duration: 1.6, ease: "easeOut" }}
+        />
+      )}
+      {sensor !== "normal" && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "repeating-linear-gradient(0deg, rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 1px, transparent 1px, transparent 3px), radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.65) 100%)" }}
+        />
+      )}
+      <div className="pointer-events-none absolute left-3 right-3 top-2.5 flex flex-col gap-0.5 font-mono text-[12px]" style={{ color: hud }}>
+        <div className="flex justify-between">
+          <span><span className="mr-2 inline-block h-2 w-2 rounded-full" style={{ background: RED }} />pokpok.ai and its rivals</span>
+          <span>15 Sep to 31 Oct 2026</span>
+        </div>
+        <div className="flex justify-between" style={{ opacity: 0.8 }}>
+          <span>sensor: {SENSORS.find((x) => x.k === sensor)!.t.toLowerCase()}</span>
+          <span>{clock}</span>
+        </div>
       </div>
-      <p className="pointer-events-none absolute bottom-2.5 left-3 right-3 font-mono text-[12px]" style={{ color: "#C9CFD2" }}>
-        Tower height = moves we read. Tap a tower.
-      </p>
+      <div className="pointer-events-none absolute bottom-2.5 left-3 right-3 flex flex-col gap-0.5 font-mono text-[12px] leading-snug" style={{ color: hud }}>
+        <span>tracking: {sel}</span>
+        <span style={{ opacity: 0.75 }}>{flat ? "Bigger target = bigger risk. Tap a target." : `${sensor === "thermal" ? "Hotter = more moves." : "Tower height = moves we read."} Tap a tower.`}</span>
+      </div>
     </div>
   );
 
@@ -742,64 +885,78 @@ export function WarSplit() {
     </div>
   ) : null;
 
+  const sensors = (
+    <div role="group" aria-label="Sensor" className="flex justify-center gap-6 py-1 sm:gap-10">
+      {SENSORS.map((x) => {
+        const on = sensor === x.k;
+        const c = x.k === "night" ? "#7CFF9B" : x.k === "thermal" ? "#FFB224" : "#FFFFFF";
+        return (
+          <button key={x.k} type="button" aria-pressed={on} onClick={() => setSensor(x.k)} className="flex flex-col items-center gap-2 font-mono text-[12px]">
+            <span data-l="glass" data-3d="glass" data-on={on ? "1" : "0"} data-color={c} className="grid h-[60px] w-[60px] place-items-center" style={on ? { outline: `2px solid ${c}`, outlineOffset: "3px" } : undefined}>
+              <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke={on || phys ? c : "#8A9095"} strokeWidth="1.8" opacity={on || !phys ? 1 : 0.6} aria-hidden>
+                {x.k === "normal" && (<><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></>)}
+                {x.k === "night" && <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />}
+                {x.k === "thermal" && <path d="M12 3c1 3 4 5 4 9a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-8z" />}
+              </svg>
+            </span>
+            <span style={{ color: on ? c : "#8A9095" }}>{x.t}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  const codeRed = (
+    <div className="flex flex-col gap-3 border-b pb-4 sm:flex-row sm:items-center sm:gap-4" style={{ borderColor: "#17181A" }}>
+      {phys ? (
+        <SosCapsule label="Code red: show Peec AI on the radar" onPress={() => {
+            if (rivals.off.has("Peec AI")) rivals.toggle("Peec AI");
+            setSel("Peec AI");
+            setSensor("normal");
+            setFlash((n) => n + 1);
+          }}>
+          CODE RED
+        </SosCapsule>
+      ) : null}
+      <p className="min-w-0 text-[15px] leading-[1.45] text-[#E8EAEA]">
+        <a href="https://peec.ai/blog/introducing-brand-perception" target="_blank" rel="noreferrer" className="-my-[14px] inline-block py-[14px] font-mono text-[12.5px] underline underline-offset-4" style={{ color: RED }}>16 Sep, Peec blog</a>{" "}
+        Peec AI started selling “brand perception”, your main term.{" "}
+        <a href="#nb-folder" className="-my-[14px] inline-block py-[14px] font-mono text-[12.5px] underline underline-offset-4" style={{ color: RED }}>
+          Open the folder
+        </a>
+      </p>
+    </div>
+  );
+
+  const stats = (
+    <div className="grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-center" style={{ borderColor: "#17181A" }}>
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { n: moves.read, t: "rival moves read", tag: "READ", c: LGREEN },
+          { n: moves.matter, t: "matter to you", tag: "FOR YOU", c: LYELLOW },
+          { n: moves.act, t: "need your move", tag: "ACT", c: RED },
+        ].map((x) => (
+          <div key={x.t} className="flex min-w-0 flex-col items-start gap-1.5">
+            <LTag color={x.c}>{x.tag}</LTag>
+            <p className="text-[34px] font-light leading-none tracking-[-0.02em] md:text-[38px]" style={{ color: x.tag === "ACT" ? RED : "#FFFFFF" }}>
+              <Count from={0} to={x.n} />
+            </p>
+            <p className="text-[12.5px] leading-tight text-[#A9B1B5]">{x.t}</p>
+          </div>
+        ))}
+      </div>
+      <LTrace values={WEEKS.map((_, i) => moves.run.filter((m) => weekOf(m) === i).length)} color="#E8EAEA" unit="moves a week" labels={["15 Sep", "now"]} />
+    </div>
+  );
+
+  // the same move list the old panel had; the folder, "so what" and send buttons stay only in their own sections below
   const folder = (
     <AnimatePresence mode="wait" initial={false}>
-      <motion.div key={sel} initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }} className="flex h-full flex-col gap-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 flex-col items-start gap-2">
-            <span className="rounded-[4px] border px-2 py-1 font-mono text-[12px] leading-none tracking-[0.06em]" style={{ color: status.c, borderColor: status.c }}>
-              {status.t}
-            </span>
-            <h3 className="font-mono text-[24px] font-semibold leading-tight text-white md:text-[28px]">{sel}</h3>
-          </div>
-          <p className="shrink-0 text-right font-mono text-[13px]" style={{ color: MUTE }}>
-            <span className="block text-[34px] font-medium leading-none" style={{ color: status.c === "#A9B1B5" ? "#FFFFFF" : status.c }}>{byRival[sel].length}</span>
-            moves read
-          </p>
-        </div>
-        {story ? (
-          <>
-            <div>
-              <p className="mb-1 font-mono text-[12px]" style={{ color: MUTE }}>So what</p>
-              <p className="text-[19px] leading-[1.4] text-white md:text-[21px]">{story.soWhat}</p>
-            </div>
-            {story.move && (
-              <div>
-                <p className="mb-1 font-mono text-[12px]" style={{ color: MUTE }}>Your move</p>
-                <p className="text-[16px] leading-[1.5] text-[#D9DDDF] md:text-[17px]">{story.move}</p>
-              </div>
-            )}
-          </>
-        ) : lead ? (
-          <div>
-            <p className="mb-1 font-mono text-[12px]" style={{ color: MUTE }}>What they did</p>
-            <p className="text-[19px] leading-[1.4] text-white md:text-[21px]">
-              <Ext href={lead.url}>{lead.title}</Ext> <span className="font-mono text-[13px]" style={{ color: status.c }}>{lead.date}, {labelOf(lead)!.t}</span>
-            </p>
-          </div>
-        ) : (
-          <div>
-            <p className="mb-1 font-mono text-[12px]" style={{ color: MUTE }}>So what</p>
-            <p className="text-[19px] leading-[1.4] text-white md:text-[21px]">Nothing aimed at you. No change needed.</p>
-          </div>
-        )}
-        {lead && (
-          <div className="flex flex-wrap gap-2">
-            {[
-              { t: "Investor update", h: "#nb-send-0" },
-              { t: "LinkedIn post", h: "#nb-send-1" },
-              { t: "Deck slide", h: "#nb-send-2" },
-            ].map((x) => (
-              <a key={x.t} href={x.h} className="inline-flex min-h-[44px] items-center rounded-full border px-4 font-mono text-[13px] text-white transition-colors hover:bg-white hover:text-black" style={{ borderColor: "#3A3F42", background: "#15191B" }}>
-                Send as {x.t.toLowerCase()}
-              </a>
-            ))}
-          </div>
-        )}
-        <div className="mt-auto border-t pt-3" style={{ borderColor: "#17181A" }}>
-          <p className="mb-2 font-mono text-[12px]" style={{ color: MUTE }}>Latest moves we read</p>
-          <MoveList items={latest} empty="Quiet. We read no moves from it between 15 Sep and 31 Oct." />
-        </div>
+      <motion.div key={sel} initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+        <p className="mb-2 font-mono text-[13px] font-medium" style={{ color: sel === "Peec AI" ? RED : sel === "Profound" ? AMBER : "#E8EAEA" }}>
+          {sel}: {byRival[sel].length} move{byRival[sel].length === 1 ? "" : "s"}
+        </p>
+        <MoveList items={byRival[sel]} empty="Quiet. We read no moves from it between 15 Sep and 31 Oct." />
       </motion.div>
     </AnimatePresence>
   );
@@ -810,13 +967,16 @@ export function WarSplit() {
         <div className="grid grid-cols-1 overflow-hidden rounded-[20px] bg-[#050505] lg:grid-cols-2" style={{ boxShadow: "inset 0 0 0 1px #17181A" }}>
           <div className="flex min-w-0 flex-col gap-3 p-3 md:p-5 lg:border-r" style={{ borderColor: "#17181A" }}>
             {map}
-            <p className="px-1 font-mono text-[13px]" style={{ color: MUTE }}>
-              <span className="text-white">{read}</span> rival moves read. <span style={{ color: RED }}>{act}</span> need your move. Flip a rival off and its tower goes dark.
+            {sensors}
+            <p className="px-1 text-center font-mono text-[12px]" style={{ color: "#8A9095" }}>
+              Rivals you watch. Flip one off and its {flat ? "target" : "tower"} goes dark.
             </p>
             {levers}
           </div>
-          <div className="flex min-w-0 flex-col border-t p-4 md:p-6 lg:border-t-0" style={{ borderColor: "#17181A" }}>
-            {folder}
+          <div className="flex min-w-0 flex-col gap-4 border-t p-4 md:p-6 lg:border-t-0" style={{ borderColor: "#17181A" }}>
+            {codeRed}
+            <div className="flex min-h-0 flex-1 flex-col">{folder}</div>
+            {stats}
           </div>
         </div>
       </Maybe3D>
