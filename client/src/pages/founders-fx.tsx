@@ -773,7 +773,7 @@ function RadarTop({ byRival, selected, onSelect, off, sensor }: { byRival: Recor
   );
 }
 
-export function WarSplit({ flat = false }: { flat?: boolean } = {}) {
+export function WarSplit({ flat = false, noSensors = false }: { flat?: boolean; noSensors?: boolean } = {}) {
   const moves = useContext(MovesCtx);
   const phys = useContext(LucePhysCtx);
   const rivals = useRivals();
@@ -857,7 +857,7 @@ export function WarSplit({ flat = false }: { flat?: boolean } = {}) {
           <span>15 Sep to 31 Oct 2026</span>
         </div>
         <div className="flex justify-between" style={{ opacity: 0.8 }}>
-          <span>sensor: {SENSORS.find((x) => x.k === sensor)!.t.toLowerCase()}</span>
+          <span>{noSensors ? "" : `sensor: ${SENSORS.find((x) => x.k === sensor)!.t.toLowerCase()}`}</span>
           <span>{clock}</span>
         </div>
       </div>
@@ -967,7 +967,7 @@ export function WarSplit({ flat = false }: { flat?: boolean } = {}) {
         <div className="grid grid-cols-1 overflow-hidden rounded-[20px] bg-[#050505] lg:grid-cols-2" style={{ boxShadow: "inset 0 0 0 1px #17181A" }}>
           <div className="flex min-w-0 flex-col gap-3 p-3 md:p-5 lg:border-r" style={{ borderColor: "#17181A" }}>
             {map}
-            {sensors}
+            {!noSensors && sensors}
             <p className="px-1 text-center font-mono text-[12px]" style={{ color: "#8A9095" }}>
               Rivals you watch. Flip one off and its {flat ? "target" : "tower"} goes dark.
             </p>
