@@ -930,6 +930,9 @@ export function Luce3DLayerV12({ children, className = "" }: { children: ReactNo
           ((it.parts.halo as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = 0.9 * op;
           (((it.parts.led as THREE.Group).children[1] as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = op;
           it.parts.body.visible = true;
+          // redraw when the picked square changes, or the white frame stays on the old square
+          if (it.parts.sel.visible !== on || it.cur.op !== op) dirty = true;
+          it.cur.op = op;
           it.parts.sel.visible = on;
         }
         it.group.scale.setScalar(Math.max(0.01, r.width / Math.max(1, w)));
