@@ -181,25 +181,30 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
   };
   const color = el.dataset.color || "#FFFFFF";
   if (kind === "lever") {
-    add(slab(w + 6, h + 6, 2, 2), M.graphite, 1, undefined, false);
-    add(slab(w, h, 3, 3), M.well, 3);
-    add(slab(w * 0.62, h * 0.5, 4, 3), M.graphite, 5);
+    // Luce toggle: glossy black capsule slot with a thin lit rim, a dark round boss,
+    // and a flat satin paddle a little wider than the slot.
+    add(slab(w + 4, h + 4, 2, 1.5), M.rim, 0, undefined, false);
+    add(slab(w, h, 3, 2.5), M.glass, 2);
+    add(dome(w * 0.43, 10), M.satin, 3);
     const pad = new THREE.Group();
-    const cap = new THREE.CapsuleGeometry(6.5, 31, 8, 32);
-    cap.rotateZ(Math.PI / 2);
-    own.push(cap);
-    const pm = new THREE.Mesh(cap, M.chrome);
+    const bar = new RoundedBoxGeometry(w * 1.2, w * 0.36, w * 0.4, 5, w * 0.07);
+    own.push(bar);
+    const pm = new THREE.Mesh(bar, M.blade);
+    pm.scale.z = 0.6;
     pm.castShadow = true;
     pad.add(pm);
-    const stem = new THREE.CylinderGeometry(4.2, 5.2, 12, 32);
+    const stem = new THREE.CylinderGeometry(w * 0.13, w * 0.17, 12, 32);
     stem.rotateX(Math.PI / 2);
     own.push(stem);
-    const sm = new THREE.Mesh(stem, M.satin);
+    const sm = new THREE.Mesh(stem, M.bowl);
     sm.position.z = -6;
     pad.add(sm);
-    pad.position.z = 15;
+    pad.position.z = 14;
     g.add(pad);
     parts.pad = pad;
+  } else if (kind === "panel") {
+    add(slab(w, h, 6, 3, 22), M.panel, -14, undefined, false);
+    add(slab(w + 3, h + 3, 4, 2, 23.5), M.rim, -16, undefined, false);
   } else if (kind === "rotary") {
     // Measured from the Luce reference (R = outer radius): chrome lip R .95-1, satin bowl
     // sloping in to a black hole at .56R; satin blade .81R wide, 2R tall; slot .14R x 1.07R.
@@ -460,7 +465,7 @@ export function Luce3DLayer({ children, className = "" }: { children: ReactNode;
         if (it.kind === "lever") {
           const f = it.cur.flip ?? 0;
           const pad = it.parts.pad;
-          pad.position.y = -12 + f * 24;
+          pad.position.y = -11 + f * 13;
           pad.rotation.x = (f - 0.5) * -0.9;
         }
         if (it.kind === "rotary") it.parts.key.rotation.z = it.cur.rot ?? 0;

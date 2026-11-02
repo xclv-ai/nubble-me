@@ -223,7 +223,7 @@ export function WarRoom() {
           <p className="mb-3 text-center font-mono text-[12px]" style={{ color: "#8A9095" }}>
             Rivals you watch. Flip one off and its tower goes dark.
           </p>
-          <div className="mx-auto grid max-w-[520px] grid-cols-3 justify-items-center gap-y-4 sm:grid-cols-6">
+          <div data-3d="panel" className="mx-auto grid max-w-[520px] grid-cols-3 justify-items-center gap-y-4 rounded-[22px] px-2 py-4 sm:grid-cols-6">
             {FX_RIVALS.map((r) => {
               const n = MOVES_BY_RIVAL[r].length;
               return (
