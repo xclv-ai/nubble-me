@@ -41,7 +41,7 @@ export function LeverToggle({ on, onChange, label, sub, color = "#FFFFFF" }: { o
       <span
         data-3d="lever"
         data-on={on ? "1" : "0"}
-        className="relative block h-[58px] w-[34px] rounded-[17px]"
+        className="relative block h-[96px] w-[46px] rounded-[23px]"
         style={{ background: "linear-gradient(180deg,#050505,#141517)", boxShadow: "0 0 0 1px #2A2C30, inset 0 2px 6px #000, 0 1px 0 rgba(255,255,255,.06)" }}
       >
         <span data-3d-hide className="absolute left-1/2 top-1/2 h-[30px] w-[22px] -translate-x-1/2 -translate-y-1/2 rounded-[11px]" style={{ background: "radial-gradient(circle at 50% 40%,#2A2C30,#0A0A0B)" }} />

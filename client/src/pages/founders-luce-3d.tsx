@@ -50,6 +50,42 @@ function slab(w: number, h: number, depth: number, bevel: number, radius = Math.
   return g;
 }
 
+/** Give a slab front-face UVs that span 0..1 across its width and height, so a band texture fits it. */
+function fitUV(g: THREE.BufferGeometry, w: number, h: number) {
+  const pos = g.attributes.position;
+  const uv = new Float32Array(pos.count * 2);
+  for (let i = 0; i < pos.count; i++) {
+    uv[i * 2] = pos.getX(i) / w + 0.5;
+    uv[i * 2 + 1] = pos.getY(i) / h + 0.5;
+  }
+  g.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+  return g;
+}
+
+/** The Luce key blade: straight sides that flare out near both ends, ends cut to the bezel's circle. */
+function bladeShape(R: number, depth: number, bevel: number) {
+  const hw = R * 0.37;
+  const flare = R * 0.03;
+  const rc = R * 0.99; // ends follow the bezel circle
+  const yEnd = (x: number) => Math.sqrt(Math.max(0, rc * rc - x * x));
+  const half = (y: number) => {
+    const t = Math.min(1, Math.max(0, (Math.abs(y) - R * 0.78) / (R * 0.2)));
+    return hw + flare * t * t * (3 - 2 * t);
+  };
+  const s = new THREE.Shape();
+  const N = 24;
+  const xTop = half(R * 0.95);
+  const pts: [number, number][] = [];
+  for (let i = 0; i <= N; i++) { const y = -yEnd(xTop) + (2 * yEnd(xTop) * i) / N; pts.push([half(y), y]); }
+  for (let i = 1; i < N; i++) { const x = xTop - (2 * xTop * i) / N; pts.push([x, yEnd(x)]); }
+  for (let i = 0; i <= N; i++) { const y = yEnd(xTop) - (2 * yEnd(xTop) * i) / N; pts.push([-half(y), y]); }
+  for (let i = 1; i < N; i++) { const x = -xTop + (2 * xTop * i) / N; pts.push([x, -yEnd(x)]); }
+  pts.forEach(([x, y], i) => (i ? s.lineTo(x, y) : s.moveTo(x, y)));
+  const g = new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 12, curveSegments: 8 });
+  g.translate(0, 0, -depth / 2);
+  return g;
+}
+
 /** A domed round button (turned profile), facing +z. */
 function dome(r: number, height: number) {
   const pts: THREE.Vector2[] = [];
@@ -85,23 +121,59 @@ function ring(rIn: number, rOut: number, h: number) {
   return g;
 }
 
+/** Brushed-aluminium bands across the Luce key blade: dark, light, mid, dark. */
+function bandTex() {
+  const c = document.createElement("canvas");
+  c.width = 256;
+  c.height = 4;
+  const g = c.getContext("2d")!;
+  const l = g.createLinearGradient(0, 0, 256, 0);
+  [[0, "#8a8a8c"], [0.12, "#b4b5b8"], [0.3, "#ffffff"], [0.42, "#f2f2f3"], [0.6, "#b8b8ba"], [0.72, "#7a7b7e"], [1, "#5a5a5c"]].forEach(([o, col]) => l.addColorStop(o as number, col as string));
+  g.fillStyle = l;
+  g.fillRect(0, 0, 256, 4);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+/** Top-lit band for the lever paddle: bright top edge fading to a dark underside. */
+function vbandTex() {
+  const c = document.createElement("canvas");
+  c.width = 4;
+  c.height = 128;
+  const g = c.getContext("2d")!;
+  const l = g.createLinearGradient(0, 0, 0, 128);
+  [[0, "#ffffff"], [0.3, "#e4e4e5"], [0.6, "#9c9d9f"], [1, "#3a3a3c"]].forEach(([o, col]) => l.addColorStop(o as number, col as string));
+  g.fillStyle = l;
+  g.fillRect(0, 0, 4, 128);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.flipY = true;
+  return t;
+}
+
 type Mats = ReturnType<typeof makeMats>;
 function makeMats() {
   const m = {
     chrome: new THREE.MeshPhysicalMaterial({ color: 0xe6e8ea, metalness: 1, roughness: 0.16 }),
     satin: new THREE.MeshPhysicalMaterial({ color: 0x8e9196, metalness: 1, roughness: 0.38 }),
-    graphite: new THREE.MeshPhysicalMaterial({ color: 0x1b1c1e, metalness: 0.2, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.4 }),
+    graphite: new THREE.MeshPhysicalMaterial({ color: 0x1c1c1c, metalness: 0.2, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.4 }),
     well: new THREE.MeshPhysicalMaterial({ color: 0x040404, metalness: 0, roughness: 0.7 }),
-    glass: new THREE.MeshPhysicalMaterial({ color: 0x0b0b0c, metalness: 0, roughness: 0.18, clearcoat: 0.7, clearcoatRoughness: 0.08, reflectivity: 0.35, envMapIntensity: 0.22 }),
+    glass: new THREE.MeshPhysicalMaterial({ color: 0x0b0b0b, metalness: 0, roughness: 0.18, clearcoat: 0.7, clearcoatRoughness: 0.08, reflectivity: 0.35, envMapIntensity: 0.22 }),
     keyGlass: new THREE.MeshPhysicalMaterial({ color: 0x0c0d0e, metalness: 0, roughness: 0.1, clearcoat: 1, clearcoatRoughness: 0.03, transparent: true, opacity: 0.62 }),
     red: new THREE.MeshPhysicalMaterial({ color: 0xb3102c, metalness: 0, roughness: 0.22, clearcoat: 1, clearcoatRoughness: 0.05, sheen: 0.4, sheenColor: new THREE.Color(0xff4060) }),
     black: new THREE.MeshBasicMaterial({ color: 0x020202 }),
     // Luce key: brushed satin aluminium, not mirror chrome
-    blade: new THREE.MeshPhysicalMaterial({ color: 0xd2d5d9, metalness: 1, roughness: 0.3 }),
-    bowl: new THREE.MeshPhysicalMaterial({ color: 0x6d7075, metalness: 1, roughness: 0.34 }),
+    blade: new THREE.MeshPhysicalMaterial({ color: 0xc2c2c2, metalness: 1, roughness: 0.34 }),
+    bowl: new THREE.MeshPhysicalMaterial({ color: 0x5a5b5d, metalness: 1, roughness: 0.42 }),
+    hubDark: new THREE.MeshStandardMaterial({ color: 0x2e2e30, metalness: 0, roughness: 0.6 }),
+    lip: new THREE.MeshPhysicalMaterial({ color: 0xb4b4b5, metalness: 1, roughness: 0.42 }),
+    paddle: new THREE.MeshPhysicalMaterial({ color: 0xffffff, map: vbandTex(), metalness: 1, roughness: 0.36 }),
+    bladeBands: new THREE.MeshPhysicalMaterial({ color: 0xffffff, map: bandTex(), metalness: 1, roughness: 0.34 }),
+    slot: new THREE.MeshStandardMaterial({ color: 0x000000, metalness: 0, roughness: 0.5, envMapIntensity: 0.05 }),
     // Luce console: black glossy plate with a thin lighter rim
-    panel: new THREE.MeshStandardMaterial({ color: 0x000000, metalness: 0, roughness: 0.55, envMapIntensity: 0.25 }),
-    rim: new THREE.MeshPhysicalMaterial({ color: 0x3a3c40, metalness: 0.6, roughness: 0.35 }),
+    panel: new THREE.MeshStandardMaterial({ color: 0x030303, metalness: 0, roughness: 0.85, envMapIntensity: 0.08 }),
+    rim: new THREE.MeshPhysicalMaterial({ color: 0x3a3a3a, metalness: 0.7, roughness: 0.32 }),
   };
   Object.values(m).forEach((x) => (x.side = THREE.DoubleSide));
   return m;
@@ -181,25 +253,40 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
   };
   const color = el.dataset.color || "#FFFFFF";
   if (kind === "lever") {
-    // Luce toggle: glossy black capsule slot with a thin lit rim, a dark round boss,
-    // and a flat satin paddle a little wider than the slot.
-    add(slab(w + 4, h + 4, 2, 1.5), M.rim, 0, undefined, false);
-    add(slab(w, h, 3, 2.5), M.glass, 2);
-    add(dome(w * 0.43, 10), M.satin, 3);
+    // Luce toggle: outer recessed stadium, inner glossy black capsule with a soft grey glow,
+    // a large satin dome (~70% of the width), and a round-ended aluminium bar wider than the slot.
+    add(slab(w + 12, h + 12, 4, 3), M.rim, -7, undefined, false);
+    add(slab(w + 6, h + 6, 3, 2), M.panel, -3, undefined, false);
+    add(slab(w, h, 2, 2), M.slot, 1);
+    const gm = new THREE.MeshBasicMaterial({ map: glowTex(), color: 0xaaaaaa, transparent: true, depthWrite: false, toneMapped: false });
+    own.push(gm);
+    const gp = new THREE.PlaneGeometry(w * 1.5, w * 1.5);
+    own.push(gp);
+    const glow = new THREE.Mesh(gp, gm);
+    glow.position.z = 4.6;
+    glow.position.y = 4;
+    g.add(glow);
+    const hub = add(dome(w * 0.53, 7), M.blade, 4.7);
+    hub.position.y = 4;
+    // the hub's lower half sits in the paddle's shadow: dark satin
+    const lo = new THREE.Mesh(new THREE.CircleGeometry(w * 0.55, 48, Math.PI, Math.PI), M.hubDark);
+    own.push(lo.geometry);
+    lo.position.set(0, 4, 12);
+    g.add(lo);
     const pad = new THREE.Group();
-    const bar = new RoundedBoxGeometry(w * 1.2, w * 0.36, w * 0.4, 5, w * 0.07);
+    // flat front face, pill ends, soft bevel: lit top edge, shadowed underside
+    const bar = fitUV(slab(w * 1.3, w * 0.4, w * 0.2, 2.4), w * 1.3, w * 0.4);
     own.push(bar);
-    const pm = new THREE.Mesh(bar, M.blade);
-    pm.scale.z = 0.6;
+    const pm = new THREE.Mesh(bar, M.paddle);
     pm.castShadow = true;
     pad.add(pm);
     const stem = new THREE.CylinderGeometry(w * 0.13, w * 0.17, 12, 32);
     stem.rotateX(Math.PI / 2);
     own.push(stem);
     const sm = new THREE.Mesh(stem, M.bowl);
-    sm.position.z = -6;
+    sm.position.z = -8;
     pad.add(sm);
-    pad.position.z = 14;
+    pad.position.z = 18;
     g.add(pad);
     parts.pad = pad;
   } else if (kind === "panel") {
@@ -209,40 +296,41 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
     // Measured from the Luce reference (R = outer radius): chrome lip R .95-1, satin bowl
     // sloping in to a black hole at .56R; satin blade .81R wide, 2R tall; slot .14R x 1.07R.
     const R = Math.min(w, h) / 2;
-    const plate = add(slab(R * 3.1, R * 2.5, 6, 3, R * 0.55), M.panel, -10, undefined, false);
-    plate.receiveShadow = true;
-    add(slab(R * 3.1 + 3, R * 2.5 + 3, 4, 2, R * 0.55 + 1.5), M.rim, -12, undefined, false);
-    add(dome(R * 1.03, 2), M.well, -6, undefined, false);
     const lip = new THREE.LatheGeometry(
       [
-        [R * 0.9, 0], [R * 0.93, 5], [R * 0.965, 7.5], [R, 6.5], [R * 1.02, 3], [R * 1.02, 0],
+        [R * 0.8, 0], [R * 0.82, 4], [R * 0.88, 7.5], [R * 0.95, 8.5], [R * 1.0, 6], [R * 1.03, 2], [R * 1.04, 0],
       ].map(([a, b]) => new THREE.Vector2(a, b)),
       128,
     );
     lip.rotateX(Math.PI / 2);
-    add(lip, M.chrome, -2);
+    add(lip, M.lip, -2);
     const bowl = new THREE.LatheGeometry(
       [
-        [R * 0.56, -1], [R * 0.56, 1], [R * 0.66, 2.5], [R * 0.78, 4], [R * 0.9, 5.5], [R * 0.93, 5],
+        [R * 0.5, -1], [R * 0.5, 0.5], [R * 0.6, 2], [R * 0.7, 3.2], [R * 0.8, 4.2], [R * 0.81, 2],
       ].map(([a, b]) => new THREE.Vector2(a, b)),
       128,
     );
     bowl.rotateX(Math.PI / 2);
     add(bowl, M.bowl, -2);
-    add(dome(R * 0.57, 0.5), M.black, -3, undefined, false);
+    add(dome(R * 0.51, 0.5), M.black, -3, undefined, false);
+    add(ring(R * 1.045, R * 1.085, 0.6), led("#6a6a6a"), 0, undefined, false);
     const key = new THREE.Group();
     // big edge radius, then squashed in depth: the face curves across like the Luce blade
-    const bar = new RoundedBoxGeometry(R * 0.81, R * 2.0, R * 0.62, 10, R * 0.3);
+    // runs the full diameter, ends sitting on the bezel; brushed bands give the cylinder look
+    const bar = fitUV(bladeShape(R, R * 0.14, 4), R * 0.88, R * 2.0);
     own.push(bar);
-    const bm = new THREE.Mesh(bar, M.blade);
-    bm.scale.z = 0.5;
-    bm.castShadow = true;
+    const bm = new THREE.Mesh(bar, M.bladeBands);
+    bm.castShadow = false;
     key.add(bm);
-    const slot = slab(R * 0.14, R * 1.07, 1, 0.4);
+    const slot = slab(R * 0.09, R * 1.07, 1, 0.3);
     own.push(slot);
     const sl = new THREE.Mesh(slot, M.black);
-    sl.position.z = R * 0.16;
+    sl.position.z = R * 0.155;
     key.add(sl);
+    const sg = new THREE.Mesh(fitUV(slab(R * 0.09, R * 0.98, 0.5, 0.2), R * 0.09, R * 0.98), new THREE.MeshBasicMaterial({ map: glowTex(), color: 0x555555, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+    own.push(sg.geometry, sg.material as THREE.Material);
+    sg.position.z = R * 0.17;
+    key.add(sg);
     key.position.z = 10;
     g.add(key);
     parts.key = key;
@@ -333,7 +421,7 @@ export function Luce3DLayer({ children, className = "" }: { children: ReactNode;
     if (!host.current || !cv.current || !hasWebGL()) return;
     const box = host.current;
     const R = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-    R.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    R.setPixelRatio(Math.min(window.devicePixelRatio, 3));
     R.toneMapping = THREE.ACESFilmicToneMapping;
     R.toneMappingExposure = 1.0;
     R.outputColorSpace = THREE.SRGBColorSpace;
@@ -465,7 +553,7 @@ export function Luce3DLayer({ children, className = "" }: { children: ReactNode;
         if (it.kind === "lever") {
           const f = it.cur.flip ?? 0;
           const pad = it.parts.pad;
-          pad.position.y = -11 + f * 13;
+          pad.position.y = -22 + f * 26;
           pad.rotation.x = (f - 0.5) * -0.9;
         }
         if (it.kind === "rotary") it.parts.key.rotation.z = it.cur.rot ?? 0;
