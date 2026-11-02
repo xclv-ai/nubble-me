@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion, useInView, useReducedMotion, type PanInfo } from "framer-motion";
 import { LucePhysCtx, RotaryKey } from "./founders-luce-ctl";
+import { Maybe3D } from "./founders-luce-3d";
 import { ChevronDown } from "lucide-react";
 import { NubbleReader } from "@/components/NubbleReader";
 import type { ContentDocument } from "@/lib/sample-content";
@@ -613,7 +614,9 @@ export function SizesBig() {
   return (
     <div className="flex flex-col gap-3">
       {phys ? (
-        <RotaryKey value={size} options={SIZE_TABS} onChange={go} colors={[AMBER, "#FFFFFF", "#FFFFFF"]} />
+        <Maybe3D>
+          <RotaryKey value={size} options={SIZE_TABS} onChange={go} colors={[AMBER, "#FFFFFF", "#FFFFFF"]} />
+        </Maybe3D>
       ) : (
       <div role="tablist" aria-label="Story size" data-l="pill" className="grid grid-cols-3 gap-1 rounded-xl bg-[#1A1A1A] p-1">
         {SIZE_TABS.map((t, i) => (

@@ -4,6 +4,7 @@ import { Ext } from "./founders";
 import { BRIEF, PAINS } from "./founders-data";
 import { XRayHunt } from "./founders-fx";
 import { LuceBoldCtx } from "./founders-fx-data";
+import { Maybe3D } from "./founders-luce-3d";
 import { AMBER, LINE, MUTE, RED, Stamp } from "./founders-v3";
 
 /*
@@ -128,6 +129,7 @@ function CopyBtn({ text }: { text: string }) {
         setTimeout(() => setState("idle"), 2200);
       }}
       data-l="glass"
+      data-3d="glass"
       className="min-h-[44px] rounded-md border px-5 font-mono text-[12.5px] text-white hover:border-white"
       style={{ borderColor: "#3A4449" }}
     >
@@ -183,6 +185,7 @@ export function Sendables() {
   };
   const ring = (i: number) => (bold && lit === i ? { outline: "2px solid #E9D27A", outlineOffset: "13px" } : undefined);
   return (
+    <Maybe3D>
     <div className="flex flex-col gap-5">
       <p className="text-[17px] leading-[1.55] text-[#D9DDDF] md:text-[19px]">Every folder turns into something you send. Here are three, written from the moves above.</p>
       {bold && (
@@ -193,7 +196,7 @@ export function Sendables() {
             { t: "Deck slide", d: "M3 5h18v11H3z M12 16v4 M8 20h8" },
           ].map((x, i) => (
             <button key={x.t} type="button" onClick={() => pull(i)} className="flex w-[84px] flex-col items-center gap-2 font-mono text-[12px] text-[#C9CFD2]">
-              <span data-l="glass" className="grid h-[60px] w-[60px] place-items-center" style={lit === i ? { outline: "2px solid #E9D27A", outlineOffset: "3px" } : undefined}>
+              <span data-l="glass" data-3d="glass" data-on={lit === i ? "1" : "0"} data-color="#E9D27A" className="grid h-[60px] w-[60px] place-items-center" style={lit === i ? { outline: "2px solid #E9D27A", outlineOffset: "3px" } : undefined}>
                 <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke={lit === i ? "#E9D27A" : "#C9CFD2"} strokeWidth="1.7" strokeLinejoin="round" aria-hidden>
                   <path d={x.d} />
                 </svg>
@@ -283,6 +286,7 @@ export function Sendables() {
         </article>
       </div>
     </div>
+    </Maybe3D>
   );
 }
 

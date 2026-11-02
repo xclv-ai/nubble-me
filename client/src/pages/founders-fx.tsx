@@ -2,6 +2,7 @@ import { Component, lazy, Suspense, useContext, useEffect, useMemo, useRef, useS
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { Count, Ext } from "./founders";
 import { LGREEN, LTag, LTrace, LYELLOW } from "./founders-luce";
+import { Maybe3D } from "./founders-luce-3d";
 import { LeverToggle, LucePhysCtx, SosCapsule, glassKey, useRivals } from "./founders-luce-ctl";
 import { AMBER, CompetitorMap, LINE, MUTE, RED } from "./founders-v3";
 import { BRIEF, PROFILE, type RunItem } from "./founders-data";
@@ -204,7 +205,7 @@ export function WarRoom() {
             const c = x.k === "night" ? "#7CFF9B" : x.k === "thermal" ? "#FFB224" : "#FFFFFF";
             return (
               <button key={x.k} type="button" aria-pressed={on} onClick={() => setSensor(x.k)} className="flex flex-col items-center gap-2 font-mono text-[12px]">
-                <span data-l="glass" className="grid h-[60px] w-[60px] place-items-center" style={on ? { outline: `2px solid ${c}`, outlineOffset: "3px" } : undefined}>
+                <span data-l="glass" data-3d="glass" data-on={on ? "1" : "0"} data-color={c} className="grid h-[60px] w-[60px] place-items-center" style={on ? { outline: `2px solid ${c}`, outlineOffset: "3px" } : undefined}>
                   <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke={on || phys ? c : "#8A9095"} strokeWidth="1.8" opacity={on || !phys ? 1 : 0.6} aria-hidden>
                     {x.k === "normal" && (<><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></>)}
                     {x.k === "night" && <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />}
@@ -356,7 +357,7 @@ export function WarRoom() {
   if (bold)
     return (
       <div data-l="bezel" className="overflow-hidden">
-        {panel}
+        <Maybe3D>{panel}</Maybe3D>
       </div>
     );
   return (
@@ -578,6 +579,9 @@ export function Heatmap() {
                   initial={false}
                   animate={inView || reduce ? { opacity: phys && rivals.off.has(r) ? 0.3 : 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
                   transition={{ delay: reduce ? 0 : (wi * 6 + ri) * 0.025, duration: 0.25 }}
+                  data-3d={phys ? "key" : undefined}
+                  data-color={phys ? ledOf(items) ?? "" : undefined}
+                  data-on={on ? "1" : "0"}
                   className="aspect-square min-h-[40px] w-full rounded-[4px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
                   style={phys ? glassKey(ledOf(items), on) : { ...cellColor(items), outline: on ? "2px solid #FFFFFF" : undefined, outlineOffset: 1 }}
                 >
