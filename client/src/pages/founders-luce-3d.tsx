@@ -96,6 +96,12 @@ function makeMats() {
     keyGlass: new THREE.MeshPhysicalMaterial({ color: 0x0c0d0e, metalness: 0, roughness: 0.1, clearcoat: 1, clearcoatRoughness: 0.03, transparent: true, opacity: 0.62 }),
     red: new THREE.MeshPhysicalMaterial({ color: 0xb3102c, metalness: 0, roughness: 0.22, clearcoat: 1, clearcoatRoughness: 0.05, sheen: 0.4, sheenColor: new THREE.Color(0xff4060) }),
     black: new THREE.MeshBasicMaterial({ color: 0x020202 }),
+    // Luce key: brushed satin aluminium, not mirror chrome
+    blade: new THREE.MeshPhysicalMaterial({ color: 0xd2d5d9, metalness: 1, roughness: 0.3 }),
+    bowl: new THREE.MeshPhysicalMaterial({ color: 0x6d7075, metalness: 1, roughness: 0.34 }),
+    // Luce console: black glossy plate with a thin lighter rim
+    panel: new THREE.MeshStandardMaterial({ color: 0x000000, metalness: 0, roughness: 0.55, envMapIntensity: 0.25 }),
+    rim: new THREE.MeshPhysicalMaterial({ color: 0x3a3c40, metalness: 0.6, roughness: 0.35 }),
   };
   Object.values(m).forEach((x) => (x.side = THREE.DoubleSide));
   return m;
@@ -195,23 +201,44 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
     g.add(pad);
     parts.pad = pad;
   } else if (kind === "rotary") {
+    // Measured from the Luce reference (R = outer radius): chrome lip R .95-1, satin bowl
+    // sloping in to a black hole at .56R; satin blade .81R wide, 2R tall; slot .14R x 1.07R.
     const R = Math.min(w, h) / 2;
-    add(ring(R * 0.9, R, 6), M.graphite, 0);
-    add(dome(R * 0.9, 4), M.well, 0, undefined, false);
-    add(ring(R * 0.5, R * 0.82, 10), M.satin, 2);
-    add(dome(R * 0.52, 3), M.well, 2, undefined, false);
+    const plate = add(slab(R * 3.1, R * 2.5, 6, 3, R * 0.55), M.panel, -10, undefined, false);
+    plate.receiveShadow = true;
+    add(slab(R * 3.1 + 3, R * 2.5 + 3, 4, 2, R * 0.55 + 1.5), M.rim, -12, undefined, false);
+    add(dome(R * 1.03, 2), M.well, -6, undefined, false);
+    const lip = new THREE.LatheGeometry(
+      [
+        [R * 0.9, 0], [R * 0.93, 5], [R * 0.965, 7.5], [R, 6.5], [R * 1.02, 3], [R * 1.02, 0],
+      ].map(([a, b]) => new THREE.Vector2(a, b)),
+      128,
+    );
+    lip.rotateX(Math.PI / 2);
+    add(lip, M.chrome, -2);
+    const bowl = new THREE.LatheGeometry(
+      [
+        [R * 0.56, -1], [R * 0.56, 1], [R * 0.66, 2.5], [R * 0.78, 4], [R * 0.9, 5.5], [R * 0.93, 5],
+      ].map(([a, b]) => new THREE.Vector2(a, b)),
+      128,
+    );
+    bowl.rotateX(Math.PI / 2);
+    add(bowl, M.bowl, -2);
+    add(dome(R * 0.57, 0.5), M.black, -3, undefined, false);
     const key = new THREE.Group();
-    const bar = new RoundedBoxGeometry(R * 0.6, R * 1.7, 30, 6, R * 0.29);
+    // big edge radius, then squashed in depth: the face curves across like the Luce blade
+    const bar = new RoundedBoxGeometry(R * 0.81, R * 2.0, R * 0.62, 10, R * 0.3);
     own.push(bar);
-    const bm = new THREE.Mesh(bar, M.chrome);
+    const bm = new THREE.Mesh(bar, M.blade);
+    bm.scale.z = 0.5;
     bm.castShadow = true;
     key.add(bm);
-    const slot = new RoundedBoxGeometry(7, R * 1.02, 4, 3, 3.4);
+    const slot = slab(R * 0.14, R * 1.07, 1, 0.4);
     own.push(slot);
     const sl = new THREE.Mesh(slot, M.black);
-    sl.position.z = 15.2;
+    sl.position.z = R * 0.16;
     key.add(sl);
-    key.position.z = 22;
+    key.position.z = 10;
     g.add(key);
     parts.key = key;
   } else if (kind === "sos") {
