@@ -697,7 +697,7 @@ export function SizesBig() {
             )}
           </motion.div>
         </div>
-        <p className="border-t border-[#EAEAEA] px-5 py-3 font-mono text-[12px] text-mute md:px-7">Swipe the card or tap a size.</p>
+        {!phys && <p className="border-t border-[#EAEAEA] px-5 py-3 font-mono text-[12px] text-mute md:px-7">Swipe the card or tap a size.</p>}
       </motion.div>
     </div>
   );

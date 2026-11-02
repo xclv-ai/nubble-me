@@ -226,7 +226,7 @@ export function SyncSlider({
                 type="button"
                 onClick={() => onChange(i)}
                 aria-label={`Week of ${l}`}
-                className="absolute top-0 flex min-h-[48px] min-w-[38px] -translate-x-1/2 flex-col items-center font-mono text-[12px] leading-tight"
+                className="absolute top-0 flex min-h-[48px] min-w-[44px] -translate-x-1/2 flex-col items-center font-mono text-[12px] leading-tight"
                 style={{ left: pos(i), color: on ? "#FFFFFF" : "#6A7074" }}
               >
                 <span className="block h-[6px] w-px" style={{ background: values[i] ? colorOf(values[i]) : "#3A3C40" }} />

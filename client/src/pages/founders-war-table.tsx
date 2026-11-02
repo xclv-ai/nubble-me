@@ -115,6 +115,7 @@ function Tower({ i, name, selected, onPick, still, sensor, off = false }: { i: n
           <meshBasicMaterial color={sensor === "normal" ? RED : p.beam} transparent />
         </mesh>
       )}
+      {!off && (
       <Html position={[0, h + 0.6, 0]} center distanceFactor={9} zIndexRange={[10, 0]} style={{ pointerEvents: "none" }}>
         <div
           className="whitespace-nowrap font-mono leading-tight"
@@ -133,6 +134,7 @@ function Tower({ i, name, selected, onPick, still, sensor, off = false }: { i: n
           <div style={{ fontSize: BIG ? 12.5 : 10.5, opacity: 0.85 }}>{off ? "switched off" : moves ? `${moves} move${moves > 1 ? "s" : ""}` : "quiet"}</div>
         </div>
       </Html>
+      )}
     </group>
   );
 }

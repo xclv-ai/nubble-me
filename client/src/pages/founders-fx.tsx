@@ -220,7 +220,7 @@ export function WarRoom() {
       {phys && (
         <div className="border-t px-3 py-4" style={{ borderColor: "#17181A" }}>
           <p className="mb-3 text-center font-mono text-[12px]" style={{ color: "#8A9095" }}>
-            Rivals you watch. Flip one off and it leaves the radar.
+            Rivals you watch. Flip one off and its tower goes dark.
           </p>
           <div className="mx-auto grid max-w-[520px] grid-cols-3 justify-items-center gap-y-4 sm:grid-cols-6">
             {FX_RIVALS.map((r) => {
@@ -576,10 +576,10 @@ export function Heatmap() {
                   aria-label={`${r}, week of ${WEEKS[wi].label}: ${items.length} moves`}
                   onClick={() => setSel({ r, w: wi })}
                   initial={false}
-                  animate={inView || reduce ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
+                  animate={inView || reduce ? { opacity: phys && rivals.off.has(r) ? 0.3 : 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
                   transition={{ delay: reduce ? 0 : (wi * 6 + ri) * 0.025, duration: 0.25 }}
                   className="aspect-square min-h-[40px] w-full rounded-[4px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
-                  style={phys ? { ...glassKey(ledOf(items), on), opacity: rivals.off.has(r) ? 0.3 : 1 } : { ...cellColor(items), outline: on ? "2px solid #FFFFFF" : undefined, outlineOffset: 1 }}
+                  style={phys ? glassKey(ledOf(items), on) : { ...cellColor(items), outline: on ? "2px solid #FFFFFF" : undefined, outlineOffset: 1 }}
                 >
                   {items.length > 1 && <span className={`font-mono text-[11px] font-medium ${phys ? "text-white" : "text-black"}`} style={phys ? { textShadow: "0 0 4px #000, 0 0 2px #000" } : undefined}>{items.length}</span>}
                 </motion.button>
