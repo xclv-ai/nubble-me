@@ -670,3 +670,165 @@ export function Heatmap() {
     </div>
   );
 }
+
+/* ─── v19: the war room as its own section, map on one half, the tapped rival's folder on the other ─── */
+
+const SEVERITY = { "code-red": 3, weakened: 2, "worth-knowing": 1 } as const;
+const STATUS = {
+  "code-red": { t: "CODE RED", c: RED },
+  weakened: { t: "WEAKENED A CLAIM", c: ORANGE },
+  "worth-knowing": { t: "WORTH KNOWING", c: AMBER },
+} as const;
+
+export function WarSplit() {
+  const moves = useContext(MovesCtx);
+  const phys = useContext(LucePhysCtx);
+  const rivals = useRivals();
+  const reduce = useReducedMotion();
+  const byRival = moves.byRival;
+  const [gl, setGl] = useState<boolean | null>(null);
+  const [sel, setSel] = useState<FxRival>("Peec AI");
+  useEffect(() => setGl(hasWebGL()), []);
+  const sources = Array.from(new Map(PROFILE.competitors.map((c) => [c.foundAt, c.url])).entries());
+  const top = (r: FxRival) => byRival[r].filter((m) => m.kept).sort((a, b) => SEVERITY[b.kept!] - SEVERITY[a.kept!])[0];
+  const hot = (r: FxRival) => byRival[r].some((m) => m.kept === "code-red" || m.kept === "weakened");
+  const live = FX_RIVALS.filter((r) => !rivals.off.has(r));
+  const read = live.reduce((a, r) => a + byRival[r].length, 0);
+  const act = live.reduce((a, r) => a + byRival[r].filter((m) => m.kept === "code-red" || m.kept === "weakened").length, 0);
+  const lead = top(sel);
+  const story = lead ? BRIEF.find((b) => b.url === lead.url) : undefined;
+  const status = lead ? STATUS[lead.kept!] : { t: "QUIET", c: "#A9B1B5" };
+  const latest = [...byRival[sel]].reverse().slice(0, 5);
+  const pick = (r: FxRival) => {
+    if (rivals.off.has(r)) rivals.toggle(r);
+    setSel(r);
+  };
+
+  const map = (
+    <div className="nb-war relative h-[340px] overflow-hidden rounded-[18px] sm:h-[420px] lg:h-[460px]" style={{ background: "radial-gradient(ellipse at 50% 60%, #0D1A14 0%, #07090A 65%)", boxShadow: "inset 0 0 0 1px #17181A" }}>
+      {gl ? (
+        <Guard fallback={<CompetitorMap />}>
+          <Suspense fallback={<div className="grid h-full place-items-center font-mono text-[12px]" style={{ color: MUTE }}>loading the map…</div>}>
+            <WarTable selected={sel} tracking onSelect={pick} sensor="normal" byRival={byRival} big off={phys ? rivals.off : undefined} />
+          </Suspense>
+        </Guard>
+      ) : gl === false ? (
+        <CompetitorMap />
+      ) : null}
+      <div className="pointer-events-none absolute left-3 right-3 top-2.5 flex justify-between font-mono text-[12px]" style={{ color: "#C9CFD2" }}>
+        <span>pokpok.ai and its rivals</span>
+        <span>15 Sep to 31 Oct</span>
+      </div>
+      <p className="pointer-events-none absolute bottom-2.5 left-3 right-3 font-mono text-[12px]" style={{ color: "#C9CFD2" }}>
+        Tower height = moves we read. Tap a tower.
+      </p>
+    </div>
+  );
+
+  const levers = phys ? (
+    <div data-3d="panel" className="grid grid-cols-3 justify-items-center gap-y-4 rounded-[22px] px-2 py-4 sm:grid-cols-6">
+      {FX_RIVALS.map((r) => {
+        const n = byRival[r].length;
+        const glow = hot(r) && !rivals.off.has(r);
+        return (
+          <div key={r} className="relative rounded-[18px] px-1" style={glow ? { boxShadow: `0 0 0 1.5px ${RED}, 0 0 18px ${RED}88` } : undefined}>
+            {glow && !reduce && (
+              <motion.span aria-hidden className="pointer-events-none absolute inset-0 rounded-[18px]" style={{ boxShadow: `0 0 26px ${RED}` }} animate={{ opacity: [0.2, 0.75, 0.2] }} transition={{ duration: 1.8, repeat: Infinity }} />
+            )}
+            <LeverToggle on={!rivals.off.has(r)} onChange={() => rivals.toggle(r)} label={r.split(" ")[0].replace(".AI", "")} sub={`${n} move${n === 1 ? "" : "s"}`} color={glow ? RED : r === "Profound" ? AMBER : "#FFFFFF"} />
+          </div>
+        );
+      })}
+    </div>
+  ) : null;
+
+  const folder = (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div key={sel} initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }} className="flex h-full flex-col gap-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 flex-col items-start gap-2">
+            <span className="rounded-[4px] border px-2 py-1 font-mono text-[12px] leading-none tracking-[0.06em]" style={{ color: status.c, borderColor: status.c }}>
+              {status.t}
+            </span>
+            <h3 className="font-mono text-[24px] font-semibold leading-tight text-white md:text-[28px]">{sel}</h3>
+          </div>
+          <p className="shrink-0 text-right font-mono text-[13px]" style={{ color: MUTE }}>
+            <span className="block text-[34px] font-medium leading-none" style={{ color: status.c === "#A9B1B5" ? "#FFFFFF" : status.c }}>{byRival[sel].length}</span>
+            moves read
+          </p>
+        </div>
+        {story ? (
+          <>
+            <div>
+              <p className="mb-1 font-mono text-[12px]" style={{ color: MUTE }}>So what</p>
+              <p className="text-[19px] leading-[1.4] text-white md:text-[21px]">{story.soWhat}</p>
+            </div>
+            {story.move && (
+              <div>
+                <p className="mb-1 font-mono text-[12px]" style={{ color: MUTE }}>Your move</p>
+                <p className="text-[16px] leading-[1.5] text-[#D9DDDF] md:text-[17px]">{story.move}</p>
+              </div>
+            )}
+          </>
+        ) : lead ? (
+          <div>
+            <p className="mb-1 font-mono text-[12px]" style={{ color: MUTE }}>What they did</p>
+            <p className="text-[19px] leading-[1.4] text-white md:text-[21px]">
+              <Ext href={lead.url}>{lead.title}</Ext> <span className="font-mono text-[13px]" style={{ color: status.c }}>{lead.date}, {labelOf(lead)!.t}</span>
+            </p>
+          </div>
+        ) : (
+          <div>
+            <p className="mb-1 font-mono text-[12px]" style={{ color: MUTE }}>So what</p>
+            <p className="text-[19px] leading-[1.4] text-white md:text-[21px]">Nothing aimed at you. No change needed.</p>
+          </div>
+        )}
+        {lead && (
+          <div className="flex flex-wrap gap-2">
+            {[
+              { t: "Investor update", h: "#nb-send-0" },
+              { t: "LinkedIn post", h: "#nb-send-1" },
+              { t: "Deck slide", h: "#nb-send-2" },
+            ].map((x) => (
+              <a key={x.t} href={x.h} className="inline-flex min-h-[44px] items-center rounded-full border px-4 font-mono text-[13px] text-white transition-colors hover:bg-white hover:text-black" style={{ borderColor: "#3A3F42", background: "#15191B" }}>
+                Send as {x.t.toLowerCase()}
+              </a>
+            ))}
+          </div>
+        )}
+        <div className="mt-auto border-t pt-3" style={{ borderColor: "#17181A" }}>
+          <p className="mb-2 font-mono text-[12px]" style={{ color: MUTE }}>Latest moves we read</p>
+          <MoveList items={latest} empty="Quiet. We read no moves from it between 15 Sep and 31 Oct." />
+        </div>
+      </motion.div>
+    </AnimatePresence>
+  );
+
+  return (
+    <div data-l="bezel" className="overflow-hidden">
+      <Maybe3D>
+        <div className="grid grid-cols-1 overflow-hidden rounded-[20px] bg-[#050505] lg:grid-cols-2" style={{ boxShadow: "inset 0 0 0 1px #17181A" }}>
+          <div className="flex min-w-0 flex-col gap-3 p-3 md:p-5 lg:border-r" style={{ borderColor: "#17181A" }}>
+            {map}
+            <p className="px-1 font-mono text-[13px]" style={{ color: MUTE }}>
+              <span className="text-white">{read}</span> rival moves read. <span style={{ color: RED }}>{act}</span> need your move. Flip a rival off and its tower goes dark.
+            </p>
+            {levers}
+          </div>
+          <div className="flex min-w-0 flex-col border-t p-4 md:p-6 lg:border-t-0" style={{ borderColor: "#17181A" }}>
+            {folder}
+          </div>
+        </div>
+      </Maybe3D>
+      <p className="px-4 py-2.5 font-mono text-[12px] leading-[1.6]" style={{ color: MUTE }}>
+        Each rival was found by a live web search, on these public lists of AI visibility tools:{" "}
+        {sources.map(([host, url], i) => (
+          <span key={host}>
+            <Ext href={url} className="-my-[14px] inline-block py-[14px]">{host}</Ext>
+            {i < sources.length - 1 ? ", " : ""}
+          </span>
+        ))}
+      </p>
+    </div>
+  );
+}
