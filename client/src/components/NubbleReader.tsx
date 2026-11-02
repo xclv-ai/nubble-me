@@ -831,9 +831,8 @@ function NubbleLogo() {
       xmlns="http://www.w3.org/2000/svg"
       aria-label="nubble logo"
     >
-      <rect x="3" y="5" width="12" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.3" opacity="0.3" />
-      <rect x="9" y="5" width="12" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.3" />
-      <line x1="7" y1="12" x2="17" y2="12" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeLinecap="round" />
+      {/* the logo is just a rectangle (owner, 2 Nov 2026) */}
+      <rect x="6" y="4" width="12" height="16" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   );
 }
