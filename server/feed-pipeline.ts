@@ -27,6 +27,7 @@ const CATEGORY = getArg("--category", "ai-news");
 const CUSTOM_QUERY = getArg("--query", "");
 const DATA_DIR_SERVER = path.join(process.cwd(), "server/data/feed", CATEGORY);
 const DATA_DIR_PUBLIC = path.join(process.cwd(), "client/public/data/feed", CATEGORY);
+const PODCAST_BASE_URL = "https://raw.githubusercontent.com/xclv-ai/nubble-me/main/media/podcasts";
 
 // ---------- logging ----------
 
@@ -384,7 +385,9 @@ IMPORTANT: Do NOT include citation numbers like [1], [2], [3] anywhere in your r
       await pollArtifactReady(notebookId, "audio", 15 * 60 * 1000);
 
       // Download audio (nlm outputs .m4a) → decode to wav → encode to mp3 via lame
-      const podcastDir = path.join(DATA_DIR_PUBLIC, "podcasts");
+      // Audio lives outside client/public so it is not copied into every Vercel deploy;
+      // the site plays it straight from GitHub.
+      const podcastDir = path.join(process.cwd(), "media/podcasts", CATEGORY);
       if (!fs.existsSync(podcastDir)) {
         fs.mkdirSync(podcastDir, { recursive: true });
       }
@@ -420,7 +423,7 @@ IMPORTANT: Do NOT include citation numbers like [1], [2], [3] anywhere in your r
       log(`Audio compressed: ${audioSize}MB`);
 
       // Update feed JSON with audioUrl
-      const audioUrl = `/data/feed/${CATEGORY}/podcasts/${audioFilename}`;
+      const audioUrl = `${PODCAST_BASE_URL}/${CATEGORY}/${path.basename(finalPath)}`;
       output.audioUrl = audioUrl;
 
       for (const dir of [DATA_DIR_SERVER, DATA_DIR_PUBLIC]) {

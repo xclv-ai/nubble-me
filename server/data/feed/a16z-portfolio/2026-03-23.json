@@ -185,6 +185,6 @@
       ]
     }
   ],
-  "audioUrl": "/data/feed/a16z-portfolio/podcasts/2026-03-23.mp3",
+  "audioUrl": "https://raw.githubusercontent.com/xclv-ai/nubble-me/main/media/podcasts/a16z-portfolio/2026-03-23.mp3",
   "infographicUrl": "/data/feed/a16z-portfolio/infographics/2026-03-23_landscape.jpg"
 }

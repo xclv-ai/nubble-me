@@ -185,6 +185,6 @@
       ]
     }
   ],
-  "audioUrl": "/data/feed/ai-ecommerce/podcasts/2026-04-20.mp3",
+  "audioUrl": "https://raw.githubusercontent.com/xclv-ai/nubble-me/main/media/podcasts/ai-ecommerce/2026-04-20.m4a",
   "infographicUrl": "/data/feed/ai-ecommerce/infographics/2026-04-20_landscape.jpg"
 }
