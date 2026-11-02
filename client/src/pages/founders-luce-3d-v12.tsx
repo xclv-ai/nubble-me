@@ -219,7 +219,7 @@ function makeMats() {
     tRim: capMat(capRim),
     tWell: capMat(capWell),
     tHub: Object.assign(capMat(capHub, true), { map: grainTex() }),
-    tBar: capMat(capBar, true),
+    tBar: Object.assign(capMat(capBar, true), { map: brushTex() }),
     tAlu: capMat(capBar),
     capBlade: Object.assign(capMat(capBlade), { map: grainTex() }),
     capLip: capMat(capLip, true),
@@ -315,6 +315,34 @@ function grainTex() {
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
 }
+/** Brushed grain for the toggle bar: fine speckle plus faint streaks along its length. */
+function brushTex() {
+  const c = document.createElement("canvas");
+  c.width = 128; // around the bar
+  c.height = 256; // along the bar
+  const g = c.getContext("2d")!;
+  const img = g.createImageData(128, 256);
+  let seed = 11;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const GX = 9, GY = 17;
+  const grid = Array.from({ length: GX * GY }, () => rnd());
+  const at = (i: number, j: number) => grid[(j % GY) * GX + (i % GX)];
+  for (let y = 0; y < 256; y++)
+    for (let x = 0; x < 128; x++) {
+      const fx = (x / 128) * (GX - 1), fy = (y / 256) * (GY - 1);
+      const i = Math.floor(fx), j = Math.floor(fy), tx = fx - i, ty = fy - j;
+      const sx = tx * tx * (3 - 2 * tx), sy = ty * ty * (3 - 2 * ty);
+      const n = (at(i, j) * (1 - sx) + at(i + 1, j) * sx) * (1 - sy) + (at(i, j + 1) * (1 - sx) + at(i + 1, j + 1) * sx) * sy;
+      const v = 222 + n * 22 + rnd() * 11;
+      const k = (y * 128 + x) * 4;
+      img.data[k] = img.data[k + 1] = img.data[k + 2] = Math.min(255, v);
+      img.data[k + 3] = 255;
+    }
+  g.putImageData(img, 0, 0);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
 /** linear vertex colour that scales a matcap's sRGB value by f */
 const vlin = (f: number) => Math.pow(Math.max(0, f), 2.2);
 // Key blade: bright where it tilts up to the light, ~178 face, dark where it turns down;
@@ -348,11 +376,14 @@ const capHub = (nx: number, ny: number) => ramp([[0, 158], [0.5, 166], [0.8, 180
 // Toggle bar (bent slightly round the hub): bright bands near both ends and in the middle,
 // darker between, flat ~150 along the top edge, falling to dark along the bottom edge.
 const capBar = (nx: number, ny: number) => {
-  let v = ramp([[-1, 90], [-0.7, 190], [-0.5, 210], [-0.34, 130], [-0.22, 80], [-0.08, 125], [0.04, 158], [0.14, 145], [0.24, 120], [0.36, 180], [0.48, 175], [0.7, 110], [1, 60]], nx);
-  v = 146 + (v - 158) * 0.7;
-  v += 24 * ny;
-  if (ny > 0) v += (222 - v) * sstep(0.4, 0.68, ny) - 70 * sstep(0.88, 1, ny);
-  else { v *= 1 - 0.22 * sstep(0.1, 0.45, -ny); v += (42 - v) * sstep(0.55, 0.85, -ny); }
+  // along the bar (the bend tilts the face from nx -.29 at the left end to +.29 at the right),
+  // read off the reference: bright left end, dark band at 20%, bright at 40%, darker at 70-80%,
+  // lighter again near the right end; left end cap lit, right end cap dim
+  let v = ramp([[-1, 190], [-0.36, 200], [-0.29, 205], [-0.23, 150], [-0.17, 108], [-0.1, 140], [-0.05, 172], [0.02, 168], [0.1, 145], [0.17, 132], [0.23, 150], [0.27, 182], [0.33, 150], [1, 105]], nx);
+  // across the bar: a lit top face with a crisp top line, then the front, a darker lower edge
+  // with a faint light rim at the very bottom
+  if (ny > 0) v += (-12 * sstep(0.18, 0.26, ny) * (1 - sstep(0.26, 0.32, ny))) + (205 - v) * sstep(0.28, 0.4, ny) + 28 * sstep(0.55, 0.68, ny) * (1 - sstep(0.75, 0.88, ny)) - 90 * sstep(0.9, 1, ny);
+  else v += (118 - v) * sstep(0.55, 0.85, -ny) + 55 * sstep(0.86, 0.94, -ny) * (1 - sstep(0.96, 1, -ny));
   return v;
 };
 /** A soft round glow, used as the light of an LED under black glass. */
@@ -572,7 +603,7 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
     shadeHub(hubMesh, 0);
     const pad = new THREE.Group();
     const L = W * 1.3;
-    const e = W * 0.05;
+    const e = W * 0.06;
     const prof: THREE.Vector2[] = [];
     for (let i = 0; i <= 10; i++) { const t = (i / 10) * (Math.PI / 2); prof.push(new THREE.Vector2(0.5 * Math.pow(Math.sin(t), 0.6) + 0.0001, -L / 2 + e * (1 - Math.cos(t)))); }
     // enough rings along the length for the bend to shape the light bands
@@ -595,7 +626,10 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
     // bent back slightly toward both ends, round the hub
     {
       const bp = bar.attributes.position;
-      for (let i = 0; i < bp.count; i++) { const u = bp.getX(i) / (L / 2); bp.setZ(i, bp.getZ(i) - W * 0.1 * u * u); }
+      for (let i = 0; i < bp.count; i++) {
+        const u = bp.getX(i) / (L / 2);
+        bp.setZ(i, bp.getZ(i) - W * 0.1 * u * u);
+      }
     }
     bar.computeVertexNormals();
     {
