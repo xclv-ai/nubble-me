@@ -4,6 +4,7 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import type { RunItem } from "./founders-data";
 import { MovesCtx, WEEKS, weekOf } from "./founders-fx-data";
 import { AMBER, MUTE, RED } from "./founders-v3";
+import { LucePhysCtx, SyncSlider } from "./founders-luce-ctl";
 
 /*
  * The pressure gauge, ported from the iPhone app prototype (docs/redesign/proto/gauge3d.html),
@@ -407,6 +408,7 @@ function hasWebGL() {
 /** The pressure gauge with one chip per week. Default: the week with the most pressure. */
 export function PressureGauge() {
   const { run } = useContext(MovesCtx);
+  const phys = useContext(LucePhysCtx);
   const weeks = useMemo(() => pressureByWeek(run), [run]);
   const total = Math.min(100, weeks.reduce((a, b) => a + b, 0));
   const top = weeks.indexOf(Math.max(...weeks));
@@ -498,6 +500,9 @@ export function PressureGauge() {
           </span>
         </div>
       )}
+      {phys ? (
+        <SyncSlider labels={WEEKS.map((w) => w.label)} values={WEEKS.map((_, i) => valueOf(i))} value={sel} onChange={(i) => i !== sel && pick(i)} colorOf={(v) => (v >= 40 ? RED : v > 0 ? AMBER : MUTE)} />
+      ) : (
       <div className="grid grid-cols-4 gap-1.5">
         {chips.map((i) => {
           const on = i === sel;
@@ -521,6 +526,7 @@ export function PressureGauge() {
           );
         })}
       </div>
+      )}
       <div data-l="glasscard" className="rounded-lg border px-4 py-3" style={{ borderColor: "#1E2529", background: "#0B0E0F" }}>
         <p className="mb-2 font-mono text-[12px]" style={{ color: MUTE }}>
           How {sel < 0 ? "the total" : "this week"} adds up
