@@ -27,12 +27,13 @@ import FoundersLandingV11 from "@/pages/founders-v11";
 import FoundersLandingV12 from "@/pages/founders-v12";
 import FoundersLandingV13 from "@/pages/founders-v13";
 import FoundersLandingV14 from "@/pages/founders-v14";
+import FoundersLandingV15 from "@/pages/founders-v15";
 
 function AppRouter() {
   return (
     <Switch>
       {/* nubble.me is the founders page (owner, 2 Nov 2026); the news reader moved to /ai-news */}
-      <Route path="/">{() => <FoundersLandingV14 rectLogo />}</Route>
+      <Route path="/">{() => <FoundersLandingV15 rectLogo />}</Route>
       <Route path="/ai-news" component={Home} />
       <Route path="/founders" component={FoundersLanding} />
       <Route path="/founders-v2" component={FoundersLandingV2} />
@@ -48,6 +49,7 @@ function AppRouter() {
       <Route path="/founders-v12" component={FoundersLandingV12} />
       <Route path="/founders-v13" component={FoundersLandingV13} />
       <Route path="/founders-v14">{() => <FoundersLandingV14 />}</Route>
+      <Route path="/founders-v15">{() => <FoundersLandingV15 />}</Route>
       <Route path="/ai-branding" component={Home} />
       <Route path="/ai-ecommerce" component={Home} />
       <Route path="/a16z-portfolio" component={Home} />
