@@ -21,6 +21,7 @@ import FoundersLandingV5 from "@/pages/founders-v5";
 import FoundersLandingV6 from "@/pages/founders-v6";
 import FoundersLandingV7 from "@/pages/founders-v7";
 import FoundersLandingV8 from "@/pages/founders-v8";
+import FoundersLandingV9 from "@/pages/founders-v9";
 
 function AppRouter() {
   return (
@@ -34,6 +35,7 @@ function AppRouter() {
       <Route path="/founders-v6" component={FoundersLandingV6} />
       <Route path="/founders-v7" component={FoundersLandingV7} />
       <Route path="/founders-v8" component={FoundersLandingV8} />
+      <Route path="/founders-v9" component={FoundersLandingV9} />
       <Route path="/ai-branding" component={Home} />
       <Route path="/ai-ecommerce" component={Home} />
       <Route path="/a16z-portfolio" component={Home} />

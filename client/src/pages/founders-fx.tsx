@@ -2,6 +2,7 @@ import { Component, lazy, Suspense, useContext, useEffect, useMemo, useRef, useS
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { Count, Ext } from "./founders";
 import { LGREEN, LTag, LTrace, LYELLOW } from "./founders-luce";
+import { LeverToggle, LucePhysCtx, SosCapsule, glassKey, useRivals } from "./founders-luce-ctl";
 import { AMBER, CompetitorMap, LINE, MUTE, RED } from "./founders-v3";
 import { BRIEF, PROFILE, type RunItem } from "./founders-data";
 import { FX_RIVALS, LuceBoldCtx, LuceCtx, MovesCtx, WEEKS, rivalOf, weekOf, type FxRival } from "./founders-fx-data";
@@ -76,6 +77,8 @@ export function WarRoom() {
   const moves = useContext(MovesCtx);
   const luce = useContext(LuceCtx);
   const bold = useContext(LuceBoldCtx);
+  const phys = useContext(LucePhysCtx);
+  const rivals = useRivals();
   const MOVES_BY_RIVAL = moves.byRival;
   const [gl, setGl] = useState<boolean | null>(null);
   const [sel, setSel] = useState<FxRival>("Peec AI");
@@ -161,7 +164,7 @@ export function WarRoom() {
         {gl && (
           <Guard fallback={<CompetitorMap />}>
             <Suspense fallback={<div className="grid h-full place-items-center font-mono text-[12px]" style={{ color: MUTE }}>loading the map…</div>}>
-              <WarTable selected={sel} tracking onSelect={setSel} sensor={sensor} byRival={MOVES_BY_RIVAL} big={luce} />
+              <WarTable selected={sel} tracking onSelect={setSel} sensor={sensor} byRival={MOVES_BY_RIVAL} big={luce} off={phys ? rivals.off : undefined} />
             </Suspense>
           </Guard>
         )}
@@ -202,7 +205,7 @@ export function WarRoom() {
             return (
               <button key={x.k} type="button" aria-pressed={on} onClick={() => setSensor(x.k)} className="flex flex-col items-center gap-2 font-mono text-[12px]">
                 <span data-l="glass" className="grid h-[60px] w-[60px] place-items-center" style={on ? { outline: `2px solid ${c}`, outlineOffset: "3px" } : undefined}>
-                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke={on ? c : "#8A9095"} strokeWidth="1.8" aria-hidden>
+                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke={on || phys ? c : "#8A9095"} strokeWidth="1.8" opacity={on || !phys ? 1 : 0.6} aria-hidden>
                     {x.k === "normal" && (<><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></>)}
                     {x.k === "night" && <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />}
                     {x.k === "thermal" && <path d="M12 3c1 3 4 5 4 9a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 0-8z" />}
@@ -214,8 +217,40 @@ export function WarRoom() {
           })}
         </div>
       )}
+      {phys && (
+        <div className="border-t px-3 py-4" style={{ borderColor: "#17181A" }}>
+          <p className="mb-3 text-center font-mono text-[12px]" style={{ color: "#8A9095" }}>
+            Rivals you watch. Flip one off and its tower goes dark.
+          </p>
+          <div className="mx-auto grid max-w-[520px] grid-cols-3 justify-items-center gap-y-4 sm:grid-cols-6">
+            {FX_RIVALS.map((r) => {
+              const n = MOVES_BY_RIVAL[r].length;
+              return (
+                <LeverToggle
+                  key={r}
+                  on={!rivals.off.has(r)}
+                  onChange={() => rivals.toggle(r)}
+                  label={r.split(" ")[0].replace(".AI", "")}
+                  sub={`${n} move${n === 1 ? "" : "s"}`}
+                  color={r === "Peec AI" ? RED : r === "Profound" ? AMBER : "#FFFFFF"}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
       {bold && (
         <div className="flex flex-col gap-3 border-t px-4 py-4 sm:flex-row sm:items-center sm:gap-4 md:px-5" style={{ borderColor: "#17181A" }}>
+          {phys ? (
+            <SosCapsule label="Code red: show Peec AI on the radar" onPress={() => {
+                if (rivals.off.has("Peec AI")) rivals.toggle("Peec AI");
+                setSel("Peec AI");
+                setSensor("normal");
+                setFlash((n) => n + 1);
+              }}>
+              CODE RED
+            </SosCapsule>
+          ) : (
           <button
             type="button"
             onClick={() => {
@@ -233,6 +268,7 @@ export function WarRoom() {
             </span>
             CODE RED
           </button>
+          )}
           <p className="min-w-0 text-[15px] leading-[1.45] text-[#E8EAEA]">
             <a href="https://peec.ai/blog/introducing-brand-perception" target="_blank" rel="noreferrer" className="-my-[14px] inline-block py-[14px] font-mono text-[12.5px] underline underline-offset-4" style={{ color: RED }}>16 Sep, Peec blog</a>{" "}
             Peec AI started selling “brand perception”, your main term.{" "}
@@ -482,6 +518,8 @@ export function Heatmap() {
   const inView = useInView(ref, { once: true, margin: "-60px" });
   const reduce = useReducedMotion();
   const { run, byRival: MOVES_BY_RIVAL } = useContext(MovesCtx);
+  const phys = useContext(LucePhysCtx);
+  const rivals = useRivals();
   const [sel, setSel] = useState<{ r: FxRival; w: number }>({ r: "Peec AI", w: 0 });
   const grid = useMemo(() => {
     const g: Record<string, RunItem[]> = {};
@@ -499,15 +537,16 @@ export function Heatmap() {
     if (items.some((m) => m.kept === "weakened")) return { background: ORANGE, boxShadow: `0 0 12px ${ORANGE}66` };
     return { background: "#C98A1C" };
   };
+  const ledOf = (items: RunItem[]) => (!items.length ? null : items.some((m) => m.kept === "code-red") ? RED : items.some((m) => m.kept === "weakened") ? ORANGE : "#E0A43A");
   const picked = grid[`${sel.r}|${sel.w}`] ?? [];
   return (
     <div ref={ref} data-l="glasscard" className="rounded-xl border bg-[#07090A] p-3 md:p-6" style={{ borderColor: LINE }}>
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
         <p className="font-mono text-[13px] text-white">Every move, week by week. Tap a square.</p>
         <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px]" style={{ color: MUTE }}>
-          <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: RED }} />copied you</span>
-          <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: ORANGE }} />weakened a claim</span>
-          <span className="inline-flex items-center gap-1.5"><i className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: "#C98A1C" }} />other</span>
+          <span className="inline-flex items-center gap-1.5"><i className={`inline-block h-2.5 w-2.5 ${phys ? "rounded-full" : "rounded-sm"}`} style={{ background: RED, boxShadow: phys ? `0 0 8px ${RED}` : undefined }} />copied you</span>
+          <span className="inline-flex items-center gap-1.5"><i className={`inline-block h-2.5 w-2.5 ${phys ? "rounded-full" : "rounded-sm"}`} style={{ background: ORANGE, boxShadow: phys ? `0 0 8px ${ORANGE}` : undefined }} />weakened a claim</span>
+          <span className="inline-flex items-center gap-1.5"><i className={`inline-block h-2.5 w-2.5 ${phys ? "rounded-full" : "rounded-sm"}`} style={{ background: "#C98A1C", boxShadow: phys ? `0 0 8px ${"#C98A1C"}` : undefined }} />other</span>
         </p>
       </div>
       <div className="grid gap-[3px] md:max-w-[620px] md:gap-1.5" style={{ gridTemplateColumns: `54px repeat(${WEEKS.length}, minmax(0, 1fr)) 22px` }}>
@@ -524,7 +563,7 @@ export function Heatmap() {
         </span>
         {FX_RIVALS.map((r, ri) => (
           <div key={r} className="contents">
-            <span className="truncate self-center font-mono text-[11.5px] md:text-[13px]" style={{ color: r === "Peec AI" ? RED : "#C9CFD2" }} title={r}>
+            <span className="truncate self-center font-mono text-[11.5px] md:text-[13px]" style={{ color: r === "Peec AI" ? RED : "#C9CFD2", opacity: phys && rivals.off.has(r) ? 0.3 : 1 }} title={r}>
               {r.split(" ")[0].replace(".AI", "")}
             </span>
             {WEEKS.map((_, wi) => {
@@ -537,12 +576,12 @@ export function Heatmap() {
                   aria-label={`${r}, week of ${WEEKS[wi].label}: ${items.length} moves`}
                   onClick={() => setSel({ r, w: wi })}
                   initial={false}
-                  animate={inView || reduce ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
+                  animate={inView || reduce ? { opacity: phys && rivals.off.has(r) ? 0.3 : 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
                   transition={{ delay: reduce ? 0 : (wi * 6 + ri) * 0.025, duration: 0.25 }}
                   className="aspect-square min-h-[40px] w-full rounded-[4px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
-                  style={{ ...cellColor(items), outline: on ? "2px solid #FFFFFF" : undefined, outlineOffset: 1 }}
+                  style={phys ? glassKey(ledOf(items), on) : { ...cellColor(items), outline: on ? "2px solid #FFFFFF" : undefined, outlineOffset: 1 }}
                 >
-                  {items.length > 1 && <span className="font-mono text-[11px] font-medium text-black">{items.length}</span>}
+                  {items.length > 1 && <span className={`font-mono text-[11px] font-medium ${phys ? "text-white" : "text-black"}`} style={phys ? { textShadow: "0 0 4px #000, 0 0 2px #000" } : undefined}>{items.length}</span>}
                 </motion.button>
               );
             })}

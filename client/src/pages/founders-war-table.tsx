@@ -81,10 +81,10 @@ function Ground({ p }: { p: ReturnType<typeof palette> }) {
   );
 }
 
-function Tower({ i, name, selected, onPick, still, sensor }: { i: number; name: FxRival; selected: boolean; onPick: () => void; still: boolean; sensor: Sensor }) {
+function Tower({ i, name, selected, onPick, still, sensor, off = false }: { i: number; name: FxRival; selected: boolean; onPick: () => void; still: boolean; sensor: Sensor; off?: boolean }) {
   const moves = MOVES_BY_RIVAL[name].length;
-  const h = 0.12 + moves * 0.2;
-  const color = towerColor(name, sensor);
+  const h = off ? 0.04 : 0.12 + moves * 0.2;
+  const color = off ? "#2A2D30" : towerColor(name, sensor);
   const p = palette(sensor);
   const [x, , z] = pos(i);
   const ring = useRef<THREE.Mesh>(null);
@@ -109,12 +109,13 @@ function Tower({ i, name, selected, onPick, still, sensor }: { i: number; name: 
         <boxGeometry args={[1.1, 0.9, 1.1]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      {name === "Peec AI" && (
+      {name === "Peec AI" && !off && (
         <mesh ref={ring} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
           <ringGeometry args={[0.32, 0.38, 48]} />
           <meshBasicMaterial color={sensor === "normal" ? RED : p.beam} transparent />
         </mesh>
       )}
+      {!off && (
       <Html position={[0, h + 0.6, 0]} center distanceFactor={9} zIndexRange={[10, 0]} style={{ pointerEvents: "none" }}>
         <div
           className="whitespace-nowrap font-mono leading-tight"
@@ -125,13 +126,15 @@ function Tower({ i, name, selected, onPick, still, sensor }: { i: number; name: 
             border: `1px solid ${selected ? labelColor : "transparent"}`,
             background: selected ? "rgba(0,0,0,0.55)" : "transparent",
             textShadow: "0 0 6px #000, 0 0 2px #000",
+            opacity: off ? 0.35 : 1,
           }}
         >
           <div style={{ fontSize: BIG ? 12 : 9.5, opacity: 0.75 }}>TGT-0{i + 1}</div>
           <div style={{ fontWeight: selected ? 600 : 400 }}>{name}</div>
-          <div style={{ fontSize: BIG ? 12.5 : 10.5, opacity: 0.85 }}>{moves ? `${moves} move${moves > 1 ? "s" : ""}` : "quiet"}</div>
+          <div style={{ fontSize: BIG ? 12.5 : 10.5, opacity: 0.85 }}>{off ? "switched off" : moves ? `${moves} move${moves > 1 ? "s" : ""}` : "quiet"}</div>
         </div>
       </Html>
+      )}
     </group>
   );
 }
@@ -204,6 +207,7 @@ export default function WarTable({
   sensor,
   byRival = DEFAULT_BY_RIVAL,
   big = false,
+  off,
 }: {
   selected: FxRival;
   tracking: boolean;
@@ -211,6 +215,7 @@ export default function WarTable({
   sensor: Sensor;
   byRival?: Record<FxRival, RunItem[]>;
   big?: boolean;
+  off?: ReadonlySet<string>;
 }) {
   MOVES_BY_RIVAL = byRival;
   BIG = big;
@@ -228,7 +233,7 @@ export default function WarTable({
         <You still={still} color={p.you} />
         <Beam still={still} color={p.beam} />
         {FX_RIVALS.map((r, i) => (
-          <Tower key={r} i={i} name={r} selected={selected === r} onPick={() => onSelect(r)} still={still} sensor={sensor} />
+          <Tower key={r} i={i} name={r} selected={selected === r} onPick={() => onSelect(r)} still={still} sensor={sensor} off={!!off?.has(r)} />
         ))}
       </Turntable>
     </Canvas>

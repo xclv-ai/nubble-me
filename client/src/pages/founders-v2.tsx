@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion, useInView, useReducedMotion, type PanInfo } from "framer-motion";
+import { LucePhysCtx, RotaryKey } from "./founders-luce-ctl";
 import { ChevronDown } from "lucide-react";
 import { NubbleReader } from "@/components/NubbleReader";
 import type { ContentDocument } from "@/lib/sample-content";
@@ -596,6 +597,7 @@ function isHeading(p: string) {
 
 /** Accent moment: the three sizes, with the So what as large as a headline. */
 export function SizesBig() {
+  const phys = useContext(LucePhysCtx);
   const [size, setSize] = useState(0);
   const reduce = useReducedMotion();
   const [dir, setDir] = useState(1);
@@ -610,6 +612,9 @@ export function SizesBig() {
   };
   return (
     <div className="flex flex-col gap-3">
+      {phys ? (
+        <RotaryKey value={size} options={SIZE_TABS} onChange={go} colors={[AMBER, "#FFFFFF", "#FFFFFF"]} />
+      ) : (
       <div role="tablist" aria-label="Story size" data-l="pill" className="grid grid-cols-3 gap-1 rounded-xl bg-[#1A1A1A] p-1">
         {SIZE_TABS.map((t, i) => (
           <button
@@ -634,6 +639,7 @@ export function SizesBig() {
           </button>
         ))}
       </div>
+      )}
       <motion.div
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
@@ -691,7 +697,7 @@ export function SizesBig() {
             )}
           </motion.div>
         </div>
-        <p className="border-t border-[#EAEAEA] px-5 py-3 font-mono text-[12px] text-mute md:px-7">Swipe the card or tap a size.</p>
+        {!phys && <p className="border-t border-[#EAEAEA] px-5 py-3 font-mono text-[12px] text-mute md:px-7">Swipe the card or tap a size.</p>}
       </motion.div>
     </div>
   );
