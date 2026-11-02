@@ -103,13 +103,13 @@ function bladeGrid(R: number, hw: number, depth: number, bend: number) {
       const u = i / NX, v = (j / NY) * 2 - 1;
       const x = (u * 2 - 1) * hw;
       const au0 = Math.abs(x / hw), cc = 0.28;
-      const corner = au0 > 1 - cc ? R * 0.07 * (1 - Math.sqrt(Math.max(0, 1 - ((au0 - (1 - cc)) / cc) ** 2))) : 0;
+      const corner = au0 > 1 - cc ? R * 0.12 * (1 - Math.sqrt(Math.max(0, 1 - ((au0 - (1 - cc)) / cc) ** 2))) : 0;
       const yMax = Math.sqrt(Math.max(0, rc * rc - x * x)) - corner;
       const y = v * yMax;
       const au = Math.abs(x / hw), e = 0.3;
       const edge = au < 1 - e ? 1 : Math.sqrt(Math.max(0, 1 - ((au - (1 - e)) / e) ** 2));
       const across = (0.85 + 0.15 * (1 - au * au)) * edge;
-      const ends = Math.pow(Math.max(0, 1 - Math.pow(Math.abs(v), 10)), 0.3);
+      const ends = Math.pow(Math.max(0, 1 - Math.pow(Math.abs(v), 6)), 0.45);
       const z = depth * across * ends - bend * (y / R) * (y / R);
       pos.push(x, y, z);
       uv.push(u, (v + 1) / 2);
@@ -226,6 +226,7 @@ function makeMats() {
     capBowl: capMat(capBowl, true),
   };
   Object.values(m).forEach((x) => (x.side = THREE.DoubleSide));
+  m.tBar.side = THREE.FrontSide; // back faces at the bar's silhouette showed as dots
   return m;
 }
 
@@ -339,17 +340,18 @@ const capLip = (nx: number, ny: number) => {
 // Bowl: plain satin grey; its radial shading comes from vertex colours.
 const capBowl = (nx: number, ny: number) => 236 + 18 * (-nx * 0.6 + ny * 0.8);
 // Toggle capsule: near-black gloss with a faint lighter top edge.
-const capRim = (nx: number, ny: number) => 18 + 16 * sstep(0.3, 0.85, ny) - 6 * sstep(0.3, 0.85, -ny) + 12 * sstep(0.4, 0.85, Math.abs(nx));
+const capRim = (nx: number, ny: number) => 18 + 16 * sstep(0.3, 0.85, ny) - 6 * sstep(0.3, 0.85, -ny) + 12 * sstep(0.4, 0.85, Math.abs(nx)) + 16 * sstep(0.75, 0.95, Math.hypot(nx, ny));
 // Toggle well: black gloss, its top inner wall catching the overhead light, the bottom wall less.
 const capWell = (_nx: number, ny: number) => 20 + 18 * sstep(0.15, 0.75, -ny) + 14 * sstep(0.2, 0.8, ny);
 // Toggle hub: a flat satin disc ~190-205, a touch lighter toward the top, edge rolling off.
-const capHub = (nx: number, ny: number) => ramp([[0, 178], [0.5, 190], [0.8, 206], [0.93, 186], [1, 110]], Math.hypot(nx, ny)) + 26 * ny - 8 * nx;
+const capHub = (nx: number, ny: number) => ramp([[0, 158], [0.5, 166], [0.8, 180], [0.93, 165], [1, 100]], Math.hypot(nx, ny)) + 40 * ny - 8 * nx;
 // Toggle bar (bent slightly round the hub): bright bands near both ends and in the middle,
 // darker between, flat ~150 along the top edge, falling to dark along the bottom edge.
 const capBar = (nx: number, ny: number) => {
   let v = ramp([[-1, 90], [-0.7, 190], [-0.5, 210], [-0.34, 130], [-0.22, 80], [-0.08, 125], [0.04, 158], [0.14, 145], [0.24, 120], [0.36, 180], [0.48, 175], [0.7, 110], [1, 60]], nx);
-  v = 155 + (v - 155) * 0.92;
-  if (ny > 0) v += (215 - v) * sstep(0.4, 0.7, ny) - 70 * sstep(0.88, 1, ny);
+  v = 146 + (v - 158) * 0.7;
+  v += 24 * ny;
+  if (ny > 0) v += (222 - v) * sstep(0.4, 0.68, ny) - 70 * sstep(0.88, 1, ny);
   else { v *= 1 - 0.22 * sstep(0.1, 0.45, -ny); v += (42 - v) * sstep(0.55, 0.85, -ny); }
   return v;
 };
@@ -576,7 +578,7 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
     // enough rings along the length for the bend to shape the light bands
     for (let i = 1; i < 40; i++) prof.push(new THREE.Vector2(0.5001, -L / 2 + e + ((L - 2 * e) * i) / 40));
     for (let i = 0; i <= 10; i++) { const t = (Math.PI / 2) * (1 - i / 10); prof.push(new THREE.Vector2(0.5 * Math.pow(Math.sin(t), 0.6) + 0.0001, L / 2 - e * (1 - Math.cos(t)))); }
-    const bar = new THREE.LatheGeometry(prof, 64);
+    const bar = new THREE.LatheGeometry(prof, 96, Math.PI);
     bar.rotateZ(-Math.PI / 2);
     // squircle cross-section: a flat face with rounded top and bottom edges, not a tube
     {
@@ -610,7 +612,6 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
     own.push(stem);
     const sm = new THREE.Mesh(stem, M.tWell);
     sm.position.set(0, 0, -W * 0.4);
-    pad.add(sm);
     // the bar's soft shadow on the hub just below it
     pad.position.z = z0 + W * 0.3;
     g.add(pad);
@@ -639,7 +640,7 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
       for (let i = 0; i < lp.count; i++) {
         const th = Math.atan2(lp.getY(i), lp.getX(i));
         const rr = Math.hypot(lp.getX(i), lp.getY(i)) / R;
-        const f = (0.78 + 0.3 * Math.pow(Math.max(0, Math.cos(th + (60 * Math.PI) / 180)), 3) + 0.22 * Math.pow(Math.max(0, Math.cos(th - (135 * Math.PI) / 180)), 3)) * (rr < 0.876 ? 1.25 : 1);
+        const f = (0.72 + 0.48 * Math.pow(Math.max(0, Math.cos(th + (60 * Math.PI) / 180)), 4) + 0.42 * Math.pow(Math.max(0, Math.cos(th - (135 * Math.PI) / 180)), 4)) * (rr < 0.876 ? 1.06 : 1);
         col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = vlin(f);
       }
       lipG.setAttribute("color", new THREE.BufferAttribute(col, 3));
