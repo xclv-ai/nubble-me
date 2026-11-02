@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import type { RunItem } from "./founders-data";
@@ -15,19 +15,27 @@ import { LucePhysCtx, SyncSlider } from "./founders-luce-ctl";
  * copied you = 40, weakened a claim = 20, worth knowing = 5. Capped at 100.
  */
 
-const POINTS = { "code-red": 40, weakened: 20, "worth-knowing": 5 } as const;
+const POINTS_V1 = { "code-red": 40, weakened: 20, "worth-knowing": 5 } as const;
+/**
+ * v18 (owner, 2 Nov: "you marked it code red but pressure is just 45?"): a copy of your main claim
+ * is code red on its own, so it scores 80 and the dial is red from 80 up. Score and label agree.
+ */
+const POINTS_V2 = { "code-red": 80, weakened: 20, "worth-knowing": 5 } as const;
+export const REDLINE = 80;
+export const PressureV2Ctx = createContext(false);
 
-export function pressureByWeek(run: RunItem[]) {
+export function pressureByWeek(run: RunItem[], v2 = false) {
+  const P = v2 ? POINTS_V2 : POINTS_V1;
   const w = WEEKS.map(() => 0);
   run.forEach((m) => {
-    if (m.kept) w[weekOf(m)] += POINTS[m.kept];
+    if (m.kept) w[weekOf(m)] += P[m.kept];
   });
   return w.map((v) => Math.min(100, v));
 }
 
 type Api = { set: (v: number, delta: string | null, deltaColor: string) => void; dispose: () => void };
 
-function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
+function mountGauge(host: HTMLDivElement, reduce: boolean, redline = false): Api {
   const R = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   R.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   R.toneMapping = THREE.ACESFilmicToneMapping;
@@ -151,7 +159,7 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
       const mid = i % 5 === 0;
       const r2 = S * 0.452;
       const r1 = maj ? S * 0.385 : mid ? S * 0.418 : S * 0.435;
-      g.strokeStyle = v <= WARM ? YEL : WHT;
+      g.strokeStyle = redline && i >= REDLINE ? "#FF3B3B" : v <= WARM ? YEL : WHT;
       g.lineWidth = maj ? 14 : mid ? 7 : 3.2;
       g.beginPath();
       g.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
@@ -163,7 +171,7 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
     g.textBaseline = "middle";
     [0, 20, 40, 60, 80, 100].forEach((n) => {
       const a = ang(n / 100);
-      g.fillStyle = n / 100 <= WARM ? YEL : WHT;
+      g.fillStyle = redline && n >= REDLINE ? "#FF3B3B" : n / 100 <= WARM ? YEL : WHT;
       g.fillText(String(n), cx + Math.cos(a) * S * 0.315, cy + Math.sin(a) * S * 0.315);
     });
   };
@@ -284,7 +292,7 @@ function mountGauge(host: HTMLDivElement, reduce: boolean): Api {
     ng.beginPath();
     ng.arc(256, 256, 248, 0, 7);
     ng.stroke();
-    ng.fillStyle = "#F0F0F0";
+    ng.fillStyle = redline && n >= REDLINE ? "#FF4A4A" : "#F0F0F0";
     ng.font = "500 228px Geist, system-ui, sans-serif";
     ng.fillText(String(n), 256, 226);
     ng.fillStyle = "#C8C8C8";
@@ -409,7 +417,9 @@ function hasWebGL() {
 export function PressureGauge() {
   const { run } = useContext(MovesCtx);
   const phys = useContext(LucePhysCtx);
-  const weeks = useMemo(() => pressureByWeek(run), [run]);
+  const v2 = useContext(PressureV2Ctx);
+  const POINTS = v2 ? POINTS_V2 : POINTS_V1;
+  const weeks = useMemo(() => pressureByWeek(run, v2), [run, v2]);
   const total = Math.min(100, weeks.reduce((a, b) => a + b, 0));
   const top = weeks.indexOf(Math.max(...weeks));
   const [sel, setSel] = useState<number>(top);
@@ -434,7 +444,7 @@ export function PressureGauge() {
     }
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     try {
-      api.current = mountGauge(host.current, reduce);
+      api.current = mountGauge(host.current, reduce, v2);
     } catch {
       setGl(false);
       return;
@@ -501,7 +511,7 @@ export function PressureGauge() {
         </div>
       )}
       {phys ? (
-        <SyncSlider labels={WEEKS.map((w) => w.label)} values={WEEKS.map((_, i) => valueOf(i))} value={sel} onChange={(i) => i !== sel && pick(i)} colorOf={(v) => (v >= 40 ? RED : v > 0 ? AMBER : MUTE)} />
+        <SyncSlider labels={WEEKS.map((w) => w.label)} values={WEEKS.map((_, i) => valueOf(i))} value={sel} onChange={(i) => i !== sel && pick(i)} colorOf={(v) => (v2 ? (v >= REDLINE ? RED : v >= 20 ? "#FF8B3E" : v > 0 ? AMBER : MUTE) : v >= 40 ? RED : v > 0 ? AMBER : MUTE)} />
       ) : (
       <div className="grid grid-cols-4 gap-1.5">
         {chips.map((i) => {
@@ -557,7 +567,9 @@ export function PressureGauge() {
           </li>
         </ul>
         <p className="mt-2 text-[12.5px] leading-[1.5]" style={{ color: MUTE }}>
-          Copied you: 40. Weakened one of your claims: 20. Worth knowing: 5. Capped at 100.
+          {v2
+            ? "Copied your main claim: 80. That alone puts you in the red. Weakened one of your claims: 20. Worth knowing: 5. Capped at 100."
+            : "Copied you: 40. Weakened one of your claims: 20. Worth knowing: 5. Capped at 100."}
         </p>
       </div>
     </div>
