@@ -134,8 +134,9 @@ function glowTex() {
   const g = c.getContext("2d")!;
   const r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
   r.addColorStop(0, "rgba(255,255,255,1)");
-  r.addColorStop(0.35, "rgba(255,255,255,0.85)");
-  r.addColorStop(0.7, "rgba(255,255,255,0.25)");
+  r.addColorStop(0.18, "rgba(255,255,255,0.9)");
+  r.addColorStop(0.42, "rgba(255,255,255,0.28)");
+  r.addColorStop(0.75, "rgba(255,255,255,0.06)");
   r.addColorStop(1, "rgba(255,255,255,0)");
   g.fillStyle = r;
   g.fillRect(0, 0, 128, 128);
@@ -242,6 +243,7 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
   } else if (kind === "track") {
     add(slab(w + 6, h + 6, 2, 2), M.graphite, 1, undefined, false);
     add(slab(w, h, 2, 2), M.well, 2.5, undefined, false);
+    add(slab(w - 2, h - 2, 3, 2.5), M.glass, 3);
   } else if (kind === "knob") {
     const R = Math.min(w, h) / 2;
     add(ring(R * 0.96, R + 2.5, 5), M.graphite, 3);
@@ -252,12 +254,20 @@ function build(kind: string, w: number, h: number, el: HTMLElement, M: Mats): It
     parts.body = body;
     const gm = new THREE.MeshBasicMaterial({ map: glowTex(), color: new THREE.Color(color), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
     own.push(gm);
-    const gp = new THREE.PlaneGeometry(w * 1.15, h * 1.0);
+    const gp = new THREE.PlaneGeometry(w * 1.1, h * 1.0);
     own.push(gp);
-    const glow = new THREE.Mesh(gp, gm);
-    glow.position.z = 14;
+    const glow = new THREE.Group();
+    const halo = new THREE.Mesh(gp, gm);
+    halo.position.z = 14;
+    glow.add(halo);
+    // crisp lit lens in the middle of the key, like a Luce indicator
+    const core = new THREE.Mesh(slab(w * 0.34, h * 0.42, 1, 0.5), led(color));
+    own.push(core.geometry, core.material as THREE.Material);
+    core.position.z = 14.5;
+    glow.add(core);
     g.add(glow);
     parts.led = glow;
+    parts.halo = halo;
     const sel = new THREE.Mesh(slab(w + 7, h + 7, 0.5, 0.5, 13), led("#FFFFFF"));
     sel.position.z = 0;
     sel.visible = false;
@@ -392,7 +402,8 @@ export function Luce3DLayer({ children, className = "" }: { children: ReactNode;
         if (kind === "key") {
           const ledOn = !!el.dataset.color;
           it.parts.led.visible = ledOn;
-          ((it.parts.led as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = 0.95 * op;
+          ((it.parts.halo as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = 0.9 * op;
+          (((it.parts.led as THREE.Group).children[1] as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = op;
           it.parts.body.visible = true;
           it.parts.sel.visible = on;
         }
