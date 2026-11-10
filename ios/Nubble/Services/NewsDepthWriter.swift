@@ -42,7 +42,7 @@ struct StoryLevels: Sendable {
 @MainActor
 final class NewsDepthWriter {
     /// Bump when the prompts change: stories written by an older writer are written again.
-    static let version = 3
+    static let version = 4
     /// Tokens per part when a text doesn't fit; the rest of the 4,096 is for instructions and the notes.
     static let partTokens = 1_200
 
@@ -241,8 +241,10 @@ final class NewsDepthWriter {
                 \(facts)
 
                 Describe this product in 80-150 words: what it sells, to whom, how it is priced, \
-                who it competes with, and what makes it different. Keep the page's own product names and numbers.
-                """)
+                and what makes it different. Keep the page's own product names and numbers. \
+                Name competitors only if the page itself calls them competitors or alternatives: \
+                names in banners, awards, juries, partner or client logos are not competitors.
+                """, options: Self.options(maxTokens: 400))
             return (name, response.content.trimmingCharacters(in: .whitespacesAndNewlines))
         } catch let error as LanguageModelSession.GenerationError {
             throw WriterError.model(Self.describe(error))
@@ -264,17 +266,21 @@ final class NewsDepthWriter {
             rounds += 1
             let parts = Self.chunks(current, size: await Self.wordsPerPart(current))
             var notes: [String] = []
-            for part in parts {
+            var failures: [String] = []
+            for (i, part) in parts.enumerated() {
                 let session = LanguageModelSession(model: Self.transformModel, instructions: "You take notes on a text. Keep every fact: who, what, numbers, prices, dates, names, claims, quotes. Plain sentences, no commentary.")
                 do {
-                    let response = try await session.respond(to: "Source: \(title)\n\nText:\n\(part)\n\nWrite the most important facts from this text in 10-15 sentences.")
+                    // The answer is capped: without a cap the small model can keep writing until its window overflows.
+                    let response = try await session.respond(to: "Source: \(title)\n\nText:\n\(part)\n\nWrite the most important facts from this text in 10-15 sentences.", options: Self.options(maxTokens: 400))
                     notes.append(response.content)
                 } catch let error as LanguageModelSession.GenerationError {
-                    throw WriterError.model("[notes, part \(notes.count + 1) of \(parts.count)] " + Self.describe(error))
+                    failures.append("[notes, part \(i + 1) of \(parts.count)] " + Self.describe(error))
                 } catch {
-                    throw WriterError.model("[notes, part \(notes.count + 1) of \(parts.count)] \(type(of: error)): \(error.localizedDescription)")
+                    failures.append("[notes, part \(i + 1) of \(parts.count)] \(type(of: error)): \(error.localizedDescription)")
                 }
             }
+            // One unreadable part loses its facts, not the whole story; only all parts failing is an error.
+            if notes.isEmpty, let first = failures.first { throw WriterError.model(first) }
             let joined = notes.joined(separator: "\n")
             // Notes no shorter than the text: the model isn't compressing, stop here.
             if rounds > 3 || Self.words(joined).count >= Self.words(current).count { return joined }
@@ -291,6 +297,11 @@ final class NewsDepthWriter {
             tokensPerWord = max(1, Double(count) / Double(wordCount))
         }
         return max(200, Int(Double(partTokens) / tokensPerWord))
+    }
+
+    /// Every answer has a ceiling, so one runaway answer can't eat the model's whole window.
+    private static func options(maxTokens: Int) -> GenerationOptions {
+        GenerationOptions(maximumResponseTokens: maxTokens)
     }
 
     /// Apple's guardrails for transforming text the user supplied (notes, descriptions).
@@ -327,10 +338,15 @@ final class NewsDepthWriter {
 
 
             """
-        let relevance = try await block("how relevant", analyst, context, "How relevant is this story to \(name)? Start the lead with High, Medium or Low.")
+        // What it means is written first, and the relevance is judged from it, so the two can't contradict
+        // (the small model rated every story High, then wrote "no impact" in the next block).
         let applies = try await block("what it means", analyst, context, "What does this story mean for \(name)'s own products and customers?")
+        let relevance = try await block("how relevant", analyst, context + "WHAT IT MEANS FOR \(name.uppercased()): \(applies)\n\n",
+            "How relevant is this story to \(name)? Start the lead with High, Medium or Low. High only if \(name)'s founders must act this week; Low if it doesn't touch \(name)'s products or customers.")
         let impact = try await block("impact", analyst, context, "How will this change \(name)'s market or customers in the next 6-12 months?")
-        let moves = try await text("what to do", analyst, context + "What should \(name) do about it? Exactly 3 moves, one per line, each starting with \"- \" and a verb, each at most 10 words, using \(name)'s real products.")
+        let names = Self.cleanProductNames(product.products ?? [], company: name)
+        let namesLine = names.isEmpty ? "" : " Each move names one of these products: \(names.joined(separator: ", "))."
+        let moves = try await text("what to do", analyst, context + "What should \(name) do about it? Exactly 3 moves, one per line, each starting with \"- \" and a verb, each at most 10 words, using \(name)'s real products.\(namesLine) No vague verbs like analyze, evaluate, optimize or leverage.")
         return """
             **HOW RELEVANT**
             \(relevance)
@@ -373,7 +389,7 @@ final class NewsDepthWriter {
     private func text(_ step: String, _ instructions: String, _ prompt: String) async throws -> String {
         let session = LanguageModelSession(model: Self.transformModel, instructions: instructions)
         do {
-            return try await session.respond(to: prompt).content.trimmingCharacters(in: .whitespacesAndNewlines)
+            return try await session.respond(to: prompt, options: Self.options(maxTokens: 300)).content.trimmingCharacters(in: .whitespacesAndNewlines)
         } catch let error as LanguageModelSession.GenerationError {
             throw WriterError.model("[\(step)] " + Self.describe(error))
         } catch {

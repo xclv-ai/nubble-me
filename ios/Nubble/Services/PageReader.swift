@@ -17,6 +17,8 @@ struct PageReader: Sendable {
         let title = siteName.isEmpty ? try doc.title() : siteName
         let description = try doc.select("meta[name=description], meta[property=og:description]").first()?.attr("content") ?? ""
         try doc.select("script, style, noscript, svg, iframe, nav, footer").remove()
+        // Scrolling banners (tickers) repeat their text in hidden copies: drop the copies.
+        try doc.select("[aria-hidden=true]").remove()
         var lines: [String] = []
         for element in try doc.select("h1, h2, h3, h4, p, li, a[class*=button], button, td").array() {
             let line = try element.text().trimmingCharacters(in: .whitespacesAndNewlines)
