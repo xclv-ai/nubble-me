@@ -4,6 +4,17 @@ All notable changes to this project. Format: [Keep a Changelog](https://keepacha
 
 ---
 
+## [Unreleased]
+
+### Added
+- **iOS: Mac version** (Mac Catalyst) of the app; share and widget extensions stay iPhone-only.
+
+### Fixed
+- **iOS: ranking scored no story** on Apple's 2026 on-device model (it answers "level — low — …"); the level is now read wherever it sits.
+- **iOS: runaway note calls** filled the model's window and failed product setup; every answer now has a token ceiling and one failed part no longer stops the rest.
+- **iOS: banner names read as competitors** (pokpok.ai's Vibeathon jury); hidden ticker copies are dropped and only names the page calls competitors count.
+- **iOS: So What contradicted itself** (High relevance, then "no impact"); relevance is judged after "what it means", and moves must name the product's own offerings.
+
 ## [iOS 1.2.0 (3) — 2026-10-13] — Dr HAOS's rounds
 
 ### Added

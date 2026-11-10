@@ -35,7 +35,7 @@
 		3B3B38E40E7EFE658552A269 /* NubbleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7154753A83EFB28462FD99A /* NubbleApp.swift */; };
 		3B89AFC73E6568EACF743B77 /* Zodiak-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = F80CFFB3E70D4FD8D12B9685 /* Zodiak-Black.otf */; };
 		4045A503B9E29BBFCD3DCA53 /* SharedInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40D87F123C4B2396B75CDFE /* SharedInbox.swift */; };
-		417CDDED6E35B654A95E5BF8 /* NubbleWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 91B050C65F6B276663D02AE8 /* NubbleWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		417CDDED6E35B654A95E5BF8 /* NubbleWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 91B050C65F6B276663D02AE8 /* NubbleWidget.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		45027B626E07DEA9911B7404 /* Haos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BFEA5D585B28021CB07B1EC /* Haos.swift */; };
 		47BD5A0B109FB9A6864C6052 /* DepthGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3C4A203835059617D97B7A /* DepthGenerator.swift */; };
 		4A3627C59A6B4D2406A9CB23 /* Prescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59EAF5F1852A00C810E3B09 /* Prescription.swift */; };
@@ -119,7 +119,7 @@
 		E762841951E5C59BD89A659D /* JetBrainsMono-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3213C5AEA3BC3608D2199040 /* JetBrainsMono-Bold.ttf */; };
 		E77DF9096F698D3C60B4AC1A /* NubbleReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0755FE128A25592C9D838527 /* NubbleReaderView.swift */; };
 		EB4D70A023DB2779C4E8444A /* DepthIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6886937EFD690603D16BCEC6 /* DepthIndicator.swift */; };
-		EE0FD3F1511E7A30E767854F /* NubbleShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EE0FD3F1511E7A30E767854F /* NubbleShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 69B400C4AE7030E5AC2F9D6C /* NubbleShare.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EE2ABE357AC546CA1A6452F1 /* Satoshi-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3026CCA56112E799A3CD303D /* Satoshi-MediumItalic.otf */; };
 		F0DE4871420FA99BD38B1007 /* ProductProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B36ADE400BD8221DA781180 /* ProductProfile.swift */; };
 		F4092F44F297610CECEF7831 /* ProtoViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377EDFF7F6F67342E4864995 /* ProtoViewer.swift */; };
@@ -805,11 +805,13 @@
 /* Begin PBXTargetDependency section */
 		46F97319C70C3E4C230F4ACA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 44B7B265A75CDEE1B6AD1293 /* NubbleWidget */;
 			targetProxy = 1753BD261C08502D9141BFB9 /* PBXContainerItemProxy */;
 		};
 		B4E820CAF16095E65864A289 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 2CD600351DE454DE9EF479A8 /* NubbleShare */;
 			targetProxy = 1B9F24D64E472300C739842A /* PBXContainerItemProxy */;
 		};
@@ -909,6 +911,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.nubble.app;
 				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -996,6 +1000,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.nubble.app;
 				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

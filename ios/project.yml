@@ -33,9 +33,9 @@ targets:
       - package: SwiftSoup
       - package: ZIPFoundation
       - target: NubbleShare
-        platformFilter: ios
+        platformFilter: iOS
       - target: NubbleWidget
-        platformFilter: ios
+        platformFilter: iOS
     entitlements:
       path: Nubble/Nubble.entitlements
       properties:
