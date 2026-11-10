@@ -7,7 +7,7 @@ import Foundation
 /// high / medium / low for how much it matters to the product's business.
 struct RelevanceRanker: Sendable {
     /// Bump when the ranking rule changes: every story is scored again.
-    static let version = 3
+    static let version = 4
     #if DEBUG
     /// The model's raw answers from the last run (development self-test only).
     nonisolated(unsafe) static var lastAnswers: [String] = []
@@ -40,8 +40,12 @@ struct RelevanceRanker: Sendable {
             #if DEBUG
             Self.lastAnswers.append(answer.prefix(40) + " | " + article.title)
             #endif
-            let level = answer.split(separator: "—").first.map(String.init) ?? answer
-            let reason = answer.split(separator: "—").dropFirst().joined(separator: "—")
+            // The level is the first of high / medium / low in the answer, wherever it sits: Apple's
+            // 2026 model (AFM 3) copies the form literally ("level — low — reason"), so the text before
+            // the first dash is the word "level", and every story went unscored.
+            let found = ["high", "medium", "low"].compactMap { w in answer.range(of: w).map { (w, $0) } }.min { $0.1.lowerBound < $1.1.lowerBound }
+            let level = found?.0 ?? ""
+            let reason = found.map { String(answer[$0.1.upperBound...]) } ?? ""
             let grounded = !reason.lowercased().split(whereSeparator: { !$0.isLetter }).map(String.init).filter { world.contains($0) }.isEmpty
             if level.contains("high") { scores[article.id] = grounded ? 1.0 : 0.5 }
             else if level.contains("medium") { scores[article.id] = 0.5 }
